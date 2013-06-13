@@ -1,3 +1,18 @@
+<IfModule mod_rewrite.c>
+  Options +FollowSymLinks
+  RewriteEngine On
+  RewriteBase /http://areslands.ironfist.com/
+</IfModule>
+
+# For all files not found in the file system, reroute the request to the
+# "index.php" front controller, keeping the query string intact
+
+<IfModule mod_rewrite.c>
+  RewriteCond %{REQUEST_FILENAME} !-f
+  RewriteCond %{REQUEST_FILENAME} !-d
+  RewriteRule ^(.*)$ http://areslands.ironfist.com/index.php/$1 [L,QSA]
+</IfModule>
+
 # Apache configuration file
 # httpd.apache.org/docs/2.2/mod/quickreference.html
 

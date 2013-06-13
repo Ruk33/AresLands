@@ -42,7 +42,7 @@ return array(
 	|
 	*/
 
-	'default' => 'mysql',
+	'default' => 'default',
 
 	/*
 	|--------------------------------------------------------------------------
@@ -61,39 +61,23 @@ return array(
 
 	'connections' => array(
 
-		'sqlite' => array(
-			'driver'   => 'sqlite',
-			'database' => 'application',
-			'prefix'   => '',
-		),
-
-		'mysql' => array(
+		'default' => array(
 			'driver'   => 'mysql',
 			'host'     => '127.0.0.1',
-			'database' => 'database',
+			'database' => 'areslands',
 			'username' => 'root',
 			'password' => '',
 			'charset'  => 'utf8',
 			'prefix'   => '',
 		),
 
-		'pgsql' => array(
-			'driver'   => 'pgsql',
+		'ironfist' => array(
+			'driver'   => 'mysql',
 			'host'     => '127.0.0.1',
-			'database' => 'database',
+			'database' => 'ironfist',
 			'username' => 'root',
 			'password' => '',
 			'charset'  => 'utf8',
-			'prefix'   => '',
-			'schema'   => 'public',
-		),
-
-		'sqlsrv' => array(
-			'driver'   => 'sqlsrv',
-			'host'     => '127.0.0.1',
-			'database' => 'database',
-			'username' => 'root',
-			'password' => '',
 			'prefix'   => '',
 		),
 
