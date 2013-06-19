@@ -10,10 +10,10 @@ class Home_Controller extends Base_Controller
 		parent::__construct();
 
 		/*
-		 *	Si está logueado, entonces
-		 *	lo llevamos a la página de logueados
+		 *	Si está logueado, enviamos
+		 *	al usuario a la página de autentificados
 		 */
-		$this->filter('before','logged', ['authenticated/index']);
+		$this->filter('before', 'logged', ['authenticated/index']);
 	}
 
 	/* Index */

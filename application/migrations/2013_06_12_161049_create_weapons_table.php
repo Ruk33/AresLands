@@ -1,5 +1,7 @@
 <?php
-
+/**
+ *	@deprecated
+ */
 class Create_Weapons_Table {
 
 	/**

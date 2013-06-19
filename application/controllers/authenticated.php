@@ -7,6 +7,8 @@ class Authenticated_Controller extends Base_Controller
 
 	public function __construct()
 	{
+		parent::__construct();
+
 		/*
 		 *	Solo queremos logueados
 		 */
@@ -22,7 +24,15 @@ class Authenticated_Controller extends Base_Controller
 
 	public function get_index()
 	{
-		$this->layout->title = 'ho';
-		$this->layout->content = View::make('home.index');
+		$items = CharacterItem::where('owner_id', '=', Session::get('character')->id)->get();
+		$itemsToView = [];
+
+		foreach ( $items as $item )
+		{
+			$itemsToView[$item->location][] = $item;
+		}
+
+		$this->layout->title = 'Inicio';
+		$this->layout->content = View::make('authenticated.index')->with('items', $itemsToView);
 	}
 }

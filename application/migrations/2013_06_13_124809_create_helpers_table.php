@@ -24,7 +24,7 @@ class Create_Helpers_Table {
 			 *	y por día (en cobre)
 			 */
 			$table->integer('price');
-			$table->integer('price_day');
+			$table->integer('price_per_period');
 
 			/*
 			 *	Estadísticas que otorga

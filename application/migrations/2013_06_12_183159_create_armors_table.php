@@ -1,5 +1,7 @@
 <?php
-
+/**
+ *	@deprecated
+ */
 class Create_Armors_Table {
 
 	/**

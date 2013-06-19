@@ -10,9 +10,12 @@
 		<meta name="description" content="">
 		<meta name="viewport" content="width=device-width">
 
-		<link rel="stylesheet" href="css/normalize.min.css">
-		<link rel="stylesheet" href="css/bootstrap.min.css">
-		<link rel="stylesheet" href="css/main.css">
+		<link rel="stylesheet" href="/css/normalize.min.css">
+		<link rel="stylesheet" href="/css/bootstrap.min.css">
+		<link rel="stylesheet" href="/css/main.css">
+
+		<script src="/js/vendor/jquery-1.9.1.min.js"></script>
+		<script src="/js/vendor/bootstrap.min.js"></script>
 	</head>
 	<body>
 		<!--[if lt IE 7]>
@@ -24,36 +27,36 @@
 				<div class="logo"></div>
 				<div class="row-fluid col-wrap">
 					<div class="span2 menu col" style="width: 176px; ">
-						@if (Auth::check())
+						@if ( Request::route()->controller == 'authenticated' )
 							<div class="mini-player-display">
-								<img src="img/icons/race/enano_ico.jpg" alt="" class="pull-left">
+								<img src="/img/icons/race/{{ Session::get('character')->race }}_{{ Session::get('character')->gender }}.jpg" alt="" class="pull-left">
 								<div class="pull-left" style="margin-left: 5px;">
-									<b style="color: rgb(231, 180, 47); font-size: 12px;">Ruke</b>
+									<b style="color: rgb(231, 180, 47); font-size: 12px;">{{ Session::get('character')->name }}</b>
 									<br>
-									Nivel: 17
+									Nivel: {{ Session::get('character')->level }}
 								</div>
 							</div>
 						@endif
 						<ul class="unstyled">
-							<li><img src="img/inicio.jpg" alt=""></li>
-							<li><img src="img/inicio.jpg" alt=""></li>
-							<li><img src="img/inicio.jpg" alt=""></li>
+							<li><img src="/img/inicio.jpg" alt=""></li>
+							<li><img src="/img/inicio.jpg" alt=""></li>
+							<li><img src="/img/inicio.jpg" alt=""></li>
 						</ul>
 					</div>
 
 					<div class="span10 content col" style="width: 764px; margin-left: 0;">
-						@if (Auth::check())
+						@if ( Request::route()->controller == 'authenticated' )
 							<div class="bar">
-								<img src="img/icons/actions/travel-disabled.png" alt="">
-								<img src="img/icons/actions/travel-disabled.png" alt="">
-								<img src="img/icons/actions/travel-disabled.png" alt="">
-								<img src="img/icons/actions/travel-disabled.png" alt="">
-								<img src="img/icons/actions/travel-disabled.png" alt="">
-								<img src="img/icons/actions/travel-disabled.png" alt="">
-								<img src="img/icons/actions/travel-disabled.png" alt="">
-								<img src="img/icons/actions/travel-disabled.png" alt="">
-								<img src="img/icons/actions/travel-disabled.png" alt="">
-								<img src="img/icons/actions/travel-disabled.png" alt="">
+								<img src="/img/icons/actions/travel-disabled.png" alt="">
+								<img src="/img/icons/actions/travel-disabled.png" alt="">
+								<img src="/img/icons/actions/travel-disabled.png" alt="">
+								<img src="/img/icons/actions/travel-disabled.png" alt="">
+								<img src="/img/icons/actions/travel-disabled.png" alt="">
+								<img src="/img/icons/actions/travel-disabled.png" alt="">
+								<img src="/img/icons/actions/travel-disabled.png" alt="">
+								<img src="/img/icons/actions/travel-disabled.png" alt="">
+								<img src="/img/icons/actions/travel-disabled.png" alt="">
+								<img src="/img/icons/actions/travel-disabled.png" alt="">
 							</div>
 							<hr class="line">
 						@endif
@@ -68,7 +71,7 @@
 		<div id="footer">
 			<div class="text-center">
 				<div>
-					<img src="img/ironfist-logo.png">
+					<img src="/img/ironfist-logo.png">
 					<p style="color: white; font-size: 11px;">
 						Todas las marcas aquí mencionadas son propiedad de sus respectivos dueños. 
 						<br>
@@ -81,8 +84,6 @@
 		<script src="/js/vendor/angular.min.js"></script>
 
 		<script src="/js/vendor/modernizr-2.6.2.min.js"></script>
-		<script src="/js/vendor/jquery-1.9.1.min.js"></script>
-		<script src="/js/vendor/bootstrap.min.js"></script>
 
 		<!--
 			<script>

@@ -6,7 +6,9 @@
 |--------------------------------------------------------------------------
 */
 
-Route::controller(Controller::detect());
+Route::controller('Authenticated');
+Route::controller('CharacterCreation');
+Route::controller('Home');
 
 
 /*
@@ -32,6 +34,23 @@ Event::listen('500', function($exception)
 |--------------------------------------------------------------------------
 */
 
+/*
+ *	Antes de todo, verificamos
+ *	si el usuario está logueado
+ *	y traemos su personaje para
+ *	guardarlo en session
+ */
+Route::filter('before', function() {
+	$character = null;
+
+	if ( Auth::check() )
+	{
+		$character = Character::where('user_id', '=', Auth::user()->id)->first();
+	}
+
+	Session::put('character', $character);
+});
+
 Route::filter('csrf', function()
 {
 	if (Request::forged()) return Response::error('500');
@@ -42,7 +61,8 @@ Route::filter('csrf', function()
  */
 Route::filter('auth', function($redirectTo = 'home/index')
 {
-	if (Auth::guest()) {
+	if (Auth::guest()) 
+	{
 		return Redirect::to($redirectTo);
 	}
 });
@@ -51,7 +71,8 @@ Route::filter('auth', function($redirectTo = 'home/index')
  *	Logueado
  */
 Route::filter('logged', function($redirectTo) {
-	if (Auth::check()) {
+	if (Auth::check()) 
+	{
 		return Redirect::to($redirectTo);
 	}
 });
@@ -59,9 +80,10 @@ Route::filter('logged', function($redirectTo) {
 /*
  *	¿No tiene personaje?
  */
-Route::filter('hasNoCharacter', function($redirectTo = 'characterCreation/index')
+Route::filter('hasNoCharacter', function($redirectTo = 'charactercreation/race')
 {
-	if (!Character::where('account_id', Auth::user()->id)) {
+	if ( is_null(Session::get('character')) ) 
+	{
 		return Redirect::to($redirectTo);
 	}
 });
@@ -71,7 +93,8 @@ Route::filter('hasNoCharacter', function($redirectTo = 'characterCreation/index'
  */
 Route::filter('hasCharacter', function($redirectTo = 'home/index')
 {
-	if (Character::where('account_id', Auth::user()->id)) {
+	if ( ! is_null(Session::get('character')) ) 
+	{
 		return Redirect::to($redirectTo);
 	}
 });
