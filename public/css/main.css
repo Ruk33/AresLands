@@ -186,6 +186,14 @@ h2 {
 	right: 5px;
 }
 
+.positive {
+	color: rgb(123, 223, 56);
+}
+
+.negative {
+	color: rgb(216, 66, 66);
+}
+
 #push, #footer {
 	height: 250px;
 }
