@@ -20,6 +20,15 @@ Route::controller('Home');
 Event::listen('unequipItem', function(CharacterItem $characterItem)
 {
 	$character = Session::get('character');
+
+	/*
+	 *	No queremos compartir eventos
+	 */
+	if ($character->id != $characterItem->owner_id)
+	{
+		return;
+	}
+
 	$item = $characterItem->item;
 
 	/*
@@ -54,11 +63,35 @@ Event::listen('unequipItem', function(CharacterItem $characterItem)
 			}
 		}
 	}
+
+	/*
+	 *	No nos olvidamos de trabajar con los
+	 *	triggers que tengan de evento 'equipItem'
+	 */
+	$characterTriggers = $character->triggers()->where('event', '=', 'unequipItem')->get();
+	$className = null;
+
+	foreach ($characterTriggers as $characterTrigger) {
+		$className = $characterTrigger->class_name;
+		if ( $className::onEquipItem($item) )
+		{
+			$characterTrigger->delete();
+		}
+	}
 });
 
 Event::listen('equipItem', function(CharacterItem $characterItem, $amount = 1)
 {
 	$character = Session::get('character');
+
+	/*
+	 *	No queremos compartir eventos
+	 */
+	if ($character->id != $characterItem->owner_id)
+	{
+		return;
+	}
+
 	$item = $characterItem->item;
 
 	/*
@@ -96,6 +129,21 @@ Event::listen('equipItem', function(CharacterItem $characterItem, $amount = 1)
 			}
 		}
 	}
+
+	/*
+	 *	No nos olvidamos de trabajar con los
+	 *	triggers que tengan de evento 'equipItem'
+	 */
+	$characterTriggers = $character->triggers()->where('event', '=', 'equipItem')->get();
+	$className = null;
+
+	foreach ($characterTriggers as $characterTrigger) {
+		$className = $characterTrigger->class_name;
+		if ( $className::onEquipItem($item) )
+		{
+			$characterTrigger->delete();
+		}
+	}
 });
 
 Event::listen('404', function()
@@ -126,7 +174,31 @@ Route::filter('before', function() {
 
 	if ( Auth::check() )
 	{
-		$character = Character::where('user_id', '=', Auth::user()->id)->first();
+		/*
+		 *	Obtenemos al personaje logueado
+		 */
+		$character = Character::get_character_of_logged_user();
+
+		if ( $character )
+		{
+			/*
+			 *	Además vamos a actualizar tiempos
+			 *	de sus actividades
+			 */
+			$characterActivities = $character->activities()->get();
+
+			foreach ( $characterActivities as $characterActivity )
+			{
+				$characterActivity->update_time();
+			}
+
+			/*
+			 *	Lo se, shity, pero necesario puesto
+			 *	que si lo anterior llega a actualizar
+			 *	algo, la variable de session no se actualiza
+			 */
+			$character = Character::get_character_of_logged_user();
+		}
 	}
 
 	Session::put('character', $character);

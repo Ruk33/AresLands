@@ -91,6 +91,18 @@ h2 {
 	margin: 0;
 }
 
+h4 {
+	color: rgb(153, 153, 152);
+	font-weight: normal;
+	font-style: italic;
+}
+
+.dark-box {
+	padding: 20px;
+	background-color: rgb(16, 17, 17);
+	border: 1px dashed rgb(60, 60, 60);
+}
+
 .menu {
 	background-color: #131111;
 }
@@ -130,9 +142,10 @@ h2 {
 }
 
 .bar {
-	height: 40px;
-	padding: 10px;
-	text-align: center;
+	height: 82px;
+	text-align: right;
+	clear: both;
+	float: none;
 }
 
 .line {
@@ -186,12 +199,45 @@ h2 {
 	right: 5px;
 }
 
+.clan-member-link {
+	padding: 15px;
+	background-color: rgb(14, 14, 14);
+	border-radius: 2px;
+}
+
+.clan-member-link a {
+	color: white;
+}
+
+.clan-member-link a:hover {
+	text-decoration: none;
+	color: white;
+	background-color: rgb(10, 10, 10);
+}
+
+.menu li a img:hover {
+	opacity: 0.75;
+	filter: alpha(opacity=75); /* For IE8 and earlier */
+}
+
 .positive {
 	color: rgb(123, 223, 56);
 }
 
 .negative {
 	color: rgb(216, 66, 66);
+}
+
+.thumbnail {
+	border: none;
+}
+
+.table td { 
+     border-top: 1px dashed rgb(39, 39, 39);
+ }
+
+.table tbody tr:hover td, .table tbody tr:hover th {
+    background-color: rgb(34, 36, 37);
 }
 
 #push, #footer {

@@ -1,16 +1,13 @@
-<IfModule mod_rewrite.c>
-  Options +FollowSymLinks
-  RewriteEngine On
-  RewriteBase /http://areslands.ironfist.com/
-</IfModule>
-
-# For all files not found in the file system, reroute the request to the
-# "index.php" front controller, keeping the query string intact
+# Escondemos index.php
+# y lo agregamos en caso de que falte
 
 <IfModule mod_rewrite.c>
-  RewriteCond %{REQUEST_FILENAME} !-f
-  RewriteCond %{REQUEST_FILENAME} !-d
-  RewriteRule ^(.*)$ http://areslands.ironfist.com/index.php/$1 [L,QSA]
+ RewriteEngine on
+
+ RewriteCond %{REQUEST_FILENAME} !-f
+ RewriteCond %{REQUEST_FILENAME} !-d
+
+ RewriteRule ^(.*)$ /index.php/$1 [L]
 </IfModule>
 
 # Apache configuration file

@@ -33,4 +33,19 @@ class Item extends Base_Model
 
 		return $skills;
 	}
+
+	public function get_text_for_tooltip()
+	{
+		return "<div style='width: 600px; text-align: left;'>
+			<strong>$this->name</strong> (<small>$this->type</small>)
+			<p>$this->description</p>
+			<ul>
+				<li>Vitalidad: $this->stat_life</li>
+				<li>Destreza: $this->stat_dexterity</li>
+				<li>Magia: $this->stat_magic</li>
+				<li>Fuerza: $this->stat_strength</li>
+				<li>Suerte: $this->stat_luck</li>
+			</ul>
+		</div>";
+	}
 }

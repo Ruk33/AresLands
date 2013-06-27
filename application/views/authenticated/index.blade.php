@@ -1,9 +1,17 @@
+<div class="bar">
+	@foreach ( $npcs as $npc )
+		<a href="{{ URL::to('authenticated/npc/' . $npc->name) }}"><img src="/img/icons/npcs/{{ $npc->id }}.png" alt="" data-toggle="tooltip" data-placement="left" data-original-title="{{ $npc->tooltip_dialog }}"></a>
+	@endforeach
+</div>
+<!--<hr class="line">-->
+
 <div class="row">
 	<ul class="unstyled inline" style="margin-left: 20px;">
 		@foreach ( $skills as $skill )
 			<li>
 				<img src="/img/icons/skills/{{ $skill->skill_id }}.jpg" alt="" width="32px" height="32px" data-toggle="tooltip" data-placement="right" data-original-title="
-				<b>{{ $skill->skill->name }}</b><p>{{ $skill->skill->description }}</p>">
+				<b>{{ $skill->skill->name }}</b> (Nivel: {{ $skill->level }})
+				<p>{{ $skill->skill->description }}</p>">
 			</li>
 		@endforeach
 	</ul>
@@ -12,10 +20,14 @@
 		<h2>Personaje</h2>
 		<div style="min-height: 405px;">
 			<!-- DOS MANOS -->
-			@if ( isset($items['lrhand']) )
+			@if ( isset($items['lrhand']) && $lrhand = $items['lrhand'][0]->item )
 				<div style="position: absolute; margin-top: 150px;">
 					<div class="equipped-item">
-						<img src="/img/icons/items/{{ $items['lrhand'][0]->item->id }}.png" alt="">
+						<img src="/img/icons/items/{{ $items['lrhand'][0]->item->id }}.png" alt="" data-toggle="popover" data-placement="top" data-original-title="
+						{{ $lrhand->get_text_for_tooltip() }}
+						<a href='{{ URL::to('authenticated/manipulateItem/' . $items['lrhand'][0]->id) }}'>
+							Desequipar
+						</a>">
 					</div>
 				</div>
 			<!-- END DOS MANOS -->
@@ -25,20 +37,10 @@
 					<div class="equipped-item">
 					@if ( isset($items['rhand']) && $rhand = $items['rhand'][0]->item )
 						<img style="cursor: pointer;" src="/img/icons/items/{{ $rhand->id }}.png" alt="" data-toggle="popover" data-placement="top" data-original-title="
-						<div style='width: 600px; text-align: left;'>
-							<strong>{{ $rhand->name }}</strong> (<small>{{ $rhand->type }}</small>)
-							<p>{{ $rhand->description }}</p>
-							<ul>
-								<li>Vitalidad: {{ $rhand->stat_life }}</li>
-								<li>Destreza: {{ $rhand->stat_dexterity }}</li>
-								<li>Magia: {{ $rhand->stat_magic }}</li>
-								<li>Fuerza: {{ $rhand->stat_strength }}</li>
-								<li>Suerte: {{ $rhand->stat_luck }}</li>
-							</ul>
-							<a href='{{ URL::to('authenticated/manipulateItem/' . $items['rhand'][0]->id) }}'>
-								Desequipar
-							</a>
-						</div>">
+						{{ $rhand->get_text_for_tooltip() }}
+						<a href='{{ URL::to('authenticated/manipulateItem/' . $items['rhand'][0]->id) }}'>
+							Desequipar
+						</a>">
 					@endif
 					</div>
 				</div>
@@ -49,20 +51,10 @@
 					<div class="equipped-item">
 					@if ( isset($items['lhand']) && $lhand = $items['lhand'][0]->item )
 						<img style="cursor: pointer;" src="/img/icons/items/{{ $lhand->id }}.png" alt="" data-toggle="popover" data-placement="top" data-original-title="
-						<div style='width: 600px; text-align: left;'>
-							<strong>{{ $lhand->name }}</strong> (<small>{{ $lhand->type }}</small>)
-							<p>{{ $lhand->description }}</p>
-							<ul>
-								<li>Vitalidad: {{ $lhand->stat_life }}</li>
-								<li>Destreza: {{ $lhand->stat_dexterity }}</li>
-								<li>Magia: {{ $lhand->stat_magic }}</li>
-								<li>Fuerza: {{ $lhand->stat_strength }}</li>
-								<li>Suerte: {{ $lhand->stat_luck }}</li>
-							</ul>
-							<a href='{{ URL::to('authenticated/manipulateItem/' . $items['lhand'][0]->id) }}'>
-								Desequipar
-							</a>
-						</div>">
+						{{ $lhand->get_text_for_tooltip() }}
+						<a href='{{ URL::to('authenticated/manipulateItem/' . $items['lhand'][0]->id) }}'>
+							Desequipar
+						</a>">
 					@endif
 					</div>
 				</div>
@@ -168,18 +160,36 @@
 	
 	<!-- ZONA -->
 	<div class="span6">
-		<h2>Estás en...</h2>
-		Los montes bárbaros
+		<h2>Ubicación</h2>
+		@if ( count($activities) > 0 )
+			@foreach ( $activities as $activity )
+				@if ( $activity->name == 'travel' )
+					Saliendo de 
+				@endif
+			@endforeach
+		@endif
+		{{ $character->zone->name }}
 	</div>
 	<!-- END ZONA -->
 	
 	<!-- ACTIVIDADES -->
+	@if ( count($activities) > 0 )
 	<div class="span6">
-		<h2>Actividad</h2>
+		<h2>Actividad(es)</h2>
 		<ul>
-			<li>Viajando a El Valle De La Sangre: 2:53</li>
+			@foreach ( $activities as $activity )
+			<li>
+				@if ( $activity->name == 'travel' )
+					Estás viajando a {{ $activity->data['zone']->name }}: 
+				@elseif ( $activity->name == 'battlerest' )
+					Descanzando de batalla: 
+				@endif
+				<span class="timer" data-endtime="{{ $activity->end_time }}"></span>
+			</li>
+			@endforeach
 		</ul>
 	</div>
+	@endif
 	<!-- END ACTIVIDADES -->
 </div>
 
@@ -188,19 +198,11 @@
 <div class="text-center">
 	@for ( $i = 1, $max = 6; $i <= $max; $i++ )
 		<div class="inventory-item" style="float: left;">
-		@foreach ( $items['inventory'] as $characterItem )
-			@if ( $characterItem->slot == $i && $item = $characterItem->item )
-				<img style="cursor: pointer;" src="/img/icons/inventory/items/{{ $characterItem->item_id }}.png" alt="" data-toggle="popover" data-placement="top" data-original-title="
-				<div style='width: 600px; text-align: left;'>
-					<strong>{{ $item->name }}</strong> (<small>{{ $item->type }}</small>)
-					<p>{{ $item->description }}</p>
-					<ul>
-						<li>Vitalidad: {{ $item->stat_life }}</li>
-						<li>Destreza: {{ $item->stat_dexterity }}</li>
-						<li>Magia: {{ $item->stat_magic }}</li>
-						<li>Fuerza: {{ $item->stat_strength }}</li>
-						<li>Suerte: {{ $item->stat_luck }}</li>
-					</ul>
+		@if ( isset($items['inventory']) )
+			@foreach ( $items['inventory'] as $characterItem )
+				@if ( $characterItem->slot == $i && $item = $characterItem->item )
+					<img style="cursor: pointer;" src="/img/icons/inventory/items/{{ $characterItem->item_id }}.png" alt="" data-toggle="popover" data-placement="top" data-original-title="
+					{{ $item->get_text_for_tooltip() }}
 					@if ( $item->type == 'arrow' && $items['lrhand'][0]->item->type != 'bow' )
 						<span style='font-size: 11px;'>Debes tener equipado un arco para usar flechas</span>
 					@else
@@ -211,20 +213,12 @@
 								Equipar
 							@endif
 						</a>
-					@endif					
-				</div>">
-				<div class="inventory-item-amount" data-toggle="tooltip" data-placement="top" data-original-title="Cantidad">{{ $characterItem->count }}</div>
-			@endif
-		@endforeach
+					@endif">
+					<div class="inventory-item-amount" data-toggle="tooltip" data-placement="top" data-original-title="Cantidad">{{ $characterItem->count }}</div>
+				@endif
+			@endforeach
+		@endif
 		</div>
 	@endfor
 </div>
 <!-- END INVENTARIO -->
-
-<script>
-	/*
-	 *	Iniciamos los tooltips
-	 */
-	$('[data-toggle="tooltip"]').tooltip({ html: true });
-	$('[data-toggle="popover"]').popover({ html: true });
-</script>

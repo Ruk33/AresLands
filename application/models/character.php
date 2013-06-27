@@ -25,6 +25,27 @@ class Character extends Base_Model
 	];
 
 	/**
+	 *	Devolvemos el personaje del usuario
+	 *	que esté logueado
+	 *
+	 *	@return <Character>
+	 */
+	public static function get_character_of_logged_user()
+	{
+		if ( Auth::guest() )
+		{
+			return null;
+		}
+
+		return Character::where('user_id', '=', Auth::user()->id)->first();
+	}
+
+	public function get_link()
+	{
+		return '<a href="' . URL::to('authenticated/character/' . $this->name ) . '">' . $this->name . '</a>';
+	}
+
+	/**
 	 *	@param <bool> $positive Si es true, traemos bonificaciones positivas, si es false negativas
 	 *	@return <array>
 	 */
@@ -135,6 +156,109 @@ class Character extends Base_Model
 		return $bonification;
 	}
 
+	/**
+	 *	Obtenemos la cantidad de monedas
+	 *	en cobre de un personaje
+	 *
+	 *	@return <CharacterItem> 
+	 */
+	public function get_coins()
+	{
+		return $this->items()->where('item_id', '=', Config::get('game.coin_id'))->first();
+	}
+
+	/**
+	 *	Obtenemos las monedas dividas en
+	 *	oro, plata y cobre de un personaje
+	 *
+	 *	@return <Array> Monedas dividas en oro, plata y cobre
+	 */
+	public function get_divided_coins()
+	{
+		$coins = $this->get_coins();
+
+		if ( $coins )
+		{
+			$coins = $coins->count;
+		}
+
+		return [
+			'gold' => substr($coins, 0, -4) ? substr($coins, 0, -4) : 0,
+			'silver' => substr($coins, -4, -2) ? substr($coins, -4, -2) : 0,
+			'copper' => substr($coins, -2) ? substr($coins, -2) : 0,
+		];
+	}
+
+	/**
+	 *	Iniciamos el viaje de un
+	 *	personaje a una zona
+	 *
+	 *	@param <Zone> $zone
+	 */
+	public function travel_to(Zone $zone)
+	{
+		if ( $zone )
+		{
+			$characterActivity = new CharacterActivity();
+
+			$characterActivity->character_id = $this->id;
+			$characterActivity->name = 'travel';
+			$characterActivity->data = [ 'zone' => $zone ];
+			$characterActivity->end_time = time() + Config::get('game.travel_time');
+
+			$characterActivity->save();
+		}
+	}
+
+	/**
+	 *	Verificamos si el personaje está habilitado
+	 *	para viajar
+	 *
+	 *	@return <mixed> True si puede, de lo contrario el mensaje de error
+	 */
+	public function can_travel()
+	{
+		/*
+		 *	Si ya está viajando...
+		 */
+		if ( $this->activities()->where('name', '=', 'travel')->first() )
+		{
+			return 'Ya estás viajando, no puedes volver a hacerlo.';
+		}
+
+		/*
+		 *	¿Le alcanzan las monedas?
+		 */
+		$coins = $this->items()->where('item_id', '=', Config::get('game.coin_id'))->first();
+		if ( $coins && $coins->count < Config::get('game.travel_cost') )
+		{
+			return 'No tienes suficientes monedas.';
+		}
+
+		return true;
+	}
+
+	public function get_unread_messages_count()
+	{
+		$count = $this->messages()->where('unread', '=', true)->count();
+		return ( $count > 0 ) ? $count : '';
+	}
+
+	public function can_enter_in_clan()
+	{
+		return $this->clan_id == 0;
+	}
+
+	public function zone()
+	{
+		return $this->belongs_to('Zone', 'zone_id');
+	}
+
+	public function activities()
+	{
+		return $this->has_many('CharacterActivity', 'character_id');
+	}
+
 	public function items()
 	{
 		return $this->has_many('CharacterItem', 'owner_id');
@@ -143,5 +267,35 @@ class Character extends Base_Model
 	public function skills()
 	{
 		return $this->has_many('CharacterSkill', 'character_id');
+	}
+
+	public function quests()
+	{
+		return $this->has_many('CharacterQuest', 'character_id');
+	}
+
+	public function triggers()
+	{
+		return $this->has_many('CharacterTrigger', 'character_id');
+	}
+
+	public function messages()
+	{
+		return $this->has_many('Message', 'receiver_id');
+	}
+
+	public function clan()
+	{
+		return $this->belongs_to('Clan', 'clan_id');
+	}
+
+	public function petitions()
+	{
+		return $this->has_many('ClanPetition', 'character_id');
+	}
+
+	public function trades()
+	{
+		return $this->has_many('Trade', 'seller_id');
 	}
 }
