@@ -5,6 +5,7 @@ class Quest extends Base_Model
 	public static $softDelete = false;
 	public static $timestamps = false;
 	public static $table = 'quests';
+	public static $key = 'id';
 
 	public function get_data()
 	{

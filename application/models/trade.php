@@ -5,6 +5,7 @@ class Trade extends Base_Model
 	public static $softDelete = false;
 	public static $timestamps = false;
 	public static $table = 'trades';
+	public static $key = 'id';
 
 	protected $rules = array(
 		//'seller_id' => 'required|exists:characters,id|different:buyer_id',

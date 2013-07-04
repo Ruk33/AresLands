@@ -5,6 +5,7 @@ class CharacterItem extends Base_Model
 	public static $softDelete = false;
 	public static $timestamps = false;
 	public static $table = 'character_items';
+	public static $key = 'id';
 
 	public function item()
 	{
@@ -27,13 +28,29 @@ class CharacterItem extends Base_Model
 
 		for ( $i = 1, $max = 6; $i <= $max; $i++ )
 		{
-			//if ( ! CharacterItem::where('owner_id', '=', $character->id)->where('slot', '=', $i)->first() )
-			if ( ! $character->items()->where('slot', '=', $i)->select(array('id'))->first() )
+			if ( $character->items()->where('slot', '=', $i)->count() == 0 )
 			{
 				return $i;
 			}
 		}
 
 		return false;
+	}
+
+	public function save_in_inventory()
+	{
+		$emptySlot = self::get_empty_slot();
+
+		if ( $emptySlot )
+		{
+			$this->location = 'inventory';
+			$this->slot = $emptySlot;
+
+			$this->save();
+
+			Event::fire('unequipItem', array($this));
+		}
+
+		return $emptySlot;
 	}
 }

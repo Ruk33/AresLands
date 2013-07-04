@@ -5,6 +5,7 @@ class Message extends Base_Model
 	public static $softDelete = false;
 	public static $timestamps = false;
 	public static $table = 'messages';
+	public static $key = 'id';
 
 	protected $rules = array(
 		//'receiver_id' => 'exists:characters,id',

@@ -5,6 +5,7 @@ class Npc extends Base_Model
 	public static $softDelete = false;
 	public static $timestamps = false;
 	public static $table = 'npcs';
+	public static $key = 'id';
 
 	public function get_stats()
 	{

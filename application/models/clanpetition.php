@@ -5,6 +5,7 @@ class ClanPetition extends Base_Model
 	public static $softDelete = false;
 	public static $timestamps = false;
 	public static $table = 'clan_petitions';
+	public static $key = 'id';
 
 	public function clan()
 	{

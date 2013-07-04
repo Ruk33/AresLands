@@ -63,7 +63,7 @@
 							</div>
 						@endif
 						<ul class="unstyled menu">
-							@if ( Auth::check() && $character )
+							@if ( Auth::check() && isset($character) )
 								<li><a href="{{ URL::to('authenticated/index') }}"><img src="{{ URL::base() }}/img/menu/character.jpg" alt=""></a></li>
 								<li style="position: relative;"><div style="position: absolute; top: 7px; right: 10px; color: white" data-toggle="tooltip" data-placement="top" data-original-title="Mensaje(s) sin leer"><span class="badge badge-warning">{{ $character->get_unread_messages_count() }}</span></div><a href="{{ URL::to('authenticated/messages') }}"><img src="{{ URL::base() }}/img/menu/messages.jpg" alt=""></a></li>
 								

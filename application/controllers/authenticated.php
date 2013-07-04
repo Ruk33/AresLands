@@ -184,7 +184,7 @@ class Authenticated_Controller extends Base_Controller
 
 	public function post_explore()
 	{
-		$character = Character::get_character_of_logged_user(array('id', 'is_traveling', 'is_exploring'));
+		$character = Character::get_character_of_logged_user(array('id', 'is_traveling', 'is_exploring', 'level'));
 		$time = Input::get('time');
 
 		if ( ($time <= Config::get('game.max_explore_time') || $time >= Config::get('game.min_explore_time')) && $character->can_explore() )
@@ -1885,226 +1885,128 @@ class Authenticated_Controller extends Base_Controller
 
 	public function get_manipulateItem($id = 0, $count = 1)
 	{
-		/*
-		 *	No queremos ejecutar acciones innecesariamente
-		 */
 		if ( $id > 0 && $count > 0 )
 		{
-			//$character = Session::get('character');
 			$character = Character::get_character_of_logged_user(array('id'));
-			$characterItem = $character->items()->find($id);
 
-			/*
-			 *	¿Existe el objeto?
-			 */
-			if ( $characterItem )
+			if ( $character )
 			{
-				/*
-				 *	Primero vamos a verificar
-				 *	si lo tiene equipado, puesto
-				 *	que si así es quiere decir
-				 *	que quiere sacarse el objeto
-				 */
-				if ( $characterItem->location != 'inventory' )
-				{
-					$emptySlot = CharacterItem::get_empty_slot();
+				$characterItem = $character->items()->find($id);
 
+				if ( $characterItem )
+				{
 					/*
-					 *	¿No hay espacio en el inventario?
+					 *	Verificamos si el objeto no lo
+					 *	tiene en alguno de estos lugares
 					 */
-					if ( ! $emptySlot )
+					if ( in_array($characterItem->location, array('chest', 'legs', 'feet', 'head', 'hands', 'lhand', 'rhand', 'lrhand')) )
 					{
 						/*
-						 *	Redireccionamos notificándolo
+						 *	Si lo tiene, entonces intentamos guardar en inventario
 						 */
-						return Redirect::to('authenticated/index');
+						if ( ! $characterItem->save_in_inventory() )
+						{
+							/*
+							 *	No tiene espacio, lo notificamos
+							 */
+							Session::flash('error', 'No tienes espacio en el inventario');
+						}
 					}
-
-					/*
-					 *	Si hay espacio, entonces ponemos
-					 *	el objeto en el inventario y guardamos
-					 */
-					$characterItem->location = 'inventory';
-					$characterItem->slot = $emptySlot;
-
-					$characterItem->save();
-
-					/*
-					 *	Disparamos el evento de desequipar objeto
-					 */
-					Event::fire('unequipItem', array($characterItem));
-
-					return Redirect::to('authenticated/index');
-				}
-
-				/*
-				 *	¿Tiene la cantidad?
-				 */
-				if ( $characterItem->count >= $count )
-				{
-					$item = $characterItem->item()->select(array('body_part', 'type'))->first();
-
-					switch ( $item->body_part )
+					else
 					{
-						case 'lhand':
-						case 'rhand':
-							/*
-							 *	Obtenemos el objeto que tiene equipado
-							 *	que será reemplazado con $characterItem
-							 */
-							$equippedItem = $character->items()->where('location', '=', $item->body_part)->or_where('location', '=', 'lrhand')->first();
+						/*
+						 *	Verificamos que tenga la cantidad
+						 */
+						if ( $characterItem->count >= $count )
+						{
+							$item = $characterItem->item()->first();
 
-							/*
-							 *	Evitamos acciones innecesarias
-							 *	verificando que el personaje de hecho
-							 *	tenga un objeto equipado
-							 */
-							if ( $equippedItem )
+							switch ( $item->body_part )
 							{
-								/*
-								 *	Si tiene, movemos este objeto
-								 *	equipado al inventario, al slot
-								 *	de $characterItem
-								 */
-								$equippedItem->location = 'inventory';
-								$equippedItem->slot = $characterItem->slot;
-
-								$equippedItem->save();
-
-								/*
-								 *	Disparamos el evento de desequipar objeto
-								 */
-								Event::fire('unequipItem', array($equippedItem));
-							}
-
-							/*
-							 *	¡Le equipamos el objeto al personaje!
-							 */
-							$characterItem->location = $item->body_part;
-							$characterItem->slot = 0;
-
-							$characterItem->save();
-
-							break;
-
-						case 'lrhand':
-							/*
-							 *	En caso de que $characterItem sea de dos manos
-							 *	entonces tenemos que buscar los objetos
-							 *	que tiene equipados en ambas manos
-							 */
-							$equippedItems = $character->items()->select(array('id', 'location', 'slot'))->where('location', '=', 'lhand')->or_where('location', '=', 'rhand')->or_where('location', '=', 'lrhand')->get();
-
-							/*
-							 *	Evitamos acciones innecesarias...
-							 */
-							if ( count($equippedItems) > 0 )
-							{
-								/*
-								 *	Array en el que guardaremos los slots
-								 *	que están vacíos
-								 */
-								$emptySlots = array();
-
-								/*
-								 *	¿Hay espacio en el inventario?
-								 */
-								$spaceInInventory = true;
-
-								foreach ( $equippedItems as $equippedItem )
-								{
-									if ( $spaceInInventory )
+								case 'lhand':
+								case 'rhand':
+								case 'lrhand':
+									$ok = true;
+									
+									/*
+									if ( $item->body_part == 'lrhand' )
 									{
-										/*
-										 *	Buscamos un slot en el inventario para los objetos
-										 */
-										$spaceInInventory = CharacterItem::get_empty_slot();
+										$equippedItems = $character->items()->where('location', '=', 'lhand')->or_where('location', '=', 'rhand')->or_where('location', '=', 'lrhand')->get();
 
-										if ( $spaceInInventory )
+										foreach ( $equippedItems as $equippedItem )
 										{
-											$emptySlots[$equippedItem->id] = $spaceInInventory;
-											$spaceInInventory = true;
+											if ( ! $equippedItem->save_in_inventory() )
+											{
+												$ok = false;
+												break;
+											}
 										}
 									}
-								}
+									else
+									{
+									*/
+										$equippedItem = $character->items()->where('location', '=', $item->body_part)->first();
+										$query = DB::last_query();
+										Log::info($query['sql']);
+										/*if ( $equippedItem )
+										{
+											$ok = $equippedItem->save_in_inventory();
+										}
+									}								
+									*/
 
-								/*
-								 *	Verificamos si no hay espacio en el inventario
-								 *	para guardar los objetos que vamos a sacar
-								 */
-								if ( ! $spaceInInventory )
-								{
+									if ( $ok )
+									{
+										/*
+										 *	¡Le equipamos el objeto al personaje!
+										 */
+										$characterItem->location = $item->body_part;
+										$characterItem->slot = 0;
+
+										$characterItem->save();
+
+										Event::fire('equipItem', array($characterItem));
+									}
+
+									break;
+
+								case 'none':
 									/*
-									 *	Si no hay, redirigimos notificándolo
+									 *	Que sea none no significa que sea
+									 *	poción, así que nos aseguramos
 									 */
-									return Redirect::to('authenticated/index');
-								}
+									if ( $item->type == 'potion' )
+									{
+										/*
+										 *	Restamos la cantidad que vamos a usar
+										 */
+										$characterItem->count -= $count;
 
-								/*
-								 *	Ahora que sabemos que tenemos
-								 *	espacio en el inventario para los objetos
-								 *	los situamos en el inventario
-								 */
-								foreach ( $equippedItems as $equippedItem )
-								{
-									$equippedItem->location = 'inventory';
-									$equippedItem->slot = $emptySlots[$equippedItem->id];
+										/*
+										 *	Si se quedó con cero o menos simplemente
+										 *	borramos el registro
+										 */
+										if ( $characterItem->count <= 0 )
+										{
+											$characterItem->delete();
+										}
+										else
+										{
+											$characterItem->save();
+										}
+									}
 
-									$equippedItem->save();
-
-									/*
-									 *	Disparamos el evento de desequipar objeto
-									 */
-									Event::fire('unequipItem', array($equippedItem));
-								}
+									break;
 							}
-
-							/*
-							 *	Finalmente, ¡equipamos el objeto!
-							 */
-							$characterItem->location = 'lrhand';
-							$characterItem->slot = 0;
-
-							$characterItem->save();
-
-							break;
-
-						case 'none':
-							/*
-							 *	Que sea none no significa que sea
-							 *	poción, así que nos aseguramos
-							 */
-							if ( $item->type == 'potion' )
-							{
-								/*
-								 *	Restamos la cantidad que vamos a usar
-								 */
-								$characterItem->count -= $count;
-
-								/*
-								 *	Si se quedó con cero o menos simplemente
-								 *	borramos el registro
-								 */
-								if ( $characterItem->count <= 0 )
-								{
-									$characterItem->delete();
-								}
-								else
-								{
-									$characterItem->save();
-								}
-							}
-
-							break;
+						}
+						else
+						{
+							Session::flash('error', 'No posees esa cantidad');
+						}
 					}
 				}
 			}
 		}
-
-		/*
-		 *	Disparamos el evento de equipar objeto
-		 */
-		Event::fire('equipItem', array($characterItem));
 
 		return Redirect::to('authenticated/index');
 	}

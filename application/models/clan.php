@@ -5,6 +5,7 @@ class Clan extends Base_Model
 	public static $softDelete = false;
 	public static $timestamps = false;
 	public static $table = 'clans';
+	public static $key = 'id';
 
 	protected $rules = array(
 		'name' => 'required|between:3,35|unique:clans',

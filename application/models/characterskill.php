@@ -5,6 +5,7 @@ class CharacterSkill extends Base_Model
 	public static $softDelete = false;
 	public static $timestamps = false;
 	public static $table = 'character_skills';
+	public static $key = 'id';
 
 	public function skill()
 	{

@@ -5,6 +5,7 @@ class CharacterActivity extends Base_Model
 	public static $softDelete = false;
 	public static $timestamps = false;
 	public static $table = 'character_activities';
+	public static $key = 'id';
 
 	public function get_data()
 	{
@@ -60,14 +61,14 @@ class CharacterActivity extends Base_Model
 
 					$character->is_exploring = false;
 					$character->xp += $data['time'] / 60 * Config::get('game.xp_rate');
-					$character->add_exploring_time($character->zone, $data['time']);
+					$character->add_exploring_time($character->zone()->select(array('id'))->first(), $data['time']);
 					$character->give_explore_reward($data['reward']);
 					$character->save();
 
 					/*
 					 *	Nuevo mounstruo para pelear
 					 */
-					$monster = Npc::where('zone_id', '=', $character->zone_id)->where('type', '=', 'monster')->order_by(DB::raw('RAND()'))->first();
+					$monster = Npc::select(array('id'))->where('zone_id', '=', $character->zone_id)->where('type', '=', 'monster')->order_by(DB::raw('RAND()'))->first();
 
 					if ( $monster )
 					{

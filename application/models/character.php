@@ -3,8 +3,9 @@
 class Character extends Base_Model
 {
 	public static $softDelete = true;
-	public static $timestamps = true;
+	public static $timestamps = false;
 	public static $table = 'characters';
+	public static $key = 'id';
 
 	protected $rules = array(
 		'name' => 'required|unique:characters|between:3,10|alpha_num',
@@ -25,6 +26,11 @@ class Character extends Base_Model
 		'gender_match' => 'El género es incorrecto',
 	);
 
+	public function user()
+	{
+		return $this->belongs_to('IronFistUser', 'user_id');
+	}
+
 	/**
 	 *	Devolvemos el personaje del usuario
 	 *	que esté logueado
@@ -38,12 +44,16 @@ class Character extends Base_Model
 			return null;
 		}
 
+		$user = Auth::user();
+
 		if ( count($select) > 0 )
 		{
-			return Character::select($select)->where('user_id', '=', Auth::user()->id)->first();
+			//return Character::select($select)->where('user_id', '=', Auth::user()->id)->first();
+			return $user->character()->select($select)->first();
 		}
 
-		return Character::where('user_id', '=', Auth::user()->id)->first();
+		//return Character::where('user_id', '=', Auth::user()->id)->first();
+		return $user->character;
 	}
 
 	public function battle_against_monster(Npc $monster)
