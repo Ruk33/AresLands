@@ -13,7 +13,7 @@ return array(
 	|
 	*/
 
-	'url' => 'http://areslands.ironfist.com/',
+	'url' => 'http://areslands.ironfist.com.ar/public',
 
 	/*
 	|--------------------------------------------------------------------------
@@ -67,7 +67,7 @@ return array(
 	|
 	*/
 
-	'profiler' => true,
+	'profiler' => false,
 
 	/*
 	|--------------------------------------------------------------------------

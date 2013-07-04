@@ -1,11 +1,20 @@
 <h2>¡Batallar!</h2>
+
+<div class="span11">
+
+	@if ( Session::has('errorMessage') )
+		<div class="alert alert-error">
+			{{ Session::get('errorMessage') }}
+		</div>
+	@endif
+
 <p>¿Así que quieres probar suerte con algún contrincante?</p>
 
 <ul class="thumbnails" style="margin-left: -18px;">
 	<li class="span4">
 		<div class="thumbnail">
 			<div class="caption">
-				<h2>Buscar por nombre</h2>
+				<h2>Por nombre</h2>
 				{{ Form::open() }}
 					{{ Form::hidden('search_method', 'name') }}
 
@@ -13,7 +22,7 @@
 					{{ Form::text('character_name') }}
 
 					<div>
-					{{ Form::submit('¡Buscar!', ['class' => 'btn btn-primary']) }}
+					{{ Form::submit('¡Buscar!', array('class' => 'btn btn-primary')) }}
 					</div>
 				{{ Form::close() }}
 			</div>
@@ -23,19 +32,19 @@
 	<li class="span4">
 		<div class="thumbnail">
 			<div class="caption">
-				<h2>Buscar aleatoriamente</h2>
+				<h2>Aleatoriamente</h2>
 				{{ Form::open() }}
 					{{ Form::hidden('search_method', 'random') }}
 
 					{{ Form::label('race_label', 'Raza') }}
-					{{ Form::select('race', [ 'any' => 'Cualquiera', 'dwarf' => 'Enano', 'human' => 'Humano', 'drow' => 'Drow', 'elf' => 'Elfo' ]) }}
+					{{ Form::select('race', array('any' => 'Cualquiera', 'dwarf' => 'Enano', 'human' => 'Humano', 'drow' => 'Drow', 'elf' => 'Elfo')) }}
 
 					{{ Form::label('level_label', 'Nivel') }}
-					{{ Form::select('operation', [ 'exactly' => 'Exactamente', 'greaterThan' => 'Mayor que', 'lowerThan' => 'Menor que' ]) }}
-					{{ Form::number('level', null, ['min' => '1']) }}
+					{{ Form::select('operation', array('exactly' => 'Exactamente', 'greaterThan' => 'Mayor que', 'lowerThan' => 'Menor que')) }}
+					{{ Form::number('level', null, array('min' => '1')) }}
 
 					<div>
-					{{ Form::submit('¡Buscar!', ['class' => 'btn btn-primary']) }}
+					{{ Form::submit('¡Buscar!', array('class' => 'btn btn-primary')) }}
 					</div>
 				{{ Form::close() }}
 			</div>
@@ -45,18 +54,19 @@
 	<li class="span4">
 		<div class="thumbnail">
 			<div class="caption">
-				<h2>Buscar en grupo</h2>
+				<h2>En grupo</h2>
 				{{ Form::open() }}
 					{{ Form::hidden('search_method', 'group') }}
 
 					{{ Form::label('group_label', 'Grupo') }}
-					{{ Form::select('group_name', []) }}
+					{{ Form::select('clan', Clan::lists('name', 'id')) }}
 
 					<div>
-					{{ Form::submit('¡Buscar!', ['class' => 'btn btn-primary']) }}
+					{{ Form::submit('¡Buscar!', array('class' => 'btn btn-primary')) }}
 					</div>
 				{{ Form::close() }}
 			</div>
 		</div>
 	</li>
 </ul>
+</div>

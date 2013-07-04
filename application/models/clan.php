@@ -6,19 +6,19 @@ class Clan extends Base_Model
 	public static $timestamps = false;
 	public static $table = 'clans';
 
-	protected $rules = [
-		'name' => 'required|between:3,20|unique:clans',
-	];
+	protected $rules = array(
+		'name' => 'required|between:3,35|unique:clans',
+	);
 
-	protected $messages = [
+	protected $messages = array(
 		'name_required' => 'El nombre es requerido',
-		'name_between' => 'El nombre debe tener entre 3 y 20 carácteres',
+		'name_between' => 'El nombre debe tener entre 3 y 35 carácteres',
 		'name_unique' => 'Ya hay un grupo con ese nombre',
-	];
+	);
 
 	public function get_members()
 	{
-		return Character::where('clan_id', '=', $this->id)->get();
+		return Character::select(array('name', 'race', 'gender', 'level'))->where('clan_id', '=', $this->id)->get();
 	}
 
 	public function get_link()

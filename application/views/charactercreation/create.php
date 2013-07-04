@@ -1,6 +1,6 @@
 <div ng-controller="CharacterCreationController" style="width: 300px; margin: 0 auto;">
 	<h2>
-		<img src="/img/icons/race/<?php echo $race; ?>.jpg" alt="<?php echo $race; ?>">
+		<img src="<?php echo URL::base(); ?>/img/icons/race/<?php echo $race; ?>_male.jpg" alt="<?php echo $race; ?>">
 		¡Último paso para jugar!
 	</h2>
 
@@ -33,7 +33,7 @@
 			<strong>Oops!</strong>
 			<ul class="unstyled" style="margin-left: 10px;">
 				<li ng-repeat="error in errors">
-					<small>{{ error }}</small>
+					<small>[[ error ]]</small>
 				</li>
 			</ul>
 		</div>
@@ -43,4 +43,4 @@
 	</form>
 </div>
 
-<script src="/js/controllers/CharacterCreationController.js"></script>
+<script src="<?php echo URL::base(); ?>/js/controllers/CharacterCreationController.js"></script>

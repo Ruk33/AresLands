@@ -1,6 +1,28 @@
 <h2>Comerciar</h2>
 
 <div class="span11">
+
+	@if ( Session::has('successMessages') )
+		<div class="alert alert-success">
+			<ul>
+			@foreach ( Session::get('successMessages') as $message )
+				<li>{{ $message }}</li>
+			@endforeach	
+			</ul>
+		</div>
+	@endif
+
+	@if ( Session::has('errorMessages') )
+		<div class="alert alert-error">
+			<strong>Oops!</strong>
+			<ul>
+			@foreach ( Session::get('errorMessages') as $message )
+				<li>{{ $message }}</li>
+			@endforeach	
+			</ul>
+		</div>
+	@endif
+
 	<a href="{{ URL::to('authenticated/newTrade') }}" class="btn btn-primary">Nuevo comercio</a>
 
 	<h2>Comercios pendientes</h2>
@@ -11,6 +33,7 @@
 				<tr>
 					<th style="width: 40%;">Personaje</th>
 					<th>Objeto</th>
+					<th>Cantidad</th>
 					<th>Precio</th>
 					<th>Acciones</th>
 				</tr>
@@ -18,7 +41,7 @@
 
 			<tbody>
 				@foreach ( $trades as $trade )
-				@if ( $trade->status == 'pending' || $trade->buyer_id == $character->id )
+				@if ( $trade->status == 'pending' || $trade->seller_id == $character->id )
 				<tr>
 					<td>
 						@if ( $trade->buyer->id == $character->id )
@@ -29,11 +52,12 @@
 					</td>
 					<td>
 						<div class="inventory-item">
-							<img src="/img/icons/inventory/items/{{ $trade->item_id }}.png" alt="" data-toggle="tooltip" data-placement="top" data-original-title="{{ $trade->item->get_text_for_tooltip() }}">
+							<img src="{{ URL::base() }}/img/icons/inventory/items/{{ $trade->item_id }}.png" alt="" data-toggle="tooltip" data-placement="top" data-original-title="{{ $trade->item->get_text_for_tooltip() }}">
 						</div>
 					</td>
+					<td>{{ $trade->amount }}</td>
 					<td>
-						<img src="/img/copper.gif" alt="">
+						<img src="{{ URL::base() }}/img/copper.gif" alt="">
 						{{ $trade->price_copper }}
 					</td>
 					<td>

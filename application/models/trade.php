@@ -6,15 +6,15 @@ class Trade extends Base_Model
 	public static $timestamps = false;
 	public static $table = 'trades';
 
-	protected $rules = [
+	protected $rules = array(
 		//'seller_id' => 'required|exists:characters,id|different:buyer_id',
 		'buyer_id' => 'required|exists:characters,id|different:seller_id',
 		'item_id' => 'required',
 		'amount' => 'required|numeric|min:1',
 		'price_copper' => 'required|numeric',
-	];
+	);
 
-	protected $messages = [
+	protected $messages = array(
 		//'seller_id_required' => 'El vendedor es requerido',
 		//'seller_id_exists' => 'El vendedor debe exister',
 		//'seller_id_different' => 'El vendedor y el comprador no pueden ser el mismo',
@@ -31,7 +31,7 @@ class Trade extends Base_Model
 
 		'price_copper_required' => 'El precio es requerido',
 		'price_copper_numeric' => 'El precio es incorrecto (solo números)',
-	];
+	);
 
 	public function seller()
 	{

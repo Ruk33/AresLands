@@ -7,7 +7,7 @@
 			@if ( isset($items['lrhand']) && $lrhand = $items['lrhand'][0]->item )
 				<div style="position: absolute; margin-top: 150px;">
 					<div class="equipped-item">
-						<img src="/img/icons/items/{{ $items['lrhand'][0]->item->id }}.png" alt="" data-toggle="popover" data-placement="top" data-original-title="{{ $lrhand->get_text_for_tooltip() }}">
+						<img src="{{ URL::base() }}/img/icons/items/{{ $items['lrhand'][0]->item->id }}.png" alt="" data-toggle="popover" data-placement="top" data-original-title="{{ $lrhand->get_text_for_tooltip() }}">
 					</div>
 				</div>
 			<!-- END DOS MANOS -->
@@ -16,7 +16,7 @@
 				<div style="position: absolute; margin-top: 150px;">
 					<div class="equipped-item">
 					@if ( isset($items['rhand']) && $rhand = $items['rhand'][0]->item )
-						<img style="cursor: pointer;" src="/img/icons/items/{{ $rhand->id }}.png" alt="" data-toggle="popover" data-placement="top" data-original-title="{{ $rhand->get_text_for_tooltip() }}">
+						<img style="cursor: pointer;" src="{{ URL::base() }}/img/icons/items/{{ $rhand->id }}.png" alt="" data-toggle="popover" data-placement="top" data-original-title="{{ $rhand->get_text_for_tooltip() }}">
 					@endif
 					</div>
 				</div>
@@ -26,7 +26,7 @@
 				<div style="position: absolute; margin-left: 250px; margin-top: 150px;">
 					<div class="equipped-item">
 					@if ( isset($items['lhand']) && $lhand = $items['lhand'][0]->item )
-						<img style="cursor: pointer;" src="/img/icons/items/{{ $lhand->id }}.png" alt="" data-toggle="popover" data-placement="top" data-original-title="{{ $lhand->get_text_for_tooltip() }}">
+						<img style="cursor: pointer;" src="{{ URL::base() }}/img/icons/items/{{ $lhand->id }}.png" alt="" data-toggle="popover" data-placement="top" data-original-title="{{ $lhand->get_text_for_tooltip() }}">
 					@endif
 					</div>
 				</div>
@@ -34,13 +34,15 @@
 			@endif
 
 			<!-- AYUDANTE -->
+			<!--
 			<div style="position: absolute; margin-left: 260px; margin-top: 50px;">
-				<img src="/img/characters/ayudante.png" alt="">
+				<img src="{{ URL::base() }}/img/characters/ayudante.png" alt="">
 			</div>
+			-->
 			<!-- END AYUDANTE -->
 			
 			<!-- PERSONAJE -->
-			<img src="/img/characters/{{ $characterToSee->race }}_{{ $characterToSee->gender }}_
+			<img src="{{ URL::base() }}/img/characters/{{ $characterToSee->race }}_{{ $characterToSee->gender }}_
 			@if ( isset($rhand) )
 				{{ $rhand->id }}
 			@elseif ( isset($lhand) )
@@ -56,7 +58,7 @@
 
 		@if ( $character->id != $characterToSee->id && $character->zone_id == $characterToSee->zone_id )
 			<h2>¿Te atreves a batallar?</h2>
-			<a href="{{ URL::to('authenticated/battle/' . $characterToSee->name) }}">Luchar contra <b>{{ $characterToSee->name }}</b></a>
+			<a href="{{ URL::to('authenticated/toBattle/' . $characterToSee->name) }}">Luchar contra <b>{{ $characterToSee->name }}</b></a>
 		@endif
 	</div>
 @else

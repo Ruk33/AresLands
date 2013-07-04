@@ -6,24 +6,68 @@ class Message extends Base_Model
 	public static $timestamps = false;
 	public static $table = 'messages';
 
-	protected $rules = [
+	protected $rules = array(
 		//'receiver_id' => 'exists:characters,id',
 		'subject' => 'required|between:3,100',
 		'content' => 'required'
-	];
+	);
 
-	protected $messages = [
+	protected $messages = array(
 		//'receiver_id_exists' => 'El destinatario no existe',
 
 		'subject_required' => 'El asunto del mensaje es requerido',
 		'subject_between' => 'El asunto del mensaje debe tener entre 3 y 100 carácteres',
 
 		'content_required' => 'El contenido del mensaje es requerido',
-	];
+	);
 
 	public function sender()
 	{
 		return $this->belongs_to('Character', 'sender_id');
+	}
+
+	public static function attack_report($receiver, $attacker, $battleMessage, $winner)
+	{
+		$message = new Message();
+
+		$message->sender_id = $receiver->id;
+		$message->receiver_id = $receiver->id;
+
+		$message->subject = '¡Te han atacado!';
+		$message->content = '<p>El jugador ' . $attacker->name . ' te ha atacado. El ganador ha sido ' . $winner->name . '</p><p>Dessarrollo de la pelea:</p><p>' . $battleMessage . '</p>';
+
+		$message->unread = true;
+		$message->date = time();
+
+		$message->is_special = true;
+
+		$message->save();
+	}
+
+	public static function exploration_finished($receiver, $monster, $battleMessage, $winner)
+	{
+		$message = new Message();
+
+		$message->sender_id = $receiver->id;
+		$message->receiver_id = $receiver->id;
+
+		$message->subject = 'Terminaste la exploración';
+
+		if ( $winner )
+		{
+			$message->content = '<p>Terminaste de explorar, luchaste contra ' . $monster->name . ' y el ganador fue ' . $winner->name . '</p><p>Dessarrollo de la pelea:</p><p>' . $battleMessage . '</p>';
+		}
+		else
+		{
+			$message->content = '<p>Terminaste de explorar, luchaste contra ' . $monster->name . '. El resultado ha sido un empate!.</p><p>Dessarrollo de la pelea:</p><p>' . $battleMessage . '</p>';	
+		}
+
+		$message->unread = true;
+		$message->date = time();
+
+		$message->is_special = true;
+
+		$message->save();
 	}
 
 	/**

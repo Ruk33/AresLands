@@ -15,11 +15,11 @@
 	{{ Form::open() }}
 		<div>
 		{{ Form::label('name_label', 'Nombre del grupo') }}
-		{{ Form::text('name', '', ['class' => 'input-block-level']) }}
+		{{ Form::text('name', '', array('class' => 'input-block-level')) }}
 		</div>
 		
 		<div class="pull-right">
-		{{ Form::submit('Crear', ['class' => 'btn btn-primary']) }}
+		{{ Form::submit('Crear', array('class' => 'btn btn-primary')) }}
 		</div>
 		
 	{{ Form::close() }}

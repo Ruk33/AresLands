@@ -19,7 +19,7 @@ class Quest extends Base_Model
 	private function get_value_from_data($valueName)
 	{
 		$data = $this->data;
-		$value = [];
+		$value = array();
 
 		if ( isset($data[$valueName]) )
 		{
@@ -57,7 +57,7 @@ class Quest extends Base_Model
 
 		if ( ! is_array($data) )
 		{
-			$data = [];
+			$data = array();
 		}
 
 		/*
@@ -66,7 +66,7 @@ class Quest extends Base_Model
 		 */
 		if ( ! isset($data[$valueName]) )
 		{
-			$data[$valueName] = [];
+			$data[$valueName] = array();
 		}
 
 		$data[$valueName] = $value;
@@ -143,7 +143,7 @@ class Quest extends Base_Model
 	 */
 	public function give_reward()
 	{
-		$character = Session::get('character');
+		$character = Character::get_character_of_logged_user();
 
 		/*
 		 *	Obtenemos todas las recompensas
@@ -156,6 +156,16 @@ class Quest extends Base_Model
 		foreach ( $rewards as $reward )
 		{
 			/*
+			 *	Nos fijamos primero si no es experiencia
+			 */
+			if ( $reward['item_id'] == Config::get('game.xp_item_id') )
+			{
+				$character->xp += $reward['amount'];
+				$character->save();
+				continue;
+			}
+
+			/*
 			 *	Nos fijamos si el personaje
 			 *	ya tiene uno de los items
 			 *	que le vamos a recompensar
@@ -166,7 +176,7 @@ class Quest extends Base_Model
 			 *	Si lo tiene, y el mismo puede
 			 *	ser acumulado...
 			 */
-			if ( $characterItem && $characterItem->item->stackable )
+			if ( $characterItem && $characterItem->item()->select(array('stackable'))->first()->stackable )
 			{
 				/*
 				 *	Solamente aumentamos la cantidad
@@ -202,7 +212,7 @@ class Quest extends Base_Model
 	 */
 	public function accept()
 	{
-		$character = Session::get('character');
+		$character = Character::get_character_of_logged_user(array('id'));
 
 		/*
 		 *	Registramos los triggers
@@ -212,7 +222,7 @@ class Quest extends Base_Model
 
 		foreach ( $triggers as $trigger )
 		{
-			$characterTrigger = new characterTrigger();
+			$characterTrigger = new CharacterTrigger();
 
 			$characterTrigger->character_id = $character->id;
 			$characterTrigger->event = $trigger;

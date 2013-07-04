@@ -63,20 +63,20 @@ return array(
 
 		'default' => array(
 			'driver'   => 'mysql',
-			'host'     => '127.0.0.1',
-			'database' => 'areslands',
-			'username' => 'root',
-			'password' => '',
+			'host'     => 'localhost',
+			'database' => 'mbertran_areslands',
+			'username' => 'mbertran_root',
+			'password' => 'UncE34xxS',
 			'charset'  => 'utf8',
 			'prefix'   => '',
 		),
 
 		'ironfist' => array(
 			'driver'   => 'mysql',
-			'host'     => '127.0.0.1',
-			'database' => 'ironfist',
-			'username' => 'root',
-			'password' => '',
+			'host'     => 'localhost',
+			'database' => 'mbertran_ironfist',
+			'username' => 'mbertran_root',
+			'password' => 'UncE34xxS',
 			'charset'  => 'utf8',
 			'prefix'   => '',
 		),

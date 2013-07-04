@@ -18,16 +18,16 @@
 		{{ Form::label('to_label', 'Para:') }}
 
 		@if ( $to )
-			{{ Form::text('to', $to), ['class' => 'input-block-level'] }}
+			{{ Form::text('to', $to), array('class' => 'input-block-level') }}
 		@else
-			{{ Form::text('to', Input::old('to'), ['class' => 'input-block-level']) }}
+			{{ Form::text('to', Input::old('to'), array('class' => 'input-block-level')) }}
 		@endif
 
 		{{ Form::label('to_label', 'Asunto:') }}
-		{{ Form::text('subject', Input::old('subject'), ['class' => 'input-block-level']) }}
+		{{ Form::text('subject', Input::old('subject'), array('class' => 'input-block-level')) }}
 
 		{{ Form::label('content_label', 'Mensaje') }}
-		{{ Form::textarea('content', Input::old('content'), ['class' => 'input-block-level']) }}
+		{{ Form::textarea('content', Input::old('content'), array('class' => 'input-block-level')) }}
 
 		{{ Form::submit('Enviar') }}
 

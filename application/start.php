@@ -66,6 +66,7 @@ Autoloader::map(array(
 	 *	Registramos las misiones
 	 */
 	'Quest_Starting' => path('app').'libraries/quest_starting.php',
+	'Quest_AyudaATuPueblo' => path('app').'libraries/quest_ayudaatupueblo.php',
 ));
 
 /*

@@ -17,131 +17,260 @@ Route::controller('Home');
 |--------------------------------------------------------------------------
 */
 
-Event::listen('unequipItem', function(CharacterItem $characterItem)
+Event::listen('acceptQuest', function(Character $character, Quest $quest)
 {
-	$character = Session::get('character');
-
-	/*
-	 *	No queremos compartir eventos
-	 */
-	if ($character->id != $characterItem->owner_id)
-	{
-		return;
-	}
-
-	$item = $characterItem->item;
-
-	/*
-	 *	Nos fijamos si tiene una habilidad
-	 */
-	if ( $item->skill != '0-0' )
-	{
-		/*
-		 *	Obtenemos las habilidades
-		 */
-		$skills = $item->get_skills();
-
-		/*
-		 *	¿No existen?
-		 */
-		if ( count($skills) > 0 )
-		{
-			$characterSkill = null;
-
-			/*
-			 *	Recorremos todas las habilidades
-			 *	y las removemos del registro
-			 */
-			foreach ( $skills as $skill )
-			{
-				$characterSkill = $character->skills()->where('skill_id', '=', $skill->id)->where('level', '=', $skill->level)->first();
-
-				if ( $characterSkill )
-				{
-					$characterSkill->delete();
-				}
-			}
-		}
-	}
-
 	/*
 	 *	No nos olvidamos de trabajar con los
-	 *	triggers que tengan de evento 'equipItem'
+	 *	triggers que tengan de evento 'acceptQuest'
 	 */
-	$characterTriggers = $character->triggers()->where('event', '=', 'unequipItem')->get();
+	$characterTriggers = $character->triggers()->where('event', '=', 'acceptQuest')->select(array('class_name'))->get();
 	$className = null;
 
 	foreach ($characterTriggers as $characterTrigger) {
 		$className = $characterTrigger->class_name;
-		if ( $className::onEquipItem($item) )
+		if ( $className::onAcceptQuest($character, $quest) )
 		{
 			$characterTrigger->delete();
 		}
 	}
 });
 
-Event::listen('equipItem', function(CharacterItem $characterItem, $amount = 1)
+Event::listen('unequipItem', function(CharacterItem $characterItem)
 {
-	$character = Session::get('character');
+	$character = Character::get_character_of_logged_user();
 
 	/*
-	 *	No queremos compartir eventos
+	 *	Nos aseguramos de que character
+	 *	y characterItem estén definidos y no
+	 *	sean null
 	 */
-	if ($character->id != $characterItem->owner_id)
+	if ( $character && $characterItem )
 	{
-		return;
-	}
-
-	$item = $characterItem->item;
-
-	/*
-	 *	Nos fijamos si tiene una habilidad
-	 */
-	if ( $item->skill != '0-0' )
-	{
+		$item = $character->items()->select(array('item_id'))->find($characterItem->id);
 		/*
-		 *	Obtenemos las habilidades
+		 *	Nos aseguramos de que el personaje
+		 *	tenga el objeto
 		 */
-		$skills = $item->get_skills();
-
-		/*
-		 *	¿No existen?
-		 */
-		if ( count($skills) > 0 )
+		if ( $item )
 		{
-			$characterSkill = null;
-
+			$item = $item->item()->select(array('skill'))->first();
 			/*
-			 *	Recorremos todas las habilidades
-			 *	y las agregamos al registro
+			 *	Nos aseguramos de que el objeto
+			 *	en si exista
 			 */
-			foreach ( $skills as $skill )
+			if ( $item )
 			{
-				$characterSkill = new CharacterSkill();
+				/*
+				 *	Nos fijamos si tiene una habilidad
+				 */
+				if ( $item->skill != '0-0' )
+				{
+					/*
+					 *	Obtenemos las habilidades
+					 */
+					$skills = $item->get_skills();
 
-				$characterSkill->skill_id = $skill->id;
-				$characterSkill->character_id = $character->id;
-				$characterSkill->level = $skill->level;
-				$characterSkill->end_time = ($skill->duration != -1) ? time() + $skill->duration : 0;
-				$characterSkill->amount = $amount;
+					/*
+					 *	¿No existen?
+					 */
+					if ( count($skills) > 0 )
+					{
+						$characterSkill = null;
 
-				$characterSkill->save();
+						/*
+						 *	Recorremos todas las habilidades
+						 *	y las removemos del registro
+						 */
+						foreach ( $skills as $skill )
+						{
+							$characterSkill = $character->skills()->where('skill_id', '=', $skill->id)->where('level', '=', $skill->level)->select(array('id'))->first();
+
+							if ( $characterSkill )
+							{
+								$characterSkill->delete();
+							}
+						}
+					}
+				}
+
+				/*
+				 *	No nos olvidamos de trabajar con los
+				 *	triggers que tengan de evento 'equipItem'
+				 */
+				$characterTriggers = $character->triggers()->where('event', '=', 'unequipItem')->select(array('class_name'))->get();
+				$className = null;
+
+				foreach ($characterTriggers as $characterTrigger) {
+					$className = $characterTrigger->class_name;
+					if ( $className::onEquipItem($item) )
+					{
+						$characterTrigger->delete();
+					}
+				}
 			}
 		}
 	}
+});
+
+Event::listen('battle', function($character_one, $character_two)
+{
+	$character = Character::get_character_of_logged_user();
 
 	/*
-	 *	No nos olvidamos de trabajar con los
-	 *	triggers que tengan de evento 'equipItem'
+	 *	Nos aseguramos de que el personaje
+	 *	exista
 	 */
-	$characterTriggers = $character->triggers()->where('event', '=', 'equipItem')->get();
-	$className = null;
+	if ( $character )
+	{
+		/*
+		 *	No nos olvidamos de trabajar con los
+		 *	triggers que tengan de evento 'battle'
+		 */
+		$characterTriggers = $character->triggers()->where('event', '=', 'battle')->select(array('class_name'))->get();
+		$className = null;
 
-	foreach ($characterTriggers as $characterTrigger) {
-		$className = $characterTrigger->class_name;
-		if ( $className::onEquipItem($item) )
+		foreach ($characterTriggers as $characterTrigger) {
+			$className = $characterTrigger->class_name;
+			if ( $className::onBattle($character_one, $character_two) )
+			{
+				$characterTrigger->delete();
+			}
+		}
+	}
+});
+
+Event::listen('equipItem', function(CharacterItem $characterItem, $amount = 1)
+{
+	$character = Character::get_character_of_logged_user();
+
+	/*
+	 *	Nos aseguramos de que character
+	 *	y el objeto existan
+	 */
+	if ( $character && $characterItem )
+	{
+		/*
+		 *	Buscamos el objeto para 
+		 *	confirmar que el usuario logueado
+		 *	realmente lo tiene
+		 */
+		$item = $character->items()->select(array('item_id'))->find($characterItem->id);
+
+		if ( $item )
 		{
-			$characterTrigger->delete();
+			/*
+			 *	Obtenemos la información del objeto
+			 */
+			$item = $item->item()->select(array('skill'))->first();
+
+			/*
+			 *	Confirmamos que el objeto
+			 *	en si, exista
+			 */
+			if ( $item )
+			{
+				/*
+				 *	Nos fijamos si tiene una habilidad
+				 */
+				if ( $item->skill != '0-0' )
+				{
+					/*
+					 *	Obtenemos las habilidades
+					 */
+					$skills = $item->get_skills();
+
+					/*
+					 *	¿No existen?
+					 */
+					if ( count($skills) > 0 )
+					{
+						$characterSkill = null;
+
+						/*
+						 *	Recorremos todas las habilidades
+						 *	y las agregamos al registro
+						 */
+						foreach ( $skills as $skill )
+						{
+							if ( $skill->duration == 0 )
+							{
+								$data = $skill->data;
+
+								if ( isset($data['heal_amount']) )
+								{
+									$character->current_life += $data['heal_amount'];
+									$character->save();
+								}
+							}
+							else
+							{
+								$characterSkill = new CharacterSkill();
+
+								$characterSkill->skill_id = $skill->id;
+								$characterSkill->character_id = $character->id;
+								$characterSkill->level = $skill->level;
+								$characterSkill->end_time = ($skill->duration != -1) ? time() + $skill->duration : 0;
+								$characterSkill->amount = $amount;
+
+								$characterSkill->save();
+							}
+						}
+					}
+				}
+
+				/*
+				 *	No nos olvidamos de trabajar con los
+				 *	triggers que tengan de evento 'equipItem'
+				 */
+				$characterTriggers = $character->triggers()->where('event', '=', 'equipItem')->select(array('class_name'))->get();
+				$className = null;
+
+				foreach ($characterTriggers as $characterTrigger) {
+					$className = $characterTrigger->class_name;
+					if ( $className::onEquipItem($item) )
+					{
+						$characterTrigger->delete();
+					}
+				}
+			}
+		}
+	}
+});
+
+Event::listen('pveBattle', function(Character $character, Npc $monster, $winner)
+{
+	if ( $character && $monster )
+	{
+		/*
+		 *	No nos olvidamos de trabajar con los
+		 *	triggers que tengan de evento 'equipItem'
+		 */
+		$characterTriggers = $character->triggers()->where('event', '=', 'pveBattle')->select(array('class_name'))->get();
+		$className = null;
+
+		foreach ($characterTriggers as $characterTrigger) {
+			$className = $characterTrigger->class_name;
+			if ( $className::onPveBattle($character, $monster) )
+			{
+				$characterTrigger->delete();
+			}
+		}
+
+		if ( $winner )
+		{
+			if ( $winner->id == $character->id )
+			{
+				$characterTriggers = $character->triggers()->where('event', '=', 'pveBattleWin')->select(array('class_name'))->get();
+				$className = null;
+
+				foreach ($characterTriggers as $characterTrigger) {
+					$className = $characterTrigger->class_name;
+					if ( $className::onPveBattleWin($character, $monster) )
+					{
+						$characterTrigger->delete();
+					}
+				}
+			}
 		}
 	}
 });
@@ -177,10 +306,70 @@ Route::filter('before', function() {
 		/*
 		 *	Obtenemos al personaje logueado
 		 */
-		$character = Character::get_character_of_logged_user();
+		$character = Character::get_character_of_logged_user(array(
+			'id',
+			'name',
+			'last_activity_time',
+			'current_life',
+			'max_life',
+			'stat_life',
+			'last_regeneration_time',
+			'xp',
+			'xp_next_level',
+			'level',
+			'points_to_change',
+		));
 
 		if ( $character )
 		{
+			$character->last_activity_time = time();
+			$character->save();
+
+			/*
+			 *	Verificamos si es necesario
+			 *	regenerar puntos de vida
+			 */
+			if ( $character->current_life != $character->max_life )
+			{
+				$time = time();
+				$regeneration = (0.05 + $character->stat_life * 0.01) * ($time - $character->last_regeneration_time);
+				
+				if ( $regeneration > 0 )
+				{
+					$character->current_life += $regeneration;
+					$character->last_regeneration_time = $time;
+
+					/*
+					 *	Verificamos que la vida actual
+					 *	no sea mayor a la vida máxima
+					 */
+					if ( $character->current_life > $character->max_life )
+					{
+						$character->current_life = $character->max_life;
+					}
+
+					$character->save();
+				}
+			}
+
+			/*
+			 *	Verificamos si no subió de nivel
+			 */
+			if ( $character->xp >= $character->xp_next_level )
+			{
+				$character->level++;
+				$character->xp_next_level = $character->xp_next_level + 100 * $character->level;
+
+				/* 
+				 *	Aumentamos la vida
+				 */
+				$character->max_life = $character->max_life + $character->level * 20;
+
+				$character->points_to_change += Config::get('game.points_per_level');
+
+				$character->save();
+			}
+
 			/*
 			 *	Además vamos a actualizar tiempos
 			 *	de sus actividades
@@ -193,15 +382,34 @@ Route::filter('before', function() {
 			}
 
 			/*
+			 *	Y de sus habilidades
+			 */
+			$characterSkills = $character->skills()->select(array('id', 'end_time'))->get();
+			foreach ( $characterSkills as $characterSkill )
+			{
+				$characterSkill->update_time();
+			}
+
+			/*
+			 *	Verificamos si tiene que pelear
+			 *	contra un bicho
+			 */
+			if ( Session::has('monster_id') )
+			{
+				$character->battle_against_monster(Npc::find(Session::get('monster_id')));
+				Session::forget('monster_id');
+			}
+
+			/*
 			 *	Lo se, shity, pero necesario puesto
 			 *	que si lo anterior llega a actualizar
 			 *	algo, la variable de session no se actualiza
 			 */
-			$character = Character::get_character_of_logged_user();
+			//$character = Character::get_character_of_logged_user();
 		}
 	}
 
-	Session::put('character', $character);
+	//Session::put('character', $character);
 });
 
 Route::filter('csrf', function()
@@ -214,7 +422,7 @@ Route::filter('csrf', function()
  */
 Route::filter('auth', function($redirectTo = 'home/index')
 {
-	if (Auth::guest()) 
+	if ( Auth::guest() ) 
 	{
 		return Redirect::to($redirectTo);
 	}
@@ -235,7 +443,8 @@ Route::filter('logged', function($redirectTo) {
  */
 Route::filter('hasNoCharacter', function($redirectTo = 'charactercreation/race')
 {
-	if ( is_null(Session::get('character')) ) 
+	//if ( is_null(Session::get('character')) ) 
+	if ( ! Character::get_character_of_logged_user(array('id')) ) 
 	{
 		return Redirect::to($redirectTo);
 	}
@@ -246,7 +455,8 @@ Route::filter('hasNoCharacter', function($redirectTo = 'charactercreation/race')
  */
 Route::filter('hasCharacter', function($redirectTo = 'home/index')
 {
-	if ( ! is_null(Session::get('character')) ) 
+	//if ( ! is_null(Session::get('character')) ) 
+	if ( Character::get_character_of_logged_user(array('id')) )
 	{
 		return Redirect::to($redirectTo);
 	}

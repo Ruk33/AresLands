@@ -6,10 +6,10 @@ var CharacterCreationController = function($scope, $http) {
 	$scope.sendForm = function(data) {
 		$scope.error = false;
 
-		$http.post('/charactercreation/create', data)
+		$http.post($scope.basePath + 'charactercreation/create', data)
 			.success(function(data) {
 				if (data.ok) {
-					window.location.href = '/index.php/authenticated/index';
+					window.location.href = $scope.basePath + 'authenticated/index';
 				} else if (data.errors) {
 					$scope.errors = data.errors;
 					$scope.errorDiv = true;

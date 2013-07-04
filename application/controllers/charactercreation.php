@@ -18,7 +18,7 @@ class CharacterCreation_Controller extends Base_Controller
 		 *	Solo queremos usuarios
 		 *	que no tengan un personaje
 		 */
-		$this->filter('before', 'hasCharacter', ['authenticated/index']);
+		$this->filter('before', 'hasCharacter', array('authenticated/index'));
 	}
 
 	public function get_race()
@@ -32,13 +32,13 @@ class CharacterCreation_Controller extends Base_Controller
 		/*
 		 *	Evitamos que elijan cualquier raza
 		 */
-		if ( ! in_array($race, ['dwarf', 'human', 'drow', 'elf']) )
+		if ( ! in_array($race, array('dwarf', 'human', 'drow', 'elf')) )
 		{
 			return Redirect::to('charactercreation/race');
 		}
 
 		$this->layout->title = 'Último paso para jugar';
-		$this->layout->content = View::make('charactercreation.create', ['race' => $race]);
+		$this->layout->content = View::make('charactercreation.create', array('race' => $race));
 	}
 
 	public function post_create()
@@ -75,7 +75,7 @@ class CharacterCreation_Controller extends Base_Controller
 					//59
 
 					$character->max_life = 400;
-					$character->zone_id = 2;
+					$character->zone_id = 3;
 					break;
 
 				case 'drow':
@@ -87,7 +87,7 @@ class CharacterCreation_Controller extends Base_Controller
 					//59
 
 					$character->max_life = 150;
-					$character->zone_id = 3;
+					$character->zone_id = 2;
 					break;
 
 				case 'elf':
@@ -103,12 +103,22 @@ class CharacterCreation_Controller extends Base_Controller
 					break;
 			}
 
+			$character->level = 0;
 			$character->current_life = $character->max_life;
 
 			$character->save();
-			return json_encode(['ok' => true]);
+
+			$characterCoin = new CharacterItem();
+			$characterCoin->owner_id = $character->id;
+			$characterCoin->item_id = Config::get('game.coin_id');
+			$characterCoin->count = 50;
+			$characterCoin->location = 'none';
+
+			$characterCoin->save();
+
+			return json_encode(array('ok' => true));
 		} else {
-			return json_encode(['errors' => $character->errors()->all()]);
+			return json_encode(array('errors' => $character->errors()->all()));
 		}
 	}
 }

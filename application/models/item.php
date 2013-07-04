@@ -17,7 +17,7 @@ class Item extends Base_Model
 		 *	Ej.: 2-1 (guardamos el skill con el id 2 y su nivel 1)
 		 */
 		$skillsPattern = explode(';', $this->skill);
-		$skills = [];
+		$skills = array();
 		$skillId;
 		$skillLevel;
 
@@ -36,16 +36,62 @@ class Item extends Base_Model
 
 	public function get_text_for_tooltip()
 	{
-		return "<div style='width: 600px; text-align: left;'>
-			<strong>$this->name</strong> (<small>$this->type</small>)
-			<p>$this->description</p>
-			<ul>
-				<li>Vitalidad: $this->stat_life</li>
-				<li>Destreza: $this->stat_dexterity</li>
-				<li>Magia: $this->stat_magic</li>
-				<li>Fuerza: $this->stat_strength</li>
-				<li>Suerte: $this->stat_luck</li>
-			</ul>
-		</div>";
+		$message = "<div style='width: 600px; text-align: left;'>";
+
+		$message .= "<strong>$this->name</strong> (<small>$this->type</small>)";
+		$message .= "<p style='width: 210px;'><em>$this->description</em></p>";
+
+		$message .= '<ul>';
+
+		if ( $this->p_damage != 0 )
+		{
+			$message .= "<li><b>Daño físico:</b> $this->p_damage</li>";
+		}
+
+		if ( $this->m_damage != 0 )
+		{
+			$message .= "<li><b>Daño mágico:</b> $this->m_damage</li>";
+		}
+
+		if ( $this->p_defense != 0 )
+		{
+			$message .= "<li><b>Defensa física:</b> $this->p_defense</li>";
+		}
+
+		if ( $this->m_defense != 0 )
+		{
+			$message .= "<li><b>Defensa mágica:</b> $this->m_defense</li>";
+		}
+
+		if ( $this->stat_life != 0 )
+		{
+			$message .= "<li><b>Vitalidad:</b> $this->stat_life</li>";
+		}
+
+		if ( $this->stat_dexterity != 0 )
+		{
+			$message .= "<li><b>Destreza:</b> $this->stat_dexterity</li>";
+		}
+
+		if ( $this->stat_magic != 0 )
+		{
+			$message .= "<li><b>Magia:</b> $this->stat_magic</li>";
+		}
+
+		if ( $this->stat_strength != 0 )
+		{
+			$message .= "<li><b>Fuerza:</b> $this->stat_strength</li>";
+		}
+
+		if ( $this->stat_luck != 0 )
+		{
+			$message .= "<li><b>Suerte:</b> $this->stat_luck</li>";
+		}
+
+		$message .= '</ul>';
+
+		$message .= '</div>';
+
+		return $message;
 	}
 }

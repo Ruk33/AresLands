@@ -60,7 +60,7 @@
 			<tr>
 				<td style="width: 200px;">Creador</td>
 				<td>
-					<img src="/img/icons/crown-gold-icon.png" alt="">
+					<img src="{{ URL::base() }}/img/icons/crown-gold-icon.png" alt="">
 					<b style="color: white;">{{ $clan->lider->name }}</b>
 				</td>
 			</tr>
@@ -82,7 +82,7 @@
 			<div class="clan-member-link">
 				<ul class="inline">
 					<li>
-					<img src="/img/icons/race/{{ $member->race }}_{{ $member->gender }}.jpg" alt="">
+					<img src="{{ URL::base() }}/img/icons/race/{{ $member->race }}_{{ $member->gender }}.jpg" alt="">
 					<a href="{{ URL::to('authenticated/character/' . $member->name) }}">{{ $member->name }} ({{ $member->level }})</a>
 					</li>
 	

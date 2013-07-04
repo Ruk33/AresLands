@@ -35,32 +35,33 @@
 		<tbody>
 			<td colspan="4" ng-show="!characters">
 				<div class="text-center" style="color: white;" ng-show="!error">
-					<img src="/img/icons/ajax-loader.gif" alt="">
+					<img src="<?php echo URL::base(); ?>/img/icons/ajax-loader.gif" alt="">
 					Obteniendo datos del servidor
 				</div>
 
 				<div class="alert alert-error text-center" ng-show="error">
-					{{ error }}
+					[[ error ]]
 				</div>
 			</td>
 
 			<tr ng-repeat="character in characters | filter:search | filter:query_number | orderBy:predicate:reverse">
-				<td><img src="/img/icons/race/{{ character.race }}_{{ character.gender }}.jpg" alt=""></td>
+				<td><img ng-src="<?php echo URL::base(); ?>/img/icons/race/[[ character.race ]]_[[ character.gender ]].jpg" alt=""></td>
 
 				<td>
-					{{ character.name }}
+					[[ character.name ]]
 				</td>
 
 				<td>
-					{{ character.clan_name }}
+					<span ng-show="character.clan_name">[[ character.clan_name ]]</span>
+					<span ng-show="!character.clan_name">Sin grupo</span>
 				</td>
 
 				<td>
-					{{ character.pvp_points }}
+					[[ character.pvp_points ]]
 				</td>
 			</tr>
 		</tbody>
 	</table>
 </div>
 
-<script src="/js/controllers/CharactersController.js"></script>
+<script src="<?php echo URL::base(); ?>/js/controllers/CharactersController.js"></script>

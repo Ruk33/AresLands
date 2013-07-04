@@ -30,14 +30,26 @@ class Authenticated_Controller extends Base_Controller
 		 *	(puesto que la variable de session
 		 *	no estará definida)
 		 */
-		if ( Auth::check() && Session::get('character') )
+		$character = Character::get_character_of_logged_user(array(
+			'id',
+			'name',
+			'level',
+			'gender',
+			'race',
+			'xp',
+			'xp_next_level',
+			'clan_id',
+		));
+
+		if ( Auth::check() && $character )
 		{
 			/*
 			 *	Debemos pasar las monedas directamente
 			 *	al layout, puesto que es ahí donde
 			 *	las utilizamos
 			 */
-			$this->layout->with('coins', Session::get('character')->get_divided_coins());
+			$this->layout->with('coins', $character->get_divided_coins());
+			$this->layout->with('character', $character);
 		}
 	}
 
@@ -46,11 +58,11 @@ class Authenticated_Controller extends Base_Controller
 	{
 		$skill = new Skill();
 
-		$skill->name = 'Might';
+		$skill->name = 'Heal';
 		$skill->level = 1;
-		$skill->duration = -1;
+		$skill->duration = 0;
 		$skill->data = [
-			'stat_strength' => 15,
+			'heal_amount' => 15,
 		];
 
 		$skill->save();
@@ -62,21 +74,26 @@ class Authenticated_Controller extends Base_Controller
 	{
 		$quest = new Quest();
 
-		$quest->name = 'just test';
+		//$quest->id = 8;
 		$quest->npc_id = 1;
-		$quest->class_name = 'Quest_Starting';
+		$quest->class_name = 'Quest_AyudaATuPueblo';
+		$quest->name = 'Ayuda a tu pueblo';
+		$quest->description = 'Elimina 5 enemigos en tu ciudad natal.';
+		$quest->min_level = 1;
+		$quest->max_level = 10;
 
-		$quest->add_triggers([
-			'equipItem'
-		]);
+		$quest->add_triggers(array(
+			'acceptQuest',
+			'pveBattleWin'
+		));
 
-		$quest->add_rewards([
-			[
-				'item_id' => 2,
+		$quest->add_rewards(array(
+			array(
+				'item_id' => Config::get('game.coin_id'),
 				'amount' => 50,
 				'text_for_view' => '<img src="/img/copper.gif" style="vertical-align: text-top;"> 50'
-			],
-		]);
+			),
+		));
 
 		$quest->save();
 	}
@@ -84,13 +101,27 @@ class Authenticated_Controller extends Base_Controller
 
 	public function get_index()
 	{
-		$character = Session::get('character');
+		$character = Character::get_character_of_logged_user(array(
+			'id',
+			'name',
+			'zone_id',
+			'race',
+			'gender',
+			'stat_life',
+			'stat_dexterity',
+			'stat_magic',
+			'stat_strength',
+			'stat_luck',
+			'points_to_change',
+			'current_life',
+			'max_life',
+		));
 
 		/*
 		 *	Obtenemos los objetos del personaje
 		 */
 		$items = $character->items;
-		$itemsToView = [];
+		$itemsToView = array();
 
 		/*
 		 *	Los ordenamos solo para que sea
@@ -111,7 +142,7 @@ class Authenticated_Controller extends Base_Controller
 		 *	Obtenemos todas las actividades
 		 *	del personaje
 		 */
-		$activities = $character->activities()->get();
+		$activities = $character->activities()->select(array('end_time', 'name', 'data'))->get();
 
 		/*
 		 *	Obtenemos las bonificaciones
@@ -138,9 +169,173 @@ class Authenticated_Controller extends Base_Controller
 		->with('npcs', $npcs);
 	}
 
+	public function get_destroyItem($characterItemId = false)
+	{
+		$character = Character::get_character_of_logged_user(array('id'));
+		$characterItem = ( $characterItemId ) ? $character->items()->select(array('id'))->find($characterItemId) : false;
+
+		if ( $characterItem )
+		{
+			$characterItem->delete();
+		}
+
+		return Redirect::to('authenticated/index/');
+	}
+
+	public function post_explore()
+	{
+		$character = Character::get_character_of_logged_user(array('id', 'is_traveling', 'is_exploring'));
+		$time = Input::get('time');
+
+		if ( ($time <= Config::get('game.max_explore_time') || $time >= Config::get('game.min_explore_time')) && $character->can_explore() )
+		{
+			$character->explore($time);
+		}
+
+		return Redirect::to('authenticated/index/');
+	}
+
+	public function get_explore()
+	{
+		$this->layout->title = 'Explorar';
+		$this->layout->content = View::make('authenticated.explore');
+	}
+
+	public function post_addStat()
+	{
+		$character = Character::get_character_of_logged_user(array(
+			'id',
+			'points_to_change',
+			'stat_life',
+			'stat_dexterity',
+			'stat_magic',
+			'stat_strength',
+			'stat_luck',
+		));
+		$stat = Input::json()->stat_name;
+
+		if ( $character->points_to_change > 0 )
+		{
+			switch ( $stat ) 
+			{
+				case 'stat_life':
+					$character->stat_life++;
+					break;
+
+				case 'stat_dexterity':
+					$character->stat_dexterity++;
+					break;
+
+				case 'stat_magic':
+					$character->stat_magic++;
+					break;
+
+				case 'stat_strength':
+					$character->stat_strength++;
+					break;
+
+				case 'stat_luck':
+					$character->stat_luck++;
+					break;
+
+				default:
+					return false;
+			}
+
+			$character->points_to_change--;
+			$character->save();
+			
+			return true;
+		}
+		return false;
+	}
+
+	public function get_ranking($from = 0)
+	{
+		//$characters = Character::order_by('pvp_points', 'desc')->select(['name', 'pvp_points', 'gender', 'race'])->take(50)->get();
+
+		$characters = Character::order_by('pvp_points', 'desc')->select(array('id', 'name', 'gender', 'race', 'pvp_points'))->paginate(50, array('name', 'pvp_points', 'gender', 'race'));
+
+		$this->layout->title = 'Ranking';
+		$this->layout->content = View::make('authenticated.ranking')
+		->with('characters', $characters);
+	}
+
+	public function get_acceptTrade($tradeId = false)
+	{
+		$character = Character::get_character_of_logged_user();
+		$trade = ( $tradeId ) ? Trade::where('id', '=', $tradeId)->where('buyer_id', '=', $character->id)->where('status', '=', 'pending')->first() : false;
+
+		if ( $trade )
+		{
+			$characterCoins = $character->get_coins();
+
+			if ( $characterCoins && $characterCoins->count >= $trade->price_copper )
+			{
+				$characterItem = $character->items()->find($trade->item_id);
+
+				if ( $characterItem && $characterItem->item->stackable )
+				{
+					$characterItem->count += $trade->amount;
+					$characterItem->save();
+
+					$characterCoins->count -= $trade->price_copper;
+					$characterCoins->save();
+
+					$characterSellerCoins = $trade->seller->get_coins();
+					$characterSellerCoins->count += $trade->price_copper;
+					$characterSellerCoins->save();
+
+					$trade->delete();
+
+					Session::flash('successMessages', array('El comercio fue un éxito'));
+				}
+				else
+				{
+					$slotInInventory = CharacterItem::get_empty_slot();
+
+					if ( $slotInInventory )
+					{
+						$characterItem = new CharacterItem();
+
+						$characterItem->owner_id = $character->id;
+						$characterItem->item_id = $trade->item_id;
+						$characterItem->count = $trade->amount;
+						$characterItem->location = 'inventory';
+						$characterItem->data = $trade->data;
+						$characterItem->slot = $slotInInventory;
+
+						$characterItem->save();
+
+						$characterCoins->count -= $trade->price_copper;
+						$characterCoins->save();
+
+						$characterSellerCoins = $trade->seller->get_coins();
+						$characterSellerCoins->count += $trade->price_copper;
+						$characterSellerCoins->save();
+
+						$trade->delete();
+
+						Session::flash('successMessages', array('El comercio fue un éxito'));
+					}
+					else
+					{
+						Session::flash('errorMessages', array('No tienes espacio en el inventario'));
+					}
+				}
+			}
+			else
+			{
+				Session::flash('errorMessages', array('No tienes suficientes monedas para aceptar el comercio'));
+			}
+		}
+
+		return Redirect::to('authenticated/trade/');
+	}
+
 	public function get_cancelTrade($tradeId = false)
 	{
-		$character = Session::get('character');
+		$character = Character::get_character_of_logged_user();
 		$trade = ( $tradeId ) ? Trade::where('id', '=', $tradeId)->where('seller_id', '=', $character->id)->or_where('buyer_id', '=', $character->id)->first() : false;
 
 		if ( $trade )
@@ -148,19 +343,48 @@ class Authenticated_Controller extends Base_Controller
 			if ( $trade->status == 'pending' )
 			{
 				// notificamos que se canceló
+
+				Session::flash('successMessages', array('El comercio ha sido cancelado'));
+
+				$trade->status = 'canceled';
+				$trade->save();
 			}
 
 			if ( $trade->seller_id == $character->id )
 			{
 				$characterItem = $character->items()->find($trade->item_id);
 
-				$slotInInventory = $characterItem->get_empty_slot();
-
-				if ( $slotInInventory )
+				if ( $characterItem && $characterItem->item->stackable )
 				{
-					
+					$characterItem->count += $trade->amount;
+					$characterItem->save();
+
+					$trade->delete();
 				}
-				$trade->delete();
+				else
+				{
+					$slotInInventory = CharacterItem::get_empty_slot();
+
+					if ( $slotInInventory )
+					{
+						$characterItem = new CharacterItem();
+
+						$characterItem->owner_id = $character->id;
+						$characterItem->item_id = $trade->item_id;
+						$characterItem->count = $trade->amount;
+						$characterItem->location = 'inventory';
+						$characterItem->data = $trade->data;
+						$characterItem->slot = $slotInInventory;
+
+						$characterItem->save();
+
+						$trade->delete();
+					}
+					else
+					{
+						Session::flash('errorMessages', array('Debes tener espacio en el inventario'));
+					}
+				}
 			}
 		}
 
@@ -172,14 +396,15 @@ class Authenticated_Controller extends Base_Controller
 		/*
 		 *	Obtenemos al vendedor y "comprador"
 		 */
-		$sellerCharacter = Session::get('character');
+		$sellerCharacter = Character::get_character_of_logged_user();
 		$buyerCharacter = Character::where('name', '=', Input::get('name'))->first();
 
 		/*
 		 *	'amount' es array, esto es para
 		 *	saber la cantidad del objeto que se seleccionó
 		 */
-		$amount = Input::get('amount')[Input::get('item')];
+		$amount = Input::get('amount');
+		$amount = $amount[Input::get('item')];
 
 		/*
 		 *	Objeto que se va a comerciar
@@ -202,8 +427,9 @@ class Authenticated_Controller extends Base_Controller
 
 		$trade->seller_id = ( $sellerCharacter ) ? $sellerCharacter->id : -1;
 		$trade->buyer_id = ( $buyerCharacter ) ? $buyerCharacter->id : -1;
-		$trade->item_id = ( $sellerCharacterItem ) ? $sellerCharacterItem->id : -1;
+		$trade->item_id = ( $sellerCharacterItem ) ? $sellerCharacterItem->item_id : -1;
 		$trade->amount = $amount;
+		$trade->data = ( $sellerCharacterItem ) ? $sellerCharacterItem->data : '';
 		$trade->price_copper = Input::get('price');
 		$trade->status = 'pending';
 
@@ -217,19 +443,6 @@ class Authenticated_Controller extends Base_Controller
 			 *	guardamos
 			 */
 			$trade->save();
-
-			/*
-			 *	Guardamos el objeto
-			 *	que se va a comerciar
-			 */
-			$tradeItem = new TradeItem();
-
-			$tradeItem->trade_id = $trade->id;
-			$tradeItem->item_id = $sellerCharacterItem->item_id;
-			$tradeItem->count = $amount;
-			$tradeItem->data = $sellerCharacterItem->data;
-
-			$tradeItem->save();
 
 			/*
 			 *	Sacamos el objeto al personaje
@@ -256,7 +469,7 @@ class Authenticated_Controller extends Base_Controller
 			 */
 			Message::trade_new($sellerCharacter, $buyerCharacter);
 
-			Session::flash('successMessages', 'Oferta realizada con éxito');
+			Session::flash('successMessage', 'Oferta realizada con éxito');
 			return Redirect::to('authenticated/newTrade/');
 		}
 		else
@@ -268,7 +481,7 @@ class Authenticated_Controller extends Base_Controller
 
 	public function get_newTrade()
 	{
-		$character = Session::get('character');
+		$character = Character::get_character_of_logged_user();
 		$characterItems = $character->items()->where('location', '=', 'inventory')->where('count', '>', 0)->get();
 
 		$this->layout->title = 'Nuevo comercio';
@@ -278,7 +491,7 @@ class Authenticated_Controller extends Base_Controller
 
 	public function get_trade()
 	{
-		$character = Session::get('character');
+		$character = Character::get_character_of_logged_user();
 		$trades = Trade::where('seller_id', '=', $character->id)->or_where('buyer_id', '=', $character->id)->get();
 
 		$this->layout->title = 'Comerciar';
@@ -290,15 +503,15 @@ class Authenticated_Controller extends Base_Controller
 	public function post_characters()
 	{
 		$result = DB::table('characters')
-		->join('clans', 'characters.clan_id', '=', 'clans.id')
-		->get([
+		->left_join('clans', 'characters.clan_id', '=', 'clans.id')
+		->get(array(
 			'characters.name', 
 			'characters.pvp_points', 
 			'characters.clan_id', 
 			'characters.race', 
 			'characters.gender', 
 			'clans.name as clan_name'
-		]);
+		));
 
 		return json_encode($result);
 	}
@@ -312,7 +525,10 @@ class Authenticated_Controller extends Base_Controller
 
 	public function post_createClan()
 	{
-		$character = Session::get('character');
+		$character = Character::get_character_of_logged_user(array(
+			'id',
+			'clan_id',
+		));
 
 		$clan = new Clan();
 
@@ -325,7 +541,7 @@ class Authenticated_Controller extends Base_Controller
 			 *	Borramos todas las peticiones
 			 *	pendientes del personaje
 			 */
-			$petitions = $character->petitions()->get();
+			$petitions = $character->petitions()->select(array('id'))->get();
 
 			foreach ( $petitions as $petition )
 			{
@@ -354,7 +570,7 @@ class Authenticated_Controller extends Base_Controller
 
 	public function get_createClan()
 	{
-		$character = Session::get('character');
+		$character = Character::get_character_of_logged_user(array('id', 'clan_id'));
 
 		if ( $character->clan_id != 0 )
 		{
@@ -367,8 +583,8 @@ class Authenticated_Controller extends Base_Controller
 
 	public function get_leaveFromClan()
 	{
-		$character = Session::get('character');
-		$clan = $character->clan;
+		$character = Character::get_character_of_logged_user(array('id', 'clan_id'));
+		$clan = $character->clan()->select(array('leader_id'))->first();
 		
 		if ( $clan )
 		{
@@ -396,8 +612,8 @@ class Authenticated_Controller extends Base_Controller
 
 	public function get_deleteClan()
 	{
-		$character = Session::get('character');
-		$clan = $character->clan;
+		$character = Character::get_character_of_logged_user(array('id', 'clan_id'));
+		$clan = $character->clan()->select(array('id', 'leader_id'))->first();
 
 		/*
 		 *	Verificamos que el clan exista y
@@ -423,8 +639,8 @@ class Authenticated_Controller extends Base_Controller
 
 	public function get_clanRemoveMember($memberName = '')
 	{
-		$character = Session::get('character');
-		$clan = $character->clan;
+		$character = Character::get_character_of_logged_user(array('id', 'name', 'clan_id'));
+		$clan = $character->clan()->select(array('id', 'leader_id'))->first();
 
 		/*
 		 *	Verificamos que el clan exista
@@ -447,7 +663,7 @@ class Authenticated_Controller extends Base_Controller
 					 *	Obtenemos el miembro por su nombre
 					 *	y el id de clan
 					 */
-					$member = ( $memberName ) ? Character::where('name', '=', $memberName)->where('clan_id', '=', $clan->id)->first() : false;
+					$member = ( $memberName ) ? Character::where('name', '=', $memberName)->where('clan_id', '=', $clan->id)->select(array('id', 'clan_id'))->first() : false;
 
 					/*
 					 *	Verificamos que el miembro exista
@@ -482,14 +698,14 @@ class Authenticated_Controller extends Base_Controller
 
 		if ( $petition )
 		{
-			$character = Session::get('character');
+			$character = Character::get_character_of_logged_user(array('id'));
 			$clan = $petition->clan;
 
 			if ( $clan )
 			{
 				if ( $character->id == $clan->leader_id )
 				{
-					Message::clan_reject_message($character, $petition->character, $clan);
+					Message::clan_reject_message($character, $petition->character()->select(array('id'))->first(), $clan);
 					$petition->delete();
 
 					/*
@@ -511,7 +727,7 @@ class Authenticated_Controller extends Base_Controller
 
 		if ( $petition )
 		{
-			$character = Session::get('character');
+			$character = Character::get_character_of_logged_user(array('id'));
 			$clan = $petition->clan;
 			
 			/*
@@ -529,7 +745,7 @@ class Authenticated_Controller extends Base_Controller
 					 *	Obtenemos la información del personaje
 					 *	que vamos a aceptar
 					 */
-					$characterToAccept = $petition->character;
+					$characterToAccept = $petition->character()->select(array('id', 'clan_id', 'name'))->first();
 
 					if ( $characterToAccept->clan_id == 0 )
 					{
@@ -537,7 +753,7 @@ class Authenticated_Controller extends Base_Controller
 						 *	Todo bien, así que lo aceptamos
 						 *	en el clan y borramos todas sus peticiones
 						 */
-						$petitions = $characterToAccept->petitions()->get();
+						$petitions = $characterToAccept->petitions()->select(array('id'))->get();
 
 						foreach ($petitions as $petition) {
 							$petition->delete();
@@ -594,7 +810,7 @@ class Authenticated_Controller extends Base_Controller
 
 		if ( $clan )
 		{
-			$character = Session::get('character');
+			$character = Character::get_character_of_logged_user(array('id', 'name'));
 
 			if ( $character->can_enter_in_clan() )
 			{
@@ -652,12 +868,11 @@ class Authenticated_Controller extends Base_Controller
 	public function get_clan($clanId = false)
 	{
 		$clan = ( $clanId ) ? Clan::find($clanId) : false;
-		$character = Session::get('character');
+		$character = Character::get_character_of_logged_user(array('id', 'clan_id'));
 
 		if ( $clan )
 		{
-
-			$dataToView = [];
+			$dataToView = array();
 
 			$dataToView['clan'] = $clan;
 			$dataToView['members'] = $clan->get_members();
@@ -683,8 +898,8 @@ class Authenticated_Controller extends Base_Controller
 	public function post_sendMessage()
 	{
 		$to = Input::get('to');
-		$toCharacter = Character::where('name', '=', $to)->first();
-		$errorMessages = [];
+		$toCharacter = Character::where('name', '=', $to)->select(array('id'))->first();
+		$errorMessages = array();
 
 		/*
 		 *	Verificamos que
@@ -698,7 +913,7 @@ class Authenticated_Controller extends Base_Controller
 			 */
 			$message = new Message();
 
-			$message->sender_id = Session::get('character')->id;
+			$message->sender_id = Character::get_character_of_logged_user(array('id'))->id;
 			$message->receiver_id = $toCharacter->id;
 			$message->subject = Input::get('subject');
 			$message->content = Input::get('content');
@@ -753,8 +968,8 @@ class Authenticated_Controller extends Base_Controller
 		/*
 		 *	Obtenemos el mensaje
 		 */
-		$character = Session::get('character');
-		$message = ( $messageId > 0 ) ? $character->messages()->find($messageId) : false;
+		$character = Character::get_character_of_logged_user(array('id'));
+		$message = ( $messageId > 0 ) ? $character->messages()->select(array('id'))->find($messageId) : false;
 
 		/*
 		 *	Verificamos que exista
@@ -775,7 +990,7 @@ class Authenticated_Controller extends Base_Controller
 		/*
 		 *	Obtenemos el mensaje que vamos a leer
 		 */
-		$character = Session::get('character');
+		$character = Character::get_character_of_logged_user(array('id'));
 		$message = ( $messageId > 0 ) ? $character->messages()->find($messageId) : false;
 
 		/*
@@ -806,12 +1021,12 @@ class Authenticated_Controller extends Base_Controller
 
 	public function get_messages($messageId = 0)
 	{
-		$character = Session::get('character');
+		$character = Character::get_character_of_logged_user(array('id'));
 		
 		/*
 		 *	Obtenemos todos los mensajes del personaje
 		 */
-		$messages = $character->messages()->order_by('date', 'desc')->get();
+		$messages = $character->messages()->select(array('id', 'sender_id', 'subject', 'unread', 'date'))->order_by('date', 'desc')->get();
 
 		$this->layout->title = 'Mensajes privados';
 		$this->layout->content = View::make('authenticated.messages')
@@ -820,15 +1035,15 @@ class Authenticated_Controller extends Base_Controller
 
 	public function get_character($characterName = '')
 	{
-		$characterToSee = ( $characterName ) ? Character::where('name', '=', $characterName)->first() : false;
+		$characterToSee = ( $characterName ) ? Character::where('name', '=', $characterName)->select(array('id', 'name', 'clan_id', 'race', 'gender', 'zone_id'))->first() : false;
 
 		if ( $characterToSee )
 		{
 			/*
 			 *	Obtenemos los objetos del personaje
 			 */
-			$items = $characterToSee->items;
-			$itemsToView = [];
+			$items = $characterToSee->items()->select(array('item_id', 'location', 'data'))->get();
+			$itemsToView = array();
 
 			/*
 			 *	Los ordenamos solo para que sea
@@ -841,7 +1056,7 @@ class Authenticated_Controller extends Base_Controller
 
 			$this->layout->title = $characterToSee->name;
 			$this->layout->content = View::make('authenticated.character')
-			->with('character', Session::get('character'))
+			->with('character', Character::get_character_of_logged_user(array('id', 'zone_id')))
 			->with('items', $itemsToView)
 			->with('characterToSee', $characterToSee);
 		}
@@ -852,9 +1067,381 @@ class Authenticated_Controller extends Base_Controller
 		}
 	}
 
+	public function get_toBattle($characterName = false)
+	{
+		$character_one = array();
+
+		if ( $characterName )
+		{
+			$character_one['character'] = Character::where('name', '=', $characterName)->where('is_traveling', '=', false)->first();
+
+			/*
+			 *	Verificamos que el personaje
+			 *	exista
+			 */
+			if ( ! $character_one['character'] )
+			{
+				return Redirect::to('authenticated/battle');
+			}
+
+			/*
+			 *	Verificamos que el personaje
+			 *	pueda ser atacado
+			 */
+			if ( ! $character_one['character']->can_be_attacked() )
+			{
+				Session::flash('errorMessage', $character_one['character']->name . ' aún no puede ser atacado');
+				return Redirect::to('authenticated/battle');
+			}
+		}
+		else
+		{
+			/*
+			 *	No hay siquiera nombre...
+			 */
+			return Redirect::to('authenticated/battle');
+		}
+
+		$character_two = array();
+		$character_two['character'] = Character::get_character_of_logged_user();
+
+		/*
+		 *	Verificamos que el atacante
+		 *	realmente pueda pelear
+		 */
+		if ( ! $character_two['character']->can_fight() )
+		{
+			Session::flash('errorMessage', 'Aún no puedes pelear');
+			return Redirect::to('authenticated/battle');
+		}
+
+		/*
+		 *	Primer personaje
+		 */
+		$character_one['stats'] = $character_one['character']->get_stats();
+		$character_one['character']->current_life += $character_one['stats']['stat_life'] * 1.25;
+		//$character_one['cd'] = (int) (100 / ($character_one['stats']['stat_dexterity']+2));
+		//$character_one['actual_cd'] = 0;
+		$character_one['is_warrior'] = $character_one['character']->stat_strength > $character_one['character']->stat_magic;
+
+		/*
+		 *	Daños
+		 */
+		$character_one['min_damage'] = $character_one['stats']['p_damage'] + mt_rand(5, 15);
+		$character_one['max_damage'] = $character_one['stats']['p_damage'] * 1.25 + mt_rand(5, 15);
+		$character_one['average_damage'] = ($character_one['max_damage'] + $character_one['min_damage']) / 2  + mt_rand(5, 15);
+
+		/*
+		 *	Defensas
+		 */
+		$character_one['max_defense'] = ( $character_one['is_warrior'] ) ? $character_one['stats']['p_defense'] : $character_one['stats']['m_defense'];
+		$character_one['max_defense'] = $character_one['max_defense'] * 1.25;
+
+		$character_one['min_defense'] = ( $character_one['is_warrior'] ) ? $character_one['stats']['p_defense'] : $character_one['stats']['m_defense'];
+		$character_one['min_defense'] = $character_one['min_defense'] * 0.75;
+
+		$character_one['normal_defense'] = ( $character_one['is_warrior'] ) ? $character_one['stats']['p_defense'] : $character_one['stats']['m_defense'];	
+
+		/*
+		 *	Segundo personaje
+		 */
+		$character_two['stats'] = $character_two['character']->get_stats();
+		$character_two['character']->current_life += $character_two['stats']['stat_life'] * 1.25;
+		//$character_two['cd'] = (int) (100 / ($character_two['stats']['stat_dexterity']+2));
+		//$character_two['actual_cd'] = 0;
+		$character_two['is_warrior'] = $character_two['character']->stat_strength > $character_two['character']->stat_magic;
+
+		/*
+		 *	Daños
+		 */
+		$character_two['min_damage'] = $character_two['stats']['p_damage'] + mt_rand(5, 15);
+		$character_two['max_damage'] = $character_two['stats']['p_damage'] * 1.25 + mt_rand(5, 15);
+		$character_two['average_damage'] = ($character_two['max_damage'] + $character_two['min_damage']) / 2 + mt_rand(5, 15);
+
+		/*
+		 *	Defensas
+		 */
+		$character_two['max_defense'] = ( $character_two['is_warrior'] ) ? $character_two['stats']['p_defense'] : $character_two['stats']['m_defense'];
+		$character_two['max_defense'] = $character_two['max_defense'] * 1.25;
+
+		$character_two['min_defense'] = ( $character_two['is_warrior'] ) ? $character_two['stats']['p_defense'] : $character_two['stats']['m_defense'];
+		$character_two['min_defense'] = $character_two['min_defense'] * 0.75;
+
+		$character_two['normal_defense'] = ( $character_two['is_warrior'] ) ? $character_two['stats']['p_defense'] : $character_two['stats']['m_defense'];	
+
+		/*
+		 *	Definimos aleatoriamente quién
+		 *	golpeará primero
+		 */
+		$attacker = ( mt_rand( 1, 2) == 1 ) ? $character_one : $character_two;
+		$defenser = ( $attacker == $character_one ) ? $character_two : $character_one;
+
+		$messages = array(
+			'%1$s logra asestar un gran golpe a %2$s. %2$s no puede evitar soltar un pequeño alarido',
+			'%1$s golpea con majestuocidad a %2$s. %2$s se queja',
+			'%1$s lanza un feroz ataque a %2$s que sufre algunas heridas',
+			'%1$s ataca salvajemente a %2$s que sufre dolorosas heridas',
+			'%1$s se mueve ágil y velozmente hacia %2$s para propinarle un gran golpe',
+			'%2$s se ve algo cansado, intenta esquivar pero el ataque %1$s lo alcanza',
+		);
+
+		/*
+		 *	Guardaremos el resúmen
+		 *	de la batalla
+		 */
+		$message = '';
+
+		/*
+		 *	Mientras los personajes que están
+		 *	peleando tengan vida...
+		 */
+		while ( $character_one['character']->current_life > 0 && $character_two['character']->current_life > 0 )
+		{
+			/*
+			 *	Falta trabajar un poco mas el 
+			 *	cd, así como está tarda mucho
+			 *	en arrojar una respuesta
+			 */
+
+			/*				
+			// restamos cd en caso de haberlo
+			if ( $character_one['actual_cd'] != 0 )
+			{
+				$character_one['actual_cd']--;
+			}
+
+			if ( $character_two['actual_cd'] != 0 )
+			{
+				$character_two['actual_cd']--;
+			}
+
+			// verificamos si el nuevo atacante tiene cd
+			if ( $attacker['actual_cd'] != 0)
+			{
+				// si tiene, nos fijamos si el defensor puede atacar
+				if ( $defenser['actual_cd'] == 0 )
+				{
+					// nuevamente invertimos los papeles...
+					$tmp = $attacker;
+
+					$attacker = $defenser;
+					$defenser = $attacker;
+				}
+				else
+				{
+					// los dos están con cd, siguiente iteración
+					continue;
+				}
+			}
+			*/
+
+			// ----------------------------------------------
+			// CALCULAMOS EL DAÑO
+			// ----------------------------------------------
+
+			/*
+			 *	Si tiene suerte, entonces
+			 *	el daño será el máximo posible
+			 */
+			$damage = ( mt_rand( 0, 100) <= $attacker['stats']['stat_luck'] / 2 ) ? $attacker['max_damage'] : false;
+
+			/*
+			 *	Si damage está en false
+			 *	entonces trataremos de buscar 
+			 *	el siguiente daño (average)
+			 */
+			$damage = ( ! $damage && mt_rand( 0, 100) <= $attacker['stats']['stat_luck'] ) ? $attacker['average_damage'] : false;
+			
+			/*
+			 *	Verificamos si tuvo suerte
+			 *	con alguno de los daños anteriores
+			 */
+			if ( ! $damage )
+			{
+				/*
+				 *	Si no tuvo, entonces daño mínimo
+				 */
+				$damage = $attacker['min_damage'];
+			}
+
+			// ----------------------------------------------
+			// FIN CALCULO DAÑO
+			// ----------------------------------------------
+
+			// ----------------------------------------------
+			// CALCULAMOS EFECTO DEFENSA
+			// ----------------------------------------------
+
+			/*
+			 *	Si tiene suerte, entonces
+			 *	será la máxima defensa
+			 */
+			$defense = ( mt_rand( 0, 100) <= $defenser['stats']['stat_luck'] ) ? $defenser['max_defense'] : false;
+
+			/*
+			 *	Si tiene mala suerte
+			 *	la defensa será la menor
+			 */
+			$defense = ( ! $defense && mt_rand( 0, 100) <= $defenser['stats']['stat_luck'] / 2 ) ? $defenser['min_defense'] : false;
+			
+			/*
+			 *	Si no hay defensa...
+			 */
+			if ( ! $defense )
+			{
+				/*
+				 *	Defenderá normal
+				 */
+				$defense = $defenser['normal_defense'];
+			}
+
+			// ----------------------------------------------
+			// FIN CALCULO EFECTO DEFENSA
+			// ----------------------------------------------
+
+			// ----------------------------------------------
+			// VALOR DE IMPACTO
+			// ----------------------------------------------
+			
+			/*
+			 *	Evitamos el error division by zero
+			 */
+			$normal_defense = ( $defenser['normal_defense'] == 0 ) ? 1 : $defenser['normal_defense'];
+			$real_damage = $damage - (($attacker['min_damage'] / 2) * $defense / $normal_defense) / 100;
+
+			// ----------------------------------------------
+			// FIN VALOR DE IMPACTO
+			// ----------------------------------------------
+			
+			/*
+			 *	Golpeamos
+			 */
+			$defenser['character']->current_life -= $real_damage;
+
+			// agregamos cd
+			//$attacker['actual_cd'] = $attacker['cd'];
+
+			/*
+			 *	Registramos el movimiento
+			 */
+			$message .= sprintf($messages[mt_rand(0, 5)], $attacker['character']->name, $defenser['character']->name) . ' (daño: '. $real_damage .', defendido: '. ($damage-$real_damage) .')<br>';
+
+			
+			/* 
+			 *	Se invierten los papeles, 
+			 *	ahora el defensor pasa a ser 
+			 *	el atacante y el atacante el defensor
+			 */
+			$tmp = $attacker;
+			
+			$attacker = $defenser;
+			$defenser = $tmp;
+		}
+
+		$winner = null;
+
+		/*
+		 *	Vemos quién es el ganador
+		 */
+		if ( $character_one['character']->current_life > 0 )
+		{
+			$winner = $character_one;
+		}
+
+		if ( $character_two['character']->current_life > 0 )
+		{
+			$winner = $character_two;
+		}
+
+		/*
+		 *	Aumentamos los puntos de pvp
+		 *	del ganador
+		 */
+		$winner['character']->pvp_points++;
+
+		/*
+		 *	Volvemos la vida a la normalidad
+		 *	(sacando el bonus que da el atributo life)
+		 */
+		$character_one['character']->current_life -= $character_one['stats']['stat_life'] * 1.25;
+		$character_two['character']->current_life -= $character_two['stats']['stat_life'] * 1.25;
+
+		/*
+		 *	Evitamos que tengan vida por debajo de 0
+		 */
+		if ( $character_one['character']->current_life <= 0 )
+		{
+			$character_one['character']->current_life = 1;
+		}
+
+		if ( $character_two['character']->current_life <= 0 )
+		{
+			$character_two['character']->current_life = 1;
+		}
+
+		/*
+		 *	¡Experiencia!
+		 */
+		$character_one['character']->xp += 3 * Config::get('game.xp_rate');
+		$character_two['character']->xp += 3 * Config::get('game.xp_rate');
+
+		/*
+		 *	El ganador obtiene mas
+		 */
+		$winner['character']->xp += 2 * Config::get('game.xp_rate');;
+
+		/*
+		 *	Cobre al ganador
+		 */
+		$winnerCoins = $winner['character']->get_coins();
+		if ( $winnerCoins )
+		{
+			$winnerCoins->count += 5 * Config::get('game.coins_rate');
+		}
+		else
+		{
+			$winnerCoins = new CharacterItem();
+
+			$winnerCoins->item_id = Config::get('game.coin_id');
+			$winnerCoins->owner_id = $winner['character']->id;
+			$winnerCoins->count = 5 * Config::get('game.coins_rate');
+			$winnerCoins->location = 'none';
+		}
+		$winnerCoins->save();
+
+		/*
+		 *	Notificamos al atacado
+		 */
+		Message::attack_report($character_one['character'], $character_two['character'], $message, $winner['character']);
+
+		/*
+		 *	Guardamos
+		 */
+		$character_one['character']->save();
+		$character_two['character']->save();
+
+		/*
+		 *	Agregamos tiempo de descanzo
+		 *	luego de la batalla
+		 */
+		$character_two['character']->after_battle();
+
+		/*
+		 *	Disparamos el evento de batalla
+		 */	
+		Event::fire('battle', array($character_one['character'], $character_two['character']));
+
+		$this->layout->title = '¡Ganador ' . $winner['character']->name . '!';
+		$this->layout->content = View::make('authenticated.finishedbattle')
+		->with('character_one', $character_one['character'])
+		->with('character_two', $character_two['character'])
+		->with('winner', $winner['character'])
+		->with('message', $message);
+	}
+
 	public function post_battle()
 	{
-		$character = Session::get('character');
+		$character = Character::get_character_of_logged_user(array('id', 'zone_id', 'name'));
 		$searchMethod = Input::get('search_method');
 
 		$characterFinded = null;
@@ -862,11 +1449,11 @@ class Authenticated_Controller extends Base_Controller
 		switch ( $searchMethod ) 
 		{
 			case 'name':
-				$characterFinded = Character::where('name', '=', Input::get('character_name'))->where('name', '<>', $character->name)->where('zone_id', '=', $character->zone_id)->first();
+				$characterFinded = Character::where('name', '=', Input::get('character_name'))->where('name', '<>', $character->name)->where('is_traveling', '=', false)->where('zone_id', '=', $character->zone_id)->select(array('name'))->first();
 				break;
 
 			case 'random':
-				$race = [];
+				$race = array();
 
 				switch ( Input::get('race') )
 				{
@@ -907,11 +1494,11 @@ class Authenticated_Controller extends Base_Controller
 					$level = 1;
 				}
 
-				$characterFinded = Character::where_in('race', $race)->where('level', $operation, $level)->where('name', '<>', $character->name)->where('zone_id', '=', $character->zone_id)->order_by(DB::raw('RAND()'))->first();
+				$characterFinded = Character::where_in('race', $race)->where('level', $operation, $level)->where('name', '<>', $character->name)->where('is_traveling', '=', false)->where('zone_id', '=', $character->zone_id)->select(array('name'))->order_by(DB::raw('RAND()'))->first();
 				break;
 
 			case 'group':
-				
+				$characterFinded = Character::where('clan_id', '=', Input::get('clan'))->where('name', '<>', $character->name)->where('is_traveling', '=', false)->where('zone_id', '=', $character->zone_id)->select(array('name'))->order_by(DB::raw('RAND()'))->first();
 				break;
 		}
 
@@ -927,13 +1514,15 @@ class Authenticated_Controller extends Base_Controller
 			/*
 			 *	No encontramos :\
 			 */
+			Session::flash('errorMessage', 'No se encontró ningún personaje para batallar');
 			return Redirect::to('authenticated/battle');
 		}
 	}
 
 	public function get_battle($characterToBattle = '')
 	{
-		$character = Session::get('character');
+		/*
+		$character = Character::get_character_of_logged_user();
 		$characterToBattle = ( $characterToBattle ) ? Character::where('name', '=', $characterToBattle)->first() : false;
 
 		if ( $characterToBattle && $character->id != $characterToBattle->id )
@@ -942,18 +1531,19 @@ class Authenticated_Controller extends Base_Controller
 		}
 		else
 		{
+		*/
 			$this->layout->title = '¡Batallar!';
 			$this->layout->content = View::make('authenticated.battle');
-		}
+		//}
 	}
 
 	public function get_rewardFromQuest($questId = false)
 	{
-		$quest = ( $questId ) ? Quest::find((int) $questId) : false;
+		$quest = ( $questId ) ? Quest::select(array('id'))->find((int) $questId) : false;
 
 		if ( $quest )
 		{
-			$character = Session::get('character');
+			$character = Character::get_character_of_logged_user(array('id'));
 
 			/*
 			 *	Obtenemos el progreso de la quest
@@ -969,7 +1559,7 @@ class Authenticated_Controller extends Base_Controller
 				/*
 				 *	Recompensamos
 				 */
-				$characterQuest->quest->give_reward();
+				$characterQuest->quest()->select(array('data'))->first()->give_reward();
 
 				/*
 				 *	Y no nos olvidamos de guardar
@@ -990,13 +1580,13 @@ class Authenticated_Controller extends Base_Controller
 
 		if ( $quest )
 		{
-			$character = Session::get('character');
+			$character = Character::get_character_of_logged_user();
 
 			/*
 			 *	Nos fijamos si el personaje
 			 *	ya tiene algún progreso con esta quest
 			 */
-			$characterQuest = $character->quests()->where('quest_id', '=', $quest->id)->first();
+			$characterQuest = $character->quests()->select(array('id'))->where('quest_id', '=', $quest->id)->first();
 
 			/*
 			 *	Si no lo tiene, entonces lo creamos
@@ -1005,6 +1595,12 @@ class Authenticated_Controller extends Base_Controller
 			if ( ! $characterQuest )
 			{
 				$quest->accept();
+
+				/*
+				 *	Disparamos el evento de aceptar
+				 *	misiones
+				 */
+				Event::fire('acceptQuest', array($character, $quest));
 			}
 		}
 
@@ -1013,7 +1609,7 @@ class Authenticated_Controller extends Base_Controller
 
 	public function get_travel($zoneId = '')
 	{
-		$character = Session::get('character');
+		$character = Character::get_character_of_logged_user(array('id', 'is_traveling', 'zone_id', 'name'));
 
 		/*
 		 *	Si zoneId está definido quiere
@@ -1035,6 +1631,13 @@ class Authenticated_Controller extends Base_Controller
 			if ( $canTravel === true )
 			{
 				/*
+				 *	Cobramos el costo del viaje
+				 */
+				$characterCoins = $character->get_coins();
+				$characterCoins->count -= Config::get('game.travel_cost');
+				$characterCoins->save();
+
+				/*
 				 *	¡Iniciamos el viaje!
 				 */
 				$character->travel_to($zone);
@@ -1051,16 +1654,18 @@ class Authenticated_Controller extends Base_Controller
 			}
 		}
 
-		/*
-		 *	Solamente queremos las zonas
-		 *	en donde el personaje no está
-		 */
-		$zones = Zone::where('id', '<>', $character->zone_id)->get();
+		$cities = Zone::select(array('id', 'name', 'description'))->where('type', '=', 'city')->where('id', '<>', $character->zone_id)->get();
+
+		foreach ($cities as $city)
+		{
+			$city->villages = Zone::select(array('id', 'name', 'description'))->where('type', '=', 'village')->where('belongs_to', '=', $city->id)->get();
+			$city->farm_zones = Zone::select(array('id', 'name', 'description'))->where('type', '=', 'farmzone')->where('belongs_to', '=', $city->id)->get();
+		}
 
 		$this->layout->title = 'Viajar';
 		$this->layout->content = View::make('authenticated.travel')
 		->with('character', $character)
-		->with('zones', $zones)
+		->with('cities', $cities)
 		->with('error', $error);
 	}
 
@@ -1075,14 +1680,14 @@ class Authenticated_Controller extends Base_Controller
 			return Redirect::to('authenticated/index');
 		}
 
-		$character = Session::get('character');
+		$character = Character::get_character_of_logged_user(array('id', 'zone_id', 'level'));
 
 		/*
 		 *	Traemos al npc que tenga el nombre
 		 *	y que esté ubicado en la zona
 		 *	en donde está el personaje
 		 */
-		$npc = Npc::where('name', '=', $npcName)->where('zone_id', '=', $character->zone_id)->first();
+		$npc = Npc::select(array('id', 'name', 'dialog'))->where('name', '=', $npcName)->where('zone_id', '=', $character->zone_id)->first();
 
 		/*
 		 *	Si no existe, redireccionamos
@@ -1096,14 +1701,20 @@ class Authenticated_Controller extends Base_Controller
 		 *	Obtenemos todas las misiones del npc
 		 *	que estén acorde con el nivel del personaje
 		 */
-		$quests = $npc->quests()->where('min_level', '<=', $character->level)->where('max_level', '>=', $character->level)->get();
+		$quests = $npc->quests()->select(array('id', 'name', 'description', 'data'))->where('min_level', '<=', $character->level)->where('max_level', '>=', $character->level)->get();
 		
+		/*
+		 *	En este array vamos a guardar
+		 *	todas las misiones que están iniciadas
+		 */
+		$startedQuests = array();
+
 		/*
 		 *	En este array vamos a guardar
 		 *	las misiones que están hechas
 		 *	pero aún necesitan pedir la recompensa
 		 */
-		$rewardQuests = [];
+		$rewardQuests = array();
 
 		$characterQuest = null;
 
@@ -1127,20 +1738,26 @@ class Authenticated_Controller extends Base_Controller
 			 */
 			if ( $characterQuest )
 			{
-				if ( $characterQuest->progress == 'finished' )
+				switch ( $characterQuest->progress )
 				{
-					/*
-					 *	Si está marcado como finished
-					 *	lo sacamos
-					 */
-					unset($quests[$i]);
-				}
-				else
-				{
-					$rewardQuests[$i] = $quests[$i];
+					case 'started':
+						$startedQuests[] = array('quest' => $quests[$i], 'characterQuest' => $characterQuest);
+						unset($quests[$i]);
+						break;
+
+					case 'reward':
+						$rewardQuests[] = $quests[$i];
+						unset($quests[$i]);
+						break;
+
+					case 'finished':
+						unset($quests[$i]);
+						break;
 				}
 			}
 		}
+
+		$characterCoins = $character->get_coins();
 
 		/*
 		 *	Obtenemos las mercancías del npc
@@ -1150,9 +1767,10 @@ class Authenticated_Controller extends Base_Controller
 		$this->layout->title = $npc->name;
 		$this->layout->content = View::make('authenticated.npc')
 		->with('npc', $npc)
-		->with('characterCoinsCount', $character->get_coins()->count)
+		->with('characterCoinsCount', ( $characterCoins ) ? $characterCoins->count : 0)
 		->with('merchandises', $merchandises)
 		->with('rewardQuests', $rewardQuests)
+		->with('startedQuests', $startedQuests)
 		->with('quests', $quests);
 	}
 
@@ -1169,7 +1787,7 @@ class Authenticated_Controller extends Base_Controller
 			 *	Obtenemos la información del objeto
 			 *	a comprar
 			 */
-			$item = $merchandise->item;
+			$item = $merchandise->item()->select(array('id', 'stackable'))->first();
 
 			/*
 			 *	Si el objeto no es acumulable
@@ -1181,7 +1799,7 @@ class Authenticated_Controller extends Base_Controller
 				$amount = 1;
 			}
 
-			$character = Session::get('character');
+			$character = Character::get_character_of_logged_user(array('id'));
 
 			/*
 			 *	Obtenemos las monedas del personaje
@@ -1207,7 +1825,7 @@ class Authenticated_Controller extends Base_Controller
 					 *	Se puede acumular, busquemos entonces
 					 *	si el personaje ya tiene un objeto igual
 					 */
-					$characterItem = $character->items()->where('item_id', '=', $item->id)->first();
+					$characterItem = $character->items()->select(array('count'))->where('item_id', '=', $item->id)->first();
 				}
 
 				/*
@@ -1270,10 +1888,11 @@ class Authenticated_Controller extends Base_Controller
 		/*
 		 *	No queremos ejecutar acciones innecesariamente
 		 */
-		if ( $id > 0 && $count > 0 ) 
+		if ( $id > 0 && $count > 0 )
 		{
-			$character = Session::get('character');
-			$characterItem = $character->items()->where('id', '=', $id)->first();
+			//$character = Session::get('character');
+			$character = Character::get_character_of_logged_user(array('id'));
+			$characterItem = $character->items()->find($id);
 
 			/*
 			 *	¿Existe el objeto?
@@ -1313,7 +1932,7 @@ class Authenticated_Controller extends Base_Controller
 					/*
 					 *	Disparamos el evento de desequipar objeto
 					 */
-					Event::fire('unequipItem', [$characterItem]);
+					Event::fire('unequipItem', array($characterItem));
 
 					return Redirect::to('authenticated/index');
 				}
@@ -1323,7 +1942,7 @@ class Authenticated_Controller extends Base_Controller
 				 */
 				if ( $characterItem->count >= $count )
 				{
-					$item = $characterItem->item;
+					$item = $characterItem->item()->select(array('body_part', 'type'))->first();
 
 					switch ( $item->body_part )
 					{
@@ -1333,7 +1952,7 @@ class Authenticated_Controller extends Base_Controller
 							 *	Obtenemos el objeto que tiene equipado
 							 *	que será reemplazado con $characterItem
 							 */
-							$equippedItem = $character->items()->where('location', '=', $item->body_part)->first();
+							$equippedItem = $character->items()->where('location', '=', $item->body_part)->or_where('location', '=', 'lrhand')->first();
 
 							/*
 							 *	Evitamos acciones innecesarias
@@ -1355,7 +1974,7 @@ class Authenticated_Controller extends Base_Controller
 								/*
 								 *	Disparamos el evento de desequipar objeto
 								 */
-								Event::fire('unequipItem', [$equippedItem]);
+								Event::fire('unequipItem', array($equippedItem));
 							}
 
 							/*
@@ -1374,7 +1993,7 @@ class Authenticated_Controller extends Base_Controller
 							 *	entonces tenemos que buscar los objetos
 							 *	que tiene equipados en ambas manos
 							 */
-							$equippedItems = $character->items()->where('location', '=', 'lhand')->or_where('location', '=', 'rhand')->get();
+							$equippedItems = $character->items()->select(array('id', 'location', 'slot'))->where('location', '=', 'lhand')->or_where('location', '=', 'rhand')->or_where('location', '=', 'lrhand')->get();
 
 							/*
 							 *	Evitamos acciones innecesarias...
@@ -1385,7 +2004,7 @@ class Authenticated_Controller extends Base_Controller
 								 *	Array en el que guardaremos los slots
 								 *	que están vacíos
 								 */
-								$emptySlots = [];
+								$emptySlots = array();
 
 								/*
 								 *	¿Hay espacio en el inventario?
@@ -1436,7 +2055,7 @@ class Authenticated_Controller extends Base_Controller
 									/*
 									 *	Disparamos el evento de desequipar objeto
 									 */
-									Event::fire('unequipItem', [$equippedItem]);
+									Event::fire('unequipItem', array($equippedItem));
 								}
 							}
 
@@ -1485,8 +2104,14 @@ class Authenticated_Controller extends Base_Controller
 		/*
 		 *	Disparamos el evento de equipar objeto
 		 */
-		Event::fire('equipItem', [$characterItem]);
+		Event::fire('equipItem', array($characterItem));
 
 		return Redirect::to('authenticated/index');
+	}
+
+	public function get_logout()
+	{
+		Auth::logout();
+		return Redirect::to('home/index/');
 	}
 }

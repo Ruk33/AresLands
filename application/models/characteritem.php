@@ -11,6 +11,11 @@ class CharacterItem extends Base_Model
 		return $this->belongs_to('Item', 'item_id');
 	}
 
+	public function character()
+	{
+		return $this->belongs_to('Character', 'owner_id');
+	}
+
 	/**
 	 *	Buscamos un slot en el inventario que esté vacío
 	 *
@@ -18,11 +23,12 @@ class CharacterItem extends Base_Model
 	 */
 	public static function get_empty_slot()
 	{
-		$character = Session::get('character');
+		$character = Character::get_character_of_logged_user(array('id'));
 
 		for ( $i = 1, $max = 6; $i <= $max; $i++ )
 		{
-			if ( ! CharacterItem::where('owner_id', '=', $character->id)->where('slot', '=', $i)->first() )
+			//if ( ! CharacterItem::where('owner_id', '=', $character->id)->where('slot', '=', $i)->first() )
+			if ( ! $character->items()->where('slot', '=', $i)->select(array('id'))->first() )
 			{
 				return $i;
 			}

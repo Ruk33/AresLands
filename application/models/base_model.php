@@ -2,8 +2,8 @@
 
 abstract class Base_Model extends Eloquent
 {
-	protected $rules = [];
-	protected $messages = [];
+	protected $rules = array();
+	protected $messages = array();
 	protected $errors;
 
 	public function validate()

@@ -1,8 +1,8 @@
 <!DOCTYPE html>
-<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7" xmlns:ng="http://angularjs.org" id="ng-app"> <![endif]-->
-<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8" xmlns:ng="http://angularjs.org" id="ng-app"> <![endif]-->
-<!--[if IE 8]>         <html class="no-js lt-ie9" xmlns:ng="http://angularjs.org" id="ng-app"> <![endif]-->
-<!--[if gt IE 8]><!--> <html class="no-js" ng-app> <!--<![endif]-->
+<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7" xmlns:ng="http://angularjs.org" id="ng-app" ng-app="areslands"> <![endif]-->
+<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8" xmlns:ng="http://angularjs.org" id="ng-app" ng-app="areslands"> <![endif]-->
+<!--[if IE 8]>         <html class="no-js lt-ie9" xmlns:ng="http://angularjs.org" id="ng-app" ng-app="areslands"> <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" ng-app="areslands"> <!--<![endif]-->
 	<head>
 		<meta charset="utf-8">
 		<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
@@ -10,51 +10,82 @@
 		<meta name="description" content="">
 		<meta name="viewport" content="width=device-width">
 
-		<link rel="stylesheet" href="/css/normalize.min.css">
-		<link rel="stylesheet" href="/css/bootstrap.min.css">
-		<link rel="stylesheet" href="/css/main.css">
+		<link rel="stylesheet" href="{{ URL::base() }}/css/normalize.min.css">
+		<link rel="stylesheet" href="{{ URL::base() }}/css/bootstrap.min.css">
+		<link rel="stylesheet" href="{{ URL::base() }}/css/main.css">
 
-		<script src="/js/vendor/jquery-1.9.1.min.js"></script>
-		<script src="/js/vendor/bootstrap.min.js"></script>
-		<script src="/js/vendor/angular.min.js"></script>
+		<script src="{{ URL::base() }}/js/vendor/jquery-1.9.1.min.js"></script>
+		<script src="{{ URL::base() }}/js/vendor/bootstrap.min.js"></script>
+		<script src="{{ URL::base() }}/js/vendor/angular.min.js"></script>
+
+		<script>
+			angular.module('areslands', [], function($interpolateProvider) {
+				$interpolateProvider.startSymbol('[[');
+				$interpolateProvider.endSymbol(']]');
+			});
+		</script>
 	</head>
-	<body>
+	<body ng-init="basePath='{{ URL::base() }}'">
 		<!--[if lt IE 7]>
 			<p class="chromeframe">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> or <a href="http://www.google.com/chromeframe/?redirect=true">activate Google Chrome Frame</a> to improve your experience.</p>
 		<![endif]-->
 
 		<div id="wrap">
 			<div class="container">
+				<!--<div class="dark-box pull-left"><b>Usuarios conectados:</b> {{ Character::where('last_activity_time', '>', time() - 300)->count() }}</div>-->
 				<div class="logo"></div>
 				<div class="row-fluid col-wrap">
 					<div class="span2 menu col" style="width: 176px; ">
 						@if ( Request::route()->controller == 'authenticated' )
 							<div class="mini-player-display">
-								<img src="/img/icons/race/{{ Session::get('character')->race }}_{{ Session::get('character')->gender }}.jpg" alt="" class="pull-left">
+								<img src="{{ URL::base() }}/img/icons/race/{{ $character->race }}_{{ $character->gender }}.jpg" alt="" class="pull-left">
 								<div class="pull-left" style="margin-left: 5px;">
-									<a href="{{ URL::to('authenticated/character/' . Session::get('character')->name) }}" style="color: rgb(231, 180, 47); font-size: 12px;"><b>{{ Session::get('character')->name }}</b></a>
-									<div class="pull-right">
-										<img src="/img/copper.gif" alt="" data-toggle="tooltip" data-placement="top" data-original-title="
-										{{ $coins['gold'] }} <img src='/img/gold.gif' style='vertical-align: text-bottom;'>
-										{{ $coins['silver'] }} <img src='/img/silver.gif' style='vertical-align: text-bottom;'>
-										{{ $coins['copper'] }} <img src='/img/copper.gif' style='vertical-align: text-bottom;'>">
-									</div>
+									<a href="{{ URL::to('authenticated/character/' . $character->name) }}" style="color: rgb(231, 180, 47); font-size: 12px;"><b>{{ $character->name }}</b></a>
 									<br>
-									Nivel: {{ Session::get('character')->level }}
+									Nivel: {{ $character->level }}
+								</div>
+
+								<div class="pull-right">
+									<img src="{{ URL::base() }}/img/xp.png" alt="" data-toggle="tooltip" data-placement="top" data-original-title="<b>Experiencia</b><br>{{ $character->xp }}/{{ $character->xp_next_level }}">
+
+									<img src="{{ URL::base() }}/img/copper.gif" alt="" data-toggle="tooltip" data-placement="top" data-original-title="
+									<b>Monedas</b>
+									<br>
+									{{ $coins['gold'] }} <img src='/img/gold.gif' style='vertical-align: text-bottom;'>
+									{{ $coins['silver'] }} <img src='/img/silver.gif' style='vertical-align: text-bottom;'>
+									{{ $coins['copper'] }} <img src='/img/copper.gif' style='vertical-align: text-bottom;'>">
+	
+									@if ( $character->clan_id != 0 )
+										<a href="{{ URL::to('authenticated/clan/' . $character->clan_id) }}" data-toggle="tooltip" data-placement="top" data-original-title="Accede a la página de tu grupo"><img src="{{ URL::base() }}/img/shield-icon.png" alt=""></a>
+									@endif
+									
 								</div>
 							</div>
 						@endif
 						<ul class="unstyled menu">
-							@if ( Auth::check() )
-								<li><a href="{{ URL::to('authenticated/index') }}"><img src="/img/menu/character.jpg" alt=""></a></li>
-								<li style="position: relative;"><div style="position: absolute; top: 7px; right: 10px; color: white" data-toggle="tooltip" data-placement="top" data-original-title="Mensaje(s) sin leer"><span class="badge badge-warning">{{ Session::get('character')->get_unread_messages_count() }}</span></div><a href="{{ URL::to('authenticated/messages') }}"><img src="/img/menu/messages.jpg" alt=""></a></li>
-								<li><a href="{{ URL::to('authenticated/travel') }}"><img src="/img/menu/travel.jpg" alt=""></a></li>
-								<li><a href="{{ URL::to('authenticated/battle') }}"><img src="/img/menu/battle.jpg" alt=""></a></li>
-								<li><a href="{{ URL::to('authenticated/clan') }}"><img src="/img/menu/group.jpg" alt=""></a></li>
-								<li><a href="{{ URL::to('authenticated/trade') }}"><img src="/img/menu/trade.jpg" alt=""></a></li>
-								<li><a href="{{ URL::to('authenticated/characters') }}"><img src="/img/menu/characters.jpg" alt=""></a></li>
+							@if ( Auth::check() && $character )
+								<li><a href="{{ URL::to('authenticated/index') }}"><img src="{{ URL::base() }}/img/menu/character.jpg" alt=""></a></li>
+								<li style="position: relative;"><div style="position: absolute; top: 7px; right: 10px; color: white" data-toggle="tooltip" data-placement="top" data-original-title="Mensaje(s) sin leer"><span class="badge badge-warning">{{ $character->get_unread_messages_count() }}</span></div><a href="{{ URL::to('authenticated/messages') }}"><img src="{{ URL::base() }}/img/menu/messages.jpg" alt=""></a></li>
+								
+								@if ( $character->can_travel() === true )
+								<li><a href="{{ URL::to('authenticated/travel') }}"><img src="{{ URL::base() }}/img/menu/travel.jpg" alt=""></a></li>
+								@endif
+								
+								@if ( $character->can_fight() )
+								<li><a href="{{ URL::to('authenticated/battle') }}"><img src="{{ URL::base() }}/img/menu/battle.jpg" alt=""></a></li>
+								@endif
+	
+								@if ( $character->can_explore() )
+								<li><a href="{{ URL::to('authenticated/explore') }}"><img src="{{ URL::base() }}/img/menu/explore.jpg" alt=""></a></li>
+								@endif
+	
+								<li><a href="{{ URL::to('authenticated/clan') }}"><img src="{{ URL::base() }}/img/menu/group.jpg" alt=""></a></li>
+								<li><a href="{{ URL::to('authenticated/trade') }}"><img src="{{ URL::base() }}/img/menu/trade.jpg" alt=""></a></li>
+								<li><a href="{{ URL::to('authenticated/characters') }}"><img src="{{ URL::base() }}/img/menu/characters.jpg" alt=""></a></li>
+								<li><a href="{{ URL::to('authenticated/ranking') }}"><img src="{{ URL::base() }}/img/menu/ranking.jpg" alt=""></a></li>
+								<li><a href="{{ URL::to('authenticated/logout') }}"><img src="{{ URL::base() }}/img/menu/logout.jpg" alt=""></a></li>
 							@else
-								<li><img src="/img/menu/inicio.jpg" alt=""></li>
+								<li><img src="{{ URL::base() }}/img/menu/inicio.jpg" alt=""></li>
 							@endif
 						</ul>
 					</div>
@@ -71,7 +102,7 @@
 		<div id="footer">
 			<div class="text-center">
 				<div>
-					<img src="/img/ironfist-logo.png">
+					<img src="{{ URL::base() }}/img/ironfist-logo.png">
 					<p style="color: white; font-size: 11px;">
 						Todas las marcas aquí mencionadas son propiedad de sus respectivos dueños. 
 						<br>
@@ -81,7 +112,7 @@
 			</div>
 		</footer>
 
-		<script src="/js/libs/jquery.countdown.js"></script>
+		<script src="{{ URL::base() }}/js/libs/jquery.countdown.js"></script>
 
 		<script>
 			/*
@@ -96,7 +127,8 @@
 			$('.timer').each(function() {
 				var $this = $(this);
 				var time = $this.data('endtime');
-				var date = new Date(time * 1000);
+				var date = new Date();
+				date.setSeconds(date.getSeconds() + time);
 
 				$this.countdown({
 					until: date,
@@ -106,7 +138,7 @@
 			});
 		</script>
 
-		<script src="/js/vendor/modernizr-2.6.2.min.js"></script>
+		<script src="{{ URL::base() }}/js/vendor/modernizr-2.6.2.min.js"></script>
 
 		<!--
 			<script>

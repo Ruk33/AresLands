@@ -1,20 +1,34 @@
+@if ( ! $character->is_traveling )
 <div class="bar">
+	<ul class="inline">
 	@foreach ( $npcs as $npc )
-		<a href="{{ URL::to('authenticated/npc/' . $npc->name) }}"><img src="/img/icons/npcs/{{ $npc->id }}.png" alt="" data-toggle="tooltip" data-placement="left" data-original-title="{{ $npc->tooltip_dialog }}"></a>
+		<li>
+			<a href="{{ URL::to('authenticated/npc/' . $npc->name) }}" data-toggle="tooltip" data-placement="left" data-original-title="{{ $npc->tooltip_dialog }}">
+				<img src="{{ URL::base() }}/img/icons/npcs/{{ $npc->id }}.png" alt="">
+			</a>
+		</li>
 	@endforeach
+	</ul>
 </div>
+@endif
 <!--<hr class="line">-->
 
 <div class="row">
+	<!-- BUFFS -->
 	<ul class="unstyled inline" style="margin-left: 20px;">
 		@foreach ( $skills as $skill )
 			<li>
-				<img src="/img/icons/skills/{{ $skill->skill_id }}.jpg" alt="" width="32px" height="32px" data-toggle="tooltip" data-placement="right" data-original-title="
+				<img src="{{ URL::base() }}/img/icons/skills/{{ $skill->skill_id }}.jpg" alt="" width="32px" height="32px" data-toggle="tooltip" data-placement="right" data-original-title="
 				<b>{{ $skill->skill->name }}</b> (Nivel: {{ $skill->level }})
 				<p>{{ $skill->skill->description }}</p>">
+
+				@if ( $skill->end_time != 0 )
+				<small><div class='timer' data-endtime='{{ $skill->end_time - time() }}'></div></small>
+				@endif
 			</li>
 		@endforeach
 	</ul>
+	<!-- END BUFFS -->
 
 	<div class="span6" style="margin-left: 20px; margin-right: -20px;">
 		<h2>Personaje</h2>
@@ -23,7 +37,7 @@
 			@if ( isset($items['lrhand']) && $lrhand = $items['lrhand'][0]->item )
 				<div style="position: absolute; margin-top: 150px;">
 					<div class="equipped-item">
-						<img src="/img/icons/items/{{ $items['lrhand'][0]->item->id }}.png" alt="" data-toggle="popover" data-placement="top" data-original-title="
+						<img style="cursor: pointer;" src="{{ URL::base() }}/img/icons/items/{{ $items['lrhand'][0]->item->id }}.png" alt="" data-toggle="popover" data-placement="top" data-original-title="
 						{{ $lrhand->get_text_for_tooltip() }}
 						<a href='{{ URL::to('authenticated/manipulateItem/' . $items['lrhand'][0]->id) }}'>
 							Desequipar
@@ -36,7 +50,7 @@
 				<div style="position: absolute; margin-top: 150px;">
 					<div class="equipped-item">
 					@if ( isset($items['rhand']) && $rhand = $items['rhand'][0]->item )
-						<img style="cursor: pointer;" src="/img/icons/items/{{ $rhand->id }}.png" alt="" data-toggle="popover" data-placement="top" data-original-title="
+						<img style="cursor: pointer;" src="{{ URL::base() }}/img/icons/items/{{ $rhand->id }}.png" alt="" data-toggle="popover" data-placement="top" data-original-title="
 						{{ $rhand->get_text_for_tooltip() }}
 						<a href='{{ URL::to('authenticated/manipulateItem/' . $items['rhand'][0]->id) }}'>
 							Desequipar
@@ -50,7 +64,7 @@
 				<div style="position: absolute; margin-left: 250px; margin-top: 150px;">
 					<div class="equipped-item">
 					@if ( isset($items['lhand']) && $lhand = $items['lhand'][0]->item )
-						<img style="cursor: pointer;" src="/img/icons/items/{{ $lhand->id }}.png" alt="" data-toggle="popover" data-placement="top" data-original-title="
+						<img style="cursor: pointer;" src="{{ URL::base() }}/img/icons/items/{{ $lhand->id }}.png" alt="" data-toggle="popover" data-placement="top" data-original-title="
 						{{ $lhand->get_text_for_tooltip() }}
 						<a href='{{ URL::to('authenticated/manipulateItem/' . $items['lhand'][0]->id) }}'>
 							Desequipar
@@ -62,13 +76,15 @@
 			@endif
 
 			<!-- AYUDANTE -->
+			<!--
 			<div style="position: absolute; margin-left: 260px; margin-top: 50px;">
-				<img src="/img/characters/ayudante.png" alt="">
+				<img src="{{ URL::base() }}/img/characters/ayudante.png" alt="">
 			</div>
+			-->
 			<!-- END AYUDANTE -->
 			
 			<!-- PERSONAJE -->
-			<img src="/img/characters/{{ $character->race }}_{{ $character->gender }}_
+			<img src="{{ URL::base() }}/img/characters/{{ $character->race }}_{{ $character->gender }}_
 			@if ( isset($rhand) )
 				{{ $rhand->id }}
 			@elseif ( isset($lhand) )
@@ -84,14 +100,25 @@
 	</div>
 
 	<!-- ESTADÍSTICAS -->
-	<div class="span6">
+	<div class="span6" ng-controller="CharacterStatsController" ng-init="remainingPoints='{{ $character->points_to_change }}'">
 		<h2>Estadísticas</h2>
 		<ul class="unstyled">
-			<li style="margin-bottom: 10px;"><span data-toggle="tooltip" data-placement="top" data-original-title="<b>Vida:</b> vida actual / vida máxima"><b>Vida:</b> {{ $character->current_life }}/{{ $character->max_life }}</span></li>
+			<li style="margin-bottom: 20px;">
+				<span data-toggle="tooltip" data-placement="top" data-original-title="<b>Vida:</b> vida actual / vida máxima" ng-init="currentLife='{{ $character->current_life }}'; maxLife='{{ $character->max_life }}'">
+					<b>Vida:</b> [[ currentLife ]]/[[ maxLife ]]
+				</span>
+			</li>
 			
-			<li>
+			<li style="margin-bottom: 10px;" ng-show="remainingPoints>0">
+				<div class="dark-box" style="width: 300px;">
+					<b>Puntos restantes para cambiar:</b> [[ remainingPoints ]]
+				</div>
+			</li>
+
+			<li style="margin-bottom: 5px;" ng-init="stats['stat_life']='{{ $character->stat_life }}'">
 				<span data-toggle="tooltip" data-placement="right" data-original-title="<b>Vitalidad:</b> Aumenta los puntos de vida que el personaje posee y la regeneración de los mismos.">
-					<b>Vitalidad:</b> {{ $character->stat_life }}
+					<a ng-click="addStat('stat_life')" ng-show="remainingPoints>0" class="btn btn-mini btn-primary">+</a>
+					<b>Vitalidad:</b> [[ stats['stat_life'] ]]
 
 					@if ( isset($positiveBonifications['stat_life']) && $positiveBonifications['stat_life'] > 0 )
 						<span class="positive">+{{ $positiveBonifications['stat_life'] }}</span>
@@ -102,9 +129,10 @@
 					@endif
 				</span>
 			</li>
-			<li>
+			<li style="margin-bottom: 5px;" ng-init="stats['stat_dexterity']='{{ $character->stat_dexterity }}'">
 				<span data-toggle="tooltip" data-placement="right" data-original-title="<b>Destreza:</b> Aumenta la precisión de los ataques, aumentando así la probabilidad de asestar ya sea un golpe físico o mágico.">
-					<b>Destreza:</b> {{ $character->stat_dexterity }}
+					<a ng-click="addStat('stat_dexterity')" ng-show="remainingPoints>0" class="btn btn-mini btn-primary">+</a>
+					<b>Destreza:</b> [[ stats['stat_dexterity'] ]]
 
 					@if ( isset($positiveBonifications['stat_dexterity']) && $positiveBonifications['stat_dexterity'] > 0 )
 						<span class="positive">+{{ $positiveBonifications['stat_dexterity'] }}</span>
@@ -115,9 +143,10 @@
 					@endif
 				</span>
 			</li>
-			<li>
+			<li style="margin-bottom: 5px;" ng-init="stats['stat_magic']='{{ $character->stat_magic }}'">
 				<span data-toggle="tooltip" data-placement="right" data-original-title="<b>Magia:</b> Aumenta el poder de los ataques mágicos.">
-					<b>Magia:</b> {{ $character->stat_magic }}
+					<a ng-click="addStat('stat_magic')" ng-show="remainingPoints>0" class="btn btn-mini btn-primary">+</a>
+					<b>Magia:</b> [[ stats['stat_magic'] ]]
 
 					@if ( isset($positiveBonifications['stat_magic']) && $positiveBonifications['stat_magic'] > 0 )
 						<span class="positive">+{{ $positiveBonifications['stat_magic'] }}</span>
@@ -128,9 +157,10 @@
 					@endif
 				</span>
 			</li>
-			<li>
+			<li style="margin-bottom: 5px;" ng-init="stats['stat_strength']='{{ $character->stat_strength }}'">
 				<span data-toggle="tooltip" data-placement="right" data-original-title="<b>Fuerza:</b> Aumenta el poder de los ataques físicos.">
-					<b>Fuerza:</b> {{ $character->stat_strength }}
+					<a ng-click="addStat('stat_strength')" ng-show="remainingPoints>0" class="btn btn-mini btn-primary">+</a>
+					<b>Fuerza:</b> [[ stats['stat_strength'] ]]
 
 					@if ( isset($positiveBonifications['stat_strength']) && $positiveBonifications['stat_strength'] > 0 )
 						<span class="positive">+{{ $positiveBonifications['stat_strength'] }}</span>
@@ -141,9 +171,10 @@
 					@endif
 				</span>
 			</li>
-			<li>
+			<li style="margin-bottom: 5px;" ng-init="stats['stat_luck']='{{ $character->stat_luck }}'">
 				<span data-toggle="tooltip" data-placement="right" data-original-title="<b>Suerte:</b> Aumenta la probabilidad de asestar un golpe crítico, ya sea mágico o físico. Además, aumenta las recompensas y la probabilidad de obtener un objetos raros.">
-					<b>Suerte:</b> {{ $character->stat_luck }}
+					<a ng-click="addStat('stat_luck')" ng-show="remainingPoints>0" class="btn btn-mini btn-primary">+</a>
+					<b>Suerte:</b> [[ stats['stat_luck'] ]]
 
 					@if ( isset($positiveBonifications['stat_luck']) && $positiveBonifications['stat_luck'] > 0 )
 						<span class="positive">+{{ $positiveBonifications['stat_luck'] }}</span>
@@ -183,8 +214,10 @@
 					Estás viajando a {{ $activity->data['zone']->name }}: 
 				@elseif ( $activity->name == 'battlerest' )
 					Descanzando de batalla: 
+				@elseif ( $activity->name == 'explore' )
+					Explorando: 
 				@endif
-				<span class="timer" data-endtime="{{ $activity->end_time }}"></span>
+				<span class="timer" data-endtime="{{ $activity->end_time - time() }}"></span>
 			</li>
 			@endforeach
 		</ul>
@@ -201,19 +234,24 @@
 		@if ( isset($items['inventory']) )
 			@foreach ( $items['inventory'] as $characterItem )
 				@if ( $characterItem->slot == $i && $item = $characterItem->item )
-					<img style="cursor: pointer;" src="/img/icons/inventory/items/{{ $characterItem->item_id }}.png" alt="" data-toggle="popover" data-placement="top" data-original-title="
+					<img style="cursor: pointer;" src="{{ URL::base() }}/img/icons/inventory/items/{{ $characterItem->item_id }}.png" alt="" data-toggle="popover" data-placement="top" data-original-title="
 					{{ $item->get_text_for_tooltip() }}
+
+					<div style='padding: 20px;'>
 					@if ( $item->type == 'arrow' && $items['lrhand'][0]->item->type != 'bow' )
 						<span style='font-size: 11px;'>Debes tener equipado un arco para usar flechas</span>
 					@else
-						<a href='{{ URL::to('authenticated/manipulateItem/' . $characterItem->id) }}'>
+						<a href='{{ URL::to('authenticated/manipulateItem/' . $characterItem->id) }}' class='btn btn-primary pull-left'>
 							@if ( $item->type == 'potion' )
 								Usar
 							@else
 								Equipar
 							@endif
 						</a>
-					@endif">
+					@endif
+
+					<a href='{{ URL::to('authenticated/destroyItem/' . $characterItem->id) }}' class='btn btn-danger pull-right'>Destruir</a>
+					</div>">
 					<div class="inventory-item-amount" data-toggle="tooltip" data-placement="top" data-original-title="Cantidad">{{ $characterItem->count }}</div>
 				@endif
 			@endforeach
@@ -222,3 +260,5 @@
 	@endfor
 </div>
 <!-- END INVENTARIO -->
+
+<script src="{{ URL::base() }}/js/controllers/CharacterStatsController.js"></script>

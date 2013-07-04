@@ -4,7 +4,7 @@ var CharactersController = function($scope, $http) {
 	$scope.predicate = 'attributes.pvp_points';
 	$scope.reverse = true;
 
-	$http.post('/authenticated/characters')
+	$http.post($scope.basePath + 'authenticated/characters')
 		.success(function(data) {
 			$scope.characters = data;
 		})
