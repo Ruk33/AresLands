@@ -1904,7 +1904,11 @@ class Authenticated_Controller extends Base_Controller
 						/*
 						 *	Si lo tiene, entonces intentamos guardar en inventario
 						 */
-						if ( ! $characterItem->save_in_inventory() )
+						if ( $character->unequip_item($characterItem) )
+						{
+							Event::fire('unequipItem', array($characterItem));
+						}
+						else
 						{
 							/*
 							 *	No tiene espacio, lo notificamos
@@ -1926,45 +1930,8 @@ class Authenticated_Controller extends Base_Controller
 								case 'lhand':
 								case 'rhand':
 								case 'lrhand':
-									$ok = true;
-									
-									/*
-									if ( $item->body_part == 'lrhand' )
+									if ( $character->equip_weapon($characterItem) )
 									{
-										$equippedItems = $character->items()->where('location', '=', 'lhand')->or_where('location', '=', 'rhand')->or_where('location', '=', 'lrhand')->get();
-
-										foreach ( $equippedItems as $equippedItem )
-										{
-											if ( ! $equippedItem->save_in_inventory() )
-											{
-												$ok = false;
-												break;
-											}
-										}
-									}
-									else
-									{
-									*/
-										$equippedItem = $character->items()->where('location', '=', $item->body_part)->first();
-										$query = DB::last_query();
-										Log::info($query['sql']);
-										/*if ( $equippedItem )
-										{
-											$ok = $equippedItem->save_in_inventory();
-										}
-									}								
-									*/
-
-									if ( $ok )
-									{
-										/*
-										 *	¡Le equipamos el objeto al personaje!
-										 */
-										$characterItem->location = $item->body_part;
-										$characterItem->slot = 0;
-
-										$characterItem->save();
-
 										Event::fire('equipItem', array($characterItem));
 									}
 

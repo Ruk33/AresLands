@@ -26,6 +26,113 @@ class Character extends Base_Model
 		'gender_match' => 'El género es incorrecto',
 	);
 
+	public function empty_slot()
+	{
+		for ( $i = 1, $max = 6; $i <= $max; $i++ )
+		{
+			if ( $this->items()->where('slot', '=', $i)->count() == 0 )
+			{
+				return $i;
+			}
+		}
+
+		return false;
+	}
+
+	/**
+	 *	@return <CharacterItem>
+	 */
+	public function get_equipped_weapon()
+	{
+		if ( ! $this )
+		{
+			return null;
+		}
+
+		return $this->items()
+		->where_in('location', array('lhand', 'rhand', 'lrhand'))
+		->with('item', function($query) 
+		{
+			$query->where_in('type', array('blunt', 'bigblunt', 'sword', 'bigsword', 'bow', 'dagger', 'staff', 'bigstaff'));
+		})
+		->first();
+	}
+
+	public function get_equipped_shield()
+	{
+		if ( ! $this )
+		{
+			return null;
+		}
+
+		return $this->items()
+		->where('location', '=', 'lhand')
+		->with('item', function($query) 
+		{
+			$query->where('type', '=', 'shield');
+		})
+		->first();
+	}
+
+	public function unequip_item(CharacterItem $item)
+	{
+		if ( ! $item )
+		{
+			return false;
+		}
+
+		$emptySlot = $this->empty_slot();
+
+		if ( $emptySlot )
+		{
+			$item->location = 'inventory';
+			$item->slot = $emptySlot;
+
+			$item->save();
+
+			return true;
+		}
+
+		return false;
+	}
+
+	public function equip_weapon(CharacterItem $item)
+	{
+		if ( ! $this || ! $item )
+		{
+			return false;
+		}
+
+		if ( $item->item->body_part == 'lrhand' )
+		{
+			$equippedShield = $this->get_equipped_shield();
+
+			if ( $equippedShield )
+			{
+				if ( ! $this->unequip_item($equippedShield) )
+				{
+					return false;
+				}
+			}
+		}
+
+		$equippedWeapon = $this->get_equipped_weapon();
+
+		if ( $equippedWeapon )
+		{
+			if ( ! $this->unequip_item($equippedWeapon) )
+			{
+				return false;
+			}
+		}
+
+		$item->location = $item->item->body_part;
+		$item->slot = 0;
+		$item->save();
+
+		return true;
+	}
+
 	public function user()
 	{
 		return $this->belongs_to('IronFistUser', 'user_id');
