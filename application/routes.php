@@ -405,6 +405,7 @@ Route::filter('before', function() {
 			 */
 			if ( Session::has('monster_id') )
 			{
+				$character = Character::get_character_of_logged_user();
 				$character->battle_against(Npc::find(Session::get('monster_id')));
 				Session::forget('monster_id');
 			}

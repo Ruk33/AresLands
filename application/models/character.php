@@ -228,15 +228,18 @@ class Character extends Base_Model
 
 		$fighter_one['stats'] = $fighter_one['character']->get_stats();
 		$fighter_one['character']->current_life += $fighter_one['stats']['stat_life'] * 1.25;
-		$fighter_one['cd'] = (int) (1000 / ($fighter_one['stats']['stat_dexterity']+1));
+		$fighter_one['cd'] = (1000 / ($fighter_one['stats']['stat_dexterity']+1))+1;
 		$fighter_one['actual_cd'] = $fighter_one['cd'];
 		$fighter_one['is_warrior'] = $fighter_one['character']->stat_strength > $fighter_one['character']->stat_magic;
 
 		/*
 		 *	Daños
 		 */
-		$fighter_one['min_damage'] = $fighter_one['stats']['p_damage'];
-		$fighter_one['max_damage'] = $fighter_one['stats']['p_damage'] * 1.25;
+		$fighter_one['min_damage'] = ( $fighter_one['is_warrior'] ) ? $fighter_one['stats']['stat_strength'] : $fighter_one['stats']['stat_magic'];
+		$fighter_one['min_damage'] *= 0.75;
+
+		$fighter_one['max_damage'] = ( $fighter_one['is_warrior'] ) ? $fighter_one['stats']['stat_strength'] : $fighter_one['stats']['stat_magic'];
+		$fighter_one['max_damage'] *= 1.25;
 
 		/*
 		 *	Defensas
@@ -258,15 +261,24 @@ class Character extends Base_Model
 
 		$fighter_two['stats'] = $fighter_two['character']->get_stats();
 		$fighter_two['character']->current_life += $fighter_two['stats']['stat_life'] * 1.25;
-		$fighter_two['cd'] = (int) (1000 / ($fighter_two['stats']['stat_dexterity']+1));
+
+		if ( ! $fighter_two['is_player'] )
+		{
+			$fighter_two['character']->current_life += $target->life;
+		}
+
+		$fighter_two['cd'] = (1000 / ($fighter_two['stats']['stat_dexterity']+1))+1;
 		$fighter_two['actual_cd'] = $fighter_two['cd'];
 		$fighter_two['is_warrior'] = $fighter_two['character']->stat_strength > $fighter_two['character']->stat_magic;
 
 		/*
 		 *	Daños
 		 */
-		$fighter_two['min_damage'] = $fighter_two['stats']['p_damage'];
-		$fighter_two['max_damage'] = $fighter_two['stats']['p_damage'] * 1.25;
+		$fighter_two['min_damage'] = ( $fighter_two['is_warrior'] ) ? $fighter_two['stats']['stat_strength'] : $fighter_two['stats']['stat_magic'];
+		$fighter_two['min_damage'] *= 0.75;
+
+		$fighter_two['max_damage'] = ( $fighter_two['is_warrior'] ) ? $fighter_two['stats']['stat_strength'] : $fighter_two['stats']['stat_magic'];
+		$fighter_two['max_damage'] *= 1.25;
 
 		/*
 		 *	Defensas
@@ -301,21 +313,18 @@ class Character extends Base_Model
 		 */
 		while ( $fighter_one['character']->current_life > 0 && $fighter_two['character']->current_life > 0 )
 		{			
-			// restamos cd en caso de haberlo
-			if ( $fighter_one['actual_cd'] > $fighter_two['actual_cd'] )
-			{
-				$attacker = $fighter_two;
-				$defenser = $fighter_one;
-
-				$fighter_two['actual_cd'] += $fighter_two['cd'];
-			}
-			else
+			if ( $fighter_one['actual_cd'] < $fighter_two['actual_cd'] )
 			{
 				$attacker = $fighter_one;
 				$defenser = $fighter_two;
-
-				$fighter_one['actual_cd'] += $fighter_one['cd'];
 			}
+			else
+			{
+				$attacker = $fighter_two;
+				$defenser = $fighter_one;
+			}
+
+			$attacker['actual_cd'] += $attacker['cd'];
 
 			// ----------------------------------------------
 			// CALCULAMOS EL DAÑO
@@ -733,7 +742,7 @@ class Character extends Base_Model
 
 	public function can_fight()
 	{
-		return $this->is_traveling == false && $this->activities()->count() == 0;
+		return $this->is_traveling == false && $this->activities()->take(1)->count() == 0;
 	}
 
 	public function can_be_attacked()
