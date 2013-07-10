@@ -22,7 +22,11 @@
 
 <div style="width: 730px;">
 	@if ( ! $message->is_special )
-	<a href="{{ URL::to('authenticated/sendMessage/' . $message->sender->name) }}" class="btn btn-primary">Responder</a>
+		<a href="{{ URL::to('authenticated/sendMessage/' . $message->sender->name) }}" class="btn btn-primary">Responder</a>
 	@endif
-	<a href="{{ URL::to('authenticated/deleteMessage/' . $message->id) }}" class="btn btn-danger pull-right">Borrar mensaje</a>
+	
+	{{ Form::open(URL::to('authenticated/deleteMessage')) }}
+		{{ Form::hidden('messages[]', $message->id) }}
+		{{ Form::submit('Borrar mensaje', array('class' => 'btn btn-danger pull-right')) }}
+	{{ Form::close() }}
 </div>

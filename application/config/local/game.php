@@ -42,7 +42,7 @@ return array(
 	 *	Mínima cantidad (en segundos)
 	 *	de tiempo para explorar
 	 */
-	'min_explore_time' => 300,
+	'min_explore_time' => 5,
 
 	/*
 	 *	Máxima cantidad (en segundos)

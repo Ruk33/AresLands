@@ -2,6 +2,14 @@
 <p>¡Bienvenido a AresLands forastero/a!</p>
 <p>Últimamente el mal parece estar fortaleciéndose, criaturas que no pertecen a este mundo están ahora sobre nosotros, ¡necesitamos tu ayuda!.</p>
 
+<div class="span11 text-center dark-box">
+<h2>¿No quieres perder ni un segundo?, apresúrate entonces a</h2>
+<a href="http://ironfist.com.ar/home/register" class="btn btn-large btn-primary">Regístrarte y jugar completamente gratis</a>
+<p><small>(si ya tienes una cuenta en IronFist, <a href="http://ironfist.com.ar/home/login">ingresa</a>)</small></p>
+</div>
+
+<div class="clearfix" style="margin-bottom: 100px;"></div>
+
 <img src="{{ URL::base() }}/img/dwarfs.png" alt="" class="pull-right">
 <div style="margin-top: 100px;">
 	<h2>Diferentes razas para elegir</h2>

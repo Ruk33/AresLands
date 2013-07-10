@@ -1,6 +1,6 @@
-<div style="width: 300px; margin: 0 auto;">
-	<h2>Crear grupo</h2>
+<h2>Crear grupo</h2>
 
+<div class="span11">
 	@if ( Session::has('errorMessages') )
 		<div class="alert alert-error">
 			<strong>Oops!</strong>
@@ -16,6 +16,7 @@
 		<div>
 		{{ Form::label('name_label', 'Nombre del grupo') }}
 		{{ Form::text('name', '', array('class' => 'input-block-level')) }}
+		{{ Form::textarea('message', null, array('class' => 'ckeditor input-block-level')) }}
 		</div>
 		
 		<div class="pull-right">
@@ -24,3 +25,5 @@
 		
 	{{ Form::close() }}
 </div>
+
+<script type="text/javascript" src="{{ URL::base() }}/js/libs/ckeditor/ckeditor.js"></script>

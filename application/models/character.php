@@ -26,6 +26,18 @@ class Character extends Base_Model
 		'gender_match' => 'El género es incorrecto',
 	);
 
+	public static function logged_user_has_character()
+	{
+		$user = Auth::user();
+
+		if ( ! $user )
+		{
+			return false;
+		}
+
+		return Character::where('user_id', '=', $user->id)->count() != 0;
+	}
+
 	public function empty_slot()
 	{
 		for ( $i = 1, $max = 6; $i <= $max; $i++ )
@@ -74,9 +86,19 @@ class Character extends Base_Model
 		->first();
 	}
 
+	public function get_item_from_body_part($body_part)
+	{
+		if ( ! $this || ! $body_part )
+		{
+			return null;
+		}
+
+		return $this->items()->where('location', '=', $body_part)->first();
+	}
+
 	public function unequip_item(CharacterItem $item)
 	{
-		if ( ! $item )
+		if ( ! $this || ! $item )
 		{
 			return false;
 		}
@@ -96,37 +118,62 @@ class Character extends Base_Model
 		return false;
 	}
 
-	public function equip_weapon(CharacterItem $item)
+	public function equip_item(CharacterItem $item)
 	{
 		if ( ! $this || ! $item )
 		{
 			return false;
 		}
 
-		if ( $item->item->body_part == 'lrhand' )
-		{
-			$equippedShield = $this->get_equipped_shield();
+		$itemBodyPart = $item->item->body_part;
 
-			if ( $equippedShield )
-			{
-				if ( ! $this->unequip_item($equippedShield) )
+		switch ( $itemBodyPart ) {
+			case 'lhand':
+			case 'rhand':
+				$lrhand = $this->get_item_from_body_part('lrhand');
+
+				if ( $lrhand )
 				{
-					return false;
+					if ( ! $this->unequip_item($lrhand) )
+					{
+						return false;
+					}
 				}
-			}
+				break;
+
+			case 'lrhand':
+				$lhand = $this->get_item_from_body_part('lhand');
+				$rhand = $this->get_item_from_body_part('rhand');
+
+				if ( $lhand )
+				{
+					if ( ! $this->unequip_item($lhand) )
+					{
+						return false;
+					}
+				}
+
+				if ( $rhand )
+				{
+					if ( ! $this->unequip_item($rhand) )
+					{
+						return false;
+					}
+				}
+				break;
 		}
 
-		$equippedWeapon = $this->get_equipped_weapon();
+		$equippedItem = $this->get_item_from_body_part($itemBodyPart);
 
-		if ( $equippedWeapon )
+		if ( $equippedItem )
 		{
-			if ( ! $this->unequip_item($equippedWeapon) )
+			if ( ! $this->unequip_item($equippedItem) )
 			{
 				return false;
 			}
 		}
 
-		$item->location = $item->item->body_part;
+		$item->location = $itemBodyPart;
 		$item->slot = 0;
 		$item->save();
 
@@ -163,75 +210,83 @@ class Character extends Base_Model
 		return $user->character;
 	}
 
-	public function battle_against_monster(Npc $monster)
+	public function battle_against($target)
 	{
-		/*
-		 *	No queremos trabajar con null
-		 *	we hate null >:v
-		 */
-		if ( ! $monster || ! $this )
+		if ( ! $target || ! $this )
 		{
 			return;
 		}
 
-		$fighter_one['object'] = $this;
-		$fighter_one['stats'] = $this->get_stats();
-		$fighter_one['object']->current_life += $fighter_one['stats']['stat_life'] * 1.25;
-		$fighter_one['is_warrior'] = $this->stat_strength > $this->stat_magic;
+		$fighter_one = array();
+		$fighter_two = array();
+
+		// ----------------------------------------------
+		// PRIMER LUCHADOR
+		// ----------------------------------------------
+		$fighter_one['character'] = $this;
+		$fighter_one['is_player'] = true;
+
+		$fighter_one['stats'] = $fighter_one['character']->get_stats();
+		$fighter_one['character']->current_life += $fighter_one['stats']['stat_life'] * 1.25;
+		$fighter_one['cd'] = (int) (1000 / ($fighter_one['stats']['stat_dexterity']+1));
+		$fighter_one['actual_cd'] = $fighter_one['cd'];
+		$fighter_one['is_warrior'] = $fighter_one['character']->stat_strength > $fighter_one['character']->stat_magic;
 
 		/*
 		 *	Daños
 		 */
-		$fighter_one['min_damage'] = $fighter_one['stats']['p_damage'] + mt_rand(5, 15);
-		$fighter_one['max_damage'] = $fighter_one['min_damage'] * 1.25 + mt_rand(5, 15);
-		$fighter_one['average_damage'] = ($fighter_one['max_damage'] + $fighter_one['min_damage']) / 2  + mt_rand(5, 15);
+		$fighter_one['min_damage'] = $fighter_one['stats']['p_damage'];
+		$fighter_one['max_damage'] = $fighter_one['stats']['p_damage'] * 1.25;
 
 		/*
 		 *	Defensas
 		 */
 		$fighter_one['max_defense'] = ( $fighter_one['is_warrior'] ) ? $fighter_one['stats']['p_defense'] : $fighter_one['stats']['m_defense'];
-		$fighter_one['max_defense'] = $fighter_one['max_defense'] * 1.25;
+		$fighter_one['max_defense'] = ( $fighter_one['max_defense'] * 1.25 > 0 ) ? $fighter_one['max_defense'] * 1.25 : 0;
 
 		$fighter_one['min_defense'] = ( $fighter_one['is_warrior'] ) ? $fighter_one['stats']['p_defense'] : $fighter_one['stats']['m_defense'];
 		$fighter_one['min_defense'] = $fighter_one['min_defense'] * 0.75;
+		// ----------------------------------------------
+		// FIN PRIMER LUCHADOR
+		// ----------------------------------------------
 
-		$fighter_one['normal_defense'] = ( $fighter_one['is_warrior'] ) ? $fighter_one['stats']['p_defense'] : $fighter_one['stats']['m_defense'];
+		// ----------------------------------------------
+		// SEGUNDO LUCHADOR
+		// ----------------------------------------------
+		$fighter_two['character'] = $target;
+		$fighter_two['is_player'] = $target instanceof Character;
+
+		$fighter_two['stats'] = $fighter_two['character']->get_stats();
+		$fighter_two['character']->current_life += $fighter_two['stats']['stat_life'] * 1.25;
+		$fighter_two['cd'] = (int) (1000 / ($fighter_two['stats']['stat_dexterity']+1));
+		$fighter_two['actual_cd'] = $fighter_two['cd'];
+		$fighter_two['is_warrior'] = $fighter_two['character']->stat_strength > $fighter_two['character']->stat_magic;
 
 		/*
-		 *	Mounstro
+		 *	Daños
 		 */
-		$fighter_two['object'] = $monster;
-		$fighter_two['stats'] = $monster->get_stats();
-		$fighter_two['object']->current_life = $monster->life;
+		$fighter_two['min_damage'] = $fighter_two['stats']['p_damage'];
+		$fighter_two['max_damage'] = $fighter_two['stats']['p_damage'] * 1.25;
 
-		$fighter_two['is_warrior'] = $monster->stat_strength > $monster->stat_magic;
-
-		$fighter_two['min_damage'] = $monster->p_damage + mt_rand(5, 15);
-		$fighter_two['max_damage'] = $fighter_two['min_damage'] * 1.25 + mt_rand(5, 15);
-		$fighter_two['average_damage'] = ($fighter_two['max_damage'] + $fighter_two['min_damage']) / 2 + mt_rand(5, 15);
-
+		/*
+		 *	Defensas
+		 */
 		$fighter_two['max_defense'] = ( $fighter_two['is_warrior'] ) ? $fighter_two['stats']['p_defense'] : $fighter_two['stats']['m_defense'];
-		$fighter_two['max_defense'] = $fighter_two['max_defense'] * 1.25;
+		$fighter_two['max_defense'] = ( $fighter_two['max_defense'] * 1.25 > 0 ) ? $fighter_two['max_defense'] * 1.25 : 0;
 
 		$fighter_two['min_defense'] = ( $fighter_two['is_warrior'] ) ? $fighter_two['stats']['p_defense'] : $fighter_two['stats']['m_defense'];
 		$fighter_two['min_defense'] = $fighter_two['min_defense'] * 0.75;
-
-		$fighter_two['normal_defense'] = ( $fighter_two['is_warrior'] ) ? $fighter_two['stats']['p_defense'] : $fighter_two['stats']['m_defense'];	
-
-		/*
-		 *	Definimos aleatoriamente quién
-		 *	golpeará primero
-		 */
-		$attacker = ( mt_rand( 1, 2) == 1 ) ? $fighter_one : $fighter_two;
-		$defenser = ( $attacker == $fighter_one ) ? $fighter_two : $fighter_one;
+		// ----------------------------------------------
+		// FIN SEGUNDO LUCHADOR
+		// ----------------------------------------------
 
 		$messages = array(
-			'<b>%1$s</b> logra asestar un gran golpe a <b>%2$s</b>. <b>%2$s</b> no puede evitar soltar un pequeño alarido',
-			'<b>%1$s</b> golpea con majestuocidad a <b>%2$s</b>. <b>%2$s</b> se queja',
-			'<b>%1$s</b> lanza un feroz ataque a <b>%2$s</b> que sufre algunas heridas',
-			'<b>%1$s</b> ataca salvajemente a <b>%2$s</b> que sufre dolorosas heridas',
-			'<b>%1$s</b> se mueve ágil y velozmente hacia <b>%2$s</b> para propinarle un gran golpe',
-			'<b>%2$s</b> se ve algo cansado, intenta esquivar pero el ataque <b>%1$s</b> lo alcanza',
+			'%1$s logra asestar un gran golpe a %2$s. %2$s no puede evitar soltar un pequeño alarido',
+			'%1$s golpea con majestuocidad a %2$s. %2$s se queja',
+			'%1$s lanza un feroz ataque a %2$s que sufre algunas heridas',
+			'%1$s ataca salvajemente a %2$s que sufre dolorosas heridas',
+			'%1$s se mueve ágil y velozmente hacia %2$s para propinarle un gran golpe',
+			'%2$s se ve algo cansado, intenta esquivar pero el ataque %1$s lo alcanza',
 		);
 
 		/*
@@ -240,35 +295,49 @@ class Character extends Base_Model
 		 */
 		$message = '';
 
-		while ( $fighter_two['object']->current_life > 0 && $fighter_two['object']->current_life > 0 )
-		{
+		/*
+		 *	Mientras los personajes que están
+		 *	peleando tengan vida...
+		 */
+		while ( $fighter_one['character']->current_life > 0 && $fighter_two['character']->current_life > 0 )
+		{			
+			// restamos cd en caso de haberlo
+			if ( $fighter_one['actual_cd'] > $fighter_two['actual_cd'] )
+			{
+				$attacker = $fighter_two;
+				$defenser = $fighter_one;
+
+				$fighter_two['actual_cd'] += $fighter_two['cd'];
+			}
+			else
+			{
+				$attacker = $fighter_one;
+				$defenser = $fighter_two;
+
+				$fighter_one['actual_cd'] += $fighter_one['cd'];
+			}
+
 			// ----------------------------------------------
 			// CALCULAMOS EL DAÑO
 			// ----------------------------------------------
 
-			/*
-			 *	Si tiene suerte, entonces
-			 *	el daño será el máximo posible
-			 */
-			$damage = ( mt_rand( 0, 100) <= $attacker['stats']['stat_luck'] / 2 ) ? $attacker['max_damage'] : false;
+			$attacker['average_damage'] = mt_rand($attacker['min_damage'], $attacker['max_damage']);
 
-			/*
-			 *	Si damage está en false
-			 *	entonces trataremos de buscar 
-			 *	el siguiente daño (average)
-			 */
-			$damage = ( ! $damage && mt_rand( 0, 100) <= $attacker['stats']['stat_luck'] ) ? $attacker['average_damage'] : false;
-			
-			/*
-			 *	Verificamos si tuvo suerte
-			 *	con alguno de los daños anteriores
-			 */
-			if ( ! $damage )
+			if ( $attacker['is_warrior'] && mt_rand(0, 100) <= $attacker['stats']['stat_luck'] * 0.35 )
 			{
-				/*
-				 *	Si no tuvo, entonces daño mínimo
-				 */
-				$damage = $attacker['min_damage'];
+				$damage = $attacker['average_damage'] * 1.75;
+			}
+			elseif ( ! $attacker['is_warrior'] && mt_rand(0, 100) <= $attacker['stats']['stat_luck'] * 0.25 )
+			{
+				$damage = $attacker['average_damage'] * 2.75;
+			}
+			elseif ( mt_rand(0, 100) <= 10 )
+			{
+				$damage = $attacker['average_damage'] * 0.75;
+			}
+			else
+			{
+				$damage = $attacker['average_damage'];
 			}
 
 			// ----------------------------------------------
@@ -279,26 +348,18 @@ class Character extends Base_Model
 			// CALCULAMOS EFECTO DEFENSA
 			// ----------------------------------------------
 
-			/*
-			 *	Si tiene suerte, entonces
-			 *	será la máxima defensa
-			 */
-			$defense = ( mt_rand( 0, 100) <= $defenser['stats']['stat_luck'] ) ? $defenser['max_defense'] : false;
+			$defenser['normal_defense'] = mt_rand($defenser['min_defense'], $defenser['max_defense']);
 
-			/*
-			 *	Si tiene mala suerte
-			 *	la defensa será la menor
-			 */
-			$defense = ( ! $defense && mt_rand( 0, 100) <= $defenser['stats']['stat_luck'] / 2 ) ? $defenser['min_defense'] : false;
-			
-			/*
-			 *	Si no hay defensa...
-			 */
-			if ( ! $defense )
+			if ( mt_rand(0, 100) <= $defenser['stats']['stat_luck'] * 0.30 )
 			{
-				/*
-				 *	Defenderá normal
-				 */
+				$defense = $defenser['normal_defense'] * 1.75;
+			}
+			elseif ( mt_rand(0, 100) <= 10 )
+			{
+				$defense = $defenser['normal_defense'] * 0.75;
+			}
+			else
+			{
 				$defense = $defenser['normal_defense'];
 			}
 
@@ -310,12 +371,12 @@ class Character extends Base_Model
 			// VALOR DE IMPACTO
 			// ----------------------------------------------
 			
-			/*
-			 *	Evitamos el error division by zero
-			 */
-			$normal_defense = ( $defenser['normal_defense'] == 0 ) ? 1 : $defenser['normal_defense'];
-			$real_damage = $damage - (($attacker['min_damage'] / 2) * $defense / $normal_defense) / 100;
-			$real_damage = round($real_damage, 2);
+			$realDamage = $damage - ($defense * 0.4);
+
+			if ( $realDamage <= 0 )
+			{
+				$realDamage = 1;
+			}
 
 			// ----------------------------------------------
 			// FIN VALOR DE IMPACTO
@@ -324,66 +385,145 @@ class Character extends Base_Model
 			/*
 			 *	Golpeamos
 			 */
-			$defenser['object']->current_life -= $real_damage;
-
-			// agregamos cd
-			//$attacker['actual_cd'] = $attacker['cd'];
+			$defenser['character']->current_life -= $realDamage;
 
 			/*
 			 *	Registramos el movimiento
 			 */
-			$message .= sprintf($messages[mt_rand(0, 5)], $attacker['object']->name, $defenser['object']->name) . ' (daño: '. $real_damage .', defendido: '. round($damage-$real_damage, 2) .')<br>';
-
-			
-			/* 
-			 *	Se invierten los papeles, 
-			 *	ahora el defensor pasa a ser 
-			 *	el atacante y el atacante el defensor
-			 */
-			$tmp = $attacker;
-			
-			$attacker = $defenser;
-			$defenser = $tmp;
+			$message .= '<li>' . sprintf($messages[mt_rand(0, 5)], $attacker['character']->name, $defenser['character']->name) . ' (daño: '. $realDamage .', defendido: '. ($damage-$realDamage) .')</li>';
 		}
+
+		$message = '<ul class="unstyled">' . $message . '</ul>';
 
 		$winner = null;
 
 		/*
 		 *	Vemos quién es el ganador
 		 */
-		if ( $fighter_one['object']->current_life > 0 )
+		if ( $fighter_one['character']->current_life > 0 )
 		{
 			$winner = $fighter_one;
 		}
 
-		if ( $fighter_two['object']->current_life > 0 )
+		if ( $fighter_two['character']->current_life > 0 )
 		{
 			$winner = $fighter_two;
 		}
 
-		if ( $winner )
+		/*
+		 *	Aumentamos los puntos de pvp
+		 *	del ganador
+		 */
+		if ( $fighter_one['is_player'] && $fighter_two['is_player'] )
 		{
-			$winner = $winner['object'];
+			$winner['character']->pvp_points++;
 		}
 
 		/*
 		 *	Volvemos la vida a la normalidad
 		 *	(sacando el bonus que da el atributo life)
 		 */
-		$fighter_one['object']->current_life -= $fighter_one['stats']['stat_life'] * 1.25;
+		$fighter_one['character']->current_life -= $fighter_one['stats']['stat_life'] * 1.25;
+
+		if ( $fighter_two['is_player'] )
+		{
+			$fighter_two['character']->current_life -= $fighter_two['stats']['stat_life'] * 1.25;
+		}
 
 		/*
 		 *	Evitamos que tengan vida por debajo de 0
 		 */
-		if ( $fighter_one['object']->current_life <= 0 )
+		if ( $fighter_one['character']->current_life <= 0 )
 		{
-			$fighter_one['object']->current_life = 1;
+			$fighter_one['character']->current_life = 1;
 		}
-		$fighter_one['object']->save();
 
-		Event::fire('pveBattle', array($this, $monster, $winner));
+		if ( $fighter_two['is_player'] && $fighter_two['character']->current_life <= 0 )
+		{
+			$fighter_two['character']->current_life = 1;
+		}
 
-		Message::exploration_finished($this, $monster, $message, $winner);
+		/*
+		 *	¡Experiencia!
+		 */
+		$fighter_one['character']->xp += 3 * Config::get('game.xp_rate');
+
+		if ( $fighter_two['is_player'] )
+		{
+			$fighter_two['character']->xp += 3 * Config::get('game.xp_rate');
+		}
+
+		/*
+		 *	El ganador obtiene mas
+		 */
+		if ( $winner['is_player'] )
+		{
+			$winner['character']->xp += 2 * Config::get('game.xp_rate');;
+
+			/*
+			 *	Cobre al ganador
+			 */
+			$winnerCoins = $winner['character']->get_coins();
+			if ( $winnerCoins )
+			{
+				$winnerCoins->count += 5 * Config::get('game.coins_rate');
+			}
+			else
+			{
+				$winnerCoins = new CharacterItem();
+
+				$winnerCoins->item_id = Config::get('game.coin_id');
+				$winnerCoins->owner_id = $winner['character']->id;
+				$winnerCoins->count = 5 * Config::get('game.coins_rate');
+				$winnerCoins->location = 'none';
+			}
+			$winnerCoins->save();
+		}
+
+		/*
+		 *	Notificamos al atacado
+		 */
+		if ( $fighter_two['is_player'] )
+		{
+			Message::attack_report($fighter_two['character'], $fighter_one['character'], $message, $winner['character']);
+		}
+		else
+		{
+			Message::exploration_finished($fighter_one['character'], $fighter_two['character'], $message, $winner['character']);
+		}
+
+		/*
+		 *	Guardamos
+		 */
+		$fighter_one['character']->save();
+
+		if ( $fighter_two['is_player'] )
+		{
+			$fighter_two['character']->save();
+		}
+
+		/*
+		 *	Agregamos tiempo de descanzo
+		 *	luego de la batalla
+		 */
+		if ( $fighter_two['is_player'] )
+		{
+			$this->after_battle();
+		}
+
+		/*
+		 *	Disparamos el evento de batalla
+		 */	
+		if ( $fighter_two['is_player'] )
+		{
+			Event::fire('battle', array($fighter_one['character'], $fighter_two['character']));
+		}
+		else
+		{
+			Event::fire('pveBattle', array($fighter_one['character'], $fighter_two['character'], $winner['character']));
+		}
+
+		return array('winner' => $winner['character'], 'message' => $message);
 	}
 
 	public function give_explore_reward($reward)
@@ -561,7 +701,7 @@ class Character extends Base_Model
 	 */
 	public function get_coins()
 	{
-		return $this->items()->where('item_id', '=', Config::get('game.coin_id'))->first();
+		return $this->items()->select(array('id', 'count'))->where('item_id', '=', Config::get('game.coin_id'))->first();
 	}
 
 	/**
@@ -638,7 +778,7 @@ class Character extends Base_Model
 
 	public function add_exploring_time(Zone $zone, $time)
 	{
-		$characterExploringTime = $this->exploring_times()->where('zone_id', '=', $zone->id)->first();
+		$characterExploringTime = $this->exploring_times()->select(array('id', 'time'))->where('zone_id', '=', $zone->id)->first();
 
 		if ( $characterExploringTime )
 		{

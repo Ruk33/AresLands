@@ -9,12 +9,15 @@ class Clan extends Base_Model
 
 	protected $rules = array(
 		'name' => 'required|between:3,35|unique:clans',
+		'message' => 'between:0,1000',
 	);
 
 	protected $messages = array(
 		'name_required' => 'El nombre es requerido',
 		'name_between' => 'El nombre debe tener entre 3 y 35 carácteres',
 		'name_unique' => 'Ya hay un grupo con ese nombre',
+
+		'message_between' => 'El mensaje del grupo puede tener hasta 1000 caracteres',
 	);
 
 	public function get_members()

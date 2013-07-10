@@ -116,7 +116,7 @@
 			</li>
 
 			<li style="margin-bottom: 5px;" ng-init="stats['stat_life']='{{ $character->stat_life }}'">
-				<span data-toggle="tooltip" data-placement="right" data-original-title="<b>Vitalidad:</b> Aumenta los puntos de vida que el personaje posee y la regeneración de los mismos.">
+				<span data-toggle="tooltip" data-placement="right" data-original-title="<b>Vitalidad:</b> Aumenta los puntos de vida que posees y la regeneración de los mismos.">
 					<a ng-click="addStat('stat_life')" ng-show="remainingPoints>0" class="btn btn-mini btn-primary">+</a>
 					<b>Vitalidad:</b> [[ stats['stat_life'] ]]
 
@@ -130,7 +130,7 @@
 				</span>
 			</li>
 			<li style="margin-bottom: 5px;" ng-init="stats['stat_dexterity']='{{ $character->stat_dexterity }}'">
-				<span data-toggle="tooltip" data-placement="right" data-original-title="<b>Destreza:</b> Aumenta la precisión de los ataques, aumentando así la probabilidad de asestar ya sea un golpe físico o mágico.">
+				<span data-toggle="tooltip" data-placement="right" data-original-title="<b>Destreza:</b> Aumenta tu velocidad de golpeo en las batallas, pudiendo lograr así múltiples ataques consecutivos.">
 					<a ng-click="addStat('stat_dexterity')" ng-show="remainingPoints>0" class="btn btn-mini btn-primary">+</a>
 					<b>Destreza:</b> [[ stats['stat_dexterity'] ]]
 
@@ -172,7 +172,7 @@
 				</span>
 			</li>
 			<li style="margin-bottom: 5px;" ng-init="stats['stat_luck']='{{ $character->stat_luck }}'">
-				<span data-toggle="tooltip" data-placement="right" data-original-title="<b>Suerte:</b> Aumenta la probabilidad de asestar un golpe crítico, ya sea mágico o físico. Además, aumenta las recompensas y la probabilidad de obtener un objetos raros.">
+				<span data-toggle="tooltip" data-placement="right" data-original-title="<b>Suerte:</b> Aumenta la probabilidad de asestar un golpe crítico, ya sea mágico o físico.">
 					<a ng-click="addStat('stat_luck')" ng-show="remainingPoints>0" class="btn btn-mini btn-primary">+</a>
 					<b>Suerte:</b> [[ stats['stat_luck'] ]]
 

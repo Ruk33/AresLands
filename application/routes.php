@@ -322,8 +322,16 @@ Route::filter('before', function() {
 
 		if ( $character )
 		{
-			$character->last_activity_time = time();
-			$character->save();
+			$time = time();
+
+			/*
+			 *	Actualizamos solamente si hay una diferencia de un minuto
+			 */
+			if ( $character->last_activity_time - $time > 60 )
+			{
+				$character->last_activity_time = $time;
+				$character->save();
+			}
 
 			/*
 			 *	Verificamos si es necesario
@@ -331,7 +339,6 @@ Route::filter('before', function() {
 			 */
 			if ( $character->current_life != $character->max_life )
 			{
-				$time = time();
 				$regeneration = (0.05 + $character->stat_life * 0.01) * ($time - $character->last_regeneration_time);
 				
 				if ( $regeneration > 0 )
@@ -374,7 +381,7 @@ Route::filter('before', function() {
 			 *	Además vamos a actualizar tiempos
 			 *	de sus actividades
 			 */
-			$characterActivities = $character->activities()->get();
+			$characterActivities = $character->activities()->where('end_time', '<=', $time)->get();
 
 			foreach ( $characterActivities as $characterActivity )
 			{
@@ -384,11 +391,13 @@ Route::filter('before', function() {
 			/*
 			 *	Y de sus habilidades
 			 */
-			$characterSkills = $character->skills()->select(array('id', 'end_time'))->get();
+			$characterSkills = $character->skills()->select(array('id'))->where('end_time', '<>', 0)->where('end_time', '<=', $time)->delete();
+			/*
 			foreach ( $characterSkills as $characterSkill )
 			{
 				$characterSkill->update_time();
 			}
+			*/
 
 			/*
 			 *	Verificamos si tiene que pelear
@@ -396,20 +405,11 @@ Route::filter('before', function() {
 			 */
 			if ( Session::has('monster_id') )
 			{
-				$character->battle_against_monster(Npc::find(Session::get('monster_id')));
+				$character->battle_against(Npc::find(Session::get('monster_id')));
 				Session::forget('monster_id');
 			}
-
-			/*
-			 *	Lo se, shity, pero necesario puesto
-			 *	que si lo anterior llega a actualizar
-			 *	algo, la variable de session no se actualiza
-			 */
-			//$character = Character::get_character_of_logged_user();
 		}
 	}
-
-	//Session::put('character', $character);
 });
 
 Route::filter('csrf', function()
@@ -432,7 +432,7 @@ Route::filter('auth', function($redirectTo = 'home/index')
  *	Logueado
  */
 Route::filter('logged', function($redirectTo) {
-	if (Auth::check()) 
+	if ( Auth::check() ) 
 	{
 		return Redirect::to($redirectTo);
 	}
@@ -443,8 +443,7 @@ Route::filter('logged', function($redirectTo) {
  */
 Route::filter('hasNoCharacter', function($redirectTo = 'charactercreation/race')
 {
-	//if ( is_null(Session::get('character')) ) 
-	if ( ! Character::get_character_of_logged_user(array('id')) ) 
+	if ( ! Character::logged_user_has_character() ) 
 	{
 		return Redirect::to($redirectTo);
 	}
@@ -455,8 +454,7 @@ Route::filter('hasNoCharacter', function($redirectTo = 'charactercreation/race')
  */
 Route::filter('hasCharacter', function($redirectTo = 'home/index')
 {
-	//if ( ! is_null(Session::get('character')) ) 
-	if ( Character::get_character_of_logged_user(array('id')) )
+	if ( Character::logged_user_has_character() )
 	{
 		return Redirect::to($redirectTo);
 	}

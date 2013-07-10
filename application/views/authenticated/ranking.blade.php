@@ -12,7 +12,7 @@
 		</thead>
 
 		<tbody>
-			<?php $index = $characters->page; ?>
+			<?php $index = 1 + $characters->page * $characters->per_page - $characters->per_page; ?>
 			@foreach ( $characters->results as $character )
 			<tr>
 				<td>{{ $index++ }}</td>

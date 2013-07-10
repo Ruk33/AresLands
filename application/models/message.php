@@ -31,11 +31,14 @@ class Message extends Base_Model
 	{
 		$message = new Message();
 
-		$message->sender_id = $receiver->id;
+		$message->sender_id = $attacker->id;
 		$message->receiver_id = $receiver->id;
 
 		$message->subject = '¡Te han atacado!';
-		$message->content = '<p>El jugador ' . $attacker->name . ' te ha atacado. El ganador ha sido ' . $winner->name . '</p><p>Dessarrollo de la pelea:</p><p>' . $battleMessage . '</p>';
+		$message->content = '<p>El jugador ' . $attacker->get_link() . ' te ha atacado.</p>' .
+		'<p>El ganador ha sido ' . $winner->get_link() . '</p>' . 
+		'<p>Dessarrollo de la pelea:</p>' .
+		'<p>' . $battleMessage . '</p>';
 
 		$message->unread = true;
 		$message->date = time();

@@ -1,6 +1,6 @@
 var CharacterStatsController = function($scope, $http, $timeout) {
 	$scope.remainingPoints = 0;
-	$scope.maxLife = 0;
+	$scope.maxLife = 1;
 	$scope.currentLife = 0;
 	$scope.stats = {
 		'stat_life': 0,
@@ -11,18 +11,21 @@ var CharacterStatsController = function($scope, $http, $timeout) {
 	};
 
 	var regenerationPerSecond = function() {
-		if ( $scope.currentLife > $scope.maxLife )
-		{
-			$scope.currentLife = $scope.maxLife
-		}
-		
 		if ( $scope.currentLife != $scope.maxLife )
 		{
 			$scope.currentLife = +$scope.currentLife + (0.05 + parseInt($scope.stats['stat_life']) * 0.01);
 			$scope.currentLife = $scope.currentLife.toFixed(2);
+
+			if ( $scope.currentLife > $scope.maxLife )
+			{
+				$scope.currentLife = $scope.maxLife;
+			}
+			else
+			{
+        		$timeout(regenerationPerSecond, 1000);
+			}
 		}
 
-        $timeout(regenerationPerSecond, 1000);
 	};
 
 	regenerationPerSecond();

@@ -1,6 +1,6 @@
 <h2>{{{ $clan->name }}}</h2>
 
-<div class="span11">
+<div class="span11" ng-controller="ViewClanController">
 	@if ( Session::has('errorMessage') )
 		<div class="alert alert-error">
 			<a class="close" data-dismiss="alert" href="#">&times;</a>
@@ -73,6 +73,13 @@
 
 		<tbody>
 	</table>
+
+	<h2>Mensaje</h2>
+	@if ( $character->id == $clan->leader_id )
+		<p id="message" name="message" contenteditable="true" alt="" data-toggle="tooltip" data-placement="top" data-original-title="Haz clic para editar">{{{ $clan->message }}}</p>
+	@else
+		<p id="message" name="message">{{{ $clan->message }}}</p>
+	@endif
 	
 	<h2>Miembros</h2>
 
@@ -105,3 +112,18 @@
 		<a href="{{ URL::to('authenticated/leaveFromClan') }}">Salir del grupo</a>
 	@endif
 </div>
+
+<script type="text/javascript" src="{{ URL::base() }}/js/libs/ckeditor/ckeditor.js"></script>
+<script type="text/javascript" src="{{ URL::base() }}/js/bbcode-parser.js"></script>
+<script type="text/javascript" src="{{ URL::base() }}/js/controllers/ViewClanController.js"></script>
+<script type="text/javascript">
+	$(document).ready(function() {
+		var result = XBBCODE.process({
+			text: $.trim($('#message').html()),
+			removeMisalignedTags: false,
+			addInLineBreaks: true
+		});
+
+		$('#message').html(result.html);
+	});
+</script>
