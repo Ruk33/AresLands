@@ -14,18 +14,27 @@
 		<link rel="stylesheet" href="{{ URL::base() }}/css/bootstrap.min.css">
 		<link rel="stylesheet" href="{{ URL::base() }}/css/main.css">
 
-		<script src="{{ URL::base() }}/js/vendor/jquery-1.9.1.min.js"></script>
-		<script src="{{ URL::base() }}/js/vendor/bootstrap.min.js"></script>
 		<script src="{{ URL::base() }}/js/vendor/angular.min.js"></script>
 
+		<!--
+		<script src="{{ URL::base() }}/js/app.js"></script>
+		<script src="{{ URL::base() }}/js/services.js"></script>
+		<script src="{{ URL::base() }}/js/controllers.js"></script>
+		<script src="{{ URL::base() }}/js/filters.js"></script>
+		-->
+
+		<!--<script src="{{ URL::base() }}/js/vendor/ui-bootstrap-custom-0.4.0.min.js"></script>-->
+		<script src="{{ URL::base() }}/js/vendor/jquery-1.9.1.min.js"></script>
+		<script src="{{ URL::base() }}/js/vendor/bootstrap.min.js"></script>
+
 		<script>
-			angular.module('areslands', [], function($interpolateProvider) {
-				$interpolateProvider.startSymbol('[[');
-				$interpolateProvider.endSymbol(']]');
-			});
+		angular.module('areslands', [], function($interpolateProvider) {
+			$interpolateProvider.startSymbol('[[');
+			$interpolateProvider.endSymbol(']]');
+		});
 		</script>
 	</head>
-	<body ng-init="basePath='{{ URL::base() }}'">
+	<body ng-init="basePath='{{ URL::base() }}/'">
 		<!--[if lt IE 7]>
 			<p class="chromeframe">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> or <a href="http://www.google.com/chromeframe/?redirect=true">activate Google Chrome Frame</a> to improve your experience.</p>
 		<![endif]-->

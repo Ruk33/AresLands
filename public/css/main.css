@@ -170,19 +170,20 @@ h4 {
 }
 
 .equipped-item {
-	background-image: url('/img/icons/items/empty.png');
+	background-image: url('/img/icons/empty-80.png');
 	background-repeat: no-repeat;
-	width: 94px;
-	height: 128px;
+	width: 80px;
+	height: 80px;
 	text-align: center;
 }
 
 .inventory-item {
 	position: relative;
-	background-image: url('/img/icons/inventory/empty.png');
+	background-image: url('/img/icons/empty-80.png');
+	zoom: 0.9;
 	background-repeat: no-repeat;
-	width: 66px;
-	height: 66px;
+	width: 80px;
+	height: 80px;
 	text-align: center;
 }
 

@@ -17,6 +17,11 @@ class Item extends Base_Model
 		 *	skill_id-skill_level
 		 *	Ej.: 2-1 (guardamos el skill con el id 2 y su nivel 1)
 		 */
+		if ( $this->skill == 0 )
+		{
+			return array();
+		}
+
 		$skillsPattern = explode(';', $this->skill);
 		$skills = array();
 		$skillId;
@@ -43,16 +48,6 @@ class Item extends Base_Model
 		$message .= "<p style='width: 210px;'><em>$this->description</em></p>";
 
 		$message .= '<ul>';
-
-		if ( $this->p_damage != 0 )
-		{
-			$message .= "<li><b>Daño físico:</b> $this->p_damage</li>";
-		}
-
-		if ( $this->m_damage != 0 )
-		{
-			$message .= "<li><b>Daño mágico:</b> $this->m_damage</li>";
-		}
 
 		if ( $this->p_defense != 0 )
 		{

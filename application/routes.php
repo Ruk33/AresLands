@@ -9,6 +9,7 @@
 Route::controller('Authenticated');
 Route::controller('CharacterCreation');
 Route::controller('Home');
+Route::controller('Item');
 
 
 /*
@@ -16,6 +17,24 @@ Route::controller('Home');
 | Application Events
 |--------------------------------------------------------------------------
 */
+
+Event::listen('npcTalk', function(Character $character, Npc $npc)
+{
+	/*
+	 *	No nos olvidamos de trabajar con los
+	 *	triggers que tengan de evento 'npcTalk'
+	 */
+	$characterTriggers = $character->triggers()->where('event', '=', 'npcTalk')->select(array('class_name'))->get();
+	$className = null;
+
+	foreach ($characterTriggers as $characterTrigger) {
+		$className = $characterTrigger->class_name;
+		if ( $className::onNpcTalk($character, $npc) )
+		{
+			$characterTrigger->delete();
+		}
+	}
+});
 
 Event::listen('acceptQuest', function(Character $character, Quest $quest)
 {

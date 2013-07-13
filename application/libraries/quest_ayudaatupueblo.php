@@ -2,8 +2,8 @@
 
 class Quest_AyudaATuPueblo
 {
-	const QUEST_ID = 8;
-	public static $monstersId = array(3,4,5,6);
+	const QUEST_ID = 2;
+	public static $monstersId = array(9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20);
 
 	public static function onAcceptQuest(Character $character, Quest $quest)
 	{

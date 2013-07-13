@@ -234,7 +234,7 @@
 		@if ( isset($items['inventory']) )
 			@foreach ( $items['inventory'] as $characterItem )
 				@if ( $characterItem->slot == $i && $item = $characterItem->item )
-					<img style="cursor: pointer;" src="{{ URL::base() }}/img/icons/inventory/items/{{ $characterItem->item_id }}.png" alt="" data-toggle="popover" data-placement="top" data-original-title="
+					<img style="cursor: pointer;" src="{{ URL::base() }}/img/icons/items/{{ $characterItem->item_id }}.png" alt="" data-toggle="popover" data-placement="top" data-original-title="
 					{{ $item->get_text_for_tooltip() }}
 
 					<div style='padding: 20px;'>

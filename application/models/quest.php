@@ -177,33 +177,41 @@ class Quest extends Base_Model
 			 *	Si lo tiene, y el mismo puede
 			 *	ser acumulado...
 			 */
-			if ( $characterItem && $characterItem->item()->select(array('stackable'))->first()->stackable )
+			if ( $characterItem )
 			{
-				/*
-				 *	Solamente aumentamos la cantidad
-				 */
-				$characterItem->count += $reward['amount'];
-			}
-			else
-			{
-				/*
-				 *	Aparentemente el personaje
-				 *	no tiene uno de estos objetos
-				 *	o el mismo no se puede acumular
-				 */
-				$characterItem = new CharacterItem();
+				$item = $characterItem->item()->select(array('stackable'))->first();
 
-				$characterItem->owner_id = $character->id;
-				$characterItem->item_id = $reward['item_id'];
-				$characterItem->count = $reward['amount'];
-				$characterItem->location = 'inventory';
-				$characterItem->slot = $characterItem->get_empty_slot();
-			}
+				if ( $item )
+				{
+					if ( $item->stackable )
+					{
+						/*
+						 *	Solamente aumentamos la cantidad
+						 */
+						$characterItem->count += $reward['amount'];
+					}
+					else
+					{
+						/*
+						 *	Aparentemente el personaje
+						 *	no tiene uno de estos objetos
+						 *	o el mismo no se puede acumular
+						 */
+						$characterItem = new CharacterItem();
 
-			/*
-			 *	¡Guardamos!
-			 */
-			$characterItem->save();
+						$characterItem->owner_id = $character->id;
+						$characterItem->item_id = $reward['item_id'];
+						$characterItem->count = $reward['amount'];
+						$characterItem->location = 'inventory';
+						$characterItem->slot = $characterItem->get_empty_slot();
+					}
+
+					/*
+					 *	¡Guardamos!
+					 */
+					$characterItem->save();
+				}
+			}
 		}
 	}
 

@@ -229,7 +229,7 @@ class Character extends Base_Model
 		$fighter_one['stats'] = $fighter_one['character']->get_stats();
 		$fighter_one['character']->current_life += $fighter_one['stats']['stat_life'] * 1.25;
 		$fighter_one['cd'] = (1000 / ($fighter_one['stats']['stat_dexterity']+1))+1;
-		$fighter_one['actual_cd'] = $fighter_one['cd'];
+		$fighter_one['character']->current_cd = $fighter_one['cd'];
 		$fighter_one['is_warrior'] = $fighter_one['character']->stat_strength > $fighter_one['character']->stat_magic;
 
 		/*
@@ -268,7 +268,7 @@ class Character extends Base_Model
 		}
 
 		$fighter_two['cd'] = (1000 / ($fighter_two['stats']['stat_dexterity']+1))+1;
-		$fighter_two['actual_cd'] = $fighter_two['cd'];
+		$fighter_two['character']->current_cd = $fighter_two['cd'];
 		$fighter_two['is_warrior'] = $fighter_two['character']->stat_strength > $fighter_two['character']->stat_magic;
 
 		/*
@@ -313,7 +313,7 @@ class Character extends Base_Model
 		 */
 		while ( $fighter_one['character']->current_life > 0 && $fighter_two['character']->current_life > 0 )
 		{			
-			if ( $fighter_one['actual_cd'] < $fighter_two['actual_cd'] )
+			if ( $fighter_one['character']->current_cd <= $fighter_two['character']->current_cd )
 			{
 				$attacker = $fighter_one;
 				$defenser = $fighter_two;
@@ -324,7 +324,7 @@ class Character extends Base_Model
 				$defenser = $fighter_one;
 			}
 
-			$attacker['actual_cd'] += $attacker['cd'];
+			$attacker['character']->current_cd += $attacker['cd'];
 
 			// ----------------------------------------------
 			// CALCULAMOS EL DAÑO
@@ -402,6 +402,9 @@ class Character extends Base_Model
 			$message .= '<li>' . sprintf($messages[mt_rand(0, 5)], $attacker['character']->name, $defenser['character']->name) . ' (daño: '. $realDamage .', defendido: '. ($damage-$realDamage) .')</li>';
 		}
 
+		unset($fighter_one['character']->current_cd);
+		unset($fighter_two['character']->current_cd);
+
 		$message = '<ul class="unstyled">' . $message . '</ul>';
 
 		$winner = null;
@@ -455,11 +458,25 @@ class Character extends Base_Model
 		/*
 		 *	¡Experiencia!
 		 */
-		$fighter_one['character']->xp += 3 * Config::get('game.xp_rate');
 
 		if ( $fighter_two['is_player'] )
 		{
+			$fighter_one['character']->xp += 3 * Config::get('game.xp_rate');
 			$fighter_two['character']->xp += 3 * Config::get('game.xp_rate');
+		}
+		else
+		{
+			$fighter_one['character']->xp += $target->xp * Config::get('game.xp_rate');
+		}
+
+		/*
+		 *	Guardamos
+		 */
+		$fighter_one['character']->save();
+
+		if ( $fighter_two['is_player'] )
+		{
+			$fighter_two['character']->save();
 		}
 
 		/*
@@ -499,16 +516,6 @@ class Character extends Base_Model
 		else
 		{
 			Message::exploration_finished($fighter_one['character'], $fighter_two['character'], $message, $winner['character']);
-		}
-
-		/*
-		 *	Guardamos
-		 */
-		$fighter_one['character']->save();
-
-		if ( $fighter_two['is_player'] )
-		{
-			$fighter_two['character']->save();
 		}
 
 		/*
@@ -568,9 +575,6 @@ class Character extends Base_Model
 		$positive_stats = $this->get_bonifications(true);
 		$negative_stats = $this->get_bonifications(false);
 
-		$stats['p_damage'] = $positive_stats['p_damage'] - $negative_stats['p_damage'];
-		$stats['m_damage'] = $positive_stats['m_damage'] - $negative_stats['m_damage'];
-
 		$stats['p_defense'] = $positive_stats['p_defense'] - $negative_stats['p_defense'];
 		$stats['m_defense'] = $positive_stats['m_defense'] - $negative_stats['m_defense'];
 
@@ -597,9 +601,6 @@ class Character extends Base_Model
 
 		$bonification = array();
 
-		$bonification['p_damage'] = 0;
-		$bonification['m_damage'] = 0;
-
 		$bonification['p_defense'] = 0;
 		$bonification['m_defense'] = 0;
 
@@ -613,13 +614,11 @@ class Character extends Base_Model
 		 *	Obtenemos todos los objetos
 		 *	que no estén en inventario por supuesto
 		 */
-		$characterItems = $this->items()->select(array('item_id'))->where('location', '<>', 'inventory')->get();
+		$characterItems = $this->items()->select(array('item_id'))->where_not_in('location', array('inventory', 'none'))->get();
 
 		foreach ( $characterItems as $characterItem )
 		{
 			$item = $characterItem->item()->select(array(
-				'p_damage', 
-				'm_damage', 
 				'm_defense', 
 				'p_defense', 
 				'stat_life', 
@@ -631,9 +630,6 @@ class Character extends Base_Model
 
 			if ( $positive )
 			{
-				$bonification['p_damage']		+= ( $item->p_damage > 0 )			? $item->p_damage : 0;
-				$bonification['m_damage']		+= ( $item->m_damage > 0 )			? $item->m_damage : 0;
-
 				$bonification['p_defense']		+= ( $item->p_defense > 0 )			? $item->p_defense : 0;
 				$bonification['m_defense']		+= ( $item->m_defense > 0 )			? $item->m_defense : 0;
 
@@ -645,9 +641,6 @@ class Character extends Base_Model
 			}
 			else
 			{
-				$bonification['p_damage']		+= ( $item->p_damage < 0 )			? -$item->p_damage : 0;
-				$bonification['m_damage']		+= ( $item->m_damage < 0 )			? -$item->m_damage : 0;
-
 				$bonification['p_defense']		+= ( $item->p_defense < 0 )			? -$item->p_defense : 0;
 				$bonification['m_defense']		+= ( $item->m_defense < 0 )			? -$item->m_defense : 0;
 
@@ -671,9 +664,6 @@ class Character extends Base_Model
 
 			if ( $positive )
 			{
-				$bonification['p_damage']		+= ( isset($skill['p_damage']) && $skill['p_damage'] > 0 )				? $skill['p_damage'] * $characterSkill->amount : 0;
-				$bonification['m_damage']		+= ( isset($skill['m_damage']) && $skill['m_damage'] > 0 )				? $skill['m_damage'] * $characterSkill->amount : 0;
-
 				$bonification['p_defense']		+= ( isset($skill['p_defense']) && $skill['p_defense'] > 0 )			? $skill['p_defense'] * $characterSkill->amount : 0;
 				$bonification['m_defense']		+= ( isset($skill['m_defense']) && $skill['m_defense'] > 0 )			? $skill['m_defense'] * $characterSkill->amount : 0;
 
@@ -685,9 +675,6 @@ class Character extends Base_Model
 			}
 			else
 			{
-				$bonification['p_damage']		+= ( isset($skill['p_damage']) && $skill['p_damage'] < 0 )				? -$skill['p_damage'] * $characterSkill->amount : 0;
-				$bonification['m_damage']		+= ( isset($skill['m_damage']) && $skill['m_damage'] < 0 )				? -$skill['m_damage'] * $characterSkill->amount : 0;
-
 				$bonification['p_defense']		+= ( isset($skill['p_defense']) && $skill['p_defense'] < 0 )			? -$skill['p_defense'] * $characterSkill->amount : 0;
 				$bonification['m_defense']		+= ( isset($skill['m_defense']) && $skill['m_defense'] < 0 )			? -$skill['m_defense'] * $characterSkill->amount : 0;
 

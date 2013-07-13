@@ -28,13 +28,19 @@ class CharacterModel extends PHPUnit_Framework_TestCase {
 		}
 	}
 
+	public function testDespuesDeBatallaRevisarActividad()
+	{
+		// solamente debería tener la de descanzando de batalla
+		$this->assertEquals(count($this->character->activities()), 1);
+	}
+
 	public function testEquiparArma()
 	{
 		// comprobamos que no tenga arma
 		$this->assertEquals(null, $this->character->get_equipped_weapon());
 
 		// arma a equipar
-		$weapon = $this->character->items()->find(8);
+		$weapon = $this->character->items()->find(2);
 		// equipamos
 		$this->character->equip_item($weapon);
 
@@ -60,7 +66,7 @@ class CharacterModel extends PHPUnit_Framework_TestCase {
 	public function testEquiparArmaYSacarLaQueTieneEquipada()
 	{
 		// buscamos arma y equipamos
-		$weapon = $this->character->items()->find(8);
+		$weapon = $this->character->items()->find(3);
 		$this->character->equip_item($weapon);
 
 		// buscamos otra arma y equipamos

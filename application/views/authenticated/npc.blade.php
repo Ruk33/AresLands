@@ -79,7 +79,7 @@
 			
 			
 			<div class="inventory-item">
-				<img src="{{ URL::base() }}/img/icons/inventory/items/{{ $merchandise->item_id }}.png" alt="" data-toggle="tooltip" data-placement="top" data-original-title="{{ $merchandise->item->get_text_for_tooltip() }}<p><b>Precio</b>: {{ $merchandise->price_copper }}</p>">
+				<img src="{{ URL::base() }}/img/icons/inventory/items/{{ $merchandise->item_id }}.png" alt="" data-toggle="tooltip" data-placement="top" data-original-title="{{ $merchandise->item->get_text_for_tooltip() }}<p>Precio: {{ $merchandise->price_copper }}</p>">
 			</div>
 			
 			<div>

@@ -69,16 +69,16 @@ class Authenticated_Controller extends Base_Controller
 	}
 	*/
 
-	/*
+	
 	public function get_setQuestData()
 	{
 		$quest = new Quest();
 
-		//$quest->id = 8;
-		$quest->npc_id = 1;
-		$quest->class_name = 'Quest_AyudaATuPueblo';
-		$quest->name = 'Ayuda a tu pueblo';
-		$quest->description = 'Elimina 5 enemigos en tu ciudad natal.';
+		$quest->id = 22;
+		$quest->npc_id = 165;
+		$quest->class_name = 'Quest_SegundaMisionFallida';
+		$quest->name = 'Segunda mision fallida';
+		$quest->description = 'Eliminar 50 monstruos del Bosque Espejo.';
 		$quest->min_level = 1;
 		$quest->max_level = 10;
 
@@ -88,16 +88,20 @@ class Authenticated_Controller extends Base_Controller
 		));
 
 		$quest->add_rewards(array(
+			/*array(
+				'item_id' => 27,
+				'amount' => 1,
+				'text_for_view' => '<img src="/img/icons/items/27.png" style="vertical-align: text-top;">'
+			),*/
 			array(
 				'item_id' => Config::get('game.coin_id'),
-				'amount' => 50,
-				'text_for_view' => '<img src="/img/copper.gif" style="vertical-align: text-top;"> 50'
-			),
+				'amount' => 6000,
+				'text_for_view' => '<img src="/img/copper.gif">'
+			)
 		));
 
 		$quest->save();
 	}
-	*/
 
 	public function get_index()
 	{
@@ -167,6 +171,21 @@ class Authenticated_Controller extends Base_Controller
 		->with('positiveBonifications', $positiveBonifications)
 		->with('negativeBonifications', $negativeBonifications)
 		->with('npcs', $npcs);
+	}
+
+	public function post_getItemTextForTooltip()
+	{
+		sleep(1);
+
+		$item = Item::find(Input::get('item_id'));
+		$text = 'El objeto no existe';
+
+		if ( $item )
+		{
+			$text = $item->get_text_for_tooltip();
+		}
+
+		return json_encode($text);
 	}
 
 	public function get_destroyItem($characterItemId = false)
@@ -1454,6 +1473,11 @@ class Authenticated_Controller extends Base_Controller
 		 *	Obtenemos las mercancías del npc
 		 */
 		$merchandises = $npc->merchandises()->get();
+
+		/*
+		 *	Disparamos el evento de hablar
+		 */
+		Event::fire('npcTalk', array($character, $npc));
 
 		$this->layout->title = $npc->name;
 		$this->layout->content = View::make('authenticated.npc')
