@@ -463,10 +463,14 @@ class Character extends Base_Model
 		{
 			$fighter_one['character']->xp += 3 * Config::get('game.xp_rate');
 			$fighter_two['character']->xp += 3 * Config::get('game.xp_rate');
+
+			$fighter_one['character']->points_to_change += 3 * Config::get('game.xp_rate');
+			$fighter_two['character']->points_to_change += 3 * Config::get('game.xp_rate');
 		}
 		else
 		{
 			$fighter_one['character']->xp += $target->xp * Config::get('game.xp_rate');
+			$fighter_one['character']->points_to_change += $target->xp * Config::get('game.xp_rate');
 		}
 
 		/*
@@ -627,6 +631,11 @@ class Character extends Base_Model
 				'stat_strength',
 				'stat_luck'
 			))->first();
+
+			if ( ! $item )
+			{
+				continue;
+			}
 
 			if ( $positive )
 			{
@@ -815,6 +824,10 @@ class Character extends Base_Model
 	 */
 	public function can_travel()
 	{
+		if ( $this->is_exploring )
+		{
+			return 'Estás explorando';
+		}
 		/*
 		 *	Si ya está viajando...
 		 */

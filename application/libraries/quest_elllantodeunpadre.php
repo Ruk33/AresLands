@@ -53,7 +53,7 @@ class Quest_ElLlantoDeUnPadre
 					$data['count'] = 1;
 				}
 
-				$data['progress_for_view'] = 'Mata ' . (25-$data['count']) . ' Sooju.';
+				$data['progress_for_view'] = sprintf('Mata %d/25 Soojus.', 25-$data['count']);
 
 				$characterQuest->data = $data;
 				$characterQuest->save();

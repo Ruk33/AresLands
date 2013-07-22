@@ -26,7 +26,7 @@
 						<h4>{{ $city->name }}</h4>
 						<p>{{ $city->description }}</p>
 
-						<a href="{{ URL::to('authenticated/travel/' . $city->id) }}" class="btn btn-primary">Viajar a la ciudad</a>
+						<a href="{{ URL::to('authenticated/travel/' . $city->id) }}" class="normal-button" style="zoom: 0.8; font-size: 16px;">Viajar a la ciudad</a>
 
 						@if ( count($city->villages) > 0 )
 						<div style="margin-top: 15px;">
@@ -49,6 +49,19 @@
 						</ul>
 						</div>
 						@endif
+					</div>
+				</div>
+			</li>
+		@endforeach
+		@foreach ( $dungeons as $dungeon )
+			<li class="span4">
+				<div class="thumbnail">
+					<div class="caption">
+						<img src="{{ URL::base() }}/img/zones/1.jpg" alt="" class="text-center">
+
+						<h4>{{ $dungeon->name }}</h4>
+						<p>{{ $dungeon->description }}</p>
+						<a href="#" class="normal-button danger-button">Viajar a la mazmorra</a>
 					</div>
 				</div>
 			</li>

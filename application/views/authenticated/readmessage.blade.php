@@ -2,7 +2,7 @@
 	<thead>
 		<tr>
 			<td style="width: 100px;"><b>Enviado por:</b></td>
-			<td>{{ $message->sender->name }}</td>
+			<td>{{ $message->sender->get_link() }}</td>
 		</tr>
 
 		<tr>
@@ -22,11 +22,11 @@
 
 <div style="width: 730px;">
 	@if ( ! $message->is_special )
-		<a href="{{ URL::to('authenticated/sendMessage/' . $message->sender->name) }}" class="btn btn-primary">Responder</a>
+		<a href="{{ URL::to('authenticated/sendMessage/' . $message->sender->name) }}" class="normal-button pull-left">Responder</a>
 	@endif
 	
 	{{ Form::open(URL::to('authenticated/deleteMessage')) }}
 		{{ Form::hidden('messages[]', $message->id) }}
-		{{ Form::submit('Borrar mensaje', array('class' => 'btn btn-danger pull-right')) }}
+		{{ Form::submit('Borrar mensaje', array('class' => 'normal-button danger-button pull-right', 'style' => 'width: 222px;')) }}
 	{{ Form::close() }}
 </div>

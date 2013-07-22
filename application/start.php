@@ -87,6 +87,9 @@ Autoloader::map(array(
 	'Quest_MuchoTrabajo' => path('app') . 'libraries/quest_muchotrabajo.php',
 	'Quest_PrimerMisionFallida' => path('app') . 'libraries/quest_primermisionfallida.php',
 	'Quest_SegundaMisionFallida' => path('app') . 'libraries/quest_segundamisionfallida.php',
+	'Quest_PocionesYPociones' => path('app') . 'libraries/quest_pocionesypociones.php',
+	'Quest_LaVenganzaDelAlquimista' => path('app') . 'libraries/quest_lavenganzadelalquimista.php',
+	'Quest_AsegurarZona' => path('app') . 'libraries/quest_asegurarzona.php',
 ));
 
 /*

@@ -60,7 +60,7 @@ class Quest_NuevosProblemas
 				}
 				else
 				{
-					$data['progress_for_view'] = 'Mata ' . (10 - $data['count']) . ' monstruo(s) del Cementerio Naval.';
+					$data['progress_for_view'] = sprintf('Mata %d/10 monstruos del Cementerio Naval.', 10-$data['count']);
 
 					$characterQuest->data = $data;
 					$characterQuest->save();

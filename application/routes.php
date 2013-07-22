@@ -10,6 +10,7 @@ Route::controller('Authenticated');
 Route::controller('CharacterCreation');
 Route::controller('Home');
 Route::controller('Item');
+Route::controller('Game');
 
 
 /*
@@ -384,12 +385,12 @@ Route::filter('before', function() {
 			if ( $character->xp >= $character->xp_next_level )
 			{
 				$character->level++;
-				$character->xp_next_level = $character->xp_next_level + 100 * $character->level;
+				$character->xp_next_level = $character->xp_next_level + 25 * $character->level;
 
 				/* 
 				 *	Aumentamos la vida
 				 */
-				$character->max_life = $character->max_life + $character->level * 20;
+				$character->max_life = $character->max_life + $character->level * 5;
 
 				$character->points_to_change += Config::get('game.points_per_level');
 

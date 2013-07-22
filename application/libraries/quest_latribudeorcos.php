@@ -72,11 +72,12 @@ class Quest_LaTribuDeOrcos
 				}
 				else
 				{
-					$data['progress_for_view'] = 'Mata ' .
-					3-$data['count'][29] . ' Orco,' .
-					4-$data['count'][30] . ' Orco Guerrero, ' .
-					2-$data['count'][31] . ' Orco Shaman y ' .
-					1-$data['count'][32] . ' Orco lider.';
+					$data['progress_for_view'] = sprintf('Mata %d/3 Orco, %d/4 Orco Guerrero, %d/2 Orco Shaman y %d/1 Orco lider.',
+						3-$data['count'][29],
+						4-$data['count'][30],
+						2-$data['count'][31],
+						1-$data['count'][32]
+					);
 
 					$characterQuest->data = $data;
 					$characterQuest->save();

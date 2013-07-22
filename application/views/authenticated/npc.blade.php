@@ -19,7 +19,7 @@
 		@foreach ( $rewardQuests as $rewardQuest )
 			<div class="dark-box" style="cursor: pointer;" data-toggle="collapse" data-target="#{{ $rewardQuest->id }}">
 				<strong>{{ $rewardQuest->name }}</strong>
-				<div class="pull-right">Recompenza(s): {{ $rewardQuest->get_reward_for_view() }}</div>
+				<div class="pull-right">{{ $rewardQuest->get_reward_for_view() }}</div>
 				
 				<div id="{{ $rewardQuest->id }}" class="collapse">
 					<p>{{ $rewardQuest->description }}</p>
@@ -37,10 +37,12 @@
 		@foreach ( $startedQuests as $startedQuest )
 			<div class="dark-box" style="cursor: pointer;" data-toggle="collapse" data-target="#{{ $startedQuest['quest']->id }}">
 				<strong>{{ $startedQuest['quest']->name }}</strong>
-				<div class="pull-right">Recompenza(s): {{ $startedQuest['quest']->get_reward_for_view() }}</div>
+				<div class="pull-right">{{ $startedQuest['quest']->get_reward_for_view() }}</div>
 				
 				<div id="{{ $startedQuest['quest']->id }}" class="collapse">
 					<p>{{ $startedQuest['quest']->description }}</p>
+
+					<strong>Progreso</strong>
 					<p>{{ $startedQuest['characterQuest']->get_progress_for_view() }}</p>
 				</div>
 			</div>
@@ -53,12 +55,12 @@
 		@foreach ( $quests as $quest )
 			<div class="dark-box" style="cursor: pointer;" data-toggle="collapse" data-target="#{{ $quest->id }}">
 				<strong>{{ $quest->name }}</strong>
-				<div class="pull-right">Recompenza(s): {{ $quest->get_reward_for_view() }}</div>
+				<div class="pull-right">{{ $quest->get_reward_for_view() }}</div>
 				
 				<div id="{{ $quest->id }}" class="collapse">
 					<p>{{ $quest->description }}</p>
 					<p>
-						<a href="{{ URL::to('authenticated/acceptQuest/' . $quest->id) }}">Aceptar la misión</a>
+						<a href="{{ URL::to('authenticated/acceptQuest/' . $quest->id) }}" class="normal-button">Aceptar misión</a>
 					</p>
 				</div>
 			</div>
@@ -79,7 +81,7 @@
 			
 			
 			<div class="inventory-item">
-				<img src="{{ URL::base() }}/img/icons/inventory/items/{{ $merchandise->item_id }}.png" alt="" data-toggle="tooltip" data-placement="top" data-original-title="{{ $merchandise->item->get_text_for_tooltip() }}<p>Precio: {{ $merchandise->price_copper }}</p>">
+				<img src="{{ URL::base() }}/img/icons/items/{{ $merchandise->item_id }}.png" alt="" data-toggle="tooltip" data-placement="top" data-original-title="{{ $merchandise->item->get_text_for_tooltip() }}<p>Precio: {{ $merchandise->price_copper }}</p>">
 			</div>
 			
 			<div>

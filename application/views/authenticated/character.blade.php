@@ -1,6 +1,6 @@
 @if ( isset($character) && isset($characterToSee) )
-	<div class="span6" style="margin-left: 175px;">
-		<h2>{{ $characterToSee->name }}</h2>
+	<div class="span6" style="margin-left: 20px; margin-right: -20px;">
+		<h2>{{ $characterToSee->name }} (Nivel: {{ $characterToSee->level }})</h2>
 
 		<div style="min-height: 405px;">
 			<!-- DOS MANOS -->
@@ -42,25 +42,38 @@
 			<!-- END AYUDANTE -->
 			
 			<!-- PERSONAJE -->
-			<img src="{{ URL::base() }}/img/characters/{{ $characterToSee->race }}_{{ $characterToSee->gender }}_
-			@if ( isset($rhand) )
-				{{ $rhand->id }}
-			@elseif ( isset($lhand) )
-				{{ $lhand->id }}
-			@elseif ( isset($lrhand) )
-				{{ $lrhand->id }}
-			@else
-				0
-			@endif
-			.png" alt="">
+			<img src="{{ URL::base() }}/img/characters/{{ $characterToSee->race }}_{{ $characterToSee->gender }}_0.png" alt="">
 			<!-- END PERSONAJE -->
 		</div>
+	</div>
+
+	<!-- ESTADÍSTICAS -->
+	<div class="span6">
+		<h2>Estadísticas</h2>
+		<ul class="unstyled">
+			<li>
+				<b>Vitalidad:</b> {{ mt_rand($characterToSee->stat_life, $characterToSee->stat_life * 2) }}
+			</li>
+			<li>
+				<b>Destreza:</b> {{ mt_rand($characterToSee->stat_dexterity, $characterToSee->stat_dexterity * 2) }}
+			</li>
+			<li>
+				<b>Magia:</b> {{ mt_rand($characterToSee->stat_magic, $characterToSee->stat_magic * 2) }}
+			</li>
+			<li>
+				<b>Fuerza:</b> {{ mt_rand($characterToSee->stat_strength, $characterToSee->stat_strength * 2) }}
+			</li>
+			<li>
+				<b>Suerte:</b> {{ mt_rand($characterToSee->stat_luck, $characterToSee->stat_luck * 2) }}
+			</li>
+		</ul>
 
 		@if ( $character->id != $characterToSee->id && $character->zone_id == $characterToSee->zone_id )
 			<h2>¿Te atreves a batallar?</h2>
 			<a href="{{ URL::to('authenticated/toBattle/' . $characterToSee->name) }}">Luchar contra <b>{{ $characterToSee->name }}</b></a>
 		@endif
 	</div>
+	<!-- END ESTADISTICAS -->
 @else
 	<h2>El personaje especificado no existe</h2>
 	<p><em>En estas tierras hay muchos forasteros, pero ninguno con este nombre...</em></p>

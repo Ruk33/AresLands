@@ -39,6 +39,8 @@ class Authenticated_Controller extends Base_Controller
 			'xp',
 			'xp_next_level',
 			'clan_id',
+			'is_exploring',
+			'is_traveling'
 		));
 
 		if ( Auth::check() && $character )
@@ -69,18 +71,18 @@ class Authenticated_Controller extends Base_Controller
 	}
 	*/
 
-	
+	/*
 	public function get_setQuestData()
 	{
 		$quest = new Quest();
 
-		$quest->id = 22;
-		$quest->npc_id = 165;
-		$quest->class_name = 'Quest_SegundaMisionFallida';
-		$quest->name = 'Segunda mision fallida';
-		$quest->description = 'Eliminar 50 monstruos del Bosque Espejo.';
+		$quest->id = 26;
+		$quest->npc_id = 162;
+		$quest->class_name = 'Quest_AsegurarZona';
+		$quest->name = 'Asegurar zona';
+		$quest->description = '<p>Estamos en busqueda de combatientes que nos ayuden a despejar el camino hacia Valle de Cenisa. Desconozco cuál sea la razón, pero el valle ya no es el mismo, no con todos esos espectros merodeando y acechando. ¿Te unes?, hay buena paga.</p><p>Derrota a 15 monstruos de Valle de Cenisa.</p>';
 		$quest->min_level = 1;
-		$quest->max_level = 10;
+		$quest->max_level = 5;
 
 		$quest->add_triggers(array(
 			'acceptQuest',
@@ -88,20 +90,21 @@ class Authenticated_Controller extends Base_Controller
 		));
 
 		$quest->add_rewards(array(
-			/*array(
+			array(
 				'item_id' => 27,
 				'amount' => 1,
 				'text_for_view' => '<img src="/img/icons/items/27.png" style="vertical-align: text-top;">'
-			),*/
+			),
 			array(
 				'item_id' => Config::get('game.coin_id'),
-				'amount' => 6000,
+				'amount' => 7500,
 				'text_for_view' => '<img src="/img/copper.gif">'
 			)
 		));
 
 		$quest->save();
 	}
+	*/
 
 	public function get_index()
 	{
@@ -231,37 +234,39 @@ class Authenticated_Controller extends Base_Controller
 			'stat_strength',
 			'stat_luck',
 		));
-		$stat = Input::json()->stat_name;
 
-		if ( $character->points_to_change > 0 )
+		$stat = Input::json()->stat_name;
+		$amount = Input::json()->stat_amount;
+
+		if ( $character->points_to_change >= $amount )
 		{
 			switch ( $stat ) 
 			{
 				case 'stat_life':
-					$character->stat_life++;
+					$character->stat_life += $amount;
 					break;
 
 				case 'stat_dexterity':
-					$character->stat_dexterity++;
+					$character->stat_dexterity += $amount;
 					break;
 
 				case 'stat_magic':
-					$character->stat_magic++;
+					$character->stat_magic += $amount;
 					break;
 
 				case 'stat_strength':
-					$character->stat_strength++;
+					$character->stat_strength += $amount;
 					break;
 
 				case 'stat_luck':
-					$character->stat_luck++;
+					$character->stat_luck += $amount;
 					break;
 
 				default:
 					return false;
 			}
 
-			$character->points_to_change--;
+			$character->points_to_change -= $amount;
 			$character->save();
 			
 			return true;
@@ -1001,6 +1006,14 @@ class Authenticated_Controller extends Base_Controller
 		->with('to', $to);
 	}
 
+	public function get_clearAllMessages()
+	{
+		$character = Character::get_character_of_logged_user();
+		$character->messages()->delete();
+
+		return Redirect::to('authenticated/messages/');
+	}
+
 	public function post_deleteMessage()
 	{
 		/*
@@ -1009,7 +1022,10 @@ class Authenticated_Controller extends Base_Controller
 		$character = Character::get_character_of_logged_user(array('id'));
 		$selectedMessages = Input::get('messages');
 
-		$character->messages()->where_in('id', $selectedMessages)->delete();
+		if ( is_array($selectedMessages) )
+		{
+			$character->messages()->where_in('id', $selectedMessages)->delete();
+		}
 
 		return Redirect::to('authenticated/messages/');
 	}
@@ -1064,14 +1080,27 @@ class Authenticated_Controller extends Base_Controller
 
 	public function get_character($characterName = '')
 	{
-		$characterToSee = ( $characterName ) ? Character::where('name', '=', $characterName)->select(array('id', 'name', 'clan_id', 'race', 'gender', 'zone_id'))->first() : false;
+		$characterToSee = ( $characterName ) ? Character::where('name', '=', $characterName)->select(array(
+			'id', 
+			'name', 
+			'level', 
+			'clan_id', 
+			'race', 
+			'gender', 
+			'zone_id',
+			'stat_life',
+			'stat_dexterity',
+			'stat_magic',
+			'stat_strength',
+			'stat_luck',
+		))->first() : false;
 
 		if ( $characterToSee )
 		{
 			/*
 			 *	Obtenemos los objetos del personaje
 			 */
-			$items = $characterToSee->items()->select(array('item_id', 'location', 'data'))->get();
+			$items = $characterToSee->items()->select(array('item_id', 'location', 'data'))->where_not_in('location', array('inventory', 'none'))->get();
 			$itemsToView = array();
 
 			/*
@@ -1154,12 +1183,27 @@ class Authenticated_Controller extends Base_Controller
 		$character = Character::get_character_of_logged_user(array('id', 'zone_id', 'name'));
 		$searchMethod = Input::get('search_method');
 
+		$valuesToTake = array(
+			'id', 
+			'name', 
+			'level', 
+			'clan_id', 
+			'race', 
+			'gender', 
+			'zone_id',
+			'stat_life',
+			'stat_dexterity',
+			'stat_magic',
+			'stat_strength',
+			'stat_luck',
+		);
+
 		$characterFinded = null;
 
 		switch ( $searchMethod ) 
 		{
 			case 'name':
-				$characterFinded = Character::where('name', '=', Input::get('character_name'))->where('name', '<>', $character->name)->where('is_traveling', '=', false)->where('zone_id', '=', $character->zone_id)->select(array('name'))->first();
+				$characterFinded = Character::where('name', '=', Input::get('character_name'))->where('name', '<>', $character->name)->where('is_traveling', '=', false)->where('zone_id', '=', $character->zone_id)->select($valuesToTake)->first();
 				break;
 
 			case 'random':
@@ -1204,11 +1248,11 @@ class Authenticated_Controller extends Base_Controller
 					$level = 1;
 				}
 
-				$characterFinded = Character::where_in('race', $race)->where('level', $operation, $level)->where('name', '<>', $character->name)->where('is_traveling', '=', false)->where('zone_id', '=', $character->zone_id)->select(array('name'))->order_by(DB::raw('RAND()'))->first();
+				$characterFinded = Character::where_in('race', $race)->where('level', $operation, $level)->where('name', '<>', $character->name)->where('is_traveling', '=', false)->where('zone_id', '=', $character->zone_id)->select($valuesToTake)->order_by(DB::raw('RAND()'))->first();
 				break;
 
 			case 'group':
-				$characterFinded = Character::where('clan_id', '=', Input::get('clan'))->where('name', '<>', $character->name)->where('is_traveling', '=', false)->where('zone_id', '=', $character->zone_id)->select(array('name'))->order_by(DB::raw('RAND()'))->first();
+				$characterFinded = Character::where('clan_id', '=', Input::get('clan'))->where('name', '<>', $character->name)->where('is_traveling', '=', false)->where('zone_id', '=', $character->zone_id)->select($valuesToTake)->order_by(DB::raw('RAND()'))->first();
 				break;
 		}
 
@@ -1217,7 +1261,26 @@ class Authenticated_Controller extends Base_Controller
 		 */
 		if ( $characterFinded )
 		{
-			return Redirect::to('authenticated/character/' . $characterFinded->name);
+			/*
+			 *	Obtenemos los objetos del personaje
+			 */
+			$items = $characterFinded->items()->select(array('item_id', 'location', 'data'))->where_not_in('location', array('inventory', 'none'))->get();
+			$itemsToView = array();
+
+			/*
+			 *	Los ordenamos solo para que sea
+			 *	más cómodo de trabajar en la vista
+			 */
+			foreach ( $items as $item )
+			{
+				$itemsToView[$item->location][] = $item;
+			}
+
+			$this->layout->title = $characterFinded->name;
+			$this->layout->content = View::make('authenticated.character')
+			->with('character', Character::get_character_of_logged_user(array('id', 'zone_id')))
+			->with('items', $itemsToView)
+			->with('characterToSee', $characterFinded);
 		}
 		else
 		{
@@ -1243,7 +1306,8 @@ class Authenticated_Controller extends Base_Controller
 		{
 		*/
 			$this->layout->title = '¡Batallar!';
-			$this->layout->content = View::make('authenticated.battle');
+			$this->layout->content = View::make('authenticated.battle')
+			->with('character', Character::get_character_of_logged_user(array('level')));
 		//}
 	}
 
@@ -1340,19 +1404,26 @@ class Authenticated_Controller extends Base_Controller
 
 			if ( $canTravel === true )
 			{
-				/*
-				 *	Cobramos el costo del viaje
-				 */
-				$characterCoins = $character->get_coins();
-				$characterCoins->count -= Config::get('game.travel_cost');
-				$characterCoins->save();
+				if ( $zone->id != $character->zone_id )
+				{
+					/*
+					 *	Cobramos el costo del viaje
+					 */
+					$characterCoins = $character->get_coins();
+					$characterCoins->count -= Config::get('game.travel_cost');
+					$characterCoins->save();
 
-				/*
-				 *	¡Iniciamos el viaje!
-				 */
-				$character->travel_to($zone);
+					/*
+					 *	¡Iniciamos el viaje!
+					 */
+					$character->travel_to($zone);
 
-				return Redirect::to('authenticated/index');
+					return Redirect::to('authenticated/index');
+				}
+				else
+				{
+					$error = 'Ya te encuentras en esa zona';
+				}
 			}
 			else
 			{
@@ -1364,7 +1435,7 @@ class Authenticated_Controller extends Base_Controller
 			}
 		}
 
-		$cities = Zone::select(array('id', 'name', 'description'))->where('type', '=', 'city')->where('id', '<>', $character->zone_id)->get();
+		$cities = Zone::select(array('id', 'name', 'description'))->where('type', '=', 'city')->get();
 
 		foreach ($cities as $city)
 		{
@@ -1372,10 +1443,13 @@ class Authenticated_Controller extends Base_Controller
 			$city->farm_zones = Zone::select(array('id', 'name', 'description'))->where('type', '=', 'farmzone')->where('belongs_to', '=', $city->id)->get();
 		}
 
+		$dungeons = Zone::select(array('id', 'name', 'description'))->where('type', '=', 'dungeon')->get();
+
 		$this->layout->title = 'Viajar';
 		$this->layout->content = View::make('authenticated.travel')
 		->with('character', $character)
 		->with('cities', $cities)
+		->with('dungeons', $dungeons)
 		->with('error', $error);
 	}
 

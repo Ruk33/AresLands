@@ -15,12 +15,12 @@ class LaTribuDeOrcosTest extends PHPUnit_Framework_TestCase
 
 		$this->character = Character::get_character_of_logged_user();
 		$this->quest = Quest::find(self::QUEST_ID);
-
-		$this->quest->accept();
 	}
 
 	public function testCompletarMision()
 	{
+		$this->quest->accept();
+		
 		$monster = Npc::find(29);
 
 		for ($i = 0, $max = 4; $i <= $max; $i++)

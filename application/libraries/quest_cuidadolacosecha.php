@@ -72,11 +72,12 @@ class Quest_CuidadoLaCosecha
 				}
 				else
 				{
-					$data['progress_for_view'] = 'Mata ' .
-					3-$data['count'][25] . ' Tirx,' .
-					4-$data['count'][26] . ' Tirx de Agua, ' .
-					2-$data['count'][27] . ' Tirx de Tierra y ' .
-					1-$data['count'][28] . ' Tirx de Fuego.';
+					$data['progress_for_view'] = sprintf('Mata %d/3 Tirx, %d/4 Tirx de Agua, %d/2 Tirx de Tierra y %d/1 Tirx de Fuego.',
+						3-$data['count'][25],
+						4-$data['count'][26],
+						2-$data['count'][27],
+						1-$data['count'][28]
+					);
 
 					$characterQuest->data = $data;
 					$characterQuest->save();

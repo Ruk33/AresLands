@@ -49,6 +49,8 @@ class Quest_SegundaMisionFallida
 					return true;
 				}
 
+				$data['progress_for_view'] = sprintf('Mata %d/50 monstruos del Bosque Espejo.', 50-$data['count']);
+
 				$characterQuest->data = $data;
 				$characterQuest->save();
 			}

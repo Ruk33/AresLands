@@ -12,27 +12,18 @@
 
 		<link rel="stylesheet" href="{{ URL::base() }}/css/normalize.min.css">
 		<link rel="stylesheet" href="{{ URL::base() }}/css/bootstrap.min.css">
-		<link rel="stylesheet" href="{{ URL::base() }}/css/main.css">
-
-		<script src="{{ URL::base() }}/js/vendor/angular.min.js"></script>
+		<link rel="stylesheet" href="{{ URL::base() }}/css/main.min.css">
 
 		<!--
-		<script src="{{ URL::base() }}/js/app.js"></script>
-		<script src="{{ URL::base() }}/js/services.js"></script>
-		<script src="{{ URL::base() }}/js/controllers.js"></script>
-		<script src="{{ URL::base() }}/js/filters.js"></script>
+		<script src="{{ URL::base() }}/js/vendor/angular.min.js"></script>
 		-->
 
 		<!--<script src="{{ URL::base() }}/js/vendor/ui-bootstrap-custom-0.4.0.min.js"></script>-->
+		
+		<!--
 		<script src="{{ URL::base() }}/js/vendor/jquery-1.9.1.min.js"></script>
 		<script src="{{ URL::base() }}/js/vendor/bootstrap.min.js"></script>
-
-		<script>
-		angular.module('areslands', [], function($interpolateProvider) {
-			$interpolateProvider.startSymbol('[[');
-			$interpolateProvider.endSymbol(']]');
-		});
-		</script>
+		-->
 	</head>
 	<body ng-init="basePath='{{ URL::base() }}/'">
 		<!--[if lt IE 7]>
@@ -42,12 +33,12 @@
 		<div id="wrap">
 			<div class="container">
 				<!--<div class="dark-box pull-left"><b>Usuarios conectados:</b> {{ Character::where('last_activity_time', '>', time() - 300)->count() }}</div>-->
-				<div class="logo"></div>
+				<a href="{{ URL::base() }}"><div class="logo"></div></a>
 				<div class="row-fluid col-wrap">
 					<div class="span2 menu col" style="width: 176px; ">
 						@if ( Request::route()->controller == 'authenticated' )
 							<div class="mini-player-display">
-								<img src="{{ URL::base() }}/img/icons/race/{{ $character->race }}_{{ $character->gender }}.jpg" alt="" class="pull-left">
+								<img src="{{ URL::base() }}/img/icons/race/{{ $character->race }}_{{ $character->gender }}.jpg" alt="" width="30px" height="30px" class="pull-left">
 								<div class="pull-left" style="margin-left: 5px;">
 									<a href="{{ URL::to('authenticated/character/' . $character->name) }}" style="color: rgb(231, 180, 47); font-size: 12px;"><b>{{ $character->name }}</b></a>
 									<br>
@@ -55,9 +46,9 @@
 								</div>
 
 								<div class="pull-right">
-									<img src="{{ URL::base() }}/img/xp.png" alt="" data-toggle="tooltip" data-placement="top" data-original-title="<b>Experiencia</b><br>{{ $character->xp }}/{{ $character->xp_next_level }}">
+									<img src="{{ URL::base() }}/img/xp.png" alt="" width="22px" height="18px" data-toggle="tooltip" data-placement="top" data-original-title="<b>Experiencia</b><br>{{ $character->xp }}/{{ $character->xp_next_level }}">
 
-									<img src="{{ URL::base() }}/img/copper.gif" alt="" data-toggle="tooltip" data-placement="top" data-original-title="
+									<img src="{{ URL::base() }}/img/copper.gif" alt="" width="14px" height="15px" data-toggle="tooltip" data-placement="top" data-original-title="
 									<b>Monedas</b>
 									<br>
 									{{ $coins['gold'] }} <img src='/img/gold.gif' style='vertical-align: text-bottom;'>
@@ -73,26 +64,27 @@
 						@endif
 						<ul class="unstyled menu">
 							@if ( Auth::check() && isset($character) )
-								<li><a href="{{ URL::to('authenticated/index') }}"><img src="{{ URL::base() }}/img/menu/character.jpg" alt=""></a></li>
-								<li style="position: relative;"><div style="position: absolute; top: 7px; right: 10px; color: white" data-toggle="tooltip" data-placement="top" data-original-title="Mensaje(s) sin leer"><span class="badge badge-warning">{{ $character->get_unread_messages_count() }}</span></div><a href="{{ URL::to('authenticated/messages') }}"><img src="{{ URL::base() }}/img/menu/messages.jpg" alt=""></a></li>
+								<li><a href="{{ URL::to('authenticated/index') }}"><img src="{{ URL::base() }}/img/menu/character.jpg" alt="" width="177px" height="36px"></a></li>
+								<li style="position: relative;"><div style="position: absolute; top: 7px; right: 10px; color: white" data-toggle="tooltip" data-placement="top" data-original-title="Mensaje(s) sin leer"><span class="badge badge-warning">{{ $character->get_unread_messages_count() }}</span></div><a href="{{ URL::to('authenticated/messages') }}"><img src="{{ URL::base() }}/img/menu/messages.jpg" alt=""  width="177px" height="36px"></a></li>
 								
 								@if ( $character->can_travel() === true )
-								<li><a href="{{ URL::to('authenticated/travel') }}"><img src="{{ URL::base() }}/img/menu/travel.jpg" alt=""></a></li>
+								<li><a href="{{ URL::to('authenticated/travel') }}"><img src="{{ URL::base() }}/img/menu/travel.jpg" alt="" width="177px" height="36px"></a></li>
 								@endif
 								
 								@if ( $character->can_fight() )
-								<li><a href="{{ URL::to('authenticated/battle') }}"><img src="{{ URL::base() }}/img/menu/battle.jpg" alt=""></a></li>
+								<li><a href="{{ URL::to('authenticated/battle') }}"><img src="{{ URL::base() }}/img/menu/battle.jpg" alt="" width="177px" height="36px"></a></li>
 								@endif
 	
 								@if ( $character->can_explore() )
-								<li><a href="{{ URL::to('authenticated/explore') }}"><img src="{{ URL::base() }}/img/menu/explore.jpg" alt=""></a></li>
+								<li><a href="{{ URL::to('authenticated/explore') }}"><img src="{{ URL::base() }}/img/menu/explore.jpg" alt="" width="177px" height="36px"></a></li>
 								@endif
 	
-								<li><a href="{{ URL::to('authenticated/clan') }}"><img src="{{ URL::base() }}/img/menu/group.jpg" alt=""></a></li>
-								<li><a href="{{ URL::to('authenticated/trade') }}"><img src="{{ URL::base() }}/img/menu/trade.jpg" alt=""></a></li>
-								<li><a href="{{ URL::to('authenticated/characters') }}"><img src="{{ URL::base() }}/img/menu/characters.jpg" alt=""></a></li>
-								<li><a href="{{ URL::to('authenticated/ranking') }}"><img src="{{ URL::base() }}/img/menu/ranking.jpg" alt=""></a></li>
-								<li><a href="{{ URL::to('authenticated/logout') }}"><img src="{{ URL::base() }}/img/menu/logout.jpg" alt=""></a></li>
+								<li><a href="{{ URL::to('authenticated/clan') }}"><img src="{{ URL::base() }}/img/menu/group.jpg" alt="" width="177px" height="36px"></a></li>
+								<li><a href="{{ URL::to('authenticated/trade') }}"><img src="{{ URL::base() }}/img/menu/trade.jpg" alt="" width="177px" height="36px"></a></li>
+								<li><a href="{{ URL::to('authenticated/characters') }}"><img src="{{ URL::base() }}/img/menu/characters.jpg" alt="" width="177px" height="36px"></a></li>
+								<li><a href="{{ URL::to('authenticated/ranking') }}"><img src="{{ URL::base() }}/img/menu/ranking.jpg" alt="" width="177px" height="36px"></a></li>
+								<li><a href="http://ironfist.com.ar/forums/index"><img src="{{ URL::base() }}/img/menu/forum.jpg" alt="Ir al foro" width="177px" height="36px"></a></li>
+								<li><a href="{{ URL::to('authenticated/logout') }}"><img src="{{ URL::base() }}/img/menu/logout.jpg" alt="" width="177px" height="36px"></a></li>
 							@else
 								<li><img src="{{ URL::base() }}/img/menu/inicio.jpg" alt=""></li>
 							@endif
@@ -111,7 +103,7 @@
 		<div id="footer">
 			<div class="text-center">
 				<div>
-					<img src="{{ URL::base() }}/img/ironfist-logo.png">
+					<img src="{{ URL::base() }}/img/ironfist-logo.png" width="212px" height="259px">
 					<p style="color: white; font-size: 11px;">
 						Todas las marcas aquí mencionadas son propiedad de sus respectivos dueños. 
 						<br>
@@ -121,7 +113,30 @@
 			</div>
 		</footer>
 
-		<script src="{{ URL::base() }}/js/libs/jquery.countdown.js"></script>
+		<!--
+		<script src="{{ URL::base() }}/js/configuration.js"></script>
+		<script src="{{ URL::base() }}/js/services.js"></script>
+		<script src="{{ URL::base() }}/js/controllers.js"></script>
+		<script src="{{ URL::base() }}/js/filters.js"></script>
+		<script src="{{ URL::base() }}/js/app.js" async></script>
+		-->
+
+		<!--
+		<script src="{{ URL::base() }}/js/vendor/angular.min.js"></script>
+
+		<script src="{{ URL::base() }}/js/vendor/jquery-1.9.1.min.js"></script>
+		<script src="{{ URL::base() }}/js/vendor/bootstrap.min.js"></script>
+
+		<script src="{{ URL::base() }}/js/app.min.js"></script>
+
+		-->
+
+		<!--
+		<script src="{{ URL::base() }}/js/vendor/modernizr-2.6.2.min.js"></script>
+		-->
+
+		<script src="{{ URL::base() }}/js/main.min.js"></script>
+		<script src="{{ URL::base() }}/js/libs/jquery.countdown.min.js"></script>
 
 		<script>
 			/*
@@ -146,8 +161,6 @@
 				});
 			});
 		</script>
-
-		<script src="{{ URL::base() }}/js/vendor/modernizr-2.6.2.min.js"></script>
 
 		<!--
 			<script>

@@ -22,7 +22,7 @@
 					{{ Form::text('character_name') }}
 
 					<div>
-					{{ Form::submit('¡Buscar!', array('class' => 'btn btn-primary')) }}
+					{{ Form::submit('¡Buscar por nombre!', array('class' => 'normal-button', 'style' => 'width: 222px;')) }}
 					</div>
 				{{ Form::close() }}
 			</div>
@@ -41,10 +41,10 @@
 
 					{{ Form::label('level_label', 'Nivel') }}
 					{{ Form::select('operation', array('exactly' => 'Exactamente', 'greaterThan' => 'Mayor que', 'lowerThan' => 'Menor que')) }}
-					{{ Form::number('level', null, array('min' => '1')) }}
+					{{ Form::number('level', $character->level, array('min' => '1')) }}
 
 					<div>
-					{{ Form::submit('¡Buscar!', array('class' => 'btn btn-primary')) }}
+					{{ Form::submit('¡Buscar aleatoriamente!', array('class' => 'normal-button', 'style' => 'width: 222px;')) }}
 					</div>
 				{{ Form::close() }}
 			</div>
@@ -62,7 +62,7 @@
 					{{ Form::select('clan', Clan::lists('name', 'id')) }}
 
 					<div>
-					{{ Form::submit('¡Buscar!', array('class' => 'btn btn-primary')) }}
+					{{ Form::submit('¡Buscar en grupo!', array('class' => 'normal-button', 'style' => 'width: 222px;')) }}
 					</div>
 				{{ Form::close() }}
 			</div>

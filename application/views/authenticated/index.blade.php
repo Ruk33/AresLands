@@ -37,7 +37,7 @@
 			@if ( isset($items['lrhand']) && $lrhand = $items['lrhand'][0]->item )
 				<div style="position: absolute; margin-top: 150px;">
 					<div class="equipped-item">
-						<img style="cursor: pointer;" src="{{ URL::base() }}/img/icons/items/{{ $items['lrhand'][0]->item->id }}.png" alt="" data-toggle="popover" data-placement="top" data-original-title="
+						<img style="cursor: pointer;" src="{{ URL::base() }}/img/icons/items/{{ $items['lrhand'][0]->item->id }}.png" alt="" width="80px" height="80px" data-toggle="popover" data-placement="top" data-original-title="
 						{{ $lrhand->get_text_for_tooltip() }}
 						<a href='{{ URL::to('authenticated/manipulateItem/' . $items['lrhand'][0]->id) }}'>
 							Desequipar
@@ -50,7 +50,7 @@
 				<div style="position: absolute; margin-top: 150px;">
 					<div class="equipped-item">
 					@if ( isset($items['rhand']) && $rhand = $items['rhand'][0]->item )
-						<img style="cursor: pointer;" src="{{ URL::base() }}/img/icons/items/{{ $rhand->id }}.png" alt="" data-toggle="popover" data-placement="top" data-original-title="
+						<img style="cursor: pointer;" src="{{ URL::base() }}/img/icons/items/{{ $rhand->id }}.png" alt="" width="80px" height="80px" data-toggle="popover" data-placement="top" data-original-title="
 						{{ $rhand->get_text_for_tooltip() }}
 						<a href='{{ URL::to('authenticated/manipulateItem/' . $items['rhand'][0]->id) }}'>
 							Desequipar
@@ -64,7 +64,7 @@
 				<div style="position: absolute; margin-left: 250px; margin-top: 150px;">
 					<div class="equipped-item">
 					@if ( isset($items['lhand']) && $lhand = $items['lhand'][0]->item )
-						<img style="cursor: pointer;" src="{{ URL::base() }}/img/icons/items/{{ $lhand->id }}.png" alt="" data-toggle="popover" data-placement="top" data-original-title="
+						<img style="cursor: pointer;" src="{{ URL::base() }}/img/icons/items/{{ $lhand->id }}.png" alt="" width="80px" height="80px" data-toggle="popover" data-placement="top" data-original-title="
 						{{ $lhand->get_text_for_tooltip() }}
 						<a href='{{ URL::to('authenticated/manipulateItem/' . $items['lhand'][0]->id) }}'>
 							Desequipar
@@ -84,17 +84,7 @@
 			<!-- END AYUDANTE -->
 			
 			<!-- PERSONAJE -->
-			<img src="{{ URL::base() }}/img/characters/{{ $character->race }}_{{ $character->gender }}_
-			@if ( isset($rhand) )
-				{{ $rhand->id }}
-			@elseif ( isset($lhand) )
-				{{ $lhand->id }}
-			@elseif ( isset($lrhand) )
-				{{ $lrhand->id }}
-			@else
-				0
-			@endif
-			.png" alt="">
+			<img src="{{ URL::base() }}/img/characters/{{ $character->race }}_{{ $character->gender }}_0.png" alt="">
 			<!-- END PERSONAJE -->
 		</div>
 	</div>
@@ -111,7 +101,8 @@
 			
 			<li style="margin-bottom: 10px;" ng-show="remainingPoints>0">
 				<div class="dark-box" style="width: 300px;">
-					<b>Puntos restantes para cambiar:</b> [[ remainingPoints ]]
+					<p><b>Puntos restantes para cambiar:</b> [[ remainingPoints ]]</p>
+					<p>Puntos para cambiar: <select ng-model="pointsToChange" ng-init="pointsToChange=1;" ng-options="n for n in [] | range:1:remainingPoints"></select></p>
 				</div>
 			</li>
 
@@ -234,11 +225,11 @@
 		@if ( isset($items['inventory']) )
 			@foreach ( $items['inventory'] as $characterItem )
 				@if ( $characterItem->slot == $i && $item = $characterItem->item )
-					<img style="cursor: pointer;" src="{{ URL::base() }}/img/icons/items/{{ $characterItem->item_id }}.png" alt="" data-toggle="popover" data-placement="top" data-original-title="
+					<img style="cursor: pointer;" src="{{ URL::base() }}/img/icons/items/{{ $characterItem->item_id }}.png" alt="" width="80px" height="80px" data-toggle="popover" data-placement="top" data-original-title="
 					{{ $item->get_text_for_tooltip() }}
 
 					<div style='padding: 20px;'>
-					@if ( $item->type == 'arrow' && $items['lrhand'][0]->item->type != 'bow' )
+					@if ( $item->type == 'arrow' && isset($items['lrhand']) && $items['lrhand'][0]->item->type != 'bow' )
 						<span style='font-size: 11px;'>Debes tener equipado un arco para usar flechas</span>
 					@else
 						<a href='{{ URL::to('authenticated/manipulateItem/' . $characterItem->id) }}' class='btn btn-primary pull-left'>
@@ -261,4 +252,4 @@
 </div>
 <!-- END INVENTARIO -->
 
-<script src="{{ URL::base() }}/js/controllers/CharacterStatsController.js"></script>
+<!--<script src="{{ URL::base() }}/js/controllers/CharacterStatsController.js"></script>-->

@@ -72,11 +72,12 @@ class Quest_LasMinasEstanBajoAtaque
 				}
 				else
 				{
-					$data['progress_for_view'] = 'Mata ' .
-					3-$data['count'][21] . ' Grembling,' .
-					4-$data['count'][22] . ' Grembling Verdugo, ' .
-					2-$data['count'][23] . ' Grembling Shaman y ' .
-					1-$data['count'][24] . ' Grembling Berseker.';
+					$data['progress_for_view'] = sprintf('Mata %d/3 Grembling, %d/4 Grembling Verdugo, %d/2 Grembling Shaman y %d/1 Grembling Berseker.',
+						3-$data['count'][21],
+						4-$data['count'][22],
+						2-$data['count'][23],
+						1-$data['count'][24]
+					);
 
 					$characterQuest->data = $data;
 					$characterQuest->save();

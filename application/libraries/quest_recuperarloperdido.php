@@ -60,7 +60,7 @@ class Quest_RecuperarLoPerdido
 				}
 				else
 				{
-					$data['progress_for_view'] = 'Mata ' . (10 - $data['count']) . ' monstruo(s) de Camit.';
+					$data['progress_for_view'] = sprintf('Mata %d/10 monstruos de Camit.', 10-$data['count']);
 
 					$characterQuest->data = $data;
 					$characterQuest->save();

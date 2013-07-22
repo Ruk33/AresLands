@@ -48,7 +48,7 @@ class Quest_AyudaATuPueblo
 					$data['count'] = 1;
 				}
 
-				$data['progress_for_view'] = 'Mata ' . (5-$data['count']) . ' monstruo(s) de cualquier ciudad';
+				$data['progress_for_view'] = sprintf('Mata %d/5 monstruos de cualquier ciudad.', 5-$data['count']);
 
 				$characterQuest->data = $data;
 				$characterQuest->save();

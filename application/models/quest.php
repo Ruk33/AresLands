@@ -128,14 +128,30 @@ class Quest extends Base_Model
 		{
 			if ( isset($reward['text_for_view']) )
 			{
-				$formatedString .= $reward['text_for_view'] . ' | ';
+				$text = $reward['text_for_view'];
+
+				if ( $reward['item_id'] != Config::get('game.coin_id') )
+				{
+					$item = Item::find($reward['item_id']);
+
+					if ( $item )
+					{
+						$text = '<span data-toggle="tooltip" data-original-title="' . $item->get_text_for_tooltip() . '<p>Cantidad: ' . $reward['amount'] . '</p>">' . $text . '</span>';
+					}	
+				}
+				else
+				{
+					$text = '<span data-toggle="tooltip" data-original-title="Cantidad: ' . $reward['amount'] . '">' . $text . '</span>';
+				}
+				
+				$formatedString .= '<li><div class="quest-reward-item">' . $text . '</div></li>';
 			}
 		}
 
 		/*
 		 *	Removemos el último " | "
 		 */
-		return substr($formatedString, 0, -3);
+		return '<ul class="inline">' . $formatedString . '</ul>';
 	}
 
 	/*

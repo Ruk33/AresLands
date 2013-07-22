@@ -72,11 +72,12 @@ class Quest_ApaciguarALosMuertos
 				}
 				else
 				{
-					$data['progress_for_view'] = 'Mata ' .
-					4-$data['count'][99] . ' Esqueleto Arcano,' .
-					3-$data['count'][100] . ' Criatura Arcana, ' .
-					2-$data['count'][101] . ' Bestia Fantasmal y ' .
-					1-$data['count'][102] . ' Brujo Arcano.';
+					$data['progress_for_view'] = sprintf('Mata %d/4 Esqueleto Arcano, %d/3 Criatura Arcana, %d/2 Bestia Fantasmal y %d/1 Brujo Arcano.',
+						4-$data['count'][99],
+						3-$data['count'][100],
+						2-$data['count'][101],
+						1-$data['count'][102]
+					);
 
 					$characterQuest->data = $data;
 					$characterQuest->save();

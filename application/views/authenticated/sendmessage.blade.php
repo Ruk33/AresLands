@@ -29,7 +29,9 @@
 		{{ Form::label('content_label', 'Mensaje') }}
 		{{ Form::textarea('content', Input::old('content'), array('class' => 'input-block-level')) }}
 
-		{{ Form::submit('Enviar') }}
+		<div class="text-center">
+		{{ Form::submit('Enviar', array('class' => 'normal-button', 'style' => 'width: 222px;')) }}
+		</div>
 
 	{{ Form::close() }}
 </div>

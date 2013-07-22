@@ -54,7 +54,7 @@ class Quest_PrimerMisionFallida
 					$data['count'] = 1;
 				}
 
-				$data['progress_for_view'] = 'Mata ' . (50-$data['count']) . ' monstruo(s) de las Ruinas Enanas.';
+				$data['progress_for_view'] = sprintf('Mata %d/50 monstruos de las Ruinas Enanas.', 50-$data['count']);
 
 				$characterQuest->data = $data;
 				$characterQuest->save();

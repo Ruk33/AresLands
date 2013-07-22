@@ -72,11 +72,12 @@ class Quest_SuenoPerturbado
 				}
 				else
 				{
-					$data['progress_for_view'] = 'Mata ' .
-					3-$data['count'][33] . ' Fantasma,' .
-					4-$data['count'][34] . ' Alma en Pena, ' .
-					2-$data['count'][35] . ' Ente Fantasmal y ' .
-					1-$data['count'][36] . ' Dulces Sueños.';
+					$data['progress_for_view'] = sprintf('Mata %d/3 Fantasmas, %d/4 Almas en Pena, %d/2 Entes Fantasmales y %d/1 Dulces Sueños.',
+						3-$data['count'][33],
+						4-$data['count'][34],
+						2-$data['count'][35],
+						1-$data['count'][36]
+					);
 
 					$characterQuest->data = $data;
 					$characterQuest->save();

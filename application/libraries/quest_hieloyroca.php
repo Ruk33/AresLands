@@ -53,7 +53,7 @@ class Quest_HieloYRoca
 					$data['count'] = 1;
 				}
 
-				$data['progress_for_view'] = 'Mata ' . (10-$data['count']) . ' Golem de Hielo.';
+				$data['progress_for_view'] = sprintf('Mata %d/10 Golems de Hielo.', 10-$data['count']);
 
 				$characterQuest->data = $data;
 				$characterQuest->save();

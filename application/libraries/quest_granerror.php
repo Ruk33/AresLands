@@ -53,7 +53,7 @@ class Quest_GranError
 					$data['count'] = 1;
 				}
 
-				$data['progress_for_view'] = 'Mata ' . (20-$data['count']) . ' Bandido de Sooju.';
+				$data['progress_for_view'] = sprintf('Mata %d/20 Bandidos de Sooju.', 20-$data['count']);
 
 				$characterQuest->data = $data;
 				$characterQuest->save();

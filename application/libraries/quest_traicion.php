@@ -54,7 +54,7 @@ class Quest_Traicion
 					$data['count'] = 1;
 				}
 
-				$data['progress_for_view'] = 'Mata ' . (15-$data['count']) . ' Guardia de Sooju.';
+				$data['progress_for_view'] = sprintf('Mata %d/15 Guardias de Sooju.', 15-$data['count']);
 
 				$characterQuest->data = $data;
 				$characterQuest->save();

@@ -73,12 +73,13 @@ class Quest_MuchoTrabajo
 				}
 				else
 				{
-					$data['progress_for_view'] = 'Mata ' .
-					10-$data['count'][112] . ' Ember,' .
-					6-$data['count'][113] . ' Salamandra, ' .
-					3-$data['count'][114] . ' Especto de Fuego, ' .
-					2-$data['count'][115] . ' Mastin de Fuego y ' .
-					1-$data['count'][116] . ' Golem de Magma';
+					$data['progress_for_view'] = sprintf('Mata %d/10 Ember, %d/6 Salamandra, %d/3 Especto de Fuego, %d/2 Mastin de Fuego y %d/1 Golem de Magma.',
+						10-$data['count'][112],
+						6-$data['count'][113],
+						3-$data['count'][114],
+						2-$data['count'][115],
+						1-$data['count'][116]
+					);
 
 					$characterQuest->data = $data;
 					$characterQuest->save();
