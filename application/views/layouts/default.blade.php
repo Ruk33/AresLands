@@ -33,7 +33,10 @@
 
 		<div id="wrap">
 			<div class="container">
-				<!--<div class="dark-box pull-left"><b>Usuarios conectados:</b> {{ Character::where('last_activity_time', '>', time() - 300)->count() }}</div>-->
+				@if ( Auth::check() && Auth::user()->name == 'Ruke' )
+				<div class="dark-box pull-left"><b>Usuarios conectados:</b> {{ Character::where('last_activity_time', '>', time() - 300)->count() }}</div>
+				@endif
+
 				<a href="{{ URL::base() }}"><div class="logo"></div></a>
 				<div class="row-fluid col-wrap">
 					<div class="span2 menu col" style="width: 176px; ">
