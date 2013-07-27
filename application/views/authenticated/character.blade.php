@@ -68,7 +68,28 @@
 			</li>
 		</ul>
 
-		@if ( $character->id != $characterToSee->id && $character->zone_id == $characterToSee->zone_id )
+		<?php
+			$characterToSeeZone = $characterToSee->zone;
+			if ( $characterToSeeZone->type == 'city' || $characterToSeeZone->type = 'land' )
+			{
+				$characterToSeeZone = $characterToSeeZone->id;
+			}
+			else
+			{
+				$characterToSeeZone = $characterToSeeZone->belongs_to;
+			}
+
+			$characterZone = $characterToSee->zone;
+			if ( $characterZone->type == 'city' || $characterZone->type = 'land' )
+			{
+				$characterZone = $characterZone->id;
+			}
+			else
+			{
+				$characterZone = $characterZone->belongs_to;
+			}
+		?>
+		@if ( $character->id != $characterToSee->id && $characterZone == $characterToSeeZone )
 			<h2>¿Te atreves a batallar?</h2>
 			<a href="{{ URL::to('authenticated/toBattle/' . $characterToSee->name) }}">Luchar contra <b>{{ $characterToSee->name }}</b></a>
 		@endif
