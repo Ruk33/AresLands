@@ -4,8 +4,8 @@ angular.module('areslands.controllers', []).
 
 controller('CharacterStatsController', ['$scope', '$http', '$timeout', function($scope, $http, $timeout) {
 	$scope.remainingPoints = 0;
-	$scope.maxLife = 1;
-	$scope.currentLife = 0;
+	$scope.maxLife = '?';
+	$scope.currentLife = '?';
 	$scope.stats = {
 		'stat_life': 0,
 		'stat_dexterity': 0,
@@ -15,21 +15,27 @@ controller('CharacterStatsController', ['$scope', '$http', '$timeout', function(
 	};
 
 	var regenerationPerSecond = function() {
-		if ( $scope.currentLife != $scope.maxLife )
-		{
-			$scope.currentLife = +$scope.currentLife + (0.05 + parseInt($scope.stats['stat_life']) * 0.01);
-			$scope.currentLife = $scope.currentLife.toFixed(2);
+		var currentLife, maxLife, statLife;
 
-			if ( $scope.currentLife > $scope.maxLife )
+		if ( $scope.currentLife != '?' && $scope.maxLife != '?' )
+		{
+			currentLife = Number($scope.currentLife);
+			maxLife = Number($scope.maxLife);
+			statLife = Number($scope.stats['stat_life']);
+			
+			if ( currentLife < maxLife )
 			{
-				$scope.currentLife = $scope.maxLife;
+				currentLife += (0.05 + statLife * 0.01);
+				$scope.currentLife = currentLife.toFixed(2);
 			}
 			else
 			{
-				$timeout(regenerationPerSecond, 1000);
+				$scope.currentLife = maxLife;
+				return;
 			}
 		}
-
+		
+		$timeout(regenerationPerSecond, 1000);
 	};
 
 	regenerationPerSecond();

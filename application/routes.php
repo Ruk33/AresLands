@@ -357,10 +357,15 @@ Route::filter('before', function() {
 			 *	Verificamos si es necesario
 			 *	regenerar puntos de vida
 			 */
-			if ( $character->current_life != $character->max_life )
+			if ( $character->current_life < $character->max_life )
 			{
+				if ( ! $character->last_regeneration_time )
+				{
+					$character->last_regeneration_time = $time;
+				}
+
 				$regeneration = (0.05 + $character->stat_life * 0.01) * ($time - $character->last_regeneration_time);
-				
+
 				if ( $regeneration > 0 )
 				{
 					$character->current_life += $regeneration;
