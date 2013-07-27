@@ -6,11 +6,6 @@
 |--------------------------------------------------------------------------
 */
 
-Route::any('/', function()
-{
-	return View::make('closed.index');
-});
-
 Route::controller('Authenticated');
 Route::controller('Game');
 Route::controller('CharacterCreation');

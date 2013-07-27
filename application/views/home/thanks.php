@@ -4,7 +4,7 @@
 
 <h2>Proyectos open-source</h2>
 <ul class="unstyled">
-	<li><a href="http://sourceforge.net/projects/tierras/" target="_blank" rel="nofollow">Tierras de Leyendaa</a></li>
+	<li><a href="http://sourceforge.net/projects/tierras/" target="_blank" rel="nofollow">Tierras de Leyenda</a></li>
 	<li><a href="http://www.sublimetext.com/" target="_blank" rel="nofollow">Sublime Text</a></li>
 	<li><a href="http://laravel.com/" target="_blank" rel="nofollow">Laravel</a></li>
 	<li><a href="http://angularjs.org/" target="_blank" rel="nofollow">AngularJS</a></li>
