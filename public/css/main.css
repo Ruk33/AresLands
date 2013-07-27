@@ -56,6 +56,27 @@ body {
 	font-size: 15px;
 }
 
+.input {
+	width: auto;
+	background-color: rgb(32, 32, 32) !important;
+	color: rgb(173, 173, 173) !important;
+	border: 1px solid rgb(56, 56, 56) !important;
+	vertical-align: middle;
+	margin: 0 !important;
+}
+
+.input:focus {
+	outline: none !important;
+	border-color: rgb(253, 186, 112) !important;
+	box-shadow: 0 0 5px rgb(243, 134, 15) !important;
+	color: white !important;
+}
+
+.input.select {
+	height: 30px;
+	padding: 5px;
+}
+
 a[data-toggle=popover] {
 	color: yellow;
 }
@@ -67,6 +88,125 @@ a {
 a:hover {
 	color: #FFC04F;
 	text-decoration: none;
+}
+
+.ui-button {
+	background: 0;
+	border: 0;
+	cursor: pointer;
+	display: inline-block;
+	height: auto;
+	overflow: visible;
+	padding: 0;
+	margin: 0;
+	vertical-align: middle;
+	outline: 0;
+	text-align: center;
+	white-space: nowrap;
+	cursor: pointer;
+}
+
+.ui-input-button {
+	color: orange;
+	font: normal normal 12px/33px Verdana;
+}
+
+.ui-input-button:hover {
+	color: #FFC04F;
+}
+
+.button-icon {
+	width: 16px;
+	height: 16px;
+	left: -1px;
+	top: 9px;
+	display: inline-block;
+	z-index: 2;
+	position: absolute;
+}
+
+.button-icon.castle {
+	background-image: url('http://www.guerrerosporlapaz.com/wiki/images/f/f0/Pvp-arenapoints-icon-16x16.png');
+}
+
+.button-icon.armor {
+	background-image: url('/img/icons/armor-icon.png');
+}
+
+.button-icon.document {
+	background-image: url('/img/icons/document-icon.png');
+}
+
+.button-icon.fire {
+	background-image: url('/img/icons/fire-icon.png');
+}
+
+.button-icon.thunder {
+	background-image: url('/img/icons/thunder-icon.png');
+}
+
+.button-icon.wind {
+	background-image: url('/img/icons/wind-icon.png');
+}
+
+.button-icon.axe {
+	background-image: url('/img/icons/axe-icon.png');
+}
+
+.button-icon.dagger {
+	background-image: url('/img/icons/dagger-icon.png');
+}
+
+.button-icon.map {
+	background-image: url('/img/icons/map-icon.png');
+}
+
+.button-icon.castle {
+	background-image: url('/img/icons/castle-icon.png');
+}
+
+.button-icon.hearth {
+	background-image: url('/img/icons/hearth-icon.png');
+}
+
+.button-icon.boot {
+	background-image: url('/img/icons/boot-icon.png');
+}
+
+.button-icon.arrow {
+	background-image: url('/img/icons/arrow-icon.png');
+}
+
+.button-icon.cross {
+	background-image: url('/img/icons/cross-icon.png');
+}
+
+.button-icon.check {
+	background-image: url('/img/icons/check-icon.png');
+}
+
+.button {
+	position: relative;
+	height: 34px;
+	background: url('/img/button.png') 100% -67px;
+	background-repeat: no-repeat;
+	padding-right: 10px;
+	margin-left: 10px;
+}
+
+.button-content {
+	position: relative;
+	z-index: 1;
+	background-image: url('/img/button.png');
+	padding-left: 45px;
+	padding-right: 10px;
+	background-repeat: no-repeat;
+	margin-top: 1px;
+	height: 34px;
+	margin-left: -10px;
+	display: inline-block;
+	overflow: hidden;
+	font: normal normal 12px/33px Verdana;
 }
 
 html, body {
@@ -263,9 +403,20 @@ h4 {
 	background-color: rgb(10, 10, 10);
 }
 
+.menu li a img {
+	margin-bottom: 0.1px;
+
+	border-top: 1px;
+	border-bottom: 1px;
+	border-style: solid;
+	border-color: black;
+}
+
 .menu li a img:hover {
-	opacity: 0.75;
-	filter: alpha(opacity=75); /* For IE8 and earlier */
+	border-top: 1px;
+	border-bottom: 1px;
+	border-style: solid;
+	border-color: rgb(121, 29, 0);
 }
 
 .positive {

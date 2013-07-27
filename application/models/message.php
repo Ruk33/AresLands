@@ -42,6 +42,7 @@ class Message extends Base_Model
 
 		$message->unread = true;
 		$message->date = time();
+		$message->type = 'defense';
 
 		$message->is_special = true;
 
@@ -70,6 +71,7 @@ class Message extends Base_Model
 		$message->date = time();
 
 		$message->is_special = true;
+		$message->type = 'defense';
 
 		$message->save();
 	}
@@ -90,6 +92,7 @@ class Message extends Base_Model
 
 		$message->unread = true;
 		$message->date = time();
+		$message->type = 'received';
 
 		$message->save();
 	}
@@ -106,6 +109,7 @@ class Message extends Base_Model
 
 		$message->unread = true;
 		$message->date = time();
+		$message->type = 'received';
 
 		$message->save();
 	}
@@ -122,6 +126,7 @@ class Message extends Base_Model
 
 		$message->unread = true;
 		$message->date = time();
+		$message->type = 'received';
 
 		$message->save();
 	}
@@ -138,6 +143,7 @@ class Message extends Base_Model
 
 		$message->unread = true;
 		$message->date = time();
+		$message->type = 'received';
 
 		$message->save();
 	}
@@ -154,6 +160,7 @@ class Message extends Base_Model
 
 		$message->unread = true;
 		$message->date = time();
+		$message->type = 'received';
 
 		$message->save();
 	}

@@ -4,7 +4,7 @@
 	@foreach ( $npcs as $npc )
 		<li>
 			<a href="{{ URL::to('authenticated/npc/' . $npc->name) }}" data-toggle="tooltip" data-placement="left" data-original-title="{{ $npc->tooltip_dialog }}">
-				<img src="{{ URL::base() }}/img/icons/npcs/{{ $npc->id }}.png" alt="">
+				<img src="{{ URL::base() }}/img/icons/npcs/{{ $npc->id }}.png" alt="" width="72px" height="82px">
 			</a>
 		</li>
 	@endforeach
@@ -102,78 +102,104 @@
 			<li style="margin-bottom: 10px;" ng-show="remainingPoints>0">
 				<div class="dark-box" style="width: 300px;">
 					<p><b>Puntos restantes para cambiar:</b> [[ remainingPoints ]]</p>
-					<p>Puntos para cambiar: <select ng-model="pointsToChange" ng-init="pointsToChange=1;" ng-options="n for n in [] | range:1:remainingPoints"></select></p>
+					<p>Puntos para cambiar: <select class="input select" ng-model="pointsToChange" ng-init="pointsToChange=1;" ng-options="n for n in [] | range:1:remainingPoints"></select></p>
 				</div>
 			</li>
 
 			<li style="margin-bottom: 5px;" ng-init="stats['stat_life']='{{ $character->stat_life }}'">
 				<span data-toggle="tooltip" data-placement="right" data-original-title="<b>Vitalidad:</b> Aumenta los puntos de vida que posees y la regeneración de los mismos.">
-					<a ng-click="addStat('stat_life')" ng-show="remainingPoints>0" class="btn btn-mini btn-primary">+</a>
-					<b>Vitalidad:</b> [[ stats['stat_life'] ]]
+					<span class="ui-button button" style="cursor: default;">
+						<a ng-click="addStat('stat_life')" class="button-icon" ng-show="remainingPoints>0">+</a>
+						<i class="button-icon hearth" ng-show="remainingPoints<=0"></i>
+						<span class="button-content">
+							<b>Vitalidad:</b> [[ stats['stat_life'] ]]
 
-					@if ( isset($positiveBonifications['stat_life']) && $positiveBonifications['stat_life'] > 0 )
-						<span class="positive">+{{ $positiveBonifications['stat_life'] }}</span>
-					@endif
+							@if ( isset($positiveBonifications['stat_life']) && $positiveBonifications['stat_life'] > 0 )
+								<span class="positive">+{{ $positiveBonifications['stat_life'] }}</span>
+							@endif
 
-					@if ( isset($negativeBonifications['stat_life']) && $negativeBonifications['stat_life'] > 0 )
-						<span class="negative">-{{ $negativeBonifications['stat_life'] }}</span>
-					@endif
+							@if ( isset($negativeBonifications['stat_life']) && $negativeBonifications['stat_life'] > 0 )
+								<span class="negative">-{{ $negativeBonifications['stat_life'] }}</span>
+							@endif
+						</span>
+					</span>
+
 				</span>
 			</li>
 			<li style="margin-bottom: 5px;" ng-init="stats['stat_dexterity']='{{ $character->stat_dexterity }}'">
 				<span data-toggle="tooltip" data-placement="right" data-original-title="<b>Destreza:</b> Aumenta tu velocidad de golpeo en las batallas, pudiendo lograr así múltiples ataques consecutivos.">
-					<a ng-click="addStat('stat_dexterity')" ng-show="remainingPoints>0" class="btn btn-mini btn-primary">+</a>
-					<b>Destreza:</b> [[ stats['stat_dexterity'] ]]
+					<span class="ui-button button" style="cursor: default;">
+						<a ng-click="addStat('stat_dexterity')" class="button-icon" ng-show="remainingPoints>0">+</a>
+						<i class="button-icon boot" ng-show="remainingPoints<=0"></i>
+						<span class="button-content">
+							<b>Destreza:</b> [[ stats['stat_dexterity'] ]]
 
-					@if ( isset($positiveBonifications['stat_dexterity']) && $positiveBonifications['stat_dexterity'] > 0 )
-						<span class="positive">+{{ $positiveBonifications['stat_dexterity'] }}</span>
-					@endif
+							@if ( isset($positiveBonifications['stat_dexterity']) && $positiveBonifications['stat_dexterity'] > 0 )
+								<span class="positive">+{{ $positiveBonifications['stat_dexterity'] }}</span>
+							@endif
 
-					@if ( isset($negativeBonifications['stat_dexterity']) && $negativeBonifications['stat_dexterity'] > 0 )
-						<span class="negative">-{{ $negativeBonifications['stat_dexterity'] }}</span>
-					@endif
+							@if ( isset($negativeBonifications['stat_dexterity']) && $negativeBonifications['stat_dexterity'] > 0 )
+								<span class="negative">-{{ $negativeBonifications['stat_dexterity'] }}</span>
+							@endif
+						</span>
+					</span>
 				</span>
 			</li>
 			<li style="margin-bottom: 5px;" ng-init="stats['stat_magic']='{{ $character->stat_magic }}'">
 				<span data-toggle="tooltip" data-placement="right" data-original-title="<b>Magia:</b> Aumenta el poder de los ataques mágicos.">
-					<a ng-click="addStat('stat_magic')" ng-show="remainingPoints>0" class="btn btn-mini btn-primary">+</a>
-					<b>Magia:</b> [[ stats['stat_magic'] ]]
+					<span class="ui-button button" style="cursor: default;">
+						<a ng-click="addStat('stat_magic')" class="button-icon" ng-show="remainingPoints>0">+</a>
+						<i class="button-icon fire" ng-show="remainingPoints<=0"></i>
+						<span class="button-content">
+							<b>Magia:</b> [[ stats['stat_magic'] ]]
 
-					@if ( isset($positiveBonifications['stat_magic']) && $positiveBonifications['stat_magic'] > 0 )
-						<span class="positive">+{{ $positiveBonifications['stat_magic'] }}</span>
-					@endif
+							@if ( isset($positiveBonifications['stat_magic']) && $positiveBonifications['stat_magic'] > 0 )
+								<span class="positive">+{{ $positiveBonifications['stat_magic'] }}</span>
+							@endif
 
-					@if ( isset($negativeBonifications['stat_magic']) && $negativeBonifications['stat_magic'] > 0 )
-						<span class="negative">-{{ $negativeBonifications['stat_magic'] }}</span>
-					@endif
+							@if ( isset($negativeBonifications['stat_magic']) && $negativeBonifications['stat_magic'] > 0 )
+								<span class="negative">-{{ $negativeBonifications['stat_magic'] }}</span>
+							@endif
+						</span>
+					</span>
 				</span>
 			</li>
 			<li style="margin-bottom: 5px;" ng-init="stats['stat_strength']='{{ $character->stat_strength }}'">
 				<span data-toggle="tooltip" data-placement="right" data-original-title="<b>Fuerza:</b> Aumenta el poder de los ataques físicos.">
-					<a ng-click="addStat('stat_strength')" ng-show="remainingPoints>0" class="btn btn-mini btn-primary">+</a>
-					<b>Fuerza:</b> [[ stats['stat_strength'] ]]
+					<span class="ui-button button" style="cursor: default;">
+						<a ng-click="addStat('stat_strength')" class="button-icon" ng-show="remainingPoints>0">+</a>
+						<i class="button-icon axe" ng-show="remainingPoints<=0"></i>
+						<span class="button-content">
+							<b>Fuerza:</b> [[ stats['stat_strength'] ]]
 
-					@if ( isset($positiveBonifications['stat_strength']) && $positiveBonifications['stat_strength'] > 0 )
-						<span class="positive">+{{ $positiveBonifications['stat_strength'] }}</span>
-					@endif
+							@if ( isset($positiveBonifications['stat_strength']) && $positiveBonifications['stat_strength'] > 0 )
+								<span class="positive">+{{ $positiveBonifications['stat_strength'] }}</span>
+							@endif
 
-					@if ( isset($negativeBonifications['stat_strength']) && $negativeBonifications['stat_strength'] > 0 )
-						<span class="negative">-{{ $negativeBonifications['stat_strength'] }}</span>
-					@endif
+							@if ( isset($negativeBonifications['stat_strength']) && $negativeBonifications['stat_strength'] > 0 )
+								<span class="negative">-{{ $negativeBonifications['stat_strength'] }}</span>
+							@endif
+						</span>
+					</span>
 				</span>
 			</li>
 			<li style="margin-bottom: 5px;" ng-init="stats['stat_luck']='{{ $character->stat_luck }}'">
 				<span data-toggle="tooltip" data-placement="right" data-original-title="<b>Suerte:</b> Aumenta la probabilidad de asestar un golpe crítico, ya sea mágico o físico.">
-					<a ng-click="addStat('stat_luck')" ng-show="remainingPoints>0" class="btn btn-mini btn-primary">+</a>
-					<b>Suerte:</b> [[ stats['stat_luck'] ]]
+					<span class="ui-button button" style="cursor: default;">
+						<a ng-click="addStat('stat_luck')" class="button-icon" ng-show="remainingPoints>0">+</a>
+						<i class="button-icon thunder" ng-show="remainingPoints<=0"></i>
+						<span class="button-content">
+							<b>Suerte:</b> [[ stats['stat_luck'] ]]
 
-					@if ( isset($positiveBonifications['stat_luck']) && $positiveBonifications['stat_luck'] > 0 )
-						<span class="positive">+{{ $positiveBonifications['stat_luck'] }}</span>
-					@endif
+							@if ( isset($positiveBonifications['stat_luck']) && $positiveBonifications['stat_luck'] > 0 )
+								<span class="positive">+{{ $positiveBonifications['stat_luck'] }}</span>
+							@endif
 
-					@if ( isset($negativeBonifications['stat_luck']) && $negativeBonifications['stat_luck'] > 0 )
-						<span class="negative">-{{ $negativeBonifications['stat_luck'] }}</span>
-					@endif
+							@if ( isset($negativeBonifications['stat_luck']) && $negativeBonifications['stat_luck'] > 0 )
+								<span class="negative">-{{ $negativeBonifications['stat_luck'] }}</span>
+							@endif
+						</span>
+					</span>
 				</span>
 			</li>
 		</ul>

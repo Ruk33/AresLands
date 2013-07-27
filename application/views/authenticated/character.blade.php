@@ -7,7 +7,7 @@
 			@if ( isset($items['lrhand']) && $lrhand = $items['lrhand'][0]->item )
 				<div style="position: absolute; margin-top: 150px;">
 					<div class="equipped-item">
-						<img src="{{ URL::base() }}/img/icons/items/{{ $items['lrhand'][0]->item->id }}.png" alt="" data-toggle="popover" data-placement="top" data-original-title="{{ $lrhand->get_text_for_tooltip() }}">
+						<img src="{{ URL::base() }}/img/icons/items/{{ $items['lrhand'][0]->item->id }}.png" alt="" width="80px" height="80px" data-toggle="tooltip" data-placement="top" data-original-title="{{ $lrhand->get_text_for_tooltip() }}">
 					</div>
 				</div>
 			<!-- END DOS MANOS -->
@@ -16,7 +16,7 @@
 				<div style="position: absolute; margin-top: 150px;">
 					<div class="equipped-item">
 					@if ( isset($items['rhand']) && $rhand = $items['rhand'][0]->item )
-						<img style="cursor: pointer;" src="{{ URL::base() }}/img/icons/items/{{ $rhand->id }}.png" alt="" data-toggle="popover" data-placement="top" data-original-title="{{ $rhand->get_text_for_tooltip() }}">
+						<img src="{{ URL::base() }}/img/icons/items/{{ $rhand->id }}.png" alt="" width="80px" height="80px" data-toggle="tooltip" data-placement="top" data-original-title="{{ $rhand->get_text_for_tooltip() }}">
 					@endif
 					</div>
 				</div>
@@ -26,7 +26,7 @@
 				<div style="position: absolute; margin-left: 250px; margin-top: 150px;">
 					<div class="equipped-item">
 					@if ( isset($items['lhand']) && $lhand = $items['lhand'][0]->item )
-						<img style="cursor: pointer;" src="{{ URL::base() }}/img/icons/items/{{ $lhand->id }}.png" alt="" data-toggle="popover" data-placement="top" data-original-title="{{ $lhand->get_text_for_tooltip() }}">
+						<img src="{{ URL::base() }}/img/icons/items/{{ $lhand->id }}.png" alt="" width="80px" height="80px" data-toggle="tooltip" data-placement="top" data-original-title="{{ $lhand->get_text_for_tooltip() }}">
 					@endif
 					</div>
 				</div>

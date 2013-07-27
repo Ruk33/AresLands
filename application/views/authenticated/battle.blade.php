@@ -18,11 +18,16 @@
 				{{ Form::open() }}
 					{{ Form::hidden('search_method', 'name') }}
 
-					{{ Form::label('name_label', 'Nombre') }}
+					{{ Form::label('character_name', 'Nombre') }}
 					{{ Form::text('character_name') }}
 
 					<div>
-					{{ Form::submit('¡Buscar por nombre!', array('class' => 'normal-button', 'style' => 'width: 222px;')) }}
+						<span class="ui-button button">
+							<i class="button-icon axe"></i>
+							<span class="button-content">
+								{{ Form::submit('Buscar por nombre', array('class' => 'ui-button ui-input-button')) }}
+							</span>
+						</span>
 					</div>
 				{{ Form::close() }}
 			</div>
@@ -44,7 +49,12 @@
 					{{ Form::number('level', $character->level, array('min' => '1')) }}
 
 					<div>
-					{{ Form::submit('¡Buscar aleatoriamente!', array('class' => 'normal-button', 'style' => 'width: 222px;')) }}
+						<span class="ui-button button">
+							<i class="button-icon thunder"></i>
+							<span class="button-content">
+								{{ Form::submit('Buscar aleatoriamente', array('class' => 'ui-button ui-input-button')) }}
+							</span>
+						</span>
 					</div>
 				{{ Form::close() }}
 			</div>
@@ -58,11 +68,16 @@
 				{{ Form::open() }}
 					{{ Form::hidden('search_method', 'group') }}
 
-					{{ Form::label('group_label', 'Grupo') }}
+					{{ Form::label('clan', 'Grupo') }}
 					{{ Form::select('clan', Clan::lists('name', 'id')) }}
 
 					<div>
-					{{ Form::submit('¡Buscar en grupo!', array('class' => 'normal-button', 'style' => 'width: 222px;')) }}
+						<span class="ui-button button">
+							<i class="button-icon dagger"></i>
+							<span class="button-content">
+								{{ Form::submit('Buscar en grupo', array('class' => 'ui-button ui-input-button')) }}
+							</span>
+						</span>
 					</div>
 				{{ Form::close() }}
 			</div>

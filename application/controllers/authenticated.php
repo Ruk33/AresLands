@@ -1071,9 +1071,13 @@ class Authenticated_Controller extends Base_Controller
 		/*
 		 *	Obtenemos todos los mensajes del personaje
 		 */
-		$messages = $character->messages()->select(array('id', 'sender_id', 'subject', 'unread', 'date'))->order_by('date', 'desc')->get();
+		$messages = array();
+		$messages['received'] = $character->messages()->select(array('id', 'sender_id', 'subject', 'unread', 'date'))->where('type', '=', 'received')->order_by('date', 'desc')->get();
+		//$messages['sent'] = Message::select(array('id', 'sender_id', 'subject', 'unread', 'date'))->where('sender_id', '=', $character->id)->where('type', '=', 'received')->order_by('date', 'desc')->get();
+		$messages['attack'] = $character->messages()->select(array('id', 'sender_id', 'subject', 'unread', 'date'))->where('type', '=', 'attack')->order_by('date', 'desc')->get();
+		$messages['defense'] = $character->messages()->select(array('id', 'sender_id', 'subject', 'unread', 'date'))->where('type', '=', 'defense')->order_by('date', 'desc')->get();
 
-		$this->layout->title = 'Mensajes privados';
+		$this->layout->title = 'Mensajes';
 		$this->layout->content = View::make('authenticated.messages')
 		->with('messages', $messages);
 	}
@@ -1181,6 +1185,8 @@ class Authenticated_Controller extends Base_Controller
 	public function post_battle()
 	{
 		$character = Character::get_character_of_logged_user(array('id', 'zone_id', 'name'));
+		$zone = $character->zone()->select(array('id', 'type', 'belongs_to'))->first();
+		$zones = array();
 		$searchMethod = Input::get('search_method');
 
 		$valuesToTake = array(
@@ -1198,12 +1204,28 @@ class Authenticated_Controller extends Base_Controller
 			'stat_luck',
 		);
 
+		if ( $zone->type != 'city' || $zone->type != 'land' )
+		{
+			//$zones = Zone::where('belongs_to', '=', $zone->belongs_to)->select(array('id'))->get();
+			$zones = DB::table('zones')->where('belongs_to', '=', $zone->belongs_to)->select(array('id'))->get();
+		}
+		else
+		{
+			//$zones = Zone::where('belongs_to', '=', $zone->id)->select(array('id'))->get();
+			$zones = DB::table('zones')->where('belongs_to', '=', $zone->id)->select(array('id'))->get();
+		}
+
+		foreach ( $zones as $key => $value )
+		{
+			$zones[$key] = $value->id;
+		}
+
 		$characterFinded = null;
 
 		switch ( $searchMethod ) 
 		{
 			case 'name':
-				$characterFinded = Character::where('name', '=', Input::get('character_name'))->where('name', '<>', $character->name)->where('is_traveling', '=', false)->where('zone_id', '=', $character->zone_id)->select($valuesToTake)->first();
+				$characterFinded = Character::where('name', '=', Input::get('character_name'))->where('name', '<>', $character->name)->where('is_traveling', '=', false)->where_in('zone_id', $zones)->select($valuesToTake)->first();
 				break;
 
 			case 'random':
@@ -1248,11 +1270,11 @@ class Authenticated_Controller extends Base_Controller
 					$level = 1;
 				}
 
-				$characterFinded = Character::where_in('race', $race)->where('level', $operation, $level)->where('name', '<>', $character->name)->where('is_traveling', '=', false)->where('zone_id', '=', $character->zone_id)->select($valuesToTake)->order_by(DB::raw('RAND()'))->first();
+				$characterFinded = Character::where_in('race', $race)->where('level', $operation, $level)->where('name', '<>', $character->name)->where('is_traveling', '=', false)->where_in('zone_id', $zones)->select($valuesToTake)->order_by(DB::raw('RAND()'))->first();
 				break;
 
 			case 'group':
-				$characterFinded = Character::where('clan_id', '=', Input::get('clan'))->where('name', '<>', $character->name)->where('is_traveling', '=', false)->where('zone_id', '=', $character->zone_id)->select($valuesToTake)->order_by(DB::raw('RAND()'))->first();
+				$characterFinded = Character::where('clan_id', '=', Input::get('clan'))->where('name', '<>', $character->name)->where('is_traveling', '=', false)->where_in('zone_id', $zones)->select($valuesToTake)->order_by(DB::raw('RAND()'))->first();
 				break;
 		}
 

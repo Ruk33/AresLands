@@ -12,18 +12,19 @@
 
 		<link rel="stylesheet" href="{{ URL::base() }}/css/normalize.min.css">
 		<link rel="stylesheet" href="{{ URL::base() }}/css/bootstrap.min.css">
-		<link rel="stylesheet" href="{{ URL::base() }}/css/main.min.css">
+		<!--<link rel="stylesheet" href="{{ URL::base() }}/css/main.min.css">-->
+		<link rel="stylesheet" href="{{ URL::base() }}/css/main.css">
 
-		<!--
+		
 		<script src="{{ URL::base() }}/js/vendor/angular.min.js"></script>
-		-->
+		
 
 		<!--<script src="{{ URL::base() }}/js/vendor/ui-bootstrap-custom-0.4.0.min.js"></script>-->
 		
-		<!--
+		
 		<script src="{{ URL::base() }}/js/vendor/jquery-1.9.1.min.js"></script>
 		<script src="{{ URL::base() }}/js/vendor/bootstrap.min.js"></script>
-		-->
+		
 	</head>
 	<body ng-init="basePath='{{ URL::base() }}/'">
 		<!--[if lt IE 7]>
@@ -108,18 +109,21 @@
 						Todas las marcas aquí mencionadas son propiedad de sus respectivos dueños. 
 						<br>
 						©2013 IronFist. Todos los derechos reservados.
+						<br>
+						AresLands es una realidad gracias a <b>Vicente Buendia</b> y a su proyecto open <a href="http://sourceforge.net/projects/tierras/">Tierras de Leyenda</a>
 					</p>
 				</div>
 			</div>
 		</footer>
 
-		<!--
+		<script src="{{ URL::base() }}/js/app.js"></script>
+		
 		<script src="{{ URL::base() }}/js/configuration.js"></script>
 		<script src="{{ URL::base() }}/js/services.js"></script>
 		<script src="{{ URL::base() }}/js/controllers.js"></script>
 		<script src="{{ URL::base() }}/js/filters.js"></script>
-		<script src="{{ URL::base() }}/js/app.js" async></script>
-		-->
+		<script src="{{ URL::base() }}/js/directives.js"></script>
+		
 
 		<!--
 		<script src="{{ URL::base() }}/js/vendor/angular.min.js"></script>
@@ -135,7 +139,9 @@
 		<script src="{{ URL::base() }}/js/vendor/modernizr-2.6.2.min.js"></script>
 		-->
 
+		<!--
 		<script src="{{ URL::base() }}/js/main.min.js"></script>
+		-->
 		<script src="{{ URL::base() }}/js/libs/jquery.countdown.min.js"></script>
 
 		<script>

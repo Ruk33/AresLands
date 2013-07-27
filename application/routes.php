@@ -6,11 +6,18 @@
 |--------------------------------------------------------------------------
 */
 
+Route::any('/', function()
+{
+	return View::make('closed.index');
+});
+
+/*
 Route::controller('Authenticated');
 Route::controller('CharacterCreation');
 Route::controller('Home');
 Route::controller('Item');
 Route::controller('Game');
+*/
 
 
 /*
@@ -385,7 +392,7 @@ Route::filter('before', function() {
 			if ( $character->xp >= $character->xp_next_level )
 			{
 				$character->level++;
-				$character->xp_next_level = $character->xp_next_level + 25 * $character->level;
+				$character->xp_next_level = $character->xp_next_level + 10 * $character->level;
 
 				/* 
 				 *	Aumentamos la vida

@@ -1,6 +1,10 @@
 @if ( $character->clan_id == 0 )
 	<h2>Crear grupo</h2>
-	<a href="{{ URL::to('authenticated/createClan') }}" class="normal-button">Crear un grupo</a>
+
+	<a href="{{ URL::to('authenticated/createClan') }}" class="ui-button button">
+		<i class="button-icon castle"></i>
+		<span class="button-content">Crear grupo</span>
+	</a>
 @endif
 
 <h2>Grupos</h2>

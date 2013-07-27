@@ -19,7 +19,7 @@
 
 	{{ Form::open() }}
 		<div>
-		{{ Form::label('name_label', 'Nombre del personaje') }}
+		{{ Form::label('name', 'Nombre del personaje') }}
 		{{ Form::text('name', Input::old('name'), array('class' => 'input-block-level')) }}
 		</div>
 		
@@ -30,7 +30,7 @@
 				{{ Form::radio('item', $characterItem->id, true, array('id' => $characterItem->id)) }}
 				<label for="{{ $characterItem->id }}">
 					<div class="inventory-item">
-						<img src="{{ URL::base() }}/img/icons/inventory/items/{{ $characterItem->item_id }}.png" alt="" data-toggle="tooltip" data-placement="top" data-original-title="{{ $characterItem->item->get_text_for_tooltip() }}">
+						<img src="{{ URL::base() }}/img/icons/items/{{ $characterItem->item_id }}.png" alt="" width="80px" height="80px" data-toggle="tooltip" data-placement="top" data-original-title="{{ $characterItem->item->get_text_for_tooltip() }}">
 					</div>
 				</label>
 
@@ -52,12 +52,17 @@
 		</ul>
 
 		<div>
-			{{ Form::label('price_label', 'Precio (en cobre)') }}
+			{{ Form::label('price', 'Precio (en cobre)') }}
 			{{ Form::number('price', null, array('min' => 1, 'class' => 'input-block-level')) }}
 		</div>
 
 		<div class="text-center">
-		{{ Form::submit('Enviar oferta', array('class' => 'btn btn-primary')) }}
+			<span class="ui-button button">
+				<i class="button-icon arrow"></i>
+				<span class="button-content">
+					{{ Form::submit('Enviar oferta', array('class' => 'ui-button ui-input-button')) }}
+				</span>
+			</span>
 		</div>
 	{{ Form::close() }}
 	@endif

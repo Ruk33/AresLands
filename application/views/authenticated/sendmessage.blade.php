@@ -15,19 +15,31 @@
 
 	{{ Form::open() }}
 
-		{{ Form::label('to_label', 'Para:') }}
+		<div>
+			<i class="icon-user"></i>
+			{{ Form::label('to', 'Para:', array('style' => 'display: inline;')) }}
+		</div>
 
 		@if ( $to )
-			{{ Form::text('to', $to), array('class' => 'input-block-level') }}
+			{{ Form::text('to', $to, array('class' => 'input', 'style' => 'width: 100%;')) }}
 		@else
-			{{ Form::text('to', Input::old('to'), array('class' => 'input-block-level')) }}
+			{{ Form::text('to', Input::old('to'), array('class' => 'input', 'style' => 'width: 100%;')) }}
 		@endif
 
-		{{ Form::label('to_label', 'Asunto:') }}
-		{{ Form::text('subject', Input::old('subject'), array('class' => 'input-block-level')) }}
+		<div style="margin-top: 15px;">
+			<i class="icon-comment"></i>
+			{{ Form::label('subject', 'Asunto:', array('style' => 'display: inline;')) }}
+		</div>
 
-		{{ Form::label('content_label', 'Mensaje') }}
-		{{ Form::textarea('content', Input::old('content'), array('class' => 'input-block-level')) }}
+		{{ Form::text('subject', Input::old('subject'), array('class' => 'input', 'style' => 'width: 100%;')) }}
+
+
+		<div style="margin-top: 15px;">
+			<i class="icon-pencil"></i>
+			{{ Form::label('content', 'Mensaje', array('style' => 'display: inline;')) }}
+		</div>
+
+		{{ Form::textarea('content', Input::old('content'), array('class' => 'input', 'style' => 'width: 100%;')) }}
 
 		<div class="text-center">
 		{{ Form::submit('Enviar', array('class' => 'normal-button', 'style' => 'width: 222px;')) }}

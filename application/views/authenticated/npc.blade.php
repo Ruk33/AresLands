@@ -18,8 +18,11 @@
 	
 		@foreach ( $rewardQuests as $rewardQuest )
 			<div class="dark-box" style="cursor: pointer;" data-toggle="collapse" data-target="#{{ $rewardQuest->id }}">
-				<strong>{{ $rewardQuest->name }}</strong>
-				<div class="pull-right">{{ $rewardQuest->get_reward_for_view() }}</div>
+				<strong style="line-height: 60px;">{{ $rewardQuest->name }}</strong>
+				<div class="pull-right">
+					<small>Recompensa(s)</small>
+					{{ $rewardQuest->get_reward_for_view() }}
+				</div>
 				
 				<div id="{{ $rewardQuest->id }}" class="collapse">
 					<p>{{ $rewardQuest->description }}</p>
@@ -35,9 +38,12 @@
 		<h2>Misiones aceptadas</h2>
 		
 		@foreach ( $startedQuests as $startedQuest )
-			<div class="dark-box" style="cursor: pointer;" data-toggle="collapse" data-target="#{{ $startedQuest['quest']->id }}">
-				<strong>{{ $startedQuest['quest']->name }}</strong>
-				<div class="pull-right">{{ $startedQuest['quest']->get_reward_for_view() }}</div>
+			<div class="dark-box span11" style="cursor: pointer;" data-toggle="collapse" data-target="#{{ $startedQuest['quest']->id }}">
+				<strong style="line-height: 60px;">{{ $startedQuest['quest']->name }}</strong>
+				<div class="pull-right">
+					<small>Recompensa(s)</small>
+					{{ $startedQuest['quest']->get_reward_for_view() }}
+				</div>
 				
 				<div id="{{ $startedQuest['quest']->id }}" class="collapse">
 					<p>{{ $startedQuest['quest']->description }}</p>
@@ -54,8 +60,11 @@
 
 		@foreach ( $quests as $quest )
 			<div class="dark-box" style="cursor: pointer;" data-toggle="collapse" data-target="#{{ $quest->id }}">
-				<strong>{{ $quest->name }}</strong>
-				<div class="pull-right">{{ $quest->get_reward_for_view() }}</div>
+				<strong style="line-height: 60px;">{{ $quest->name }}</strong>
+				<div class="pull-right">
+					<small>Recompensa(s)</small>
+					{{ $quest->get_reward_for_view() }}
+				</div>
 				
 				<div id="{{ $quest->id }}" class="collapse">
 					<p>{{ $quest->description }}</p>

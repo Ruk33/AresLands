@@ -23,7 +23,12 @@
 		</div>
 	@endif
 
-	<a href="{{ URL::to('authenticated/newTrade') }}" class="btn btn-primary">Nuevo comercio</a>
+	<a href="{{ URL::to('authenticated/newTrade') }}" class="ui-button button">
+		<i class="button-icon arrow"></i>
+		<span class="button-content">
+			Nuevo comercio
+		</span>
+	</a>
 
 	<h2>Comercios pendientes</h2>
 
@@ -52,7 +57,7 @@
 					</td>
 					<td>
 						<div class="inventory-item">
-							<img src="{{ URL::base() }}/img/icons/inventory/items/{{ $trade->item_id }}.png" alt="" data-toggle="tooltip" data-placement="top" data-original-title="{{ $trade->item->get_text_for_tooltip() }}">
+							<img src="{{ URL::base() }}/img/icons/items/{{ $trade->item_id }}.png" alt="" data-toggle="tooltip" data-placement="top" data-original-title="{{ $trade->item->get_text_for_tooltip() }}">
 						</div>
 					</td>
 					<td>{{ $trade->amount }}</td>
@@ -62,10 +67,22 @@
 					</td>
 					<td>
 						@if ( $character->id == $trade->buyer_id )
-							<a href="{{ URL::to('authenticated/acceptTrade/' . $trade->id) }}" class="btn btn-success">Aceptar</a>
+							<a href="{{ URL::to('authenticated/acceptTrade/' . $trade->id) }}" class="ui-button button">
+								<i class="button-icon check"></i>
+								<span class="button-content">
+									Aceptar
+								</span>
+							</a>
 						@endif
 
-						<a href="{{ URL::to('authenticated/cancelTrade/' . $trade->id) }}" class="btn btn-danger">Cancelar</a>
+						@if ( $character->id == $trade->seller_id )
+							<a href="{{ URL::to('authenticated/cancelTrade/' . $trade->id) }}" class="ui-button button">
+								<i class="button-icon cross"></i>
+								<span class="button-content">
+									Cancelar
+								</span>
+							</a>
+						@endif
 					</td>
 				</tr>
 				@endif

@@ -14,13 +14,20 @@
 
 	{{ Form::open() }}
 		<div>
-		{{ Form::label('name_label', 'Nombre del grupo') }}
+		{{ Form::label('name', 'Nombre del grupo') }}
 		{{ Form::text('name', '', array('class' => 'input-block-level')) }}
+
+		{{ Form::label('message', 'Mensaje del grupo') }}
 		{{ Form::textarea('message', null, array('class' => 'ckeditor input-block-level')) }}
 		</div>
 		
 		<div class="pull-right">
-		{{ Form::submit('Crear', array('class' => 'btn btn-primary')) }}
+			<span class="ui-button button">
+				<i class="button-icon castle"></i>
+				<span class="button-content">
+					{{ Form::submit('Crear grupo', array('class' => 'ui-button ui-input-button')) }}
+				</span>
+			</span>
 		</div>
 		
 	{{ Form::close() }}
