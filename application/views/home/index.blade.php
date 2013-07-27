@@ -1,4 +1,4 @@
-<h2>AresLands (beta), el renacimiento de Tierras de Leyenda</h2>
+<h2>AresLands, el renacimiento de Tierras de Leyenda</h2>
 <p>¡Bienvenido a AresLands forastero/a!</p>
 <p>Últimamente el mal parece estar fortaleciéndose, criaturas que no pertecen a este mundo están ahora sobre nosotros, ¡necesitamos tu ayuda!.</p>
 

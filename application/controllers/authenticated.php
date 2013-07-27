@@ -53,11 +53,6 @@ class Authenticated_Controller extends Base_Controller
 			$this->layout->with('coins', $character->get_divided_coins());
 			$this->layout->with('character', $character);
 		}
-
-		if ( Auth::user()->name != 'Ruke' )
-		{
-			return Redirect::to('/');
-		}
 	}
 
 	/*

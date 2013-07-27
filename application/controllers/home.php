@@ -13,7 +13,7 @@ class Home_Controller extends Base_Controller
 		 *	Si está logueado, enviamos
 		 *	al usuario a la página de autentificados
 		 */
-		$this->filter('before', 'logged', array('authenticated/index'));
+		$this->filter('before', 'logged', array('authenticated/index'))->only('index');
 	}
 
 	/* Index */
@@ -21,5 +21,11 @@ class Home_Controller extends Base_Controller
 	{
 		$this->layout->title = 'El renacimiento de Tierras de Leyenda';
 		$this->layout->content = View::make('home.index');
+	}
+
+	public function get_thanks()
+	{
+		$this->layout->title = 'Muchísimas gracias a todos';
+		$this->layout->content = View::make('home.thanks');
 	}
 }

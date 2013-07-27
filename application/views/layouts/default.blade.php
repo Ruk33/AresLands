@@ -87,9 +87,10 @@
 								<li><a href="http://ironfist.com.ar/forums/index"><img src="{{ URL::base() }}/img/menu/forum.jpg" alt="Ir al foro" width="177px" height="36px"></a></li>
 								<li><a href="{{ URL::to('authenticated/logout') }}"><img src="{{ URL::base() }}/img/menu/logout.jpg" alt="" width="177px" height="36px"></a></li>
 							@else
-								<li><img src="{{ URL::base() }}/img/menu/inicio.jpg" alt="" width="177px" height="36px"></li>
+								<li><a href="{{ URL::to('home/index') }}"><img src="{{ URL::base() }}/img/menu/inicio.jpg" alt="" width="177px" height="36px"></a></li>
+								<li><a href="{{ URL::to('home/thanks') }}"><img src="{{ URL::base() }}/img/menu/thanks.jpg" alt="" width="177px" height="36px"></a></li>
 							@endif
-							<li><a href="{{ URL::to('game/index') }}"><img src="{{ URL::base() }}/img/menu/guide.jpg" width="177px" height="36px"></a></li>
+							<li><a href="{{ URL::to('game/index') }}" target="_blank"><img src="{{ URL::base() }}/img/menu/guide.jpg" width="177px" height="36px"></a></li>
 						</ul>
 					</div>
 
@@ -111,7 +112,7 @@
 						<br>
 						©2013 IronFist. Todos los derechos reservados.
 						<br>
-						AresLands es una realidad gracias a <b>Vicente Buendia</b> y a su proyecto open <a href="http://sourceforge.net/projects/tierras/">Tierras de Leyenda</a>
+						AresLands es una realidad gracias a <b>Vicente Buendia</b> y a su proyecto open <a href="http://sourceforge.net/projects/tierras/" target="_blank" rel="nofollow">Tierras de Leyenda</a> y a <a href="{{ URL::to('home/thanks') }}">todos los que contribuyeron con nosotros</a>.
 					</p>
 				</div>
 			</div>
