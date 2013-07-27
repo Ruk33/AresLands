@@ -347,7 +347,7 @@ Route::filter('before', function() {
 			/*
 			 *	Actualizamos solamente si hay una diferencia de un minuto
 			 */
-			if ( $character->last_activity_time - $time > 60 )
+			if ( ! $character->last_activity_time || $character->last_activity_time - $time > 60 )
 			{
 				$character->last_activity_time = $time;
 				$character->save();
