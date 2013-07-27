@@ -11,8 +11,8 @@ Route::any('/', function()
 	return View::make('closed.index');
 });
 
-/*
 Route::controller('Authenticated');
+/*
 Route::controller('CharacterCreation');
 Route::controller('Home');
 Route::controller('Item');
