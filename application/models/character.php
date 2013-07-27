@@ -515,7 +515,8 @@ class Character extends Base_Model
 		 */
 		if ( $fighter_two['is_player'] )
 		{
-			Message::attack_report($fighter_two['character'], $fighter_one['character'], $message, $winner['character']);
+			Message::attack_report($fighter_one['character'], $fighter_two['character'], $message, $winner['character']);
+			Message::defense_report($fighter_two['character'], $fighter_one['character'], $message, $winner['character']);
 		}
 		else
 		{

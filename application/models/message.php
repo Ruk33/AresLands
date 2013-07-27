@@ -27,7 +27,7 @@ class Message extends Base_Model
 		return $this->belongs_to('Character', 'sender_id');
 	}
 
-	public static function attack_report($receiver, $attacker, $battleMessage, $winner)
+	public static function defense_report($receiver, $attacker, $battleMessage, $winner)
 	{
 		$message = new Message();
 
@@ -43,6 +43,28 @@ class Message extends Base_Model
 		$message->unread = true;
 		$message->date = time();
 		$message->type = 'defense';
+
+		$message->is_special = true;
+
+		$message->save();
+	}
+
+	public static function attack_report($receiver, $target, $battleMessage, $winner)
+	{
+		$message = new Message();
+
+		$message->sender_id = $receiver->id;
+		$message->receiver_id = $receiver->id;
+
+		$message->subject = 'Atacaste a ' . $target->name;
+		$message->content = '<p>Atacaste al jugador ' . $target->get_link() . '.</p>' .
+		'<p>El ganador ha sido ' . $winner->get_link() . '</p>' . 
+		'<p>Dessarrollo de la pelea:</p>' .
+		'<p>' . $battleMessage . '</p>';
+
+		$message->unread = true;
+		$message->date = time();
+		$message->type = 'attack';
 
 		$message->is_special = true;
 
