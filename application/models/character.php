@@ -558,7 +558,7 @@ class Character extends Base_Model
 		{
 			$characterCoins = new CharacterItem();
 
-			$characterCoins->owner_id = $character->id;
+			$characterCoins->owner_id = $this->id;
 			$characterCoins->item_id = Config::get('game.coin_id');
 			$characterCoins->location = 'none';
 			$characterCoins->count = $reward * Config::get('game.coins_rate');
