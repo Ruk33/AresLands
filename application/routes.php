@@ -12,11 +12,11 @@ Route::any('/', function()
 });
 
 Route::controller('Authenticated');
+Route::controller('Game');
 /*
 Route::controller('CharacterCreation');
 Route::controller('Home');
 Route::controller('Item');
-Route::controller('Game');
 */
 
 
