@@ -13,7 +13,7 @@ return array(
 	|
 	*/
 
-	'url' => 'http://areslands.ironfist.com.ar/public',
+	'url' => 'http://areslands.ironfist.com.ar',
 
 	/*
 	|--------------------------------------------------------------------------
