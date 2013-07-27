@@ -87,8 +87,9 @@
 								<li><a href="http://ironfist.com.ar/forums/index"><img src="{{ URL::base() }}/img/menu/forum.jpg" alt="Ir al foro" width="177px" height="36px"></a></li>
 								<li><a href="{{ URL::to('authenticated/logout') }}"><img src="{{ URL::base() }}/img/menu/logout.jpg" alt="" width="177px" height="36px"></a></li>
 							@else
-								<li><img src="{{ URL::base() }}/img/menu/inicio.jpg" alt=""></li>
+								<li><a href="{{ URL::to('game') }}"><img src="{{ URL::base() }}/img/menu/inicio.jpg" alt="" width="177px" height="36px"></a></li>
 							@endif
+							<li>a<img src="{{ URL::base() }}/img/menu/guide.jpg"></li>
 						</ul>
 					</div>
 
