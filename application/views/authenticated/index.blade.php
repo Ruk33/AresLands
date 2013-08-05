@@ -1,15 +1,17 @@
-@if ( ! $character->is_traveling )
-<div class="bar">
-	<ul class="inline">
-	@foreach ( $npcs as $npc )
-		<li>
-			<a href="{{ URL::to('authenticated/npc/' . $npc->name) }}" data-toggle="tooltip" data-placement="left" data-original-title="{{ $npc->tooltip_dialog }}">
-				<img src="{{ URL::base() }}/img/icons/npcs/{{ $npc->id }}.png" alt="" width="72px" height="82px">
-			</a>
-		</li>
-	@endforeach
-	</ul>
-</div>
+@if ( count($npcs) > 0 )
+	@if ( ! $character->is_traveling )
+	<div class="bar">
+		<ul class="inline">
+		@foreach ( $npcs as $npc )
+			<li>
+				<a href="{{ URL::to('authenticated/npc/' . $npc->name) }}" data-toggle="tooltip" data-placement="left" data-original-title="{{ $npc->tooltip_dialog }}">
+					<img src="{{ URL::base() }}/img/icons/npcs/{{ $npc->id }}.png" alt="" width="72px" height="82px">
+				</a>
+			</li>
+		@endforeach
+		</ul>
+	</div>
+	@endif
 @endif
 <!--<hr class="line">-->
 
@@ -92,10 +94,14 @@
 	<!-- ESTADÍSTICAS -->
 	<div class="span6" ng-controller="CharacterStatsController" ng-init="remainingPoints='{{ $character->points_to_change }}'">
 		<h2>Estadísticas</h2>
-		<ul class="unstyled">
+		<ul class="unstyled" style="width: 340px;">
 			<li style="margin-bottom: 20px;">
 				<span data-toggle="tooltip" data-placement="top" data-original-title="<b>Vida:</b> vida actual / vida máxima" ng-init="currentLife='{{ $character->current_life }}'; maxLife='{{ $character->max_life }}'">
-					<b>Vida:</b> [[ currentLife ]]/[[ maxLife ]]
+					<div class="text-right" style="font-size: 12px;"><b>Vida:</b> [[ currentLife ]]/[[ maxLife ]]</div>
+					<div class="progress" style="height: 5px;">
+						<div class="bar bar-success" id="lifeBar">
+						</div>
+					</div>
 				</span>
 			</li>
 			

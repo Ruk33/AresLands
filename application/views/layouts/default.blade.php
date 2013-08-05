@@ -42,58 +42,76 @@
 					<div class="span2 menu col" style="width: 176px; ">
 						@if ( Request::route()->controller == 'authenticated' )
 							<div class="mini-player-display">
-								<img src="{{ URL::base() }}/img/icons/race/{{ $character->race }}_{{ $character->gender }}.jpg" alt="" width="30px" height="30px" class="pull-left">
+								<div class="icon-race-30 icon-race-30-{{ $character->race }}_{{ $character->gender }} pull-left"></div>
 								<div class="pull-left" style="margin-left: 5px;">
-									<a href="{{ URL::to('authenticated/character/' . $character->name) }}" style="color: rgb(231, 180, 47); font-size: 12px;"><b>{{ $character->name }}</b></a>
+									<a href="{{ URL::to('authenticated/character/' . $character->name) }}" style="color: rgb(231, 180, 47); font-size: 12px;">
+										<b>{{ $character->name }}</b>
+									</a>
 									<br>
 									Nivel: {{ $character->level }}
 								</div>
 
-								<div class="pull-right">
-									<img src="{{ URL::base() }}/img/xp.png" alt="" width="22px" height="18px" data-toggle="tooltip" data-placement="top" data-original-title="<b>Experiencia</b><br>{{ $character->xp }}/{{ $character->xp_next_level }}">
+								<ul class="inline pull-right">
+									<li style="padding: 0; vertical-align: middle;">
+										<img src="{{ URL::base() }}/img/xp.png" alt="Experiencia" width="22px" height="18px" data-toggle="tooltip" data-placement="top" data-original-title="<b>Experiencia</b><br>{{ $character->xp }}/{{ $character->xp_next_level }}">
+									</li>
 
-									<img src="{{ URL::base() }}/img/copper.gif" alt="" width="14px" height="15px" data-toggle="tooltip" data-placement="top" data-original-title="
-									<b>Monedas</b>
-									<br>
-									{{ $coins['gold'] }} <img src='/img/gold.gif' style='vertical-align: text-bottom;'>
-									{{ $coins['silver'] }} <img src='/img/silver.gif' style='vertical-align: text-bottom;'>
-									{{ $coins['copper'] }} <img src='/img/copper.gif' style='vertical-align: text-bottom;'>">
+									<li style="padding: 0; vertical-align: middle;">
+										<i class="coin coin-copper" data-toggle="tooltip" data-placement="top" data-original-title="
+										<b>Monedas</b>
+										<ul class='inline' style='margin: 0;'>
+											<li><i class='coin coin-gold pull-left'></i> {{ $coins['gold'] }}</li>
+											<li><i class='coin coin-silver pull-left'></i> {{ $coins['silver'] }}</li>
+											<li><i class='coin coin-copper pull-left'></i> {{ $coins['copper'] }}</li>
+										</ul>" alt="Monedas"></i>
+									</li>
 	
 									@if ( $character->clan_id != 0 )
-										<a href="{{ URL::to('authenticated/clan/' . $character->clan_id) }}" data-toggle="tooltip" data-placement="top" data-original-title="Accede a la página de tu grupo"><img src="{{ URL::base() }}/img/shield-icon.png" alt=""></a>
+										<li style="padding: 0; vertical-align: middle;">
+											<a href="{{ URL::to('authenticated/clan/' . $character->clan_id) }}" data-toggle="tooltip" data-placement="top" data-original-title="Accede a la página de tu grupo"><img src="{{ URL::base() }}/img/shield-icon.png" alt="Grupo"></a>
+										</li>
 									@endif
-									
-								</div>
+								</ul>
 							</div>
 						@endif
 						<ul class="unstyled menu">
 							@if ( Auth::check() && isset($character) )
-								<li><a href="{{ URL::to('authenticated/index') }}"><img src="{{ URL::base() }}/img/menu/character.jpg" alt="" width="177px" height="36px"></a></li>
-								<li style="position: relative;"><div style="position: absolute; top: 7px; right: 10px; color: white" data-toggle="tooltip" data-placement="top" data-original-title="Mensaje(s) sin leer"><span class="badge badge-warning">{{ $character->get_unread_messages_count() }}</span></div><a href="{{ URL::to('authenticated/messages') }}"><img src="{{ URL::base() }}/img/menu/messages.jpg" alt=""  width="177px" height="36px"></a></li>
+								<li><a href="{{ URL::to('authenticated/index') }}" class="menu menu-character"></a></li>
+								<li style="position: relative;">
+									<a href="{{ URL::to('authenticated/messages') }}" class="menu menu-messages">
+										@if ( $character->get_unread_messages_count() > 0 )
+										<div style="position: absolute; top: 7px; right: 10px; color: white" data-toggle="tooltip" data-placement="top" data-original-title="Mensaje(s) sin leer">
+											<span class="badge badge-warning">
+												{{ $character->get_unread_messages_count() }}
+											</span>
+										</div>
+										@endif
+									</a>
+								</li>
 								
 								@if ( $character->can_travel() === true )
-								<li><a href="{{ URL::to('authenticated/travel') }}"><img src="{{ URL::base() }}/img/menu/travel.jpg" alt="" width="177px" height="36px"></a></li>
+								<li><a href="{{ URL::to('authenticated/travel') }}" class="menu menu-travel"></a></li>
 								@endif
 								
 								@if ( $character->can_fight() )
-								<li><a href="{{ URL::to('authenticated/battle') }}"><img src="{{ URL::base() }}/img/menu/battle.jpg" alt="" width="177px" height="36px"></a></li>
+								<li><a href="{{ URL::to('authenticated/battle') }}" class="menu menu-battle"></a></li>
 								@endif
 	
 								@if ( $character->can_explore() )
-								<li><a href="{{ URL::to('authenticated/explore') }}"><img src="{{ URL::base() }}/img/menu/explore.jpg" alt="" width="177px" height="36px"></a></li>
+								<li><a href="{{ URL::to('authenticated/explore') }}" class="menu menu-explore"></a></li>
 								@endif
 	
-								<li><a href="{{ URL::to('authenticated/clan') }}"><img src="{{ URL::base() }}/img/menu/group.jpg" alt="" width="177px" height="36px"></a></li>
-								<li><a href="{{ URL::to('authenticated/trade') }}"><img src="{{ URL::base() }}/img/menu/trade.jpg" alt="" width="177px" height="36px"></a></li>
-								<li><a href="{{ URL::to('authenticated/characters') }}"><img src="{{ URL::base() }}/img/menu/characters.jpg" alt="" width="177px" height="36px"></a></li>
-								<li><a href="{{ URL::to('authenticated/ranking') }}"><img src="{{ URL::base() }}/img/menu/ranking.jpg" alt="" width="177px" height="36px"></a></li>
-								<li><a href="http://ironfist.com.ar/forums/index"><img src="{{ URL::base() }}/img/menu/forum.jpg" alt="Ir al foro" width="177px" height="36px"></a></li>
-								<li><a href="{{ URL::to('authenticated/logout') }}"><img src="{{ URL::base() }}/img/menu/logout.jpg" alt="" width="177px" height="36px"></a></li>
+								<li><a href="{{ URL::to('authenticated/clan') }}" class="menu menu-group"></a></li>
+								<li><a href="{{ URL::to('authenticated/trade') }}" class="menu menu-trade"></a></li>
+								<li><a href="{{ URL::to('authenticated/characters') }}" class="menu menu-characters"></a></li>
+								<li><a href="{{ URL::to('authenticated/ranking') }}" class="menu menu-ranking"></a></li>
+								<li><a href="http://ironfist.com.ar/forums/index" class="menu menu-forum" target="_blank"></a></li>
+								<li><a href="{{ URL::to('authenticated/logout') }}" class="menu menu-logout"></a></li>
 							@else
-								<li><a href="{{ URL::to('home/index') }}"><img src="{{ URL::base() }}/img/menu/inicio.jpg" alt="" width="177px" height="36px"></a></li>
-								<li><a href="{{ URL::to('home/thanks') }}"><img src="{{ URL::base() }}/img/menu/thanks.jpg" alt="" width="177px" height="36px"></a></li>
+								<li><a href="{{ URL::to('home/index') }}" class="menu menu-start"></a></li>
+								<li><a href="{{ URL::to('home/thanks') }}" class="menu menu-thanks"></a></li>
 							@endif
-							<li><a href="{{ URL::to('game/index') }}" target="_blank"><img src="{{ URL::base() }}/img/menu/guide.jpg" width="177px" height="36px"></a></li>
+							<li><a href="{{ URL::to('game/index') }}" class="menu menu-guide" target="_blank"></a></li>
 						</ul>
 					</div>
 
@@ -153,8 +171,8 @@
 			/*
 			 *	Iniciamos los tooltips
 			 */
-			$('[data-toggle="tooltip"]').tooltip({ html: true });
-			$('[data-toggle="popover"]').popover({ html: true });
+			$('[data-toggle="tooltip"]').tooltip({ html: true, container: 'body' });
+			$('[data-toggle="popover"]').popover({ html: true, container: 'body' });
 
 			/*
 			 *	Iniciamos los timers

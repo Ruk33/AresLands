@@ -66,6 +66,11 @@ class CharacterActivity extends Base_Model
 					$character->save();
 
 					/*
+					 *	Enviamos informe de que terminó de explorar
+					 */
+					Message::completed_exploration($character, $data['time'] / 60 * Config::get('game.xp_rate'), $data['reward']);
+
+					/*
 					 *	Nuevo mounstruo para pelear
 					 */
 					$monster = Npc::select(array('id'))->where('zone_id', '=', $character->zone_id)->where('type', '=', 'monster')->order_by(DB::raw('RAND()'))->first();

@@ -77,11 +77,16 @@ body {
 	padding: 5px;
 }
 
+#lifeBar {
+	background-image: none;
+	background-color: rgb(141, 250, 41);
+}
+
 a[data-toggle=popover] {
 	color: yellow;
 }
 
-a {
+a, a:visited, a:active {
 	color: #FFA300;
 }
 
@@ -108,81 +113,274 @@ a:hover {
 
 .ui-input-button {
 	color: orange;
-	font: normal normal 12px/33px Verdana;
+	font: normal normal 12px Verdana;
+	margin-top: -5px;
 }
 
 .ui-input-button:hover {
 	color: #FFC04F;
 }
 
+.menu {
+    background-image: url("/img/menu/menu-sprite.png");
+    background-repeat: no-repeat;
+    display: block;
+}
+
+.menu-battle {
+    width: 177px;
+    height: 36px;
+    background-position: 0 0;
+}
+
+.menu-character {
+    width: 177px;
+    height: 36px;
+    background-position: -177px 0;
+}
+
+.menu-characters {
+    width: 177px;
+    height: 36px;
+    background-position: -354px 0;
+}
+
+.menu-explore {
+    width: 177px;
+    height: 36px;
+    background-position: -531px 0;
+}
+
+.menu-forum {
+    width: 177px;
+    height: 36px;
+    background-position: -708px 0;
+}
+
+.menu-group {
+    width: 177px;
+    height: 36px;
+    background-position: -885px 0;
+}
+
+.menu-guide {
+    width: 177px;
+    height: 36px;
+    background-position: -1062px 0;
+}
+
+.menu-start {
+    width: 177px;
+    height: 36px;
+    background-position: -1239px 0;
+}
+
+.menu-logout {
+    width: 177px;
+    height: 36px;
+    background-position: -1416px 0;
+}
+
+.menu-messages {
+    width: 177px;
+    height: 36px;
+    background-position: -1593px 0;
+}
+
+.menu-ranking {
+    width: 177px;
+    height: 36px;
+    background-position: -1770px 0;
+}
+
+.menu-thanks {
+    width: 177px;
+    height: 36px;
+    background-position: -1947px 0;
+}
+
+.menu-trade {
+    width: 177px;
+    height: 36px;
+    background-position: -2124px 0;
+}
+
+.menu-travel {
+    width: 177px;
+    height: 36px;
+    background-position: -2301px 0;
+}
+
+.coin {
+    background-image: url("/img/icons/coin-sprite.png");
+    background-repeat: no-repeat;
+    display: block;
+}
+
+.coin-copper {
+    width: 14px;
+    height: 15px;
+    background-position: 0 0;
+}
+
+.coin-silver {
+    width: 14px;
+    height: 15px;
+    background-position: -14px 0;
+}
+
+.coin-gold {
+    width: 14px;
+    height: 15px;
+    background-position: -28px 0;
+}
+
+.icon-race-30 {
+    background-image: url("/img/icons/race/icon-race-30-sprite.png");
+    background-repeat: no-repeat;
+    display: block;
+}
+
+.icon-race-30-drow_female {
+    width: 30px;
+    height: 30px;
+    background-position: 0 0;
+}
+
+.icon-race-30-drow_male {
+    width: 30px;
+    height: 30px;
+    background-position: 0 -30px;
+}
+
+.icon-race-30-dwarf_female {
+    width: 30px;
+    height: 30px;
+    background-position: 0 -60px;
+}
+
+.icon-race-30-dwarf_male {
+    width: 30px;
+    height: 30px;
+    background-position: 0 -90px;
+}
+
+.icon-race-30-elf_female {
+    width: 30px;
+    height: 30px;
+    background-position: 0 -120px;
+}
+
+.icon-race-30-elf_male {
+    width: 30px;
+    height: 30px;
+    background-position: 0 -150px;
+}
+
+.icon-race-30-human_female {
+    width: 30px;
+    height: 30px;
+    background-position: 0 -180px;
+}
+
+.icon-race-30-human_male {
+    width: 30px;
+    height: 30px;
+    background-position: 0 -210px;
+}
+
 .button-icon {
+	/*
 	width: 16px;
 	height: 16px;
 	left: -1px;
 	top: 9px;
 	display: inline-block;
+	*/
+	left: -1px;
+	top: 9px;
 	z-index: 2;
 	position: absolute;
-}
 
-.button-icon.castle {
-	background-image: url('http://www.guerrerosporlapaz.com/wiki/images/f/f0/Pvp-arenapoints-icon-16x16.png');
-}
+	width: 16px;
+    height: 16px;
 
-.button-icon.armor {
-	background-image: url('/img/icons/armor-icon.png');
+	background-image: url("/img/icons/ares-icon-sprite.png");
+    background-repeat: no-repeat;
+    background-position: -999px 0;
+    display: block;
 }
 
 .button-icon.document {
-	background-image: url('/img/icons/document-icon.png');
+	width: 16px;
+    height: 16px;
+    background-position: -112px 0;
 }
 
 .button-icon.fire {
-	background-image: url('/img/icons/fire-icon.png');
+	width: 16px;
+    height: 16px;
+    background-position: -128px 0;
 }
 
 .button-icon.thunder {
-	background-image: url('/img/icons/thunder-icon.png');
+	width: 16px;
+    height: 16px;
+    background-position: -160px 0;
 }
 
 .button-icon.wind {
-	background-image: url('/img/icons/wind-icon.png');
+	width: 16px;
+    height: 16px;
+    background-position: -176px 0;
 }
 
 .button-icon.axe {
-	background-image: url('/img/icons/axe-icon.png');
+	width: 16px;
+    height: 16px;
+    background-position: -16px 0;
 }
 
 .button-icon.dagger {
-	background-image: url('/img/icons/dagger-icon.png');
-}
-
-.button-icon.map {
-	background-image: url('/img/icons/map-icon.png');
+	width: 16px;
+    height: 16px;
+    background-position: -96px 0;
 }
 
 .button-icon.castle {
-	background-image: url('/img/icons/castle-icon.png');
+	width: 16px;
+    height: 16px;
+    background-position: -48px 0;
 }
 
 .button-icon.hearth {
-	background-image: url('/img/icons/hearth-icon.png');
+	width: 16px;
+    height: 16px;
+    background-position: -144px 0;
 }
 
 .button-icon.boot {
-	background-image: url('/img/icons/boot-icon.png');
+	width: 16px;
+    height: 16px;
+    background-position: -32px 0;
 }
 
 .button-icon.arrow {
-	background-image: url('/img/icons/arrow-icon.png');
+	width: 16px;
+    height: 16px;
+    background-position: 0 0;
 }
 
 .button-icon.cross {
-	background-image: url('/img/icons/cross-icon.png');
+	width: 16px;
+    height: 16px;
+    background-position: -80px 0;
 }
 
 .button-icon.check {
-	background-image: url('/img/icons/check-icon.png');
+	width: 16px;
+    height: 16px;
+    background-position: -64px 0;
 }
 
 .button {
@@ -254,6 +452,7 @@ h4 {
 
 .menu {
 	background-color: #131111;
+	overflow: hidden;
 }
 
 .content {
@@ -401,22 +600,6 @@ h4 {
 	text-decoration: none;
 	color: white;
 	background-color: rgb(10, 10, 10);
-}
-
-.menu li a img {
-	margin-bottom: 0.1px;
-
-	border-top: 1px;
-	border-bottom: 1px;
-	border-style: solid;
-	border-color: black;
-}
-
-.menu li a img:hover {
-	border-top: 1px;
-	border-bottom: 1px;
-	border-style: solid;
-	border-color: rgb(121, 29, 0);
 }
 
 .positive {

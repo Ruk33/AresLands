@@ -14,6 +14,13 @@ controller('CharacterStatsController', ['$scope', '$http', '$timeout', function(
 		'stat_luck': 0
 	};
 
+	var lifeBar = $('#lifeBar');
+
+	var updateLifeBar = function(currentLife) {
+		var life = 100 * currentLife / $scope.maxLife;
+		lifeBar.attr('style', 'width: ' + life + '%;');
+	};
+
 	var regenerationPerSecond = function() {
 		var currentLife, maxLife, statLife;
 
@@ -27,10 +34,15 @@ controller('CharacterStatsController', ['$scope', '$http', '$timeout', function(
 			{
 				currentLife += (0.05 + statLife * 0.01);
 				$scope.currentLife = currentLife.toFixed(2);
+
+				updateLifeBar($scope.currentLife);
 			}
 			else
 			{
 				$scope.currentLife = maxLife;
+
+				updateLifeBar($scope.currentLife);
+
 				return;
 			}
 		}

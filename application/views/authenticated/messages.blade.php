@@ -45,7 +45,7 @@
 				<span class="ui-button button pull-right">
 					<i class="button-icon cross"></i>
 					<span class="button-content">
-						{{ Form::submit('Borrar mensajes seleccionados', array('class' => 'ui-button ui-input-button pull-right', 'onclick' => 'return confirm("¿Seguro quieres eliminar los mensajes seleccionados?");')) }}
+						{{ Form::submit('Borrar mensajes seleccionados', array('class' => 'ui-button ui-input-button', 'onclick' => 'return confirm("¿Seguro quieres eliminar los mensajes seleccionados?");')) }}
 					</span>
 				</span>
 
@@ -88,9 +88,9 @@
 			<hr style="border-top: 1px solid #252525;">
 
 			<span class="ui-button button pull-right">
-				<i class="button-icon fire"></i>
+				<i class="button-icon cross"></i>
 				<span class="button-content">
-					{{ Form::submit('Borrar mensajes seleccionados', array('class' => 'ui-button ui-input-button pull-right', 'onclick' => 'return confirm("¿Seguro quieres eliminar los mensajes seleccionados?");')) }}
+					{{ Form::submit('Borrar mensajes seleccionados', array('class' => 'ui-button ui-input-button', 'onclick' => 'return confirm("¿Seguro quieres eliminar los mensajes seleccionados?");')) }}
 				</span>
 			</span>
 		{{ Form::close() }}
@@ -107,7 +107,7 @@
 				<span class="ui-button button pull-right">
 					<i class="button-icon cross"></i>
 					<span class="button-content">
-						{{ Form::submit('Borrar mensajes seleccionados', array('class' => 'ui-button ui-input-button pull-right', 'onclick' => 'return confirm("¿Seguro quieres eliminar los mensajes seleccionados?");')) }}
+						{{ Form::submit('Borrar mensajes seleccionados', array('class' => 'ui-button ui-input-button', 'onclick' => 'return confirm("¿Seguro quieres eliminar los mensajes seleccionados?");')) }}
 					</span>
 				</span>
 
@@ -150,9 +150,9 @@
 			<hr style="border-top: 1px solid #252525;">
 
 			<span class="ui-button button pull-right">
-				<i class="button-icon fire"></i>
+				<i class="button-icon cross"></i>
 				<span class="button-content">
-					{{ Form::submit('Borrar mensajes seleccionados', array('class' => 'ui-button ui-input-button pull-right', 'onclick' => 'return confirm("¿Seguro quieres eliminar los mensajes seleccionados?");')) }}
+					{{ Form::submit('Borrar mensajes seleccionados', array('class' => 'ui-button ui-input-button', 'onclick' => 'return confirm("¿Seguro quieres eliminar los mensajes seleccionados?");')) }}
 				</span>
 			</span>
 		{{ Form::close() }}
@@ -169,7 +169,7 @@
 				<span class="ui-button button pull-right">
 					<i class="button-icon cross"></i>
 					<span class="button-content">
-						{{ Form::submit('Borrar mensajes seleccionados', array('class' => 'ui-button ui-input-button pull-right', 'onclick' => 'return confirm("¿Seguro quieres eliminar los mensajes seleccionados?");')) }}
+						{{ Form::submit('Borrar mensajes seleccionados', array('class' => 'ui-button ui-input-button', 'onclick' => 'return confirm("¿Seguro quieres eliminar los mensajes seleccionados?");')) }}
 					</span>
 				</span>
 
@@ -212,9 +212,9 @@
 			<hr style="border-top: 1px solid #252525;">
 
 			<span class="ui-button button pull-right">
-				<i class="button-icon fire"></i>
+				<i class="button-icon cross"></i>
 				<span class="button-content">
-					{{ Form::submit('Borrar mensajes seleccionados', array('class' => 'ui-button ui-input-button pull-right', 'onclick' => 'return confirm("¿Seguro quieres eliminar los mensajes seleccionados?");')) }}
+					{{ Form::submit('Borrar mensajes seleccionados', array('class' => 'ui-button ui-input-button', 'onclick' => 'return confirm("¿Seguro quieres eliminar los mensajes seleccionados?");')) }}
 				</span>
 			</span>
 		{{ Form::close() }}

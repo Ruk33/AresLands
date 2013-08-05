@@ -249,6 +249,9 @@ class Character extends Base_Model
 
 		$fighter_one['min_defense'] = ( $fighter_one['is_warrior'] ) ? $fighter_one['stats']['p_defense'] : $fighter_one['stats']['m_defense'];
 		$fighter_one['min_defense'] = $fighter_one['min_defense'] * 0.75;
+
+		$fighter_one['character']->damage_done = 0;
+		$fighter_one['initial_life'] = $fighter_one['character']->current_life;
 		// ----------------------------------------------
 		// FIN PRIMER LUCHADOR
 		// ----------------------------------------------
@@ -288,6 +291,9 @@ class Character extends Base_Model
 
 		$fighter_two['min_defense'] = ( $fighter_two['is_warrior'] ) ? $fighter_two['stats']['p_defense'] : $fighter_two['stats']['m_defense'];
 		$fighter_two['min_defense'] = $fighter_two['min_defense'] * 0.75;
+
+		$fighter_two['character']->damage_done = 0;
+		$fighter_two['initial_life'] = $fighter_two['character']->current_life;
 		// ----------------------------------------------
 		// FIN SEGUNDO LUCHADOR
 		// ----------------------------------------------
@@ -396,18 +402,16 @@ class Character extends Base_Model
 			 */
 			$defenser['character']->current_life -= $realDamage;
 
+			$attacker['character']->damage_done += $realDamage;
+
 			/*
 			 *	Registramos el movimiento
 			 */
 			$message .= '<li>' . sprintf($messages[mt_rand(0, 5)], $attacker['character']->name, $defenser['character']->name) . ' (daño: '. $realDamage .', defendido: '. ($damage-$realDamage) .')</li>';
 		}
 
-		unset($fighter_one['character']->current_cd);
-		unset($fighter_two['character']->current_cd);
-
-		$message = '<ul class="unstyled">' . $message . '</ul>';
-
 		$winner = null;
+		$loser = null;
 
 		/*
 		 *	Vemos quién es el ganador
@@ -415,12 +419,53 @@ class Character extends Base_Model
 		if ( $fighter_one['character']->current_life > 0 )
 		{
 			$winner = $fighter_one;
+			$loser = $fighter_two;
 		}
 
 		if ( $fighter_two['character']->current_life > 0 )
 		{
 			$winner = $fighter_two;
+			$loser = $fighter_one;
 		}
+
+		$message = '<ul class="unstyled">' . $message . '</ul>';
+		$message = sprintf('
+			<p>
+				<b>Ganador:</b> %7$s
+				<br>
+				<b>%7$s</b> obtiene %8$d cobre (ha robado la mitad del perdedor)
+			</p>
+
+			<p>
+				<b>Vida inicial de %1$s:</b> %3$d
+				<br>
+				<b>Vida inicial de %2$s:</b> %4$d
+			</p>
+
+			<p>
+				<b>Daño realizado por %1$s:</b> %5$d
+				<br>
+				<b>Daño realizado por %2$s:</b> %6$d
+			</p>',
+
+			$fighter_one['character']->name,
+			$fighter_two['character']->name,
+
+			$fighter_one['initial_life'],
+			$fighter_two['initial_life'],
+
+			$fighter_one['character']->damage_done,
+			$fighter_two['character']->damage_done,
+
+			$winner['character']->name,
+			5 * Config::get('game.coins_rate')
+		) . $message;
+
+		unset($fighter_one['character']->current_cd);
+		unset($fighter_two['character']->current_cd);
+
+		unset($fighter_one['character']->damage_done);
+		unset($fighter_two['character']->damage_done);
 
 		/*
 		 *	Aumentamos los puntos de pvp
@@ -461,11 +506,11 @@ class Character extends Base_Model
 
 		if ( $fighter_two['is_player'] )
 		{
-			$fighter_one['character']->xp += 3 * Config::get('game.xp_rate');
-			$fighter_two['character']->xp += 3 * Config::get('game.xp_rate');
+			$fighter_one['character']->xp += 1 * Config::get('game.xp_rate');
+			$fighter_two['character']->xp += 1 * Config::get('game.xp_rate');
 
-			$fighter_one['character']->points_to_change += 3 * Config::get('game.xp_rate');
-			$fighter_two['character']->points_to_change += 3 * Config::get('game.xp_rate');
+			$fighter_one['character']->points_to_change += 1 * Config::get('game.xp_rate');
+			$fighter_two['character']->points_to_change += 1 * Config::get('game.xp_rate');
 		}
 		else
 		{
@@ -488,7 +533,7 @@ class Character extends Base_Model
 		 */
 		if ( $winner['is_player'] )
 		{
-			$winner['character']->xp += 2 * Config::get('game.xp_rate');;
+			$winner['character']->xp += 1 * Config::get('game.xp_rate');;
 
 			/*
 			 *	Cobre al ganador
@@ -508,6 +553,28 @@ class Character extends Base_Model
 				$winnerCoins->location = 'none';
 			}
 			$winnerCoins->save();
+
+			/*
+			 *	Intentamos robar las monedas al perdedor
+			 */
+			if ( $loser['is_player'] )
+			{
+				$loserCoins = $loser['character']->get_coins();
+
+				if ( $loserCoins )
+				{
+					$loserCoins->count -= (5 * Config::get('game.coins_rate')) / 2;
+
+					if ( $loserCoins->count > 0 )
+					{
+						$loserCoins->save();
+					}
+					else
+					{
+						$loserCoins->delete();
+					}
+				}
+			}
 		}
 
 		/*
