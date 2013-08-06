@@ -413,6 +413,15 @@ class Character extends Base_Model
 		$winner = null;
 		$loser = null;
 
+		$fighter_one['damage_done'] = $fighter_one['character']->damage_done;
+		$fighter_two['damage_done'] = $fighter_two['character']->damage_done;
+
+		unset($fighter_one['character']->current_cd);
+		unset($fighter_two['character']->current_cd);
+
+		unset($fighter_one['character']->damage_done);
+		unset($fighter_two['character']->damage_done);
+
 		/*
 		 *	Vemos quién es el ganador
 		 */
@@ -421,51 +430,11 @@ class Character extends Base_Model
 			$winner = $fighter_one;
 			$loser = $fighter_two;
 		}
-
-		if ( $fighter_two['character']->current_life > 0 )
+		else
 		{
 			$winner = $fighter_two;
 			$loser = $fighter_one;
 		}
-
-		$message = '<ul class="unstyled">' . $message . '</ul>';
-		$message = sprintf('
-			<p>
-				<b>Ganador:</b> %7$s
-				<br>
-				<b>%7$s</b> obtiene %8$d cobre (ha robado la mitad del perdedor)
-			</p>
-
-			<p>
-				<b>Vida inicial de %1$s:</b> %3$d
-				<br>
-				<b>Vida inicial de %2$s:</b> %4$d
-			</p>
-
-			<p>
-				<b>Daño realizado por %1$s:</b> %5$d
-				<br>
-				<b>Daño realizado por %2$s:</b> %6$d
-			</p>',
-
-			$fighter_one['character']->name,
-			$fighter_two['character']->name,
-
-			$fighter_one['initial_life'],
-			$fighter_two['initial_life'],
-
-			$fighter_one['character']->damage_done,
-			$fighter_two['character']->damage_done,
-
-			$winner['character']->name,
-			5 * Config::get('game.coins_rate')
-		) . $message;
-
-		unset($fighter_one['character']->current_cd);
-		unset($fighter_two['character']->current_cd);
-
-		unset($fighter_one['character']->damage_done);
-		unset($fighter_two['character']->damage_done);
 
 		/*
 		 *	Aumentamos los puntos de pvp
@@ -502,20 +471,29 @@ class Character extends Base_Model
 
 		/*
 		 *	¡Experiencia!
+		 *	Solo si el ganador tiene el mismo o menor nivel que el perdedor
 		 */
-
-		if ( $fighter_two['is_player'] )
+		if ( $winner['is_player'] && $winner['character']->level <= $loser['character']->level )
 		{
-			$fighter_one['character']->xp += 1 * Config::get('game.xp_rate');
-			$fighter_two['character']->xp += 1 * Config::get('game.xp_rate');
-
-			$fighter_one['character']->points_to_change += 1 * Config::get('game.xp_rate');
-			$fighter_two['character']->points_to_change += 1 * Config::get('game.xp_rate');
+			if ( $loser['is_player'] )
+			{
+				$winner['character']->xp += 1 * Config::get('game.xp_rate');
+				$winner['character']->points_to_change += 1 * Config::get('game.xp_rate');
+			}
+			else
+			{
+				$winner['character']->xp += $target->xp * Config::get('game.xp_rate');
+				$winner['character']->points_to_change += $target->xp * Config::get('game.xp_rate');
+			}
 		}
-		else
+
+		/*
+		 *	El perdedor recibe experiencia (si es jugador) si o si
+		 */
+		if ( $loser['is_player'] )
 		{
-			$fighter_one['character']->xp += $target->xp * Config::get('game.xp_rate');
-			$fighter_one['character']->points_to_change += $target->xp * Config::get('game.xp_rate');
+			$loser['character']->xp += 1 * Config::get('game.xp_rate');
+			$loser['character']->points_to_change += 1 * Config::get('game.xp_rate');
 		}
 
 		/*
@@ -529,19 +507,35 @@ class Character extends Base_Model
 		}
 
 		/*
-		 *	El ganador obtiene mas
+		 *	Ganancia de monedas
 		 */
+		$stolenCoins = 0;
 		if ( $winner['is_player'] )
 		{
-			$winner['character']->xp += 1 * Config::get('game.xp_rate');;
+			$stolenCoins = (15 + $loser['character']->level) * Config::get('game.coins_rate');
 
-			/*
-			 *	Cobre al ganador
-			 */
 			$winnerCoins = $winner['character']->get_coins();
+			$loserCoins = $loser['character']->get_coins();
+
+			if ( $loserCoins )
+			{
+				$stolenCoins += $loserCoins->count * 0.10;
+
+				$loserCoins->count -= $loserCoins->count * 0.10;
+
+				if ( $loserCoins->count > 0 )
+				{
+					$loserCoins->save();
+				}
+				else
+				{
+					$loserCoins->delete();
+				}
+			}
+
 			if ( $winnerCoins )
 			{
-				$winnerCoins->count += 5 * Config::get('game.coins_rate');
+				$winnerCoins->count += $stolenCoins;
 			}
 			else
 			{
@@ -549,33 +543,48 @@ class Character extends Base_Model
 
 				$winnerCoins->item_id = Config::get('game.coin_id');
 				$winnerCoins->owner_id = $winner['character']->id;
-				$winnerCoins->count = 5 * Config::get('game.coins_rate');
+				$winnerCoins->count = $stolenCoins;
 				$winnerCoins->location = 'none';
 			}
+
 			$winnerCoins->save();
-
-			/*
-			 *	Intentamos robar las monedas al perdedor
-			 */
-			if ( $loser['is_player'] )
-			{
-				$loserCoins = $loser['character']->get_coins();
-
-				if ( $loserCoins )
-				{
-					$loserCoins->count -= (5 * Config::get('game.coins_rate')) / 2;
-
-					if ( $loserCoins->count > 0 )
-					{
-						$loserCoins->save();
-					}
-					else
-					{
-						$loserCoins->delete();
-					}
-				}
-			}
 		}
+
+		/*
+		 *	Creamos el mensaje de la batalla
+		 */
+		$message = '<ul class="unstyled">' . $message . '</ul>';
+		$message = sprintf('
+			<p>
+				<b>Ganador:</b> %7$s
+				<br>
+				<b>%7$s</b> obtiene %8$d cobre (parte robada del perdedor)
+			</p>
+
+			<p>
+				<b>Vida inicial de %1$s:</b> %3$d
+				<br>
+				<b>Vida inicial de %2$s:</b> %4$d
+			</p>
+
+			<p>
+				<b>Daño realizado por %1$s:</b> %5$d
+				<br>
+				<b>Daño realizado por %2$s:</b> %6$d
+			</p>',
+
+			$fighter_one['character']->name,
+			$fighter_two['character']->name,
+
+			$fighter_one['initial_life'],
+			$fighter_two['initial_life'],
+
+			$fighter_one['damage_done'],
+			$fighter_two['damage_done'],
+
+			$winner['character']->name,
+			$stolenCoins
+		) . $message;
 
 		/*
 		 *	Notificamos al atacado

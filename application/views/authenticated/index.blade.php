@@ -75,6 +75,16 @@
 					</div>
 				</div>
 				<!-- END MANO IZQUIERDA -->
+				
+				<!-- ORBES -->				
+				<div style="position: absolute; margin-left: 250px; margin-top: 250px;">
+					<img src="{{ URL::base() }}/img/icons/quest-reward.png">
+				</div>
+
+				<div style="position: absolute; margin-left: 298px; margin-top: 250px;">
+					<img src="{{ URL::base() }}/img/icons/quest-reward.png">
+				</div>
+				<!-- END ORBES -->
 			@endif
 
 			<!-- AYUDANTE -->
@@ -96,19 +106,18 @@
 		<h2>Estadísticas</h2>
 		<ul class="unstyled" style="width: 340px;">
 			<li style="margin-bottom: 20px;">
-				<span data-toggle="tooltip" data-placement="top" data-original-title="<b>Vida:</b> vida actual / vida máxima" ng-init="currentLife='{{ $character->current_life }}'; maxLife='{{ $character->max_life }}'">
-					<div class="text-right" style="font-size: 12px;"><b>Vida:</b> [[ currentLife ]]/[[ maxLife ]]</div>
-					<div class="progress" style="height: 5px;">
-						<div class="bar bar-success" id="lifeBar">
-						</div>
-					</div>
-				</span>
+				<div class="text-right">
+					<span style="font-size: 12px;" data-toggle="tooltip" data-placement="top" data-original-title="vida actual / vida máxima" ng-init="currentLife='{{ $character->current_life }}'; maxLife='{{ $character->max_life }}'"><b>Vida:</b> [[ currentLife ]]/[[ maxLife ]]</span>
+				</div>
+				<div class="progress" style="height: 5px;">
+					<div class="bar bar-success" id="lifeBar"></div>
+				</div>
 			</li>
 			
 			<li style="margin-bottom: 10px;" ng-show="remainingPoints>0">
 				<div class="dark-box" style="width: 300px;">
 					<p><b>Puntos restantes para cambiar:</b> [[ remainingPoints ]]</p>
-					<p>Puntos para cambiar: <select class="input select" ng-model="pointsToChange" ng-init="pointsToChange=1;" ng-options="n for n in [] | range:1:remainingPoints"></select></p>
+					<p>Puntos a cambiar: <select class="input select" ng-model="pointsToChange" ng-init="pointsToChange=1;" ng-options="n for n in [] | range:1:remainingPoints"></select></p>
 				</div>
 			</li>
 

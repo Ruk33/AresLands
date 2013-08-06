@@ -34,7 +34,10 @@
 		<div id="wrap">
 			<div class="container">
 				@if ( Auth::check() && Auth::user()->name == 'Ruke' )
-				<div class="dark-box pull-left"><b>Usuarios conectados:</b> {{ Character::where('last_activity_time', '>', time() - 300)->count() }}</div>
+					<div class="dark-box pull-left">
+						<b>Usuarios conectados:</b> 
+						{{ Character::where('last_activity_time', '>', time() - 300)->count() }}
+					</div>
 				@endif
 
 				<a href="{{ URL::base() }}"><div class="logo"></div></a>
@@ -105,6 +108,7 @@
 								<li><a href="{{ URL::to('authenticated/trade') }}" class="menu menu-trade"></a></li>
 								<li><a href="{{ URL::to('authenticated/characters') }}" class="menu menu-characters"></a></li>
 								<li><a href="{{ URL::to('authenticated/ranking') }}" class="menu menu-ranking"></a></li>
+								<li><a href="" class="menu menu-orbs" style="position: relative; cursor: not-allowed;"><div class="button-icon lock" style="left: 50px;"></div></a></li>
 								<li><a href="http://ironfist.com.ar/forums/index" class="menu menu-forum" target="_blank"></a></li>
 								<li><a href="{{ URL::to('authenticated/logout') }}" class="menu menu-logout"></a></li>
 							@else
@@ -171,8 +175,8 @@
 			/*
 			 *	Iniciamos los tooltips
 			 */
-			$('[data-toggle="tooltip"]').tooltip({ html: true, container: 'body' });
-			$('[data-toggle="popover"]').popover({ html: true, container: 'body' });
+			$('[data-toggle="tooltip"]').tooltip({ html: true/*, container: '#tooltip'*/ });
+			$('[data-toggle="popover"]').popover({ html: true/*, container: '#tooltip'*/ });
 
 			/*
 			 *	Iniciamos los timers

@@ -60,7 +60,7 @@ class CharacterActivity extends Base_Model
 					$data = $this->data;
 
 					$character->is_exploring = false;
-					$character->xp += $data['time'] / 60 * Config::get('game.xp_rate');
+					$character->xp += $data['time'] / 60 / 25 * Config::get('game.xp_rate');
 					$character->add_exploring_time($character->zone()->select(array('id'))->first(), $data['time']);
 					$character->give_explore_reward($data['reward']);
 					$character->save();

@@ -122,8 +122,9 @@ a:hover {
 }
 
 .menu {
-    background-image: url("/img/menu/menu-sprite.png");
+    background-image: url("/img/menu/menu-sprite.jpg");
     background-repeat: no-repeat;
+    background-position: 0 -999px;
     display: block;
 }
 
@@ -136,79 +137,85 @@ a:hover {
 .menu-character {
     width: 177px;
     height: 36px;
-    background-position: -177px 0;
+    background-position: 0 -36px;
 }
 
 .menu-characters {
     width: 177px;
     height: 36px;
-    background-position: -354px 0;
+    background-position: 0 -72px;
 }
 
 .menu-explore {
     width: 177px;
     height: 36px;
-    background-position: -531px 0;
+    background-position: 0 -108px;
 }
 
 .menu-forum {
     width: 177px;
     height: 36px;
-    background-position: -708px 0;
+    background-position: 0 -144px;
 }
 
 .menu-group {
     width: 177px;
     height: 36px;
-    background-position: -885px 0;
+    background-position: 0 -180px;
 }
 
 .menu-guide {
     width: 177px;
     height: 36px;
-    background-position: -1062px 0;
+    background-position: 0 -216px;
 }
 
 .menu-start {
     width: 177px;
     height: 36px;
-    background-position: -1239px 0;
+    background-position: 0 -252px;
 }
 
 .menu-logout {
     width: 177px;
     height: 36px;
-    background-position: -1416px 0;
+    background-position: 0 -288px;
 }
 
 .menu-messages {
     width: 177px;
     height: 36px;
-    background-position: -1593px 0;
+    background-position: 0 -324px;
+}
+
+.menu-orbs {
+    width: 177px;
+    height: 36px;
+    background-position: 0 -360px;
 }
 
 .menu-ranking {
     width: 177px;
     height: 36px;
-    background-position: -1770px 0;
+    background-position: 0 -396px;
 }
 
 .menu-thanks {
     width: 177px;
     height: 36px;
-    background-position: -1947px 0;
+    background-position: 0 -432px;
 }
 
 .menu-trade {
     width: 177px;
     height: 36px;
-    background-position: -2124px 0;
+    background-position: 0 -468px;
 }
 
 .menu-travel {
     width: 177px;
     height: 36px;
-    background-position: -2301px 0;
+    background-position: 0 -504px;
 }
 
 .coin {
@@ -314,55 +321,61 @@ a:hover {
 .button-icon.document {
 	width: 16px;
     height: 16px;
-    background-position: -112px 0;
+    background-position: 0 -112px;
 }
 
 .button-icon.fire {
 	width: 16px;
     height: 16px;
-    background-position: -128px 0;
+   background-position: 0 -128px;
 }
 
 .button-icon.thunder {
 	width: 16px;
     height: 16px;
-    background-position: -160px 0;
+    background-position: 0 -176px;
 }
 
 .button-icon.wind {
 	width: 16px;
     height: 16px;
-    background-position: -176px 0;
+    background-position: 0 -192px;
 }
 
 .button-icon.axe {
 	width: 16px;
     height: 16px;
-    background-position: -16px 0;
+    background-position: 0 -16px;
 }
 
 .button-icon.dagger {
 	width: 16px;
     height: 16px;
-    background-position: -96px 0;
+    background-position: 0 -96px;
 }
 
 .button-icon.castle {
 	width: 16px;
     height: 16px;
-    background-position: -48px 0;
+    background-position: 0 -48px;
 }
 
 .button-icon.hearth {
 	width: 16px;
     height: 16px;
-    background-position: -144px 0;
+    background-position: 0 -144px;
+}
+
+.button-icon.lock {
+	width: 16px;
+    height: 16px;
+	background-position: 0 -160px;
 }
 
 .button-icon.boot {
 	width: 16px;
     height: 16px;
-    background-position: -32px 0;
+    background-position: 0 -32px;
 }
 
 .button-icon.arrow {
@@ -374,13 +387,13 @@ a:hover {
 .button-icon.cross {
 	width: 16px;
     height: 16px;
-    background-position: -80px 0;
+    background-position: 0 -80px;
 }
 
 .button-icon.check {
 	width: 16px;
     height: 16px;
-    background-position: -64px 0;
+    background-position: 0 -64px;
 }
 
 .button {
@@ -411,13 +424,15 @@ html, body {
 	height: 100%;
 }
 
-#wrap {
-	width: 1252px;
-
+body {
 	background-image: url('/img/background3.jpg');
-	/*background-image: url('/img/background4.jpg');*/
 	background-repeat: no-repeat;
-	background-position: 100px 0;
+	background-position: top center;
+}
+
+#wrap {
+	/*width: 1252px;*/
+	/*background-image: url('/img/background4.jpg');*/
 
 	min-height: 100%;
 	height: auto !important;
@@ -628,7 +643,9 @@ h4 {
 
 #footer {
 	background-image: url('/img/footer.jpg');
-	width: 1152px;
+	background-repeat: no-repeat;
+	background-position: top center;
+	/*width: 1152px;*/
 	height: 313px;
 	margin: 0 auto;
 }

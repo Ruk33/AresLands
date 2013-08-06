@@ -176,10 +176,20 @@ class Authenticated_Controller extends Base_Controller
 		->with('npcs', $npcs);
 	}
 
+	/*
+	public function get_orbs()
+	{
+		$orbs = Orb::all();
+
+		$this->layout->title = 'Orbes';
+		$this->layout->content = View::make('authenticated.orbs')
+		->with('orbs', $orbs);
+	}
+	*/
+
+	/*
 	public function post_getItemTextForTooltip()
 	{
-		sleep(1);
-
 		$item = Item::find(Input::get('item_id'));
 		$text = 'El objeto no existe';
 
@@ -190,6 +200,7 @@ class Authenticated_Controller extends Base_Controller
 
 		return json_encode($text);
 	}
+	*/
 
 	public function get_destroyItem($characterItemId = false)
 	{
@@ -1006,10 +1017,17 @@ class Authenticated_Controller extends Base_Controller
 		->with('to', $to);
 	}
 
-	public function get_clearAllMessages()
+	public function get_clearAllMessages($type = '')
 	{
-		$character = Character::get_character_of_logged_user();
-		$character->messages()->delete();
+		switch ( $type )
+		{
+			case 'received':
+			case 'attack':
+			case 'defense':
+				$character = Character::get_character_of_logged_user(array('id'));
+				$character->messages()->where('type', '=', $type)->delete();
+				break;
+		}
 
 		return Redirect::to('authenticated/messages/');
 	}
@@ -1698,7 +1716,7 @@ class Authenticated_Controller extends Base_Controller
 	{
 		if ( $id > 0 && $count > 0 )
 		{
-			$character = Character::get_character_of_logged_user(array('id'));
+			$character = Character::get_character_of_logged_user(array('id', 'current_life', 'max_life'));
 
 			if ( $character )
 			{
@@ -1759,6 +1777,18 @@ class Authenticated_Controller extends Base_Controller
 										 *	Restamos la cantidad que vamos a usar
 										 */
 										$characterItem->count -= $count;
+
+										/*
+										 *	Curamos
+										 */
+										$character->current_life += $item->stat_life * $count;
+
+										if ( $character->current_life > $character->max_life )
+										{
+											$character->current_life = $character->max_life;
+										}
+
+										$character->save();
 
 										/*
 										 *	Si se quedó con cero o menos simplemente

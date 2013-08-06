@@ -214,6 +214,7 @@ Event::listen('equipItem', function(CharacterItem $characterItem, $amount = 1)
 						{
 							if ( $skill->duration == 0 )
 							{
+								/*
 								$data = $skill->data;
 
 								if ( isset($data['heal_amount']) )
@@ -221,6 +222,7 @@ Event::listen('equipItem', function(CharacterItem $characterItem, $amount = 1)
 									$character->current_life += $data['heal_amount'];
 									$character->save();
 								}
+								*/
 							}
 							else
 							{
@@ -345,9 +347,9 @@ Route::filter('before', function() {
 			$time = time();
 
 			/*
-			 *	Actualizamos solamente si hay una diferencia de un minuto
+			 *	Actualizamos solamente si hay una diferencia de 5 minutos
 			 */
-			if ( ! $character->last_activity_time || $character->last_activity_time - $time > 60 )
+			if ( ! $character->last_activity_time || $time - $character->last_activity_time >= 300 )
 			{
 				$character->last_activity_time = $time;
 				$character->save();

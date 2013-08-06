@@ -49,7 +49,7 @@
 					</span>
 				</span>
 
-				<a href="{{ URL::to('authenticated/clearAllMessages') }}" class="ui-button button pull-left" onclick="return confirm('¿Seguro que quieres eliminar TODOS los mensajes?');">
+				<a href="{{ URL::to('authenticated/clearAllMessages/received') }}" class="ui-button button pull-left" onclick="return confirm('¿Seguro que quieres eliminar TODOS los mensajes?');">
 					<i class="button-icon fire"></i>
 					<span class="button-content">Borrar todos los mensajes</span>
 				</a>
@@ -111,7 +111,7 @@
 					</span>
 				</span>
 
-				<a href="{{ URL::to('authenticated/clearAllMessages') }}" class="ui-button button pull-left" onclick="return confirm('¿Seguro que quieres eliminar TODOS los mensajes?');">
+				<a href="{{ URL::to('authenticated/clearAllMessages/attack') }}" class="ui-button button pull-left" onclick="return confirm('¿Seguro que quieres eliminar TODOS los mensajes?');">
 					<i class="button-icon fire"></i>
 					<span class="button-content">Borrar todos los mensajes</span>
 				</a>
@@ -173,7 +173,7 @@
 					</span>
 				</span>
 
-				<a href="{{ URL::to('authenticated/clearAllMessages') }}" class="ui-button button pull-left" onclick="return confirm('¿Seguro que quieres eliminar TODOS los mensajes?');">
+				<a href="{{ URL::to('authenticated/clearAllMessages/defense') }}" class="ui-button button pull-left" onclick="return confirm('¿Seguro que quieres eliminar TODOS los mensajes?');">
 					<i class="button-icon fire"></i>
 					<span class="button-content">Borrar todos los mensajes</span>
 				</a>
