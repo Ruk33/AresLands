@@ -180,6 +180,11 @@ class Character extends Base_Model
 		return true;
 	}
 
+	public function can_trade()
+	{
+		return $this->items()->where('location', '=', 'inventory')->where('count', '>', 0)->count() > 0;
+	}
+
 	public function user()
 	{
 		return $this->belongs_to('IronFistUser', 'user_id');
@@ -321,13 +326,13 @@ class Character extends Base_Model
 		{			
 			if ( $fighter_one['character']->current_cd <= $fighter_two['character']->current_cd )
 			{
-				$attacker = $fighter_one;
-				$defenser = $fighter_two;
+				$attacker = &$fighter_one;
+				$defenser = &$fighter_two;
 			}
 			else
 			{
-				$attacker = $fighter_two;
-				$defenser = $fighter_one;
+				$attacker = &$fighter_two;
+				$defenser = &$fighter_one;
 			}
 
 			$attacker['character']->current_cd += $attacker['cd'];
@@ -407,7 +412,7 @@ class Character extends Base_Model
 			/*
 			 *	Registramos el movimiento
 			 */
-			$message .= '<li>' . sprintf($messages[mt_rand(0, 5)], $attacker['character']->name, $defenser['character']->name) . ' (daño: '. $realDamage .', defendido: '. ($damage-$realDamage) .')</li>';
+			$message .= '<li>' . sprintf($messages[mt_rand(0, 5)], $attacker['character']->name, $defenser['character']->name) . ' (daño: '. number_format($realDamage, 2) .', defendido: '. number_format($damage - $realDamage, 2) .')</li>';
 		}
 
 		$winner = null;
@@ -427,20 +432,20 @@ class Character extends Base_Model
 		 */
 		if ( $fighter_one['character']->current_life > 0 )
 		{
-			$winner = $fighter_one;
-			$loser = $fighter_two;
+			$winner = &$fighter_one;
+			$loser = &$fighter_two;
 		}
 		else
 		{
-			$winner = $fighter_two;
-			$loser = $fighter_one;
+			$winner = &$fighter_two;
+			$loser = &$fighter_one;
 		}
 
 		/*
 		 *	Aumentamos los puntos de pvp
 		 *	del ganador
 		 */
-		if ( $fighter_one['is_player'] && $fighter_two['is_player'] )
+		if ( $winner['is_player'] && $loser['is_player'] )
 		{
 			$winner['character']->pvp_points++;
 		}
@@ -449,7 +454,7 @@ class Character extends Base_Model
 		 *	Volvemos la vida a la normalidad
 		 *	(sacando el bonus que da el atributo life)
 		 */
-		$fighter_one['character']->current_life -= $fighter_one['stats']['stat_life'] * 1.25;
+		$fighter_two['character']->current_life -= $fighter_two['stats']['stat_life'] * 1.25;
 
 		if ( $fighter_two['is_player'] )
 		{

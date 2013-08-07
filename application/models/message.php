@@ -35,7 +35,7 @@ class Message extends Base_Model
 		$message->receiver_id = $receiver->id;
 
 		$message->subject = 'Completaste tu exploración';
-		$message->content = 'Haz terminado de explorar. Obtuviste ' . $experienceGained . ' de experiencia y ' . $reward . ' de cobre.';
+		$message->content = 'Haz terminado de explorar. Obtuviste ' . number_format($experienceGained, 0) . ' de experiencia y ' . number_format($reward, 0) . ' de cobre.';
 
 		$message->unread = true;
 		$message->date = time();

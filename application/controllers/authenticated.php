@@ -517,11 +517,20 @@ class Authenticated_Controller extends Base_Controller
 	public function get_newTrade()
 	{
 		$character = Character::get_character_of_logged_user();
-		$characterItems = $character->items()->where('location', '=', 'inventory')->where('count', '>', 0)->get();
 
-		$this->layout->title = 'Nuevo comercio';
-		$this->layout->content = View::make('authenticated.newtrade')
-		->with('characterItems', $characterItems);
+		if ( $character->can_trade() )
+		{
+			$characterItems = $character->items()->where('location', '=', 'inventory')->where('count', '>', 0)->get();
+
+			$this->layout->title = 'Nuevo comercio';
+			$this->layout->content = View::make('authenticated.newtrade')
+			->with('characterItems', $characterItems);
+		}
+		else
+		{
+			return Redirect::to('authenticated/trade')
+			->with('errorMessages', array('No tienes ningún objeto para comerciar.'));
+		}
 	}
 
 	public function get_trade()

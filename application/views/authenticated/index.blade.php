@@ -260,9 +260,10 @@
 
 <!-- INVENTARIO -->
 <h2>Inventario</h3>
-<div class="text-center">
+<ul class="inline">
 	@for ( $i = 1, $max = 6; $i <= $max; $i++ )
-		<div class="inventory-item" style="float: left;">
+		<li>
+		<div class="inventory-item">
 		@if ( isset($items['inventory']) )
 			@foreach ( $items['inventory'] as $characterItem )
 				@if ( $characterItem->slot == $i && $item = $characterItem->item )
@@ -289,8 +290,9 @@
 			@endforeach
 		@endif
 		</div>
+		</li>
 	@endfor
-</div>
+</ul>
 <!-- END INVENTARIO -->
 
 <!--<script src="{{ URL::base() }}/js/controllers/CharacterStatsController.js"></script>-->

@@ -68,7 +68,7 @@ class CharacterActivity extends Base_Model
 					/*
 					 *	Enviamos informe de que terminó de explorar
 					 */
-					Message::completed_exploration($character, $data['time'] / 60 * Config::get('game.xp_rate'), $data['reward']);
+					Message::completed_exploration($character, $data['time'] / 60 / 25 * Config::get('game.xp_rate'), $data['reward']);
 
 					/*
 					 *	Nuevo mounstruo para pelear
