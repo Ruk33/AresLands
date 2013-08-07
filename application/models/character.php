@@ -38,6 +38,16 @@ class Character extends Base_Model
 		return Character::where('user_id', '=', $user->id)->count() != 0;
 	}
 
+	/**
+	 *	¿Tiene orbe el personaje?, true en caso de afirmativo
+	 *
+	 *	@return <Bool>
+	 */
+	public function has_orb()
+	{
+		return $this->orbs()->count() > 0;
+	}
+
 	public function empty_slot()
 	{
 		for ( $i = 1, $max = 6; $i <= $max; $i++ )
@@ -180,6 +190,11 @@ class Character extends Base_Model
 		return true;
 	}
 
+	/**
+	 *	¿Puede el personaje iniciar un comercio?
+	 *	
+	 *	@return <Bool>
+	 */
 	public function can_trade()
 	{
 		return $this->items()->where('location', '=', 'inventory')->where('count', '>', 0)->count() > 0;
@@ -592,6 +607,48 @@ class Character extends Base_Model
 		) . $message;
 
 		/*
+		 *	Orbes
+		 */
+		if ( $winner['is_player'] && $loser['is_player'] )
+		{
+			if ( $winner['character']->has_orb() )
+			{
+				$winnerOrbs = $winner['character']->orbs;
+
+				foreach ( $winnerOrbs as $winnerOrb )
+				{
+					if ( $winnerOrb->can_be_stolen_by($loser['character']) )
+					{
+						$winnerOrb->failed_robbery($loser['character']);
+					}
+				}
+			}
+			else
+			{
+				if ( $loser['character']->has_orb() && $winner['character']->orbs()->count < 2 )
+				{
+					$loserOrbs = $loser['character']->orbs;
+					$stolenOrb = null;
+
+					foreach ( $loserOrbs as $loserOrb )
+					{
+						if ( $loserOrb->can_be_stolen_by($winner['character']) )
+						{
+							$loserOrb->give_to($winner['character']);
+							$stolenOrb = $loserOrb;
+							break;
+						}
+					}
+
+					if ( $stolenOrb )
+					{
+						$message = '<p>¡Haz robado ' . $stolenOrb->name . ' de ' . $loser['character']->name . '!</p>' . $message;
+					}
+				}
+			}
+		}
+
+		/*
 		 *	Notificamos al atacado
 		 */
 		if ( $fighter_two['is_player'] )
@@ -995,5 +1052,10 @@ class Character extends Base_Model
 	public function exploring_times()
 	{
 		return $this->has_many('CharacterExploringTime', 'character_id');
+	}
+
+	public function orbs()
+	{
+		return $this->has_many('Orb', 'owner_character');
 	}
 }

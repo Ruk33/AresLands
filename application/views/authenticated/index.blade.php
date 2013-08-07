@@ -76,13 +76,17 @@
 				</div>
 				<!-- END MANO IZQUIERDA -->
 				
-				<!-- ORBES -->				
-				<div style="position: absolute; margin-left: 250px; margin-top: 250px;">
-					<img src="{{ URL::base() }}/img/icons/quest-reward.png">
+				<!-- ORBES -->
+				<div class="quest-reward-item" style="position: absolute; margin-left: 250px; margin-top: 250px;">
+					@if ( isset($orbs[0]) )
+						<img src="{{ URL::base() }}/img/icons/orbs/{{ $orbs[0]->id }}.png" data-toggle="tooltip" data-title="<div style='width: 200px;'><strong>{{ $orbs[0]->name }}</strong><p>{{ $orbs[0]->description }}</p></div>">
+					@endif
 				</div>
 
-				<div style="position: absolute; margin-left: 298px; margin-top: 250px;">
-					<img src="{{ URL::base() }}/img/icons/quest-reward.png">
+				<div class="quest-reward-item" style="position: absolute; margin-left: 298px; margin-top: 250px;">
+					@if ( isset($orbs[1]) )
+						<img src="{{ URL::base() }}/img/icons/orbs/{{ $orbs[1]->id }}.png" data-toggle="tooltip" data-title="<div style='width: 200px;'><strong>{{ $orbs[1]->name }}</strong><p>{{ $orbs[1]->description }}</p></div>">
+					@endif
 				</div>
 				<!-- END ORBES -->
 			@endif

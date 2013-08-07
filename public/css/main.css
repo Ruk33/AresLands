@@ -486,6 +486,16 @@ h4 {
 	background-repeat: no-repeat;
 }
 
+.orb-content {
+	background-image: url('/img/orb-background.png');
+	background-repeat: no-repeat;
+	min-width: 475px;
+	min-height: 412px;
+	margin-top: -15px;
+	margin-left: -15px;
+	padding: 15px;
+}
+
 .logo {
 	background-image: url('/img/logo.png');
 	background-repeat: no-repeat;

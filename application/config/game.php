@@ -24,13 +24,13 @@ return array(
 	 *	en finalizar el viaje
 	 *	(en segundos)
 	 */
-	'travel_time' => 60,
+	'travel_time' => 300,
 
 	/*
 	 *	Tiempo de descanzo (en segundos)
 	 *	después de una pelea
 	 */
-	'battle_rest_time' => 60,
+	'battle_rest_time' => 240,
 
 	/*
 	 *	Puntos que se otorgan

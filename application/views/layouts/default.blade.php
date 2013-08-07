@@ -108,7 +108,7 @@
 								<li><a href="{{ URL::to('authenticated/trade') }}" class="menu menu-trade"></a></li>
 								<li><a href="{{ URL::to('authenticated/characters') }}" class="menu menu-characters"></a></li>
 								<li><a href="{{ URL::to('authenticated/ranking') }}" class="menu menu-ranking"></a></li>
-								<li><a href="" class="menu menu-orbs" style="position: relative; cursor: not-allowed;"><div class="button-icon lock" style="left: 50px;"></div></a></li>
+								<li><a href="{{ URL::to('authenticated/orbs') }}" class="menu menu-orbs"></a></li>
 								<li><a href="http://ironfist.com.ar/forums/index" class="menu menu-forum" target="_blank"></a></li>
 								<li><a href="{{ URL::to('authenticated/logout') }}" class="menu menu-logout"></a></li>
 							@else

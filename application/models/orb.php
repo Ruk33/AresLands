@@ -11,4 +11,46 @@ class Orb extends Base_Model
 	{
 		return $this->belongs_to('Character', 'owner_character');
 	}
+
+	public function attacker()
+	{
+		return $this->belongs_to('Character', 'last_attacker');
+	}
+
+	/**
+	 *	Verificamos si el orbe puede ser robado por el personaje
+	 *
+	 *	@param <Character> $character Personaje que intenta robar
+	 *	@return <Bool>
+	 */
+	public function can_be_stolen_by(Character $character)
+	{
+		return 
+			/*
+			 *	Niveles
+			 */
+			( $character->level >= $this->min_level && $character->level <= $this->max_level )
+			&&
+			/*
+			 *	Cantidad de orbes
+			 */
+			( $character->orbs()->count() < 2 );
+	}
+
+	public function give_to(Character $character)
+	{
+		$this->owner_character = $character->id;
+		$this->last_attacker = null;
+		$this->last_attack_time = null;
+
+		$this->save();
+	}
+
+	public function failed_robbery(Character $character)
+	{
+		$this->last_attacker = $character->id;
+		$this->last_attack_time = time();
+
+		$this->save();
+	}
 }

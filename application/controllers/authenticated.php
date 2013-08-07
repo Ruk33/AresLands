@@ -159,6 +159,11 @@ class Authenticated_Controller extends Base_Controller
 		$negativeBonifications = $character->get_bonifications(false);
 
 		/*
+		 *	Obtenemos los orbes
+		 */
+		$orbs = $character->orbs()->select(array('id', 'name', 'description'))->get();
+
+		/*
 		 *	Obtenemos todos los npcs
 		 *	(no mounstros) de la zona
 		 *	en la que está el usuario
@@ -173,19 +178,19 @@ class Authenticated_Controller extends Base_Controller
 		->with('skills', $skills)
 		->with('positiveBonifications', $positiveBonifications)
 		->with('negativeBonifications', $negativeBonifications)
+		->with('orbs', $orbs)
 		->with('npcs', $npcs);
 	}
 
-	/*
 	public function get_orbs()
 	{
-		$orbs = Orb::all();
+		$character = Character::get_character_of_logged_user(array('level'));
+		$orbs = Orb::where('min_level', '<=', $character->level)->where('max_level', '>=', $character->level)->select(array('id', 'name', 'description', 'min_level', 'max_level', 'owner_character', 'last_attacker', 'last_attack_time'))->get();
 
 		$this->layout->title = 'Orbes';
 		$this->layout->content = View::make('authenticated.orbs')
 		->with('orbs', $orbs);
 	}
-	*/
 
 	/*
 	public function post_getItemTextForTooltip()
@@ -289,7 +294,7 @@ class Authenticated_Controller extends Base_Controller
 	{
 		//$characters = Character::order_by('pvp_points', 'desc')->select(['name', 'pvp_points', 'gender', 'race'])->take(50)->get();
 
-		$characters = Character::order_by('pvp_points', 'desc')->select(array('id', 'name', 'gender', 'race', 'pvp_points'))->paginate(50, array('name', 'pvp_points', 'gender', 'race'));
+		$characters = Character::order_by('pvp_points', 'desc')->order_by('xp', 'desc')->select(array('id', 'name', 'gender', 'race', 'pvp_points'))->paginate(50, array('name', 'pvp_points', 'gender', 'race'));
 
 		$this->layout->title = 'Ranking';
 		$this->layout->content = View::make('authenticated.ranking')
