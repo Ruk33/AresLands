@@ -160,7 +160,7 @@ class Quest extends Base_Model
 	 */
 	public function give_reward()
 	{
-		$character = Character::get_character_of_logged_user();
+		$character = Character::get_character_of_logged_user(array('id', 'xp'));
 
 		/*
 		 *	Obtenemos todas las recompensas
@@ -179,54 +179,51 @@ class Quest extends Base_Model
 			{
 				$character->xp += $reward['amount'];
 				$character->save();
+
 				continue;
 			}
 
-			/*
-			 *	Nos fijamos si el personaje
-			 *	ya tiene uno de los items
-			 *	que le vamos a recompensar
-			 */
-			$characterItem = $character->items()->where('item_id', '=', $reward['item_id'])->first();
+			$item = Item::where('id', '=', $reward['item_id'])->select(array('id', 'stackable'))->first();
 
-			/*
-			 *	Si lo tiene, y el mismo puede
-			 *	ser acumulado...
-			 */
-			if ( $characterItem )
+			if ( $item )
 			{
-				$item = $characterItem->item()->select(array('stackable'))->first();
+				$characterItem = null;
 
-				if ( $item )
+				if ( $item->stackable )
 				{
-					if ( $item->stackable )
+					/*
+					 *	Nos fijamos si el personaje
+					 *	ya tiene uno de los items
+					 *	que le vamos a recompensar
+					 */
+					$characterItem = $character->items()->where('item_id', '=', $reward['item_id'])->select(array('id', 'count', 'owner_id'))->first();
+				}
+
+				if ( ! $characterItem )
+				{
+					$emptySlot = $character->empty_slot();
+
+					if ( $emptySlot )
 					{
-						/*
-						 *	Solamente aumentamos la cantidad
-						 */
-						$characterItem->count += $reward['amount'];
-					}
-					else
-					{
-						/*
-						 *	Aparentemente el personaje
-						 *	no tiene uno de estos objetos
-						 *	o el mismo no se puede acumular
-						 */
 						$characterItem = new CharacterItem();
 
 						$characterItem->owner_id = $character->id;
 						$characterItem->item_id = $reward['item_id'];
 						$characterItem->count = $reward['amount'];
 						$characterItem->location = 'inventory';
-						$characterItem->slot = $characterItem->get_empty_slot();
+						$characterItem->slot = $emptySlot;
 					}
-
-					/*
-					 *	¡Guardamos!
-					 */
-					$characterItem->save();
+					else
+					{
+						continue;
+					}
 				}
+				else
+				{
+					$characterItem->count += $reward['amount'];
+				}
+
+				$characterItem->save();
 			}
 		}
 	}

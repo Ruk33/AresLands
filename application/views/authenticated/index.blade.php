@@ -266,7 +266,7 @@
 <h2>Inventario</h3>
 <ul class="inline">
 	@for ( $i = 1, $max = 6; $i <= $max; $i++ )
-		<li>
+		<li style="vertical-align: top;">
 		<div class="inventory-item">
 		@if ( isset($items['inventory']) )
 			@foreach ( $items['inventory'] as $characterItem )

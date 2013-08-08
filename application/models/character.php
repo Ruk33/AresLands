@@ -247,7 +247,7 @@ class Character extends Base_Model
 		$fighter_one['is_player'] = true;
 
 		$fighter_one['stats'] = $fighter_one['character']->get_stats();
-		$fighter_one['character']->current_life += $fighter_one['stats']['stat_life'] * 1.25;
+		$fighter_one['character']->current_life += ($fighter_one['stats']['stat_life'] * 1.25);
 		$fighter_one['cd'] = (1000 / ($fighter_one['stats']['stat_dexterity']+1))+1;
 		$fighter_one['character']->current_cd = $fighter_one['cd'];
 		$fighter_one['is_warrior'] = $fighter_one['character']->stat_strength > $fighter_one['character']->stat_magic;
@@ -283,12 +283,13 @@ class Character extends Base_Model
 		$fighter_two['is_player'] = $target instanceof Character;
 
 		$fighter_two['stats'] = $fighter_two['character']->get_stats();
-		$fighter_two['character']->current_life += $fighter_two['stats']['stat_life'] * 1.25;
 
 		if ( ! $fighter_two['is_player'] )
 		{
-			$fighter_two['character']->current_life += $target->life;
+			$fighter_two['character']->current_life = $target->life;
 		}
+
+		$fighter_two['character']->current_life += $fighter_two['stats']['stat_life'] * 1.25;
 
 		$fighter_two['cd'] = (1000 / ($fighter_two['stats']['stat_dexterity']+1))+1;
 		$fighter_two['character']->current_cd = $fighter_two['cd'];
@@ -469,7 +470,7 @@ class Character extends Base_Model
 		 *	Volvemos la vida a la normalidad
 		 *	(sacando el bonus que da el atributo life)
 		 */
-		$fighter_two['character']->current_life -= $fighter_two['stats']['stat_life'] * 1.25;
+		$fighter_one['character']->current_life -= $fighter_one['stats']['stat_life'] * 1.25;
 
 		if ( $fighter_two['is_player'] )
 		{
@@ -880,8 +881,25 @@ class Character extends Base_Model
 		return $this->is_traveling == false && $this->activities()->take(1)->count() == 0;
 	}
 
-	public function can_be_attacked()
+	public function has_orb_protection($attacker)
 	{
+		$protectionTime = $this->orb_protections()->where('attacker_id', '=', $attacker->id)->first();
+
+		if ( ! $protectionTime )
+		{
+			return false;
+		}
+
+		return $protectionTime->time > time();
+	}
+
+	public function can_be_attacked($attacker)
+	{
+		if ( $this->has_orb() && $this->has_orb_protection($attacker) )
+		{
+			return false;
+		}
+
 		return true;
 	}
 
@@ -1057,5 +1075,10 @@ class Character extends Base_Model
 	public function orbs()
 	{
 		return $this->has_many('Orb', 'owner_character');
+	}
+
+	public function orb_protections()
+	{
+		return $this->has_many('OrbProtection', 'target_id');
 	}
 }

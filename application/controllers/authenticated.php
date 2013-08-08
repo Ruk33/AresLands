@@ -55,6 +55,13 @@ class Authenticated_Controller extends Base_Controller
 		}
 	}
 
+	public function get_t()
+	{
+		$quest = Quest::find(6);
+		$data = $quest->data;
+		die(var_dump($data));
+	}
+
 	/*
 	public function get_setSkillData()
 	{
@@ -1163,6 +1170,8 @@ class Authenticated_Controller extends Base_Controller
 
 	public function get_toBattle($characterName = false)
 	{
+		$character = Character::get_character_of_logged_user();
+
 		if ( $characterName )
 		{
 			$target = Character::where('name', '=', $characterName)->where('is_traveling', '=', false)->first();
@@ -1180,9 +1189,9 @@ class Authenticated_Controller extends Base_Controller
 			 *	Verificamos que el personaje
 			 *	pueda ser atacado
 			 */
-			if ( ! $target->can_be_attacked() )
+			if ( ! $target->can_be_attacked($character) )
 			{
-				Session::flash('errorMessage', $target->name . ' aún no puede ser atacado');
+				Session::flash('errorMessage', $target->name . ' aún no puede ser atacado todavía.');
 				return Redirect::to('authenticated/battle');
 			}
 		}
@@ -1193,8 +1202,6 @@ class Authenticated_Controller extends Base_Controller
 			 */
 			return Redirect::to('authenticated/battle');
 		}
-
-		$character = Character::get_character_of_logged_user();
 
 		if ( $character->can_fight() )
 		{
@@ -1668,7 +1675,7 @@ class Authenticated_Controller extends Base_Controller
 					 *	Se puede acumular, busquemos entonces
 					 *	si el personaje ya tiene un objeto igual
 					 */
-					$characterItem = $character->items()->select(array('count'))->where('item_id', '=', $item->id)->first();
+					$characterItem = $character->items()->select(array('id', 'count'))->where('item_id', '=', $item->id)->first();
 				}
 
 				/*

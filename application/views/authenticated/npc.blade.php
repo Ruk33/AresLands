@@ -17,7 +17,7 @@
 		<h2>Misiones aceptadas</h2>
 	
 		@foreach ( $rewardQuests as $rewardQuest )
-			<div class="dark-box" style="cursor: pointer;" data-toggle="collapse" data-target="#{{ $rewardQuest->id }}">
+			<div class="dark-box span11" style="cursor: pointer;" data-toggle="collapse" data-target="#{{ $rewardQuest->id }}">
 				<strong style="line-height: 60px;">{{ $rewardQuest->name }}</strong>
 				<div class="pull-right">
 					<small>Recompensa(s)</small>
@@ -33,6 +33,8 @@
 			</div>
 		@endforeach
 	@endif
+
+	<div class="clearfix"></div>
 
 	@if ( count($startedQuests) > 0 )
 		<h2>Misiones aceptadas</h2>
@@ -55,11 +57,13 @@
 		@endforeach
 	@endif
 
+	<div class="clearfix"></div>
+
 	@if ( count($quests) > 0 )
 		<h2>Misiones disponibles</h2>
 
 		@foreach ( $quests as $quest )
-			<div class="dark-box" style="cursor: pointer;" data-toggle="collapse" data-target="#{{ $quest->id }}">
+			<div class="dark-box span11" style="cursor: pointer;" data-toggle="collapse" data-target="#{{ $quest->id }}">
 				<strong style="line-height: 60px;">{{ $quest->name }}</strong>
 				<div class="pull-right">
 					<small>Recompensa(s)</small>
@@ -75,6 +79,8 @@
 			</div>
 		@endforeach
 	@endif
+
+	<div class="clearfix"></div>
 
 @endif
 
