@@ -14,8 +14,6 @@
 	@if ( count($rewardQuests) > 0 )
 		<h2>Misiones completadas, ¡pide tu recompensa!</h2>
 
-		<h2>Misiones aceptadas</h2>
-	
 		@foreach ( $rewardQuests as $rewardQuest )
 			<div class="dark-box span11" style="cursor: pointer;" data-toggle="collapse" data-target="#{{ $rewardQuest->id }}">
 				<strong style="line-height: 60px;">{{ $rewardQuest->name }}</strong>
@@ -89,46 +87,52 @@
 	
 	<ul class="inline">
 	@foreach ( $merchandises as $merchandise )
-		<li style="vertical-align: top; padding: 10px;">
-		{{ Form::open('authenticated/buyMerchandise', 'POST') }}
+		<li class="text-center" style="vertical-align: top; padding: 10px;">
+		@if ( $characterCoinsCount >= $merchandise->price_copper )
+			{{ Form::open('authenticated/buyMerchandise', 'POST') }}
 
-			{{ Form::hidden('merchandise_id', $merchandise->id) }}
-			
-			
+				{{ Form::hidden('merchandise_id', $merchandise->id) }}
+				
+				<div class="inventory-item">
+					<img src="{{ URL::base() }}/img/icons/items/{{ $merchandise->item_id }}.png" alt="" data-toggle="tooltip" data-placement="top" data-original-title="{{ $merchandise->item->get_text_for_tooltip() }}<p>Precio: {{ $merchandise->price_copper }}</p>">
+				</div>
+				
+				<div>
+				@if ( $merchandise->item->stackable )
+					<?php
+
+					for ( $i = 1, $max = @($characterCoinsCount / $merchandise->price_copper), $amount = array(); $i <= $max; $i++ )
+					{
+						if ( $i > 25 )
+						{
+							$i += 4;
+						}
+
+						if ( $i > 50 )
+						{
+							break;
+						}
+
+						$amount[$i] = $i;
+					}
+
+					?>
+
+					{{ Form::select('amount', $amount, null, array('style' => 'width: 64px;')) }}
+				@endif
+				</div>
+		
+				<div>
+				{{ Form::submit('Comprar', array('class' => 'btn btn-warning', 'style' => 'font-size: 10px;')) }}
+				</div>
+
+			{{ Form::close() }}
+		@else
 			<div class="inventory-item">
 				<img src="{{ URL::base() }}/img/icons/items/{{ $merchandise->item_id }}.png" alt="" data-toggle="tooltip" data-placement="top" data-original-title="{{ $merchandise->item->get_text_for_tooltip() }}<p>Precio: {{ $merchandise->price_copper }}</p>">
 			</div>
-			
-			<div>
-			@if ( $merchandise->item->stackable )
-				<?php
-
-				for ( $i = 1, $max = @($characterCoinsCount / $merchandise->price_copper), $amount = array(); $i <= $max; $i++ )
-				{
-					if ( $i > 25 )
-					{
-						$i += 4;
-					}
-
-					if ( $i > 50 )
-					{
-						break;
-					}
-
-					$amount[$i] = $i;
-				}
-
-				?>
-
-				{{ Form::select('amount', $amount, null, array('style' => 'width: 64px;')) }}
-			@endif
-			</div>
-	
-			<div>
-			{{ Form::submit('Comprar', array('class' => 'btn btn-warning', 'style' => 'font-size: 10px;')) }}
-			</div>
-
-		{{ Form::close() }}
+			<div class="btn disabled" style="font-size: 10px;" data-toggle="tooltip" data-title="No tienes suficientes monedas">Comprar</div>
+		@endif
 		</li>
 	@endforeach
 	</ul>
