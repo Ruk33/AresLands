@@ -849,6 +849,26 @@ class Character extends Base_Model
 		return $this->items()->select(array('id', 'count'))->where('item_id', '=', Config::get('game.coin_id'))->first();
 	}
 
+	public function add_coins($amount)
+	{
+		$coins = $this->get_coins();
+
+		if ( ! $coins )
+		{
+			$coins = new CharacterItem();
+
+			$coins->owner_id = $this->id;
+			$coins->item_id = Config::get('game.coin_id');
+			$coins->count = $amount;
+		}
+		else
+		{
+			$coins->count += $amount;
+		}
+
+		$coins->save();
+	}
+
 	/**
 	 *	Obtenemos las monedas dividas en
 	 *	oro, plata y cobre de un personaje

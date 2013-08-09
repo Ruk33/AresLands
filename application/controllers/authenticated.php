@@ -301,7 +301,7 @@ class Authenticated_Controller extends Base_Controller
 	{
 		//$characters = Character::order_by('pvp_points', 'desc')->select(['name', 'pvp_points', 'gender', 'race'])->take(50)->get();
 
-		$characters = Character::order_by('pvp_points', 'desc')->order_by('xp', 'desc')->select(array('id', 'name', 'gender', 'race', 'pvp_points'))->paginate(50, array('name', 'pvp_points', 'gender', 'race'));
+		$characters = Character::order_by('xp', 'desc')->order_by('pvp_points', 'desc')->select(array('id', 'name', 'gender', 'race', 'pvp_points'))->paginate(50, array('name', 'pvp_points', 'gender', 'race'));
 
 		$this->layout->title = 'Ranking';
 		$this->layout->content = View::make('authenticated.ranking')

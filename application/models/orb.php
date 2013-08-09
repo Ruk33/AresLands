@@ -46,6 +46,39 @@ class Orb extends Base_Model
 		$this->save();
 	}
 
+	public function give_periodic_reward()
+	{
+		$owner = $this->owner()->select(array('id', 'clan_id'))->first();
+		$clanOrbPoint = null;
+
+		if ( $owner )
+		{
+			$owner->add_coins($this->coins);
+
+			/*
+			 *	Verificamos que esté en un grupo
+			 */
+			if ( $owner->clan_id > 0 )
+			{
+				$clanOrbPoint = ClanOrbPoint::where('clan_id', '=', $owner->clan_id)->select(array('id', 'points'))->first();
+
+				if ( ! $clanOrbPoint )
+				{
+					$clanOrbPoint = new ClanOrbPoint();
+
+					$clanOrbPoint->clan_id = $owner->clan_id;
+					$clanOrbPoint->points = $this->points;
+				}
+				else
+				{
+					$clanOrbPoint->points += $this->points;
+				}
+
+				$clanOrbPoint->save();
+			}
+		}
+	}
+
 	public function failed_robbery(Character $character)
 	{
 		/*
