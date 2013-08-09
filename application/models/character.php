@@ -626,7 +626,7 @@ class Character extends Base_Model
 			}
 			else
 			{
-				if ( $loser['character']->has_orb() && $winner['character']->orbs()->count < 2 )
+				if ( $loser['character']->has_orb() && $winner['character']->orbs()->count() < 2 )
 				{
 					$loserOrbs = $loser['character']->orbs;
 					$stolenOrb = null;
