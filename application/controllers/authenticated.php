@@ -1155,10 +1155,16 @@ class Authenticated_Controller extends Base_Controller
 				$itemsToView[$item->location][] = $item;
 			}
 
+			/*
+			 *	Obtenemos los orbes
+			 */
+			$orbs = $characterToSee->orbs()->select(array('id', 'name', 'description'))->get();
+
 			$this->layout->title = $characterToSee->name;
 			$this->layout->content = View::make('authenticated.character')
 			->with('character', Character::get_character_of_logged_user(array('id', 'zone_id')))
 			->with('items', $itemsToView)
+			->with('orbs', $orbs)
 			->with('characterToSee', $characterToSee);
 		}
 		else

@@ -31,6 +31,20 @@
 					</div>
 				</div>
 				<!-- END MANO IZQUIERDA -->
+
+				<!-- ORBES -->
+				<div class="quest-reward-item" style="position: absolute; margin-left: 250px; margin-top: 250px;">
+					@if ( isset($orbs[0]) )
+						<img src="{{ URL::base() }}/img/icons/orbs/{{ $orbs[0]->id }}.png" data-toggle="tooltip" data-title="<div style='width: 200px;'><strong>{{ $orbs[0]->name }}</strong><p>{{ $orbs[0]->description }}</p></div>">
+					@endif
+				</div>
+
+				<div class="quest-reward-item" style="position: absolute; margin-left: 298px; margin-top: 250px;">
+					@if ( isset($orbs[1]) )
+						<img src="{{ URL::base() }}/img/icons/orbs/{{ $orbs[1]->id }}.png" data-toggle="tooltip" data-title="<div style='width: 200px;'><strong>{{ $orbs[1]->name }}</strong><p>{{ $orbs[1]->description }}</p></div>">
+					@endif
+				</div>
+				<!-- END ORBES -->
 			@endif
 
 			<!-- AYUDANTE -->
@@ -52,19 +66,54 @@
 		<h2>Estadísticas</h2>
 		<ul class="unstyled">
 			<li>
-				<b>Vitalidad:</b> {{ mt_rand($characterToSee->stat_life, $characterToSee->stat_life * 2) }}
+				<span data-toggle="tooltip" data-placement="right" data-original-title="<b>Vitalidad:</b> Aumenta los puntos de vida que posees y la regeneración de los mismos.">
+					<span class="ui-button button" style="cursor: default;">
+						<i class="button-icon hearth"></i>
+						<span class="button-content">
+							<b>Vitalidad:</b> {{ mt_rand($characterToSee->stat_life, $characterToSee->stat_life * 2) }}
+						</span>
+					</span>
+				</span>
 			</li>
 			<li>
-				<b>Destreza:</b> {{ mt_rand($characterToSee->stat_dexterity, $characterToSee->stat_dexterity * 2) }}
+				<span data-toggle="tooltip" data-placement="right" data-original-title="<b>Destreza:</b> Aumenta tu velocidad de golpeo en las batallas, pudiendo lograr así múltiples ataques consecutivos.">
+					<span class="ui-button button" style="cursor: default;">
+						<i class="button-icon boot"></i>
+						<span class="button-content">
+							<b>Destreza:</b> {{ mt_rand($characterToSee->stat_dexterity, $characterToSee->stat_dexterity * 2) }}
+						</span>
+					</span>
+				</span>
 			</li>
 			<li>
-				<b>Magia:</b> {{ mt_rand($characterToSee->stat_magic, $characterToSee->stat_magic * 2) }}
+				<span data-toggle="tooltip" data-placement="right" data-original-title="<b>Magia:</b> Aumenta el poder de los ataques mágicos.">
+					<span class="ui-button button" style="cursor: default;">
+						<i class="button-icon fire"></i>
+						<span class="button-content">
+							<b>Magia:</b> {{ mt_rand($characterToSee->stat_magic, $characterToSee->stat_magic * 2) }}
+						</span>
+					</span>
+				</span>
 			</li>
 			<li>
-				<b>Fuerza:</b> {{ mt_rand($characterToSee->stat_strength, $characterToSee->stat_strength * 2) }}
+				<span data-toggle="tooltip" data-placement="right" data-original-title="<b>Fuerza:</b> Aumenta el poder de los ataques físicos.">
+					<span class="ui-button button" style="cursor: default;">
+						<i class="button-icon axe"></i>
+						<span class="button-content">
+							<b>Fuerza:</b> {{ mt_rand($characterToSee->stat_strength, $characterToSee->stat_strength * 2) }}
+						</span>
+					</span>
+				</span>
 			</li>
 			<li>
-				<b>Suerte:</b> {{ mt_rand($characterToSee->stat_luck, $characterToSee->stat_luck * 2) }}
+				<span data-toggle="tooltip" data-placement="right" data-original-title="<b>Suerte:</b> Aumenta la probabilidad de asestar un golpe crítico, ya sea mágico o físico.">
+					<span class="ui-button button" style="cursor: default;">
+						<i class="button-icon thunder"></i>
+						<span class="button-content">
+							<b>Suerte:</b> {{ mt_rand($characterToSee->stat_luck, $characterToSee->stat_luck * 2) }}
+						</span>
+					</span>
+				</span>
 			</li>
 		</ul>
 

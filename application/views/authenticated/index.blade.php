@@ -142,7 +142,6 @@
 							@endif
 						</span>
 					</span>
-
 				</span>
 			</li>
 			<li style="margin-bottom: 5px;" ng-init="stats['stat_dexterity']='{{ $character->stat_dexterity }}'">
