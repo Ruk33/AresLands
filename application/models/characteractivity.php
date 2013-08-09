@@ -25,7 +25,7 @@ class CharacterActivity extends Base_Model
 	public function update_time()
 	{
 		//$character = Session::get('character');
-		$character = $this->character()->select(array('id', 'zone_id', 'is_traveling', 'is_exploring', 'xp', 'zone_id'))->first();
+		$character = $this->character()->select(array('id', 'zone_id', 'is_traveling', 'is_exploring', 'xp', 'zone_id', 'points_to_change'))->first();
 
 		if ( ! $character )
 		{
@@ -59,10 +59,19 @@ class CharacterActivity extends Base_Model
 				case 'explore':
 					$data = $this->data;
 
+					$xpGained = $data['time'] / 60 / 25 * Config::get('game.xp_rate');
+
 					$character->is_exploring = false;
-					$character->xp += $data['time'] / 60 / 25 * Config::get('game.xp_rate');
+
+					if ( $xpGained > 0 )
+					{
+						$character->xp += $xpGained;
+						$character->points_to_change += $xpGained;
+					}
+					
 					$character->add_exploring_time($character->zone()->select(array('id'))->first(), $data['time']);
 					$character->give_explore_reward($data['reward']);
+
 					$character->save();
 
 					/*
