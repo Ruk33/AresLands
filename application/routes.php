@@ -11,6 +11,7 @@ Route::controller('Game');
 Route::controller('CharacterCreation');
 Route::controller('Home');
 Route::controller('Item');
+Route::controller('Cron');
 
 
 /*

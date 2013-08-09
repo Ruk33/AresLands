@@ -55,13 +55,6 @@ class Authenticated_Controller extends Base_Controller
 		}
 	}
 
-	public function get_t()
-	{
-		$quest = Quest::find(6);
-		$data = $quest->data;
-		die(var_dump($data));
-	}
-
 	/*
 	public function get_setSkillData()
 	{
