@@ -2,6 +2,10 @@
 	<div class="span6" style="margin-left: 20px; margin-right: -20px;">
 		<h2>{{ $characterToSee->name }} (Nivel: {{ $characterToSee->level }})</h2>
 
+		@if ( $characterToSee->clan_id > 0 )
+			<div style="margin-top: -15px;"><i>Miembro de {{ $characterToSee->clan()->select(array('id', 'name'))->first()->get_link() }}</i></div>
+		@endif
+
 		<div style="min-height: 405px;">
 			<!-- DOS MANOS -->
 			@if ( isset($items['lrhand']) && $lrhand = $items['lrhand'][0]->item )
