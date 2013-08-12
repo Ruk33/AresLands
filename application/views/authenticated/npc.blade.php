@@ -1,5 +1,5 @@
 <div class="pull-left">
-	<img src="{{ URL::base() }}/img/npcs/{{ $npc->id }}.jpg" alt="">
+	<img src="{{ URL::base() }}/img/npcs/{{ $npc->id }}.jpg" alt="" width="150px" height="193px">
 </div>
 
 <div style="margin-left: 175px;">
@@ -85,7 +85,7 @@
 @if ( count($merchandises) > 0 )
 	<h2>Mercancías</h2>
 	
-	<ul class="inline">
+	<ul class="inline" ng-controller="Item">
 	@foreach ( $merchandises as $merchandise )
 		<li class="text-center" style="vertical-align: top; padding: 10px;">
 		@if ( $characterCoinsCount >= $merchandise->price_copper )
@@ -94,7 +94,8 @@
 				{{ Form::hidden('merchandise_id', $merchandise->id) }}
 				
 				<div class="inventory-item">
-					<img src="{{ URL::base() }}/img/icons/items/{{ $merchandise->item_id }}.png" alt="" data-toggle="tooltip" data-placement="top" data-original-title="{{ $merchandise->item->get_text_for_tooltip() }}<p>Precio: {{ $merchandise->price_copper }}</p>">
+					<!--<img src="{{ URL::base() }}/img/icons/items/{{ $merchandise->item_id }}.png" alt="" ng-mouseover="onMouseOver({{ $merchandise->item_id }})" data-toggle="tooltip" data-placement="top" data-original-title="[[ item[{{ $merchandise->item_id }}] ]]<p>Precio: {{ $merchandise->price_copper }}</p>">-->
+					<img src="{{ URL::base() }}/img/icons/items/{{ $merchandise->item_id }}.png" ng-mouseover="onMouseOver({{ $merchandise->item_id }})" dynamic-tooltip="item[{{ $merchandise->item_id }}]" ng-init="price[{{ $merchandise->item_id }}] = {{ $merchandise->price_copper }}" width="80px" height="80px">
 				</div>
 				
 				<div>
@@ -129,7 +130,8 @@
 			{{ Form::close() }}
 		@else
 			<div class="inventory-item">
-				<img src="{{ URL::base() }}/img/icons/items/{{ $merchandise->item_id }}.png" alt="" data-toggle="tooltip" data-placement="top" data-original-title="{{ $merchandise->item->get_text_for_tooltip() }}<p>Precio: {{ $merchandise->price_copper }}</p>">
+				<!--<img src="{{ URL::base() }}/img/icons/items/{{ $merchandise->item_id }}.png" alt="" ng-mouseover="onMouseOver({{ $merchandise->item_id }})" data-toggle="tooltip" data-placement="top" data-original-title="[[ item[{{ $merchandise->item_id }}] ]]<p>Precio: {{ $merchandise->price_copper }}</p>">-->
+				<img src="{{ URL::base() }}/img/icons/items/{{ $merchandise->item_id }}.png" ng-mouseover="onMouseOver({{ $merchandise->item_id }})" dynamic-tooltip="item[{{ $merchandise->item_id }}]" ng-init="price[{{ $merchandise->item_id }}] = {{ $merchandise->price_copper }}" width="80px" height="80px">
 			</div>
 			<div class="btn disabled" style="font-size: 10px;" data-toggle="tooltip" data-title="No tienes suficientes monedas">Comprar</div>
 		@endif

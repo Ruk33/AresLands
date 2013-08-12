@@ -292,9 +292,7 @@ class Authenticated_Controller extends Base_Controller
 
 	public function get_ranking($from = 0)
 	{
-		//$characters = Character::order_by('pvp_points', 'desc')->select(['name', 'pvp_points', 'gender', 'race'])->take(50)->get();
-
-		$characters = Character::order_by('xp', 'desc')->order_by('pvp_points', 'desc')->select(array('id', 'name', 'gender', 'race', 'pvp_points'))->paginate(50, array('name', 'pvp_points', 'gender', 'race'));
+		$characters = Character::order_by('xp', 'desc')/*->order_by('pvp_points', 'desc')*/->select(array('id', 'name', 'gender', 'race', 'pvp_points'))->paginate(50, array('name', 'pvp_points', 'gender', 'race'));
 
 		$this->layout->title = 'Ranking';
 		$this->layout->content = View::make('authenticated.ranking')
@@ -1336,10 +1334,16 @@ class Authenticated_Controller extends Base_Controller
 				$itemsToView[$item->location][] = $item;
 			}
 
+			/*
+			 *	Obtenemos los orbes
+			 */
+			$orbs = $characterFinded->orbs()->select(array('id', 'name', 'description'))->get();
+
 			$this->layout->title = $characterFinded->name;
 			$this->layout->content = View::make('authenticated.character')
 			->with('character', Character::get_character_of_logged_user(array('id', 'zone_id')))
 			->with('items', $itemsToView)
+			->with('orbs', $orbs)
 			->with('characterToSee', $characterFinded);
 		}
 		else
@@ -1606,7 +1610,7 @@ class Authenticated_Controller extends Base_Controller
 		/*
 		 *	Obtenemos las mercancías del npc
 		 */
-		$merchandises = $npc->merchandises()->get();
+		$merchandises = $npc->merchandises()->select(array('id', 'item_id', 'price_copper'))->get();
 
 		/*
 		 *	Disparamos el evento de hablar

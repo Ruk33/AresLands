@@ -76,6 +76,26 @@ controller('CharacterStatsController', ['$scope', '$http', '$timeout', function(
 	};
 }])
 
+.controller('Item', ['$scope', '$http', function($scope, $http) {
+	$scope.item = [];
+	$scope.price = [];
+
+	$scope.getItemTooltip = function(id) {
+		$http.get($scope.basePath + 'api/itemTooltip/' + id).success(function (data) {
+			$scope.item[id] = data + '<p>Precio: ' + $scope.price[id] + '</p>';
+		});
+	}
+
+	$scope.onMouseOver = function(id)
+	{
+		if ( ! $scope.item[id] )
+		{
+			$scope.item[id] = 'Cargando...';
+			$scope.getItemTooltip(id);
+		}
+	}
+}])
+
 .controller('MyCtrl2', [function() {
 
 }]);

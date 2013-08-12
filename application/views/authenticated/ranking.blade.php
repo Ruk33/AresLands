@@ -16,7 +16,10 @@
 			@foreach ( $characters->results as $character )
 			<tr>
 				<td>{{ $index++ }}</td>
-				<td><img src="{{ URL::base() }}/img/icons/race/{{ $character->race }}_{{ $character->gender }}.jpg" alt=""></td>
+				<td>
+					<!--<img src="{{ URL::base() }}/img/icons/race/{{ $character->race }}_{{ $character->gender }}.jpg" alt="">-->
+					<div class="icon-race-30 icon-race-30-{{ $character->race }}_{{ $character->gender }}"></div>
+				</td>
 				<td>
 					@if ( $index - 1 == 1 )
 						<img src="{{ URL::base() }}/img/icons/crown-gold-icon.png" alt="">

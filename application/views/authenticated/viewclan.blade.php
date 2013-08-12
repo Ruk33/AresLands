@@ -89,8 +89,9 @@
 			<div class="clan-member-link">
 				<ul class="inline">
 					<li>
-					<img src="{{ URL::base() }}/img/icons/race/{{ $member->race }}_{{ $member->gender }}.jpg" alt="">
-					<a href="{{ URL::to('authenticated/character/' . $member->name) }}">{{ $member->name }} ({{ $member->level }})</a>
+						<!--<img src="{{ URL::base() }}/img/icons/race/{{ $member->race }}_{{ $member->gender }}.jpg" alt="">-->
+						<div class="icon-race-30 icon-race-30-{{ $member->race }}_{{ $member->gender }} pull-left"></div>
+						<a href="{{ URL::to('authenticated/character/' . $member->name) }}" style="line-height: 30px; margin-left: 10px;">{{ $member->name }} ({{ $member->level }})</a>
 					</li>
 	
 					@if ( $character->id == $clan->leader_id && $member->id != $character->id )

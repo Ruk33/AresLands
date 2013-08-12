@@ -624,27 +624,25 @@ class Character extends Base_Model
 					}
 				}
 			}
-			else
+
+			if ( $loser['character']->has_orb() && $winner['character']->orbs()->count() < 2 )
 			{
-				if ( $loser['character']->has_orb() && $winner['character']->orbs()->count() < 2 )
+				$loserOrbs = $loser['character']->orbs;
+				$stolenOrb = null;
+
+				foreach ( $loserOrbs as $loserOrb )
 				{
-					$loserOrbs = $loser['character']->orbs;
-					$stolenOrb = null;
-
-					foreach ( $loserOrbs as $loserOrb )
+					if ( $loserOrb->can_be_stolen_by($winner['character']) )
 					{
-						if ( $loserOrb->can_be_stolen_by($winner['character']) )
-						{
-							$loserOrb->give_to($winner['character']);
-							$stolenOrb = $loserOrb;
-							break;
-						}
+						$loserOrb->give_to($winner['character']);
+						$stolenOrb = $loserOrb;
+						break;
 					}
+				}
 
-					if ( $stolenOrb )
-					{
-						$message = '<p>¡Haz robado ' . $stolenOrb->name . ' de ' . $loser['character']->name . '!</p>' . $message;
-					}
+				if ( $stolenOrb )
+				{
+					$message = '<p>¡Haz robado ' . $stolenOrb->name . ' de ' . $loser['character']->name . '!</p>' . $message;
 				}
 			}
 		}

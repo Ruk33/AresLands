@@ -45,7 +45,9 @@
 			</td>
 
 			<tr ng-repeat="character in characters | filter:search | filter:query_number | orderBy:predicate:reverse">
-				<td><img ng-src="<?php echo URL::base(); ?>/img/icons/race/[[ character.race ]]_[[ character.gender ]].jpg" alt=""></td>
+				<td>
+					<div class="icon-race-30 icon-race-30-[[ character.race ]]_[[ character.gender ]]"></div>
+				</td>
 
 				<td>
 					[[ character.name ]]

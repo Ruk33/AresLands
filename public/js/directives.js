@@ -2,6 +2,30 @@
 
 angular.module('areslands.directives', []).
 
+directive('dynamicTooltip', function() {
+	return function(scope, element, attrs) {
+		var content;
+
+		function updateToolTip(value)
+		{
+			$(element).attr('data-original-title', value).tooltip('fixTitle').tooltip('show');
+		}
+
+		/*
+		 *	Handle para cuando el valor cambia
+		 */
+		scope.$watch(attrs.dynamicTooltip, function(value) {
+			updateToolTip(value);
+		});
+
+		$(element).tooltip({
+			html: true, 
+			/*placement: 'top', 
+			title: attrs.dinamicTooltip*/
+		});
+	};
+}).
+
 directive('tabs', function() {
 	return {
 		restrict: 'E',

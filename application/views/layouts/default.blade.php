@@ -71,7 +71,7 @@
 	
 									@if ( $character->clan_id != 0 )
 										<li style="padding: 0; vertical-align: middle;">
-											<a href="{{ URL::to('authenticated/clan/' . $character->clan_id) }}" data-toggle="tooltip" data-placement="top" data-original-title="Accede a la página de tu grupo"><img src="{{ URL::base() }}/img/shield-icon.png" alt="Grupo"></a>
+											<a href="{{ URL::to('authenticated/clan/' . $character->clan_id) }}" data-toggle="tooltip" data-placement="top" data-original-title="Accede a la página de tu grupo"><img src="{{ URL::base() }}/img/shield-icon.png" alt="Grupo" width="16px" height="19px"></a>
 										</li>
 									@endif
 								</ul>
