@@ -185,7 +185,7 @@ class Authenticated_Controller extends Base_Controller
 	public function get_orbs()
 	{
 		$character = Character::get_character_of_logged_user(array('level'));
-		$orbs = Orb::where('min_level', '<=', $character->level)->where('max_level', '>=', $character->level)->select(array('id', 'name', 'description', 'min_level', 'max_level', 'owner_character', 'last_attacker', 'last_attack_time'))->get();
+		$orbs = Orb::where('min_level', '<=', $character->level)->where('max_level', '>=', $character->level)->get();
 
 		$this->layout->title = 'Orbes';
 		$this->layout->content = View::make('authenticated.orbs')
@@ -1153,7 +1153,7 @@ class Authenticated_Controller extends Base_Controller
 
 			$this->layout->title = $characterToSee->name;
 			$this->layout->content = View::make('authenticated.character')
-			->with('character', Character::get_character_of_logged_user(array('id', 'zone_id')))
+			->with('character', Character::get_character_of_logged_user(array('id', 'zone_id', 'clan_id')))
 			->with('items', $itemsToView)
 			->with('orbs', $orbs)
 			->with('characterToSee', $characterToSee);
@@ -1341,7 +1341,7 @@ class Authenticated_Controller extends Base_Controller
 
 			$this->layout->title = $characterFinded->name;
 			$this->layout->content = View::make('authenticated.character')
-			->with('character', Character::get_character_of_logged_user(array('id', 'zone_id')))
+			->with('character', Character::get_character_of_logged_user(array('id', 'zone_id', 'clan_id')))
 			->with('items', $itemsToView)
 			->with('orbs', $orbs)
 			->with('characterToSee', $characterFinded);

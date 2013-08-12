@@ -38,6 +38,11 @@ class Character extends Base_Model
 		return Character::where('user_id', '=', $user->id)->count() != 0;
 	}
 
+	public function is_in_clan_of(Character $character)
+	{
+		return $this->clan_id == $character->clan_id;
+	}
+
 	/**
 	 *	¿Tiene orbe el personaje?, true en caso de afirmativo
 	 *

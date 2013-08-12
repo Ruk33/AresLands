@@ -14,7 +14,7 @@
 		@foreach ( $orbs as $orb )
 			<li style="vertical-align: top; width: 230px; margin-bottom: 25px;">
 				<h2>{{ $orb->name }}</h2>
-				<img src="{{ URL::base() }}/img/icons/orbs/{{ $orb->id }}.png" width="150px" height="150px" data-toggle="tooltip" data-title="<h6>{{ $orb->name }}</h6><p class='text-left'>{{ $orb->description }}</p><p><strong>Nivel:</strong> {{ $orb->min_level }}-{{ $orb->max_level }}</p>">
+				<img src="{{ URL::base() }}/img/icons/orbs/{{ $orb->id }}.png" width="150px" height="150px" data-toggle="tooltip" data-title="<h6>{{ $orb->name }}</h6><p class='text-left'>{{ $orb->description }}</p><ul class='unstyled'><li><strong>Monedas:</strong> {{ $orb->coins }}</li><li><strong>Puntos:</strong> {{ $orb->points }}</li><li><strong>Nivel:</strong> {{ $orb->min_level }}-{{ $orb->max_level }}</li></ul>">
 				
 				<p>
 					<strong>Poseedor:</strong> 

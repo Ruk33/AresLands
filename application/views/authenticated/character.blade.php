@@ -140,6 +140,13 @@
 		?>
 		@if ( $character->id != $characterToSee->id && $characterZone == $characterToSeeZone )
 			<h2>¿Te atreves a batallar?</h2>
+			@if ( $character->is_in_clan_of($characterToSee) )
+				    <p class="text-warning">
+				    	<strong>¡Cuidado!</strong>
+				    	<br>
+				    	{{ $characterToSee->name }} pertenece al mismo grupo en el que estás.
+				    </p>
+			@endif
 			<a href="{{ URL::to('authenticated/toBattle/' . $characterToSee->name) }}">Luchar contra <b>{{ $characterToSee->name }}</b></a>
 		@endif
 	</div>
