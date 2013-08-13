@@ -27,7 +27,7 @@ class Clan extends Base_Model
 
 	public function get_link()
 	{
-		return '<a href="' . URL::to('authenticated/clan/' . $this->id ) . '">' . $this->name . '</a>';
+		return '<a href="' . URL::to('authenticated/clan/' . $this->id ) . '">' . htmlspecialchars($this->name) . '</a>';
 	}
 
 	public function lider()
