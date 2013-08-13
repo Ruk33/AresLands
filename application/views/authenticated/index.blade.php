@@ -236,9 +236,11 @@
 @if ( count($activities) > 0 )
 <div>
 	<h2>Actividad(es)</h2>
-	<ul>
+	<ul class="unstyled">
 		@foreach ( $activities as $activity )
-		<li>
+		<li style="padding: 5px;">
+			<img src="{{ URL::base() }}/img/icons/actions/{{ $activity->name }}.jpg" alt="{{ $zone->name }}" width="32px" height="32px" style="margin-right: 5px;">
+			<b>
 			@if ( $activity->name == 'travel' )
 				Estás viajando a {{ $activity->data['zone']->name }}: 
 			@elseif ( $activity->name == 'battlerest' )
@@ -246,6 +248,7 @@
 			@elseif ( $activity->name == 'explore' )
 				Explorando: 
 			@endif
+			</b>
 			<span class="timer" data-endtime="{{ $activity->end_time - time() }}"></span>
 		</li>
 		@endforeach
