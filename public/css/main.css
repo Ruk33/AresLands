@@ -530,9 +530,10 @@ h4 {
 
 .bar {
 	height: 82px;
-	text-align: right;
+	/*text-align: right;*/
 	clear: both;
 	float: none;
+	margin-bottom: 20px;
 }
 
 .line {

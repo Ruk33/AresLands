@@ -3,8 +3,8 @@
 	<div class="bar">
 		<ul class="inline">
 		@foreach ( $npcs as $npc )
-			<li>
-				<a href="{{ URL::to('authenticated/npc/' . $npc->name) }}" data-toggle="tooltip" data-placement="left" data-original-title="{{ $npc->tooltip_dialog }}">
+			<li data-toggle="tooltip" data-placement="bottom" data-original-title="{{ $npc->tooltip_dialog }}">
+				<a href="{{ URL::to('authenticated/npc/' . $npc->name) }}">
 					<img src="{{ URL::base() }}/img/icons/npcs/{{ $npc->id }}.png" alt="" width="72px" height="82px">
 				</a>
 			</li>
@@ -230,43 +230,47 @@
 		</ul>
 	</div>
 	<!-- END ESTADÍSTICAS -->
-	
-	<!-- ZONA -->
-	<div class="span6">
-		<h2>Ubicación</h2>
-		@if ( count($activities) > 0 )
-			@foreach ( $activities as $activity )
-				@if ( $activity->name == 'travel' )
-					Saliendo de 
-				@endif
-			@endforeach
-		@endif
-		{{ $character->zone->name }}
-	</div>
-	<!-- END ZONA -->
-	
-	<!-- ACTIVIDADES -->
-	@if ( count($activities) > 0 )
-	<div class="span6">
-		<h2>Actividad(es)</h2>
-		<ul>
-			@foreach ( $activities as $activity )
-			<li>
-				@if ( $activity->name == 'travel' )
-					Estás viajando a {{ $activity->data['zone']->name }}: 
-				@elseif ( $activity->name == 'battlerest' )
-					Descanzando de batalla: 
-				@elseif ( $activity->name == 'explore' )
-					Explorando: 
-				@endif
-				<span class="timer" data-endtime="{{ $activity->end_time - time() }}"></span>
-			</li>
-			@endforeach
-		</ul>
-	</div>
-	@endif
-	<!-- END ACTIVIDADES -->
 </div>
+
+<!-- ACTIVIDADES -->
+@if ( count($activities) > 0 )
+<div>
+	<h2>Actividad(es)</h2>
+	<ul>
+		@foreach ( $activities as $activity )
+		<li>
+			@if ( $activity->name == 'travel' )
+				Estás viajando a {{ $activity->data['zone']->name }}: 
+			@elseif ( $activity->name == 'battlerest' )
+				Descanzando de batalla: 
+			@elseif ( $activity->name == 'explore' )
+				Explorando: 
+			@endif
+			<span class="timer" data-endtime="{{ $activity->end_time - time() }}"></span>
+		</li>
+		@endforeach
+	</ul>
+</div>
+@endif
+<!-- END ACTIVIDADES -->
+
+<!-- ZONA -->
+<div>
+	<h2>Ubicación</h2>
+	@if ( count($activities) > 0 )
+		@foreach ( $activities as $activity )
+			@if ( $activity->name == 'travel' )
+				Saliendo de 
+			@endif
+		@endforeach
+	@endif
+	<div class="pull-left" style="margin-right: 10px;">
+		<img src="{{ URL::base() }}/img/zones/32/{{ $zone->id }}.png" alt="{{ $zone->name }}" width="32px" height="32px">
+	</div>
+	<b>{{ $zone->name }}</b>
+	<p><i>{{ $zone->description }}</i></p>
+</div>
+<!-- END ZONA -->
 
 <!-- INVENTARIO -->
 <h2>Inventario</h3>

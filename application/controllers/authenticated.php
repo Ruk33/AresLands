@@ -163,12 +163,14 @@ class Authenticated_Controller extends Base_Controller
 		 */
 		$orbs = $character->orbs()->select(array('id', 'name', 'description'))->get();
 
+		$zone = $character->zone()->select(array('id', 'name', 'description'))->first();
+
 		/*
 		 *	Obtenemos todos los npcs
 		 *	(no mounstros) de la zona
 		 *	en la que está el usuario
 		 */
-		$npcs = Npc::get_npcs_from_zone($character->zone);
+		$npcs = Npc::get_npcs_from_zone($zone);
 
 		$this->layout->title = 'Inicio';
 		$this->layout->content = View::make('authenticated.index')
@@ -179,6 +181,7 @@ class Authenticated_Controller extends Base_Controller
 		->with('positiveBonifications', $positiveBonifications)
 		->with('negativeBonifications', $negativeBonifications)
 		->with('orbs', $orbs)
+		->with('zone', $zone)
 		->with('npcs', $npcs);
 	}
 
