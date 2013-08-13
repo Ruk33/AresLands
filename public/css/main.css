@@ -77,6 +77,20 @@ body {
 	padding: 5px;
 }
 
+#activityBarRewardMessage {
+	background-image: url("/img/npcs/activity-bar-reward.png");
+	background-repeat: no-repeat;
+	background-color: rgb(209, 174, 147);
+	color: rgb(41, 41, 41);
+	border: 1px solid rgb(211, 191, 181);
+	border-radius: 0;
+}
+
+#activityBar {
+	background-image: none;
+	background-color: orange;
+}
+
 #lifeBar {
 	background-image: none;
 	background-color: rgb(141, 250, 41);

@@ -109,10 +109,15 @@
 	<div class="span6" ng-controller="CharacterStatsController" ng-init="remainingPoints='{{ $character->points_to_change }}'">
 		<h2>Estadísticas</h2>
 		<ul class="unstyled" style="width: 340px;">
-			<li style="margin-bottom: 20px;">
-				<div class="text-right">
-					<span style="font-size: 12px;" data-toggle="tooltip" data-placement="top" data-original-title="vida actual / vida máxima" ng-init="currentLife='{{ $character->current_life }}'; maxLife='{{ $character->max_life }}'"><b>Vida:</b> [[ currentLife ]]/[[ maxLife ]]</span>
+			<li>
+				<span style="font-size: 11px;">BARRA DE ACTIVIDAD</span>
+				<div class="progress" style="height: 5px;" data-toggle="tooltip" data-placement="top" data-original-title="<b>Barra de actividad:</b> Completa la barra de actividad realizando acciones (explorar, batallar, etc.) para obtener la <b>recompensa</b>.">
+					<div id="activityBar" class="bar bar-success" style="width: {{ 100 * $character->activity_bar->filled_amount / Config::get('game.activity_bar_max') }}%"></div>
 				</div>
+			</li>
+
+			<li style="margin-bottom: 50px;">
+				<span style="font-size: 11px;" data-toggle="tooltip" data-placement="top" data-original-title="vida actual / vida máxima" ng-init="currentLife='{{ $character->current_life }}'; maxLife='{{ $character->max_life }}'"><b>SALUD:</b> [[ currentLife ]]/[[ maxLife ]]</span>
 				<div class="progress" style="height: 5px;">
 					<div class="bar bar-success" id="lifeBar"></div>
 				</div>

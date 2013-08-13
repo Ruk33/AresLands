@@ -27,6 +27,32 @@ class Message extends Base_Model
 		return $this->belongs_to('Character', 'sender_id');
 	}
 
+	public static function activity_bar_reward(Character $character, $rewards)
+	{
+		$message = new Message();
+
+		$message->sender_id = $character->id;
+		$message->receiver_id = $character->id;
+
+		$message->subject = 'Completaste tu barra de actividad';
+		$message->content = 'Por completar tu barra de actividad, haz sido recompensado con: <ul>';
+
+		foreach ( $rewards as $reward )
+		{
+			$message->content .= '<li>' . $reward['amount'] . ' ' . $reward['name'] . '</li>';
+		}
+
+		$message->content .= '</ul>';
+
+		$message->unread = true;
+		$message->date = time();
+		$message->type = 'received';
+
+		$message->is_special = true;
+
+		$message->save();
+	}
+
 	public static function completed_exploration($receiver, $experienceGained, $reward)
 	{
 		$message = new Message();

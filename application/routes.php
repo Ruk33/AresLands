@@ -20,6 +20,11 @@ Route::controller('Cron');
 |--------------------------------------------------------------------------
 */
 
+Event::listen('fullActivityBar', function(Character $character)
+{
+	Session::put('activityBarReward', '');
+});
+
 Event::listen('npcTalk', function(Character $character, Npc $npc)
 {
 	/*
@@ -354,6 +359,19 @@ Route::filter('before', function() {
 			{
 				$character->last_activity_time = $time;
 				$character->save();
+			}
+
+			/*
+			 *	Verificamos que tenga barra de actividad
+			 */
+			$activityBar = $character->activity_bar()->count();
+
+			if ( $activityBar == 0 )
+			{
+				$activityBar = new ActivityBar();
+				$activityBar->character_id = $character->id;
+				$activityBar->filled_amount = 0;
+				$activityBar->save();
 			}
 
 			/*

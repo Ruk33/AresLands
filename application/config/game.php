@@ -13,6 +13,8 @@ return array(
 	 */
 	'coin_id' => 9999,
 
+	'activity_bar_max' => 20,
+
 	/*
 	 *	Cantidad de monedas (en cobre)
 	 *	que cuesta viajar

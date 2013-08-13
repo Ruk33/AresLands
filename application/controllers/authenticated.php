@@ -227,6 +227,16 @@ class Authenticated_Controller extends Base_Controller
 
 		if ( ($time <= Config::get('game.max_explore_time') && $time >= Config::get('game.min_explore_time')) && $character->can_explore() )
 		{
+			/*
+			 *	Damos dos puntos a la barra
+			 *	de actividad si se explora
+			 *	30 minutos o mas
+			 */
+			if ( $time / 60 >= 30 )
+			{
+				ActivityBar::add($character, 2);
+			}
+
 			$character->explore($time);
 		}
 
@@ -1447,7 +1457,7 @@ class Authenticated_Controller extends Base_Controller
 
 	public function get_travel($zoneId = '')
 	{
-		$character = Character::get_character_of_logged_user(array('id', 'is_traveling', 'zone_id', 'name'));
+		$character = Character::get_character_of_logged_user(array('id', 'is_traveling', 'zone_id', 'name', 'level'));
 
 		/*
 		 *	Si zoneId está definido quiere

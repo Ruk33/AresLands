@@ -38,6 +38,36 @@ class Character extends Base_Model
 		return Character::where('user_id', '=', $user->id)->count() != 0;
 	}
 
+	public function give_full_activity_bar_reward()
+	{
+		$xpAmount = $this->level / 2 + 5;
+		$coinsAmount = $this->level * 15;
+
+		$this->add_coins($coinsAmount);
+
+		$this->xp += $xpAmount;
+		$this->points_to_change += $xpAmount;
+
+		$this->save();
+
+		$rewards = array(
+			array(
+				'amount' => $coinsAmount,
+				'name' => 'Monedas'
+			),
+
+			array(
+				'amount' => $xpAmount,
+				'name' => 'Experiencia'
+			)
+		);
+
+		// if ( 10% chance )
+		// n ironcoins
+
+		Message::activity_bar_reward($this, $rewards);
+	}
+
 	public function is_in_clan_of(Character $character)
 	{
 		return $this->clan_id == $character->clan_id;
@@ -653,6 +683,11 @@ class Character extends Base_Model
 		}
 
 		/*
+		 *	Barra de actividad
+		 */
+		ActivityBar::add($this, 2);
+
+		/*
 		 *	Notificamos al atacado
 		 */
 		if ( $fighter_two['is_player'] )
@@ -947,6 +982,8 @@ class Character extends Base_Model
 	{
 		if ( $zone )
 		{
+			ActivityBar::add($this, 1);
+
 			$this->is_traveling = true;
 			$this->save();
 
@@ -1103,5 +1140,10 @@ class Character extends Base_Model
 	public function orb_protections()
 	{
 		return $this->has_many('OrbProtection', 'target_id');
+	}
+
+	public function activity_bar()
+	{
+		return $this->has_one('ActivityBar', 'character_id');
 	}
 }
