@@ -268,7 +268,11 @@
 		@endforeach
 	@endif
 	<div class="pull-left" style="margin-right: 10px;">
-		<img src="{{ URL::base() }}/img/zones/32/{{ $zone->id }}.png" alt="{{ $zone->name }}" width="32px" height="32px">
+		@if ( $zone->id < 11 )
+			<img src="{{ URL::base() }}/img/zones/32/{{ $zone->id }}.png" alt="{{ $zone->name }}" width="32px" height="32px">
+		@else
+			<img src="{{ URL::base() }}/img/zones/32/unknown.png" alt="{{ $zone->name }}" width="32px" height="32px">
+		@endif
 	</div>
 	<b>{{ $zone->name }}</b>
 	<p><i>{{ $zone->description }}</i></p>
