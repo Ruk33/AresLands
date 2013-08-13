@@ -541,6 +541,16 @@ class Character extends Base_Model
 				$winner['character']->xp += $target->xp * Config::get('game.xp_rate');
 				$winner['character']->points_to_change += $target->xp * Config::get('game.xp_rate');
 			}
+
+			/*
+			 *	Si el ganador tiene menor nivel que
+			 *	el perdedor, se le da mas experiencia
+			 */
+			if ( $winner['character']->level < $loser['character']->level )
+			{
+				$winner['character']->xp += 1 * Config::get('game.xp_rate');
+				$winner['character']->points_to_change += 1 * Config::get('game.xp_rate');
+			}
 		}
 
 		/*
