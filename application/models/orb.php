@@ -82,9 +82,9 @@ class Orb extends Base_Model
 	public function failed_robbery(Character $character)
 	{
 		/*
-		 *	Protección de 12 horas
+		 *	Protección de 6 horas
 		 */
-		OrbProtection::add_protection($character, $this->owner()->select(array('id'))->first(), 6 * 60 * 60);
+		AttackProtection::add($character, $this->owner()->select(array('id'))->first(), 6 * 60 * 60);
 
 		$this->last_attacker = $character->id;
 		$this->last_attack_time = time();

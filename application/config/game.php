@@ -16,6 +16,13 @@ return array(
 	'activity_bar_max' => 20,
 
 	/*
+	 *	Protección (en segundos) para un personaje
+	 *	que pierde en un pvp teniendo menor nivel
+	 *	que el ganador
+	 */
+	'protection_time_on_lower_level_pvp' => 300,
+
+	/*
 	 *	Cantidad de monedas (en cobre)
 	 *	que cuesta viajar
 	 */

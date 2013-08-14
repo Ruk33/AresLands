@@ -1,10 +1,10 @@
 <?php
 
-class OrbProtection extends Base_Model
+class AttackProtection extends Base_Model
 {
 	public static $softDelete = false;
 	public static $timestamps = false;
-	public static $table = 'orb_protections';
+	public static $table = 'attack_protections';
 	public static $key = 'id';
 
 	public function get_attacker()
@@ -17,19 +17,20 @@ class OrbProtection extends Base_Model
 		return $this->belongs_to('Character', 'target_id');
 	}
 
-	public static function add_protection($attacker, $target, $time)
+	public static function add($attacker, $target, $time)
 	{
-		$protection = OrbProtection::where('attacker_id', '=', $attacker->id)->where('target_id', '=', $target->id)->first();
+		$protection = AttackProtection::where('attacker_id', '=', $attacker->id)->where('target_id', '=', $target->id)->first();
 		
 		if ( ! $protection )
 		{
-			$protection = new OrbProtection();
+			$protection = new AttackProtection();
 
 			$protection->attacker_id = $attacker->id;
 			$protection->target_id = $target->id;
+			$protection->time = time();
 		}
 
-		$protection->time = time() + $time;
+		$protection->time += $time;
 
 		$protection->save();
 	}

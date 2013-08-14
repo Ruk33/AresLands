@@ -560,6 +560,15 @@ class Character extends Base_Model
 		{
 			$loser['character']->xp += 1 * Config::get('game.xp_rate');
 			$loser['character']->points_to_change += 1 * Config::get('game.xp_rate');
+
+			/*
+			 *	Revisamos si el perdedor necesita
+			 *	protección para evitar abusos
+			 */
+			if ( $winner['is_player'] && $winner['character']->level > $loser['character']->level )
+			{
+				AttackProtection::add($winner['character'], $loser['character'], Config::get('game.protection_time_on_lower_level_pvp'));
+			}
 		}
 
 		/*
@@ -949,9 +958,9 @@ class Character extends Base_Model
 		return $this->is_traveling == false && $this->activities()->take(1)->count() == 0;
 	}
 
-	public function has_orb_protection($attacker)
+	public function has_protection($attacker)
 	{
-		$protectionTime = $this->orb_protections()->where('attacker_id', '=', $attacker->id)->first();
+		$protectionTime = $this->attack_protections()->where('attacker_id', '=', $attacker->id)->first();
 
 		if ( ! $protectionTime )
 		{
@@ -963,7 +972,7 @@ class Character extends Base_Model
 
 	public function can_be_attacked($attacker)
 	{
-		if ( $this->has_orb() && $this->has_orb_protection($attacker) )
+		if ( $this->has_protection($attacker) )
 		{
 			return false;
 		}
@@ -1147,9 +1156,9 @@ class Character extends Base_Model
 		return $this->has_many('Orb', 'owner_character');
 	}
 
-	public function orb_protections()
+	public function attack_protections()
 	{
-		return $this->has_many('OrbProtection', 'target_id');
+		return $this->has_many('AttackProtection', 'target_id');
 	}
 
 	public function activity_bar()

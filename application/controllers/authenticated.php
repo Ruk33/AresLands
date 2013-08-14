@@ -303,13 +303,36 @@ class Authenticated_Controller extends Base_Controller
 		return false;
 	}
 
-	public function get_ranking($from = 0)
+	public function get_ranking($type = '')
 	{
-		$characters = Character::order_by('xp', 'desc')/*->order_by('pvp_points', 'desc')*/->select(array('id', 'name', 'gender', 'race', 'pvp_points'))->paginate(50, array('name', 'pvp_points', 'gender', 'race'));
+		//switch ( $type ) {
+			//case 'xp':
+				$characters_xp = Character::order_by('xp', 'desc')->select(array('id', 'name', 'gender', 'race', 'xp'))->get();
+				//$characters_xp = DB::table('characters')->order_by('xp', 'desc')->select(array('id', 'name', 'gender', 'race', 'pvp_points'))->skip($from)->take(50)->get();
+				//return json_encode($characters);
+
+				//break;
+
+			//case 'pvp_points':
+				$characters_pvp = Character::order_by('pvp_points', 'desc')->select(array('id', 'name', 'gender', 'race', 'pvp_points'))->get();
+				//$characters_pvp = DB::table('characters')->order_by('pvp_points', 'desc')->select(array('id', 'name', 'gender', 'race', 'pvp_points'))->skip($from)->take(50)->get();
+				//return json_encode($characters);
+
+				//break;
+
+			//case 'clan':
+				$clansPuntuation = ClanOrbPoint::order_by('points', 'desc')->get();
+				//$clans = DB::table('clan_orb_points')->order_by('points', 'desc')->join('clans', 'clans.id', '=', 'clan_orb_points.clan_id')->get();
+				//return json_encode($clans);
+
+				//break;
+		//}
 
 		$this->layout->title = 'Ranking';
 		$this->layout->content = View::make('authenticated.ranking')
-		->with('characters', $characters);
+		->with('characters_pvp', $characters_pvp)
+		->with('characters_xp', $characters_xp)
+		->with('clansPuntuation', $clansPuntuation);
 	}
 
 	public function get_acceptTrade($tradeId = false)
