@@ -70,7 +70,7 @@ class Character extends Base_Model
 
 	public function is_in_clan_of(Character $character)
 	{
-		return $this->clan_id == $character->clan_id;
+		return $this->clan_id > 0 && $this->clan_id == $character->clan_id;
 	}
 
 	/**
