@@ -307,7 +307,7 @@ class Authenticated_Controller extends Base_Controller
 	{
 		//switch ( $type ) {
 			//case 'xp':
-				$characters_xp = Character::order_by('xp', 'desc')->select(array('id', 'name', 'gender', 'race', 'xp'))->get();
+				$characters_xp = Character::order_by('xp', 'desc')->select(array('id', 'name', 'gender', 'race', 'xp', 'level'))->get();
 				//$characters_xp = DB::table('characters')->order_by('xp', 'desc')->select(array('id', 'name', 'gender', 'race', 'pvp_points'))->skip($from)->take(50)->get();
 				//return json_encode($characters);
 

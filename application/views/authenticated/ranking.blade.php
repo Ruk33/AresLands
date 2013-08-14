@@ -71,6 +71,7 @@
 					<th width="20px">#</th>
 					<th width="50px">Raza</th>
 					<th>Nombre</th>
+					<th width="50px">Nivel</th>
 					<th width="100px">Experiencia</th>
 				</tr>
 			</thead>
@@ -93,6 +94,7 @@
 						@endif
 						{{ $character->get_link() }}
 					</td>
+					<td>{{ $character->level }}</td>
 					<td>{{ $character->xp }}</td>
 				</tr>
 				@endforeach
