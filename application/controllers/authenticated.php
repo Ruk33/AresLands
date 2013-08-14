@@ -225,7 +225,7 @@ class Authenticated_Controller extends Base_Controller
 
 	public function post_explore()
 	{
-		$character = Character::get_character_of_logged_user(array('id', 'is_traveling', 'is_exploring', 'level'));
+		$character = Character::get_character_of_logged_user(array('id', 'is_traveling', 'is_exploring', 'level', 'xp'));
 		$time = Input::get('time');
 
 		if ( ($time <= Config::get('game.max_explore_time') && $time >= Config::get('game.min_explore_time')) && $character->can_explore() )
@@ -1483,7 +1483,7 @@ class Authenticated_Controller extends Base_Controller
 
 	public function get_travel($zoneId = '')
 	{
-		$character = Character::get_character_of_logged_user(array('id', 'is_traveling', 'zone_id', 'name', 'level'));
+		$character = Character::get_character_of_logged_user(array('id', 'is_traveling', 'zone_id', 'name', 'level', 'xp'));
 
 		/*
 		 *	Si zoneId está definido quiere

@@ -236,7 +236,7 @@ class Quest extends Base_Model
 	 */
 	public function accept()
 	{
-		$character = Character::get_character_of_logged_user(array('id', 'level'));
+		$character = Character::get_character_of_logged_user(array('id', 'level', 'xp'));
 
 		ActivityBar::add($character, 1);
 
