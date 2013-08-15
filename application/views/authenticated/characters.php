@@ -3,32 +3,32 @@
 <div class="span11" ng-controller="CharactersController">
 
 	<ul class="thumbnails">
-	<li class="span6">
-		<div class="thumbnail">
-			<div class="caption">
-				Buscar por nombre
-				<input type="text" class="input-block-level" ng-model="search.name">
+		<li class="span6">
+			<div class="thumbnail">
+				<div class="caption">
+					Buscar por nombre
+					<input type="text" class="input-block-level" ng-model="search.name">
+				</div>
 			</div>
-		</div>
-	</li>
+		</li>
 
-	<li class="span6">
-		<div class="thumbnail">
-			<div class="caption">
-				Buscar por nombre de grupo
-				<input type="text" class="input-block-level" ng-model="search.clan_name">
+		<li class="span6">
+			<div class="thumbnail">
+				<div class="caption">
+					Buscar por nombre de grupo
+					<input type="text" class="input-block-level" ng-model="search.clan_name">
+				</div>
 			</div>
-		</div>
-	</li>
+		</li>
 	</ul>
 
 	<table class="table table-hover">
 		<thead>
 			<tr>
 				<th>Raza</th>
-				<th><a href="" ng-click="predicate='name'; reverse=!reverse;">Nombre</a></th>
-				<th><a href="" ng-click="predicate='clan_name'; reverse=!reverse;">Grupo</a></th>
-				<th><a href="" ng-click="predicate='pvp_points'; reverse=!reverse;">Puntos de PVP</a></th>
+				<th><a href="" ng-click="predicate='name'; reverse = !reverse;">Nombre</a></th>
+				<th><a href="" ng-click="predicate='clan_name'; reverse = !reverse;">Grupo</a></th>
+				<th><a href="" ng-click="predicate='pvp_points'; reverse = !reverse;">Puntos de PVP</a></th>
 			</tr>
 		</thead>
 
@@ -65,5 +65,3 @@
 		</tbody>
 	</table>
 </div>
-
-<script src="<?php echo URL::base(); ?>/js/controllers/CharactersController.js"></script>

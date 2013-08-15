@@ -1,7 +1,7 @@
 'use strict';
 
 var CharactersController = function($scope, $http) {
-	$scope.predicate = 'attributes.pvp_points';
+	$scope.predicate = 'pvp_points';
 	$scope.reverse = true;
 
 	$http.post($scope.basePath + 'authenticated/characters')
