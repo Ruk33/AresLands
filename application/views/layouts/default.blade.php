@@ -15,13 +15,8 @@
 		<!--<link rel="stylesheet" href="{{ URL::base() }}/css/main.min.css">-->
 		<link rel="stylesheet" href="{{ URL::base() }}/css/main.css">
 
-		
-		<script src="{{ URL::base() }}/js/vendor/angular.min.js"></script>
-		
-
 		<!--<script src="{{ URL::base() }}/js/vendor/ui-bootstrap-custom-0.4.0.min.js"></script>-->
-		
-		
+	
 		<script src="{{ URL::base() }}/js/vendor/jquery-1.9.1.min.js"></script>
 		<script src="{{ URL::base() }}/js/vendor/bootstrap.min.js"></script>
 		
@@ -161,7 +156,9 @@
 					</p>
 				</div>
 			</div>
-		</footer>
+		</div>
+
+		<script src="{{ URL::base() }}/js/vendor/angular.min.js"></script>
 
 		<script src="{{ URL::base() }}/js/app.js"></script>
 		
@@ -170,25 +167,11 @@
 		<script src="{{ URL::base() }}/js/controllers.js"></script>
 		<script src="{{ URL::base() }}/js/filters.js"></script>
 		<script src="{{ URL::base() }}/js/directives.js"></script>
-		
-
-		<!--
-		<script src="{{ URL::base() }}/js/vendor/angular.min.js"></script>
-
-		<script src="{{ URL::base() }}/js/vendor/jquery-1.9.1.min.js"></script>
-		<script src="{{ URL::base() }}/js/vendor/bootstrap.min.js"></script>
-
-		<script src="{{ URL::base() }}/js/app.min.js"></script>
-
-		-->
 
 		<!--
 		<script src="{{ URL::base() }}/js/vendor/modernizr-2.6.2.min.js"></script>
 		-->
 
-		<!--
-		<script src="{{ URL::base() }}/js/main.min.js"></script>
-		-->
 		<script src="{{ URL::base() }}/js/libs/jquery.countdown.min.js"></script>
 
 		<script>
