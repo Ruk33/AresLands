@@ -160,13 +160,17 @@
 
 		<script src="{{ URL::base() }}/js/vendor/angular.min.js"></script>
 
-		<script src="{{ URL::base() }}/js/app.js"></script>
-		
-		<script src="{{ URL::base() }}/js/configuration.js"></script>
-		<script src="{{ URL::base() }}/js/services.js"></script>
-		<script src="{{ URL::base() }}/js/controllers.js"></script>
-		<script src="{{ URL::base() }}/js/filters.js"></script>
-		<script src="{{ URL::base() }}/js/directives.js"></script>
+		@if ( Request::env() == 'local' )
+			<script src="{{ URL::base() }}/js/app.js"></script>
+			
+			<script src="{{ URL::base() }}/js/configuration.js"></script>
+			<script src="{{ URL::base() }}/js/services.js"></script>
+			<script src="{{ URL::base() }}/js/controllers.js"></script>
+			<script src="{{ URL::base() }}/js/filters.js"></script>
+			<script src="{{ URL::base() }}/js/directives.js"></script>
+		@else
+			<script src="{{ URL::base() }}/js/app.min.js"></script>
+		@endif
 
 		<!--
 		<script src="{{ URL::base() }}/js/vendor/modernizr-2.6.2.min.js"></script>
