@@ -118,7 +118,10 @@
 
 			<li style="margin-bottom: 50px;">
 				<span style="font-size: 11px;" ng-init="currentLife='{{ $character->current_life }}'; maxLife='{{ $character->max_life }}'">
-					<b>SALUD:</b> <span data-toggle="tooltip" data-placement="top" data-original-title="Salud actual / Salud máxima">[[ currentLife ]]/[[ maxLife ]]</span>
+					<b>SALUD:</b> 
+					<span data-toggle="tooltip" data-placement="top" data-original-title="Salud actual / Salud máxima">
+						<span ng-bind="currentLife || '?'">?</span>/<span ng-bind="maxLife || '?'">?</span>
+					</span>
 				</span>
 				<div class="progress" style="height: 5px;">
 					<div class="bar bar-success" id="lifeBar"></div>
@@ -127,7 +130,7 @@
 			
 			<li style="margin-bottom: 10px;" ng-show="remainingPoints>0">
 				<div class="dark-box" style="width: 300px;">
-					<p><b>Puntos restantes para cambiar:</b> [[ remainingPoints ]]</p>
+					<p><b>Puntos restantes para cambiar:</b> <span ng-bind="remainingPoints || '?'">?</span></p>
 					<p>Puntos a cambiar: <select class="input select" ng-model="pointsToChange" ng-init="pointsToChange=1;" ng-options="n for n in [] | range:1:remainingPoints"></select></p>
 				</div>
 			</li>
@@ -138,7 +141,7 @@
 						<a ng-click="addStat('stat_life')" class="button-icon" ng-show="remainingPoints>0">+</a>
 						<i class="button-icon hearth" ng-show="remainingPoints<=0"></i>
 						<span class="button-content">
-							<b>Vitalidad:</b> [[ stats['stat_life'] ]]
+							<b>Vitalidad:</b> <span ng-bind="stats['stat_life'] || '?'">?</span>
 
 							@if ( isset($positiveBonifications['stat_life']) && $positiveBonifications['stat_life'] > 0 )
 								<span class="positive">+{{ $positiveBonifications['stat_life'] }}</span>
@@ -157,7 +160,7 @@
 						<a ng-click="addStat('stat_dexterity')" class="button-icon" ng-show="remainingPoints>0">+</a>
 						<i class="button-icon boot" ng-show="remainingPoints<=0"></i>
 						<span class="button-content">
-							<b>Destreza:</b> [[ stats['stat_dexterity'] ]]
+							<b>Destreza:</b> <span ng-bind="stats['stat_dexterity'] || '?'">?</span>
 
 							@if ( isset($positiveBonifications['stat_dexterity']) && $positiveBonifications['stat_dexterity'] > 0 )
 								<span class="positive">+{{ $positiveBonifications['stat_dexterity'] }}</span>
@@ -176,7 +179,7 @@
 						<a ng-click="addStat('stat_magic')" class="button-icon" ng-show="remainingPoints>0">+</a>
 						<i class="button-icon fire" ng-show="remainingPoints<=0"></i>
 						<span class="button-content">
-							<b>Magia:</b> [[ stats['stat_magic'] ]]
+							<b>Magia:</b> <span ng-bind="stats['stat_magic'] || '?'">?</span>
 
 							@if ( isset($positiveBonifications['stat_magic']) && $positiveBonifications['stat_magic'] > 0 )
 								<span class="positive">+{{ $positiveBonifications['stat_magic'] }}</span>
@@ -195,7 +198,7 @@
 						<a ng-click="addStat('stat_strength')" class="button-icon" ng-show="remainingPoints>0">+</a>
 						<i class="button-icon axe" ng-show="remainingPoints<=0"></i>
 						<span class="button-content">
-							<b>Fuerza:</b> [[ stats['stat_strength'] ]]
+							<b>Fuerza:</b> <span ng-bind="stats['stat_strength'] || '?'">?</span>
 
 							@if ( isset($positiveBonifications['stat_strength']) && $positiveBonifications['stat_strength'] > 0 )
 								<span class="positive">+{{ $positiveBonifications['stat_strength'] }}</span>
@@ -214,7 +217,7 @@
 						<a ng-click="addStat('stat_luck')" class="button-icon" ng-show="remainingPoints>0">+</a>
 						<i class="button-icon thunder" ng-show="remainingPoints<=0"></i>
 						<span class="button-content">
-							<b>Suerte:</b> [[ stats['stat_luck'] ]]
+							<b>Suerte:</b> <span ng-bind="stats['stat_luck'] || '?'">?</span>
 
 							@if ( isset($positiveBonifications['stat_luck']) && $positiveBonifications['stat_luck'] > 0 )
 								<span class="positive">+{{ $positiveBonifications['stat_luck'] }}</span>
