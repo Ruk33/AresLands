@@ -19,8 +19,9 @@ return array(
 	 *	Protección (en segundos) para un personaje
 	 *	que pierde en un pvp teniendo menor nivel
 	 *	que el ganador
+	 *	240 = battle_rest_time
 	 */
-	'protection_time_on_lower_level_pvp' => 300,
+	'protection_time_on_lower_level_pvp' => 240 + 300,
 
 	/*
 	 *	Cantidad de monedas (en cobre)
