@@ -26,9 +26,9 @@
 		<thead>
 			<tr>
 				<th>Raza</th>
-				<th><a href="" ng-click="predicate='name'; reverse=!reverse">Nombre</a></th>
-				<th><a href="" ng-click="predicate='clan_name'; reverse=!reverse">Grupo</a></th>
-				<th><a href="" ng-click="predicate='pvp_points'; reverse=!reverse">Puntos de PVP</a></th>
+				<th><a href="" ng-click="predicate='name'; reverse=!reverse;">Nombre</a></th>
+				<th><a href="" ng-click="predicate='clan_name'; reverse=!reverse;">Grupo</a></th>
+				<th><a href="" ng-click="predicate='pvp_points'; reverse=!reverse;">Puntos de PVP</a></th>
 			</tr>
 		</thead>
 
@@ -44,7 +44,7 @@
 				</div>
 			</td>
 
-			<tr ng-repeat="character in characters | filter:search | filter:query_number | orderBy:predicate:reverse">
+			<tr ng-repeat="character in characters | filter:search | orderBy:predicate:reverse">
 				<td>
 					<div class="icon-race-30 icon-race-30-[[ character.race ]]_[[ character.gender ]]"></div>
 				</td>
