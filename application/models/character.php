@@ -349,7 +349,7 @@ class Character extends Base_Model
 
 		$fighter_two['cd'] = (1000 / ($fighter_two['stats']['stat_dexterity']+1))+1;
 		$fighter_two['character']->current_cd = $fighter_two['cd'];
-		$fighter_two['is_warrior'] = $fighter_two['character']->stat_strength > $fighter_two['character']->stat_magic;
+		$fighter_two['is_warrior'] = $fighter_two['stats']['stat_strength'] > $fighter_two['stats']['stat_magic'];
 
 		/*
 		 *	Daños
