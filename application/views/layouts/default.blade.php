@@ -7,7 +7,7 @@
 		<meta charset="utf-8">
 		<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
 		<title>AresLands - {{ $title }}</title>
-		<meta name="description" content="">
+		<meta name="description" content="Juego derivado del antiguo Tierra de Leyenda, restaurado y mejorado por IronFist. ¡Únete a este mundo épico y vive grandes aventuras!">
 		<meta name="viewport" content="width=device-width">
 
 		<link rel="stylesheet" href="{{ URL::base() }}/css/normalize.min.css">

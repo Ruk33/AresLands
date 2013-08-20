@@ -160,7 +160,7 @@ class Quest extends Base_Model
 	 */
 	public function give_reward()
 	{
-		$character = Character::get_character_of_logged_user(array('id', 'xp', 'level'));
+		$character = Character::get_character_of_logged_user(array('id', 'xp', 'level', 'clan_id'));
 
 		ActivityBar::add($character, 3);
 
@@ -236,7 +236,7 @@ class Quest extends Base_Model
 	 */
 	public function accept()
 	{
-		$character = Character::get_character_of_logged_user(array('id', 'level', 'xp'));
+		$character = Character::get_character_of_logged_user(array('id', 'level', 'xp', 'clan_id'));
 
 		ActivityBar::add($character, 1);
 

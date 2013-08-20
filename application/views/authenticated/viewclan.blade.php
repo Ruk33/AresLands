@@ -69,10 +69,29 @@
 				<td style="width: 200px;">Cantidad de miembros</td>
 				<td>{{ count($members) }}</td>
 			</tr>
-		</thead>
 
-		<tbody>
+			<tr>
+				<td>Nivel</td>
+				<td>{{ $clan->level }}</td>
+			</tr>
+
+			<tr>
+				<td>Experiencia</td>
+				<td>{{ $clan->xp }}/{{ $clan->xp_next_level }}</td>
+			</tr>
+		</thead>
 	</table>
+
+	<h2>Habilidades</h2>
+	@if ( count($skills) > 0 )
+	<ul class="inline text-center">
+		@foreach ( $skills as $skill )
+			<li><img src="{{ URL::base() }}/img/icons/skills/clan/1.png" alt="" width="64px" height="64px"></li>
+		@endforeach
+	</ul>
+	@else
+	<p>Sin habilidades aprendidas.</p>
+	@endif
 
 	<h2>Mensaje</h2>
 	@if ( $character->id == $clan->leader_id )

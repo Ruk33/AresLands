@@ -439,7 +439,8 @@ html, body {
 }
 
 body {
-	background-image: url('/img/background3.jpg');
+	/*background-image: url('/img/background3.jpg');*/
+	background-image: url('/img/background6.jpg');
 	background-repeat: no-repeat;
 	background-position: top center;
 }

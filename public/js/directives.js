@@ -26,6 +26,80 @@ directive('dynamicTooltip', function() {
 	};
 }).
 
+/*
+directive('droppable', function() {
+	return function(scope, element, attrs) {
+
+	};
+}).
+
+directive('draggable', function() {
+	return function(scope, element, attrs) {
+		var el = {};
+
+		el.dom = $(element);
+		el.allowedDroppable = $('[droppable="'+ attrs.draggable +'"]');
+		el.css = {
+			zIndex: el.dom.css('z-index')
+		};
+
+		el.isMouseDown = false;
+
+		el.func = {
+			onMouseMove: function(e) {
+				if ( el.isMouseDown ) {
+					el.dom.offset({
+						left: e.pageX + el.css.pos_x - el.css.drg_w,
+						top: e.pageY + el.css.pos_y - el.css.drg_h,
+					});
+				}
+			},
+
+			onMouseUp: function() {
+				el.dom.css({top: '', left: ''});
+				
+				if ( el.droppable ) {
+					el.dom.detach().appendTo(el.droppable);
+				}
+
+				el.dom.css('z-index', el.css.zIndex);
+				el.isMouseDown = false;
+			}
+		}
+
+		el.func.onMouseOver = function() {
+			if ( el.isMouseDown ) {
+				el.droppable = $(this);
+			}
+		}
+
+		el.func.onMouseDown = function(e) {
+			e.preventDefault();
+			el.isMouseDown = true;
+
+			el.css.drg_h = el.dom.outerHeight();
+			el.css.drg_w = el.dom.outerWidth();
+			el.css.pos_y = el.dom.offset().top + el.css.drg_h - e.pageY;
+			el.css.pos_x = el.dom.offset().left + el.css.drg_w - e.pageX;
+
+			el.dom.css('z-index', 99999);
+			el.dom.on('mousemove', el.func.onMouseMove);
+		}
+
+		el.func.init = function() {
+			el.dom.css('cursor', 'move');
+
+			el.dom.on('mousedown', el.func.onMouseDown);
+			el.dom.on('mouseup', el.func.onMouseUp);
+
+			$('[droppable="'+ attrs.draggable +'"]').on('mouseover', el.func.onMouseOver);
+		};
+
+		el.func.init();
+	};
+}).
+*/
+
 directive('tabs', function() {
 	return {
 		restrict: 'E',

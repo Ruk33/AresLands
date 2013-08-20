@@ -55,21 +55,20 @@ class Authenticated_Controller extends Base_Controller
 		}
 	}
 
-	/*
+	
 	public function get_setSkillData()
 	{
 		$skill = new Skill();
 
-		$skill->name = 'Heal';
+		$skill->name = 'Clan - Fuerza legendaria';
 		$skill->level = 1;
 		$skill->duration = 0;
 		$skill->data = [
-			'heal_amount' => 15,
+			'stat_strength' => 15,
 		];
 
 		$skill->save();
 	}
-	*/
 
 	/*
 	public function get_setQuestData()
@@ -225,7 +224,7 @@ class Authenticated_Controller extends Base_Controller
 
 	public function post_explore()
 	{
-		$character = Character::get_character_of_logged_user(array('id', 'is_traveling', 'is_exploring', 'level', 'xp'));
+		$character = Character::get_character_of_logged_user(array('id', 'is_traveling', 'is_exploring', 'level', 'xp', 'clan_id'));
 		$time = Input::get('time');
 
 		if ( ($time <= Config::get('game.max_explore_time') && $time >= Config::get('game.min_explore_time')) && $character->can_explore() )
@@ -686,28 +685,8 @@ class Authenticated_Controller extends Base_Controller
 	public function get_leaveFromClan()
 	{
 		$character = Character::get_character_of_logged_user(array('id', 'clan_id'));
-		$clan = $character->clan()->select(array('leader_id'))->first();
 		
-		if ( $clan )
-		{
-			/*
-			 *	El lider de clan no puede salir
-			 *	del mismo
-			 */
-			if ( $character->id != $clan->leader_id )
-			{
-				$character->clan_id = 0;
-				$character->save();
-			}
-		}
-		else
-		{
-			/*
-			 *	El clan no existe
-			 */
-			$character->clan_id = 0;
-			$character->save();
-		}
+		$character->leave_clan();		
 
 		return Redirect::to('authenticated/clan/');
 	}
@@ -872,6 +851,8 @@ class Authenticated_Controller extends Base_Controller
 						$characterToAccept->clan_id = $clan->id;
 						$characterToAccept->save();
 
+						$clan->join($characterToAccept);
+
 						/*
 						 *	Notificamos que todo fue bien
 						 *	y que el usuario fue agregado con éxito
@@ -977,8 +958,9 @@ class Authenticated_Controller extends Base_Controller
 			$dataToView = array();
 
 			$dataToView['clan'] = $clan;
-			$dataToView['members'] = $clan->get_members();
+			$dataToView['members'] = $clan->members()->select(array('name', 'race', 'gender', 'level'))->get();
 			$dataToView['character'] = $character;
+			$dataToView['skills'] = $clan->skills;
 
 			if ( $character->id == $clan->leader_id )
 			{
@@ -1224,7 +1206,7 @@ class Authenticated_Controller extends Base_Controller
 			 */
 			if ( ! $target->can_be_attacked($character) )
 			{
-				Session::flash('errorMessage', $target->name . ' aún no puede ser atacado todavía.');
+				Session::flash('errorMessage', $target->name . ' aún no puede ser atacado/a todavía.');
 				return Redirect::to('authenticated/battle');
 			}
 		}
@@ -1483,7 +1465,7 @@ class Authenticated_Controller extends Base_Controller
 
 	public function get_travel($zoneId = '')
 	{
-		$character = Character::get_character_of_logged_user(array('id', 'is_traveling', 'zone_id', 'name', 'level', 'xp'));
+		$character = Character::get_character_of_logged_user(array('id', 'is_traveling', 'zone_id', 'name', 'level', 'xp', 'clan_id'));
 
 		/*
 		 *	Si zoneId está definido quiere

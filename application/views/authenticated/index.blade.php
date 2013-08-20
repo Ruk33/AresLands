@@ -19,8 +19,8 @@
 	<!-- BUFFS -->
 	<ul class="unstyled inline" style="margin-left: 20px;">
 		@foreach ( $skills as $skill )
-			<li>
-				<img src="{{ URL::base() }}/img/icons/skills/{{ $skill->skill_id }}.jpg" alt="" width="32px" height="32px" data-toggle="tooltip" data-placement="right" data-original-title="
+			<li class="text-center" style="vertical-align: top;">
+				<img src="{{ URL::base() }}/img/icons/skills/{{ $skill->skill_id }}.png" alt="" width="32px" height="32px" data-toggle="tooltip" data-placement="right" data-original-title="
 				<b>{{ $skill->skill->name }}</b> (Nivel: {{ $skill->level }})
 				<p>{{ $skill->skill->description }}</p>">
 

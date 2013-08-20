@@ -38,6 +38,25 @@ class Character extends Base_Model
 		return Character::where('user_id', '=', $user->id)->count() != 0;
 	}
 
+	public function leave_clan()
+	{
+		$clan = $this->clan;
+		if ( $clan )
+		{
+			/*
+			 *	El lider de clan no puede salir
+			 *	del mismo
+			 */
+			if ( $this->id != $clan->leader_id )
+			{
+				$this->clan_id = 0;
+				$this->save();
+
+				$clan->leave($this);
+			}
+		}
+	}
+
 	public function give_full_activity_bar_reward()
 	{
 		$xpAmount = $this->level / 2 + 5;
@@ -47,6 +66,8 @@ class Character extends Base_Model
 
 		$this->xp += $xpAmount;
 		$this->points_to_change += $xpAmount;
+
+		$this->clan->add_xp(1);
 
 		$this->save();
 
@@ -958,7 +979,7 @@ class Character extends Base_Model
 		return $this->is_traveling == false && $this->activities()->take(1)->count() == 0;
 	}
 
-	public function has_protection($attacker)
+	public function has_protection(Character $attacker)
 	{
 		$protectionTime = $this->attack_protections()->where('attacker_id', '=', $attacker->id)->first();
 
@@ -970,14 +991,9 @@ class Character extends Base_Model
 		return $protectionTime->time > time();
 	}
 
-	public function can_be_attacked($attacker)
+	public function can_be_attacked(Character $attacker)
 	{
-		if ( $this->has_protection($attacker) )
-		{
-			return false;
-		}
-
-		return true;
+		return $this->has_protection($attacker) == false;
 	}
 
 	public function after_battle()
