@@ -108,6 +108,23 @@ controller('CharacterStatsController', ['$scope', '$http', '$timeout', function(
 	}
 }])
 
+.controller('Skill', ['$scope', '$http', function($scope, $http) {
+	$scope.skill = [];
+
+	$scope.getSkillTooltip = function(skillId, level) {
+		$http.get($scope.basePath + 'api/skill/' + skillId + '/' + level).success(function (data) {
+			$scope.skill[skillId] = '<strong>' + data.name + '</strong><p>' + data.description + '</p>';
+		});
+	};
+
+	$scope.onMouseOver = function(skillId, level) {
+		if ( ! $scope.skill[skillId] ) {
+			$scope.skill[skillId] = 'Cargando...';
+			$scope.getSkillTooltip(skillId, level);
+		}
+	};
+}])
+
 .controller('MyCtrl2', [function() {
 
 }]);

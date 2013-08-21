@@ -83,15 +83,17 @@
 	</table>
 
 	<h2>Habilidades</h2>
+	<ul class="inline text-center" ng-controller="Skill">
 	@if ( count($skills) > 0 )
-	<ul class="inline text-center">
 		@foreach ( $skills as $skill )
-			<li><img src="{{ URL::base() }}/img/icons/skills/clan/1.png" alt="" width="64px" height="64px"></li>
+			<?php unset($skillsToLearn[$skill->skill_id]); ?>
+			<li><img src="{{ URL::base() }}/img/icons/skills/clan/{{ $skill->skill_id }}.png" alt="" ng-mouseover="onMouseOver({{ $skill->skill_id }}, {{ $skill->level }})" dynamic-tooltip="skill[{{ $skill->skill_id }}]" width="64px" height="64px"></li>
 		@endforeach
-	</ul>
-	@else
-	<p>Sin habilidades aprendidas.</p>
 	@endif
+	@foreach ( $skillsToLearn as $key => $value )
+		<li><img class="grayEffect" src="{{ URL::base() }}/img/icons/skills/clan/{{ $key }}.png" alt="" ng-mouseover="onMouseOver({{ $key }}, 1)" dynamic-tooltip="skill[{{ $key }}]" width="64px" height="64px"></li>
+	@endforeach
+	</ul>
 
 	<h2>Mensaje</h2>
 	@if ( $character->id == $clan->leader_id )

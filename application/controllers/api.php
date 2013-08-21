@@ -12,6 +12,7 @@ interface Api_Interface
 	public function get_quest($id);
 	public function get_orb($id);
 	public function get_zone($id);
+	public function get_skill($id, $level);
 }
 
 class Api_Controller extends Base_Controller implements Api_Interface
@@ -196,6 +197,20 @@ class Api_Controller extends Base_Controller implements Api_Interface
 		if ( $zone )
 		{
 			return json_encode($zone->attributes);
+		}
+		else
+		{
+			return json_encode(null);
+		}
+	}
+
+	public function get_skill($id, $level)
+	{
+		$skill = Skill::where('skill_id', '=', (int) $id)->where('level', '=', (int) $level)->first();
+
+		if ( $skill )
+		{
+			return json_encode($skill->attributes);
 		}
 		else
 		{

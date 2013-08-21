@@ -107,6 +107,8 @@ class Authenticated_Controller extends Base_Controller
 
 	public function get_index()
 	{
+		ClanSkillList::get_instance();
+
 		$character = Character::get_character_of_logged_user(array(
 			'id',
 			'name',
@@ -193,21 +195,6 @@ class Authenticated_Controller extends Base_Controller
 		$this->layout->content = View::make('authenticated.orbs')
 		->with('orbs', $orbs);
 	}
-
-	/*
-	public function post_getItemTextForTooltip()
-	{
-		$item = Item::find(Input::get('item_id'));
-		$text = 'El objeto no existe';
-
-		if ( $item )
-		{
-			$text = $item->get_text_for_tooltip();
-		}
-
-		return json_encode($text);
-	}
-	*/
 
 	public function get_destroyItem($characterItemId = false)
 	{
@@ -961,6 +948,8 @@ class Authenticated_Controller extends Base_Controller
 			$dataToView['members'] = $clan->members()->select(array('name', 'race', 'gender', 'level'))->get();
 			$dataToView['character'] = $character;
 			$dataToView['skills'] = $clan->skills;
+
+			$dataToView['skillsToLearn'] = ClanSkillList::get_instance()->get_skills();
 
 			if ( $character->id == $clan->leader_id )
 			{

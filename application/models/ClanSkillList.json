@@ -1,0 +1,24 @@
+{
+	"12":
+	{
+		"1":
+		{
+			"clan_level": 1
+		}
+	},
+
+	"14":
+	{
+		"1":
+		{
+			"clan_level": 1,
+			"skill_requirements":
+			[
+				{
+					"id": 7,
+					"level": 3
+				}
+			]
+		}
+	}
+}
