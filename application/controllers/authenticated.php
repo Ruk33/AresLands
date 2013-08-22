@@ -207,6 +207,7 @@ class Authenticated_Controller extends Base_Controller
 							if ( $skill )
 							{
 								$clan->learn_skill($skill);
+								return Redirect::to('authenticated/clan/' . $clan->id);
 							}
 						}
 					}
