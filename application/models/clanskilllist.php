@@ -31,6 +31,11 @@ class ClanSkillList
 		return $this->_json;
 	}
 
+	public function get_skill($skillId, $level)
+	{
+		return isset($this->_json[$skillId][$level]) ? $this->_json[$skillId][$level] : null;
+	}
+
 	public function can_learn(Clan $clan, $skillId, $level)
 	{
 		$skill = isset($this->_json[$skillId][$level]) ? $this->_json[$skillId][$level] : false;
@@ -46,7 +51,7 @@ class ClanSkillList
 			{
 				foreach ( $skill['skill_requirements'] as $skillRequirement )
 				{
-					if ( $clan->skills()->where('skill_id', '=', $skillRequirement['skill_id'])->where('level', '<=', $skillRequirement['level'])->take(1)->count() == 0 )
+					if ( $clan->skills()->where('skill_id', '=', $skillRequirement['id'])->where('level', '<=', $skillRequirement['level'])->take(1)->count() == 0 )
 					{
 						return false;
 					}

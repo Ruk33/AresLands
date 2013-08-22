@@ -85,11 +85,11 @@ class Clan extends Base_Model
 
 	public function update_members_skill(ClanSkill $clanSkill)
 	{
-		$members = $this->members->select(array('id'))->get();
+		$members = $this->members()->select(array('id'))->get();
 
 		foreach ( $members as $member )
 		{
-			$memberSkill = $member->skills()->where('skill_id', '=', $skill->skill_id)->select(array('id', 'level'))->first();
+			$memberSkill = $member->skills()->where('skill_id', '=', $clanSkill->skill_id)->select(array('id', 'level'))->first();
 
 			if ( $memberSkill )
 			{
@@ -121,7 +121,7 @@ class Clan extends Base_Model
 		}
 
 		$clanSkill->save();
-		$this->update_members_skill($skill);
+		$this->update_members_skill($clanSkill);
 	}
 
 	public function join(Character $member)
@@ -132,6 +132,16 @@ class Clan extends Base_Model
 	public function leave(Character $member)
 	{
  		$this->remove_clan_skills_from_member($member);
+	}
+
+	public function delete()
+	{
+		$this->leave($this->lider()->select(array('id'))->first());
+
+		$this->skills()->delete();
+		$this->petitions()->delete();
+
+		parent::delete();
 	}
 
 	public function skills()

@@ -55,7 +55,7 @@ class Authenticated_Controller extends Base_Controller
 		}
 	}
 
-	
+	/*
 	public function get_setSkillData()
 	{
 		$skill = new Skill();
@@ -69,7 +69,7 @@ class Authenticated_Controller extends Base_Controller
 
 		$skill->save();
 	}
-
+	*/
 	/*
 	public function get_setQuestData()
 	{
@@ -184,6 +184,37 @@ class Authenticated_Controller extends Base_Controller
 		->with('orbs', $orbs)
 		->with('zone', $zone)
 		->with('npcs', $npcs);
+	}
+
+	public function get_learnClanSkill($skillId = '', $level = 1)
+	{
+		if ( $skillId && $level > 0 )
+		{
+			$character = Character::get_character_of_logged_user(array('id', 'clan_id'));
+
+			if ( $character->clan_id > 0 )
+			{
+				$clan = $character->clan()->select(array('id', 'leader_id', 'points_to_change', 'level'))->first();
+
+				if ( $clan )
+				{
+					if ( $clan->leader_id == $character->id )
+					{
+						if ( ClanSkillList::get_instance()->can_learn($clan, $skillId, $level) )
+						{
+							$skill = Skill::where('skill_id', '=', (int) $skillId)->select(array('skill_id'))->first();
+							
+							if ( $skill )
+							{
+								$clan->learn_skill($skill);
+							}
+						}
+					}
+				}
+			}
+		}
+
+		return Redirect::to('authenticated/index/');
 	}
 
 	public function get_orbs()
@@ -693,7 +724,7 @@ class Authenticated_Controller extends Base_Controller
 			 *	Solamente podemos borrar el clan
 			 *	si no hay ningún miembro
 			 */
-			if ( count($clan->get_members()) == 1 )
+			if ( $clan->members()->count() == 1 )
 			{
 				$character->clan_id = 0;
 				$character->save();
