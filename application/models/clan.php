@@ -53,7 +53,7 @@ class Clan extends Base_Model
 
 	public function remove_clan_skills_from_member(Character $member)
 	{
-		$clanSkills = $this->skills;
+		$clanSkills = $this->skills()->select(array('skill_id'))->get();
 
 		foreach ( $clanSkills as $clanSkill )
 		{
@@ -79,7 +79,7 @@ class Clan extends Base_Model
 
 	public function give_clan_skills_to_member(Character $member)
 	{
-		$clanSkills = $this->skills;
+		$clanSkills = $this->skills()->select(array('skill_id', 'level'))->get();
 
 		foreach ( $clanSkills as $clanSkill )
 		{
