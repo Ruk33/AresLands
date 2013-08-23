@@ -22,7 +22,12 @@ Route::controller('Cron');
 
 Event::listen('fullActivityBar', function(Character $character)
 {
-	Session::put('activityBarReward', '');
+	Session::put('modalMessage', 'activityBar');
+});
+
+Event::listen('loggedOfDayReward', function(Character $character)
+{
+	Session::put('modalMessage', 'loggedOfDay');
 });
 
 Event::listen('npcTalk', function(Character $character, Npc $npc)

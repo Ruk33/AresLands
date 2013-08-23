@@ -26,24 +26,49 @@
 			<p class="chromeframe">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> or <a href="http://www.google.com/chromeframe/?redirect=true">activate Google Chrome Frame</a> to improve your experience.</p>
 		<![endif]-->
 
-		@if ( Session::has('activityBarReward') )
-			<?php Session::forget('activityBarReward'); ?>
-			<div id="activityBarRewardMessage" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+		@if ( Session::has('modalMessage') )
+			<div id="modalMessage" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
 				<div class="modal-body">
 					<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
 					<span class="ui-button button" style="margin-left: 120px;">
 						<i class="button-icon check"></i>
 						<span class="button-content" style="color: orange;">
-							¡Completaste la barra de actividad!
+							<?php
+							switch ( Session::get('modalMessage') )
+							{
+								case 'activityBar':
+									echo '¡Completaste la barra de actividad!';
+									break;
+
+								case 'loggedOfDay':
+									echo '¡Recompensa por ingreso del día!';
+									break;
+							}
+							?>
 						</span>
 					</span>
-					<p style="margin-top: 20px; margin-left: 120px;">¡Bien hecho!, haz completado la barra de actividades. Revisa tus mensajes para conocer tus <b>recompensas</b>.</p>
+					<p style="margin-top: 20px; margin-left: 120px;">
+						<?php
+						switch ( Session::get('modalMessage') )
+						{
+							case 'activityBar':
+								echo '¡Bien hecho!, haz completado la barra de actividades. Revisa tus mensajes para conocer tus <b>recompensas</b>.';
+								break;
+
+							case 'loggedOfDay':
+								echo '<b>Logged of day</b> es la <b>recompensa</b> que se otorga todos los días a los jugadores que se atreven a ingresar, ¡bien hecho!.';
+								break;
+						}
+						?>
+					</p>
 				</div>
 			</div>
 
 			<script>
-				$('#activityBarRewardMessage').modal();
+				$('#modalMessage').modal();
 			</script>
+
+			<?php Session::forget('modalMessage'); ?>
 		@endif
 
 		<div id="wrap">

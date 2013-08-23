@@ -84,8 +84,8 @@ body {
 	padding: 5px;
 }
 
-#activityBarRewardMessage {
-	background-image: url("/img/npcs/activity-bar-reward.png");
+#modalMessage {
+	background-image: url("/img/modal-message-background.png");
 	background-repeat: no-repeat;
 	background-color: rgb(209, 174, 147);
 	color: rgb(41, 41, 41);

@@ -107,8 +107,6 @@ class Authenticated_Controller extends Base_Controller
 
 	public function get_index()
 	{
-		ClanSkillList::get_instance();
-
 		$character = Character::get_character_of_logged_user(array(
 			'id',
 			'name',
@@ -123,7 +121,20 @@ class Authenticated_Controller extends Base_Controller
 			'points_to_change',
 			'current_life',
 			'max_life',
+			'last_logged',
+			'level'
 		));
+
+		/*
+		 *	Verificamos logueada del día
+		 */
+		if ( $character->last_logged + 24 * 60 * 60 < time() )
+		{
+			$character->give_logged_of_day_reward();
+
+			$character->last_logged = time();
+			$character->save();
+		}
 
 		/*
 		 *	Obtenemos los objetos del personaje

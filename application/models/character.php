@@ -89,6 +89,12 @@ class Character extends Base_Model
 		Message::activity_bar_reward($this, $rewards);
 	}
 
+	public function give_logged_of_day_reward()
+	{
+		$this->add_coins(mt_rand($this->level * 10, $this->level * 20));
+		Event::fire('loggedOfDayReward', array($this));
+	}
+
 	public function is_in_clan_of(Character $character)
 	{
 		return $this->clan_id > 0 && $this->clan_id == $character->clan_id;
