@@ -22,7 +22,7 @@ class Clan extends Base_Model
 
 	public function add_xp($amount)
 	{
-		if ( $this )
+		if ( $this && $this->level < Config::get('game.clan_max_level') )
 		{
 			$this->xp += $amount;
 
@@ -30,7 +30,11 @@ class Clan extends Base_Model
 			{
 				$this->level++;
 				$this->points_to_change++;
-				$this->xp_next_level = $this->xp_next_level + 10 * $this->level;
+
+				if ( $this->level < Config::get('game.clan_max_level') )
+				{
+					$this->xp_next_level = $this->xp_next_level + 10 * $this->level;
+				}
 			}
 
 			$this->save();

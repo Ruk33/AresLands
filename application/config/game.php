@@ -13,6 +13,17 @@ return array(
 	 */
 	'coin_id' => 9999,
 
+	/*
+	 *	Nivel máximo de los clanes
+	 */
+	'clan_max_level' => 10,
+
+	/*
+	 *	Cantidad máxima de la barra
+	 *	de actividad (cuando
+	 *	llegan a este valor, la barra
+	 *	está completa)
+	 */
 	'activity_bar_max' => 20,
 
 	/*
