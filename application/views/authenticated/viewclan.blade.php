@@ -90,7 +90,7 @@
 			<img src="{{ URL::base() }}/img/icons/skills/{{ $skill->skill_id }}.png" alt="" ng-mouseover="onMouseOver({{ $skill->skill_id }}, {{ $skill->level }})" dynamic-tooltip="skill[{{ $skill->skill_id }}]" width="64px" height="64px">
 			@if ( $clan->points_to_change > 0 && $character->id == $clan->leader_id )
 				@if ( ClanSkillList::get_instance()->get_skill($skill->skill_id, $skill->level + 1) && ClanSkillList::get_instance()->can_learn($clan, $skill->skill_id, $skill->level + 1) )
-					<p>subir de nivel</p>
+					<p><a href="{{ URL::to('authenticated/learnClanSkill/' . $skill->skill_id . '/' . ($skill->level + 1)) }}">subir de nivel</a></p>
 				@endif
 			@endif
 		</li>

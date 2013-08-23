@@ -213,11 +213,15 @@ class Authenticated_Controller extends Base_Controller
 					{
 						if ( ClanSkillList::get_instance()->can_learn($clan, $skillId, $level) )
 						{
-							$skill = Skill::where('skill_id', '=', (int) $skillId)->select(array('skill_id'))->first();
+							$skill = Skill::where('skill_id', '=', (int) $skillId)->where('level', '=', (int) $level)->select(array('skill_id'))->first();
 							
 							if ( $skill )
 							{
 								$clan->learn_skill($skill);
+
+								$clan->points_to_change--;
+								$clan->save();
+
 								return Redirect::to('authenticated/clan/' . $clan->id);
 							}
 						}

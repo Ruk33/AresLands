@@ -51,7 +51,7 @@ class ClanSkillList
 			{
 				foreach ( $skill['skill_requirements'] as $skillRequirement )
 				{
-					if ( $clan->skills()->where('skill_id', '=', $skillRequirement['id'])->where('level', '<=', $skillRequirement['level'])->take(1)->count() == 0 )
+					if ( $clan->skills()->where('skill_id', '=', $skillRequirement['id'])->where('level', '>=', $skillRequirement['level'])->take(1)->count() == 0 )
 					{
 						return false;
 					}

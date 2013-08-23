@@ -109,7 +109,7 @@ class Clan extends Base_Model
 
 	public function learn_skill(Skill $skill)
 	{
-		$clanSkill = $this->skills()->where('skill_id', '=', $skill->skill_id)->select(array('id', 'level'))->first();
+		$clanSkill = $this->skills()->where('skill_id', '=', $skill->skill_id)->select(array('id', 'skill_id', 'level'))->first();
 
 		if ( $clanSkill )
 		{
