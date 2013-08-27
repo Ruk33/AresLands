@@ -7,34 +7,14 @@
 		<meta charset="utf-8">
 		<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
 		<title>AresLands - {{ $title }}</title>
-		<meta name="description" content="">
+		<meta name="description" content="Juego derivado del antiguo Tierra de Leyenda, restaurado y mejorado por IronFist. ¡Únete a este mundo épico y vive grandes aventuras!">
 		<meta name="viewport" content="width=device-width">
 
 		<link rel="stylesheet" href="{{ URL::base() }}/css/normalize.min.css">
 		<link rel="stylesheet" href="{{ URL::base() }}/css/bootstrap.min.css">
 		<link rel="stylesheet" href="{{ URL::base() }}/css/main.css">
-
-		<script src="{{ URL::base() }}/js/vendor/angular.min.js"></script>
-
-		<!--
-		<script src="{{ URL::base() }}/js/app.js"></script>
-		<script src="{{ URL::base() }}/js/services.js"></script>
-		<script src="{{ URL::base() }}/js/controllers.js"></script>
-		<script src="{{ URL::base() }}/js/filters.js"></script>
-		-->
-
-		<!--<script src="{{ URL::base() }}/js/vendor/ui-bootstrap-custom-0.4.0.min.js"></script>-->
-		<script src="{{ URL::base() }}/js/vendor/jquery-1.9.1.min.js"></script>
-		<script src="{{ URL::base() }}/js/vendor/bootstrap.min.js"></script>
-
-		<script>
-		angular.module('areslands', [], function($interpolateProvider) {
-			$interpolateProvider.startSymbol('[[');
-			$interpolateProvider.endSymbol(']]');
-		});
-		</script>
 	</head>
-	<body ng-init="basePath='{{ URL::base() }}/'">
+	<body>
 		<!--[if lt IE 7]>
 			<p class="chromeframe">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> or <a href="http://www.google.com/chromeframe/?redirect=true">activate Google Chrome Frame</a> to improve your experience.</p>
 		<![endif]-->
@@ -56,7 +36,7 @@
 		<div id="footer">
 			<div class="text-center">
 				<div>
-					<img src="{{ URL::base() }}/img/ironfist-logo.png">
+					<img src="{{ URL::base() }}/img/ironfist-logo.png" width="212px" height="259px">
 					<p style="color: white; font-size: 11px;">
 						Todas las marcas aquí mencionadas son propiedad de sus respectivos dueños. 
 						<br>
@@ -64,42 +44,6 @@
 					</p>
 				</div>
 			</div>
-		</footer>
-
-		<script src="{{ URL::base() }}/js/libs/jquery.countdown.js"></script>
-
-		<script>
-			/*
-			 *	Iniciamos los tooltips
-			 */
-			$('[data-toggle="tooltip"]').tooltip({ html: true });
-			$('[data-toggle="popover"]').popover({ html: true });
-
-			/*
-			 *	Iniciamos los timers
-			 */
-			$('.timer').each(function() {
-				var $this = $(this);
-				var time = $this.data('endtime');
-				var date = new Date();
-				date.setSeconds(date.getSeconds() + time);
-
-				$this.countdown({
-					until: date,
-					layout: '{hnn}:{mnn}:{snn}',
-					expiryText: '<a href="" onclick="location.reload();">Actualizar</a>'
-				});
-			});
-		</script>
-
-		<script src="{{ URL::base() }}/js/vendor/modernizr-2.6.2.min.js"></script>
-
-		<!--
-			<script>
-				var _gaq=[['_setAccount','UA-XXXXX-X'],['_trackPageview']];
-			</script>
-
-			<script src="//google-analytics.com/ga.js" async></script>
-		-->
+		</div>
 	</body>
 </html>

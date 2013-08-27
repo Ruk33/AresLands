@@ -128,7 +128,7 @@
 					</li>
 	
 					@if ( $character->id == $clan->leader_id && $member->id != $character->id )
-					<li>
+					<li style="vertical-align: top;">
 						<a class="close" onclick="return confirm('¿Seguro que quieres eliminar a {{ $member->name }} del grupo?');" href="{{ URL::to('authenticated/clanRemoveMember/' . $member->name) }}">&times;</a>
 					</li>
 					@endif

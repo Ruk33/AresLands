@@ -1,6 +1,9 @@
 <?php
 
 return array(
+	'registration_url' => '//ironfist.com.ar/home/register',
+	'login_url' => '//ironfist.com.ar/home/login',
+
 	/*
 	 *	Id del objeto que hace
 	 *	de experiencia

@@ -416,7 +416,7 @@ Route::filter('before', function() {
 			if ( $character->xp >= $character->xp_next_level )
 			{
 				$character->level++;
-				$character->xp_next_level = $character->xp_next_level + 10 * $character->level;
+				$character->xp_next_level = $character->xp_next_level + 40 * $character->level;
 
 				/* 
 				 *	Aumentamos la vida

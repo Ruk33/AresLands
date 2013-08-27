@@ -2,7 +2,7 @@
 
 class Home_Controller extends Base_Controller 
 {
-	public $layout = 'layouts.default';
+	public $layout = 'layouts.game';
 	public $restful = true;
 
 	public function __construct()
