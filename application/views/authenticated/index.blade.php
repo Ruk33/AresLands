@@ -15,14 +15,12 @@
 @endif
 <!--<hr class="line">-->
 
-<div class="row">
+<div class="row" ng-controller="Skill">
 	<!-- BUFFS -->
 	<ul class="unstyled inline" style="margin-left: 20px;">
 		@foreach ( $skills as $skill )
 			<li class="text-center" style="vertical-align: top;">
-				<img src="{{ URL::base() }}/img/icons/skills/{{ $skill->skill_id }}.png" alt="" width="32px" height="32px" data-toggle="tooltip" data-placement="right" data-original-title="
-				<b>{{ $skill->skill->name }}</b> (Nivel: {{ $skill->level }})
-				<p>{{ $skill->skill->description }}</p>">
+				<img src="{{ URL::base() }}/img/icons/skills/{{ $skill->skill_id }}.png" alt="" width="32px" height="32px" ng-mouseover="onMouseOver({{ $skill->skill_id }}, {{ $skill->level }}, false, false)" dynamic-tooltip="skill[{{ $skill->skill_id }}]">
 
 				@if ( $skill->end_time != 0 )
 				<small><div class='timer' data-endtime='{{ $skill->end_time - time() }}'></div></small>
@@ -318,5 +316,3 @@
 	@endfor
 </ul>
 <!-- END INVENTARIO -->
-
-<!--<script src="{{ URL::base() }}/js/controllers/CharacterStatsController.js"></script>-->

@@ -190,14 +190,26 @@ class Character extends Base_Model
 		return false;
 	}
 
-	public function equip_item(CharacterItem $item)
+	public function equip_item(CharacterItem $characterItem)
 	{
-		if ( ! $this || ! $item )
+		if ( ! $this || ! $characterItem )
 		{
 			return false;
 		}
 
-		$itemBodyPart = $item->item->body_part;
+		$item = $characterItem->item()->select(array('id', 'body_part', 'level'))->first();
+
+		if ( ! $item )
+		{
+			return false;
+		}
+
+		if ( $item->level > $this->level )
+		{
+			return false;
+		}
+
+		$itemBodyPart = $item->body_part;
 
 		switch ( $itemBodyPart ) {
 			case 'lhand':
@@ -245,9 +257,9 @@ class Character extends Base_Model
 			}
 		}
 
-		$item->location = $itemBodyPart;
-		$item->slot = 0;
-		$item->save();
+		$characterItem->location = $itemBodyPart;
+		$characterItem->slot = 0;
+		$characterItem->save();
 
 		return true;
 	}
@@ -874,14 +886,14 @@ class Character extends Base_Model
 			}
 			else
 			{
-				$bonification['p_defense']		+= ( $item->p_defense < 0 )			? -$item->p_defense : 0;
-				$bonification['m_defense']		+= ( $item->m_defense < 0 )			? -$item->m_defense : 0;
+				$bonification['p_defense']		-= ( $item->p_defense < 0 )			? $item->p_defense : 0;
+				$bonification['m_defense']		-= ( $item->m_defense < 0 )			? $item->m_defense : 0;
 
-				$bonification['stat_life']		+= ( $item->stat_life < 0 )			? -$item->stat_life : 0;
-				$bonification['stat_dexterity']	+= ( $item->stat_dexterity < 0 )	? -$item->stat_dexterity : 0;
-				$bonification['stat_magic']		+= ( $item->stat_magic < 0 )		? -$item->stat_magic : 0;
-				$bonification['stat_strength']	+= ( $item->stat_strength < 0 )		? -$item->stat_strength : 0;
-				$bonification['stat_luck']		+= ( $item->stat_luck < 0 )			? -$item->stat_luck : 0;
+				$bonification['stat_life']		-= ( $item->stat_life < 0 )			? $item->stat_life : 0;
+				$bonification['stat_dexterity']	-= ( $item->stat_dexterity < 0 )	? $item->stat_dexterity : 0;
+				$bonification['stat_magic']		-= ( $item->stat_magic < 0 )		? $item->stat_magic : 0;
+				$bonification['stat_strength']	-= ( $item->stat_strength < 0 )		? $item->stat_strength : 0;
+				$bonification['stat_luck']		-= ( $item->stat_luck < 0 )			? $item->stat_luck : 0;
 			}
 		}
 
@@ -893,7 +905,14 @@ class Character extends Base_Model
 
 		foreach ( $characterSkills as $characterSkill )
 		{
-			$skill = $characterSkill->skill()->select(array('data'))->first()->data;
+			$skill = $characterSkill->skill()->select(array('data'))->first();
+
+			if ( ! $skill )
+			{
+				continue;
+			}
+
+			$skill = $skill->data;
 
 			if ( $positive )
 			{
@@ -908,14 +927,14 @@ class Character extends Base_Model
 			}
 			else
 			{
-				$bonification['p_defense']		+= ( isset($skill['p_defense']) && $skill['p_defense'] < 0 )			? -$skill['p_defense'] * $characterSkill->amount : 0;
-				$bonification['m_defense']		+= ( isset($skill['m_defense']) && $skill['m_defense'] < 0 )			? -$skill['m_defense'] * $characterSkill->amount : 0;
+				$bonification['p_defense']		-= ( isset($skill['p_defense']) && $skill['p_defense'] < 0 )			? $skill['p_defense'] * $characterSkill->amount : 0;
+				$bonification['m_defense']		-= ( isset($skill['m_defense']) && $skill['m_defense'] < 0 )			? $skill['m_defense'] * $characterSkill->amount : 0;
 
-				$bonification['stat_life']		+= ( isset($skill['stat_life']) && $skill['stat_life'] < 0 )			? -$skill['stat_life'] * $characterSkill->amount : 0;
-				$bonification['stat_dexterity']	+= ( isset($skill['stat_dexterity']) && $skill['stat_dexterity'] < 0 )	? -$skill['stat_dexterity'] * $characterSkill->amount : 0;
-				$bonification['stat_magic']		+= ( isset($skill['stat_magic']) && $skill['stat_magic'] < 0 )			? -$skill['stat_magic'] * $characterSkill->amount : 0;
-				$bonification['stat_strength']	+= ( isset($skill['stat_strength']) && $skill['stat_strength'] < 0 )	? -$skill['stat_strength'] * $characterSkill->amount : 0;
-				$bonification['stat_luck']		+= ( isset($skill['stat_luck']) && $skill['stat_luck'] < 0 )			? -$skill['stat_luck'] * $characterSkill->amount : 0;
+				$bonification['stat_life']		-= ( isset($skill['stat_life']) && $skill['stat_life'] < 0 )			? $skill['stat_life'] * $characterSkill->amount : 0;
+				$bonification['stat_dexterity']	-= ( isset($skill['stat_dexterity']) && $skill['stat_dexterity'] < 0 )	? $skill['stat_dexterity'] * $characterSkill->amount : 0;
+				$bonification['stat_magic']		-= ( isset($skill['stat_magic']) && $skill['stat_magic'] < 0 )			? $skill['stat_magic'] * $characterSkill->amount : 0;
+				$bonification['stat_strength']	-= ( isset($skill['stat_strength']) && $skill['stat_strength'] < 0 )	? $skill['stat_strength'] * $characterSkill->amount : 0;
+				$bonification['stat_luck']		-= ( isset($skill['stat_luck']) && $skill['stat_luck'] < 0 )			? $skill['stat_luck'] * $characterSkill->amount : 0;
 			}
 		}
 

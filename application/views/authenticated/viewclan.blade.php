@@ -87,7 +87,7 @@
 	@foreach ( $skills as $skill )
 		<?php unset($skillsToLearn[$skill->skill_id]); ?>
 		<li style="vertical-align: top;">
-			<img src="{{ URL::base() }}/img/icons/skills/{{ $skill->skill_id }}.png" alt="" ng-mouseover="onMouseOver({{ $skill->skill_id }}, {{ $skill->level }})" dynamic-tooltip="skill[{{ $skill->skill_id }}]" width="64px" height="64px">
+			<img src="{{ URL::base() }}/img/icons/skills/{{ $skill->skill_id }}.png" alt="" ng-mouseover="onMouseOver({{ $skill->skill_id }}, {{ $skill->level }}, true, true)" dynamic-tooltip="skill[{{ $skill->skill_id }}]" width="64px" height="64px">
 			@if ( $clan->points_to_change > 0 && $character->id == $clan->leader_id )
 				@if ( ClanSkillList::get_instance()->get_skill($skill->skill_id, $skill->level + 1) && ClanSkillList::get_instance()->can_learn($clan, $skill->skill_id, $skill->level + 1) )
 					<p><a href="{{ URL::to('authenticated/learnClanSkill/' . $skill->skill_id . '/' . ($skill->level + 1)) }}">subir de nivel</a></p>
@@ -97,7 +97,7 @@
 	@endforeach
 	@foreach ( $skillsToLearn as $key => $value )
 		<li style="vertical-align: top;">
-			<img class="grayEffect" src="{{ URL::base() }}/img/icons/skills/{{ $key }}.png" alt="" ng-mouseover="onMouseOver({{ $key }}, 1)" dynamic-tooltip="skill[{{ $key }}]" width="64px" height="64px">
+			<img class="grayEffect" src="{{ URL::base() }}/img/icons/skills/{{ $key }}.png" alt="" ng-mouseover="onMouseOver({{ $key }}, 1, true, false)" dynamic-tooltip="skill[{{ $key }}]" width="64px" height="64px">
 			@if ( $clan->points_to_change > 0 && $character->id == $clan->leader_id )
 				@if ( ClanSkillList::get_instance()->can_learn($clan, $key, 1) )
 					<p><a href="{{ URL::to('authenticated/learnClanSkill/' . $key) }}">aprender</a></p>

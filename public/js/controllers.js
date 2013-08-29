@@ -123,13 +123,15 @@ controller('CharacterStatsController', ['$scope', '$http', '$timeout', function(
 		});
 	};
 
-	$scope.getSkillTooltip = function(skillId, level) {
+	$scope.getSkillTooltip = function(skillId, level, showRequirements, next) {
 		$http.get($scope.basePath + 'api/skill/' + skillId + '/' + level).success(function (data) {
-			$scope.skill[skillId] = '<strong>' + data.name + '</strong><p>' + data.description + '</p>';
-			if ( data.requirements_text ) {
+			$scope.skill[skillId] = '<strong>' + data.name + '</strong> - Nivel ' + level + '<p>' + data.description + '</p>';
+			if ( showRequirements && data.requirements_text ) {
 				$scope.skill[skillId] += '<strong>Requiere</strong><p>' + data.requirements_text + '</p>';
 			}
-			$scope.getSkillNextLevelToolTip(skillId, level + 1);
+			if ( next ) {
+				$scope.getSkillNextLevelToolTip(skillId, level + 1);
+			}
 		});
 	};
 

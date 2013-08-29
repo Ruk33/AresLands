@@ -1794,7 +1794,7 @@ class Authenticated_Controller extends Base_Controller
 	{
 		if ( $id > 0 && $count > 0 )
 		{
-			$character = Character::get_character_of_logged_user(array('id', 'current_life', 'max_life'));
+			$character = Character::get_character_of_logged_user(array('id', 'current_life', 'max_life', 'level'));
 
 			if ( $character )
 			{
