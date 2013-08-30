@@ -67,7 +67,10 @@ class Character extends Base_Model
 		$this->xp += $xpAmount;
 		$this->points_to_change += $xpAmount;
 
-		$this->clan->add_xp(1);
+		if ( $this->clan_id > 0 )
+		{
+			$this->clan->add_xp(1);
+		}
 
 		$this->save();
 
