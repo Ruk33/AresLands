@@ -135,10 +135,10 @@ controller('CharacterStatsController', ['$scope', '$http', '$timeout', function(
 		});
 	};
 
-	$scope.onMouseOver = function(skillId, level) {
+	$scope.onMouseOver = function(skillId, level, showRequirements, next) {
 		if ( ! $scope.skill[skillId] ) {
 			$scope.skill[skillId] = 'Cargando...';
-			$scope.getSkillTooltip(skillId, level);
+			$scope.getSkillTooltip(skillId, level, showRequirements, next);
 		}
 	};
 }])

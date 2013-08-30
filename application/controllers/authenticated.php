@@ -213,7 +213,7 @@ class Authenticated_Controller extends Base_Controller
 					{
 						if ( ClanSkillList::get_instance()->can_learn($clan, $skillId, $level) )
 						{
-							$skill = Skill::where('skill_id', '=', (int) $skillId)->where('level', '=', (int) $level)->select(array('skill_id'))->first();
+							$skill = Skill::get((int) $skillId, (int) $level);
 							
 							if ( $skill )
 							{
@@ -788,6 +788,7 @@ class Authenticated_Controller extends Base_Controller
 						/*
 						 *	Finalmente, lo sacamos del clan
 						 */
+						$clan->leave($member);
 						$member->clan_id = 0;
 						$member->save();
 

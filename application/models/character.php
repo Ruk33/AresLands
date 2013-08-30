@@ -905,14 +905,14 @@ class Character extends Base_Model
 
 		foreach ( $characterSkills as $characterSkill )
 		{
-			$skill = $characterSkill->skill()->select(array('data'))->first();
+			$skill = $characterSkill->skill()/*->select(array('data'))->first()*/;
 
 			if ( ! $skill )
 			{
 				continue;
 			}
 
-			$skill = $skill->data;
+			//$skill = $skill->data;
 
 			if ( $positive )
 			{

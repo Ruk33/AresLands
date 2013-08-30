@@ -9,6 +9,7 @@ class ClanSkill extends Base_Model
 
 	public function skill()
 	{
-		return $this->belongs_to('Skill', 'skill_id');
+		//return $this->belongs_to('Skill', 'skill_id');
+		return Skill::get($this->skill_id, $this->level);
 	}
 }

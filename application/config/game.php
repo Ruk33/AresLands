@@ -27,7 +27,7 @@ return array(
 	 *	llegan a este valor, la barra
 	 *	está completa)
 	 */
-	'activity_bar_max' => 20,
+	'activity_bar_max' => 35,
 
 	/*
 	 *	Protección (en segundos) para un personaje

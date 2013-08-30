@@ -15,6 +15,7 @@ class Item extends Base_Model
 		/*
 		 *	Patrón para guardar habilidades:
 		 *	skill_id-skill_level
+		 *
 		 *	Ej.: 2-1 (guardamos el skill con el id 2 y su nivel 1)
 		 */
 		if ( $this->skill == 0 )
@@ -33,7 +34,7 @@ class Item extends Base_Model
 
 			if ( $skillId != 0 && $skillLevel > 0 )
 			{
-				$skills[] = Skill::where('id', '=', $skillId)->where('level', '=', $skillLevel)->first();
+				$skills[] = Skill::get($skillId, $skillLevel);
 			}
 		}
 

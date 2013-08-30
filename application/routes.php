@@ -114,7 +114,7 @@ Event::listen('unequipItem', function(CharacterItem $characterItem)
 						 */
 						foreach ( $skills as $skill )
 						{
-							$characterSkill = $character->skills()->where('skill_id', '=', $skill->id)->where('level', '=', $skill->level)->select(array('id'))->first();
+							$characterSkill = $character->skills()->where('skill_id', '=', $skill['skill_id'])->where('level', '=', $skill['level'])->select(array('id'))->first();
 
 							if ( $characterSkill )
 							{
@@ -185,14 +185,14 @@ Event::listen('equipItem', function(CharacterItem $characterItem, $amount = 1)
 		 *	confirmar que el usuario logueado
 		 *	realmente lo tiene
 		 */
-		$item = $character->items()->select(array('item_id'))->find($characterItem->id);
+		$item = $character->items()->select(array('id', 'item_id'))->find($characterItem->id);
 
 		if ( $item )
 		{
 			/*
 			 *	Obtenemos la información del objeto
 			 */
-			$item = $item->item()->select(array('skill'))->first();
+			$item = $item->item()->select(array('id', 'skill'))->first();
 
 			/*
 			 *	Confirmamos que el objeto
@@ -203,7 +203,7 @@ Event::listen('equipItem', function(CharacterItem $characterItem, $amount = 1)
 				/*
 				 *	Nos fijamos si tiene una habilidad
 				 */
-				if ( $item->skill != '0-0' )
+				if ( $item->skill != '0' )
 				{
 					/*
 					 *	Obtenemos las habilidades
@@ -223,7 +223,7 @@ Event::listen('equipItem', function(CharacterItem $characterItem, $amount = 1)
 						 */
 						foreach ( $skills as $skill )
 						{
-							if ( $skill->duration == 0 )
+							if ( $skill['duration'] == -1 )
 							{
 								/*
 								$data = $skill->data;
@@ -239,10 +239,10 @@ Event::listen('equipItem', function(CharacterItem $characterItem, $amount = 1)
 							{
 								$characterSkill = new CharacterSkill();
 
-								$characterSkill->skill_id = $skill->id;
+								$characterSkill->skill_id = $skill['skill_id'];
 								$characterSkill->character_id = $character->id;
-								$characterSkill->level = $skill->level;
-								$characterSkill->end_time = ($skill->duration != -1) ? time() + $skill->duration : 0;
+								$characterSkill->level = $skill['level'];
+								$characterSkill->end_time = ($skill['duration'] != 0) ? time() + $skill['duration'] : 0;
 								$characterSkill->amount = $amount;
 
 								$characterSkill->save();

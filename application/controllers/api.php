@@ -206,11 +206,12 @@ class Api_Controller extends Base_Controller implements Api_Interface
 
 	public function get_skill($id, $level)
 	{
-		$skill = Skill::where('skill_id', '=', (int) $id)->where('level', '=', (int) $level)->first();
+		//$skill = Skill::where('skill_id', '=', (int) $id)->where('level', '=', (int) $level)->first();
+		$skill = Skill::get($id, $level);
 
 		if ( $skill )
 		{
-			return json_encode($skill->attributes);
+			return json_encode($skill);
 		}
 		else
 		{
