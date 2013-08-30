@@ -23,7 +23,7 @@ class ClanSkillList
 
 	private function __construct()
 	{
-		$this->_json = json_decode(file_get_contents(__DIR__ . '\ClanSkillList.json'), true);
+		$this->_json = json_decode(file_get_contents(__DIR__ . '/ClanSkillList.json'), true);
 	}
 
 	public function get_skills()

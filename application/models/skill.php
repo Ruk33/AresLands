@@ -21,7 +21,7 @@ class Skill
 	{
 		if ( ! self::$SKILL_LIST )
 		{
-			self::$SKILL_LIST = json_decode(file_get_contents(__DIR__ . '\Skill.json'), true);
+			self::$SKILL_LIST = json_decode(file_get_contents(__DIR__ . '/Skill.json'), true);
 		}
 
 		if ( isset(self::$SKILL_LIST[$skillId][$level]) )
