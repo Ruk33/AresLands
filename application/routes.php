@@ -416,12 +416,12 @@ Route::filter('before', function() {
 			if ( $character->xp >= $character->xp_next_level )
 			{
 				$character->level++;
-				$character->xp_next_level = $character->xp_next_level + 40 * $character->level;
+				$character->xp_next_level = $character->xp_next_level + 10 * $character->level;
 
 				/* 
 				 *	Aumentamos la vida
 				 */
-				$character->max_life = $character->max_life + $character->level * 5;
+				$character->max_life = $character->max_life + $character->level * 40;
 
 				$character->points_to_change += Config::get('game.points_per_level');
 
