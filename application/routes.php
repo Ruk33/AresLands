@@ -418,6 +418,25 @@ Route::filter('before', function() {
 				$character->level++;
 				$character->xp_next_level = $character->xp_next_level + 10 * $character->level;
 
+				/*
+				 *	Verificamos que siga cumpliendo
+				 *	con los requerimientos de sus orbes
+				 *	(en caso de tener alguno)
+				 */
+				if ( $character->has_orb() )
+				{
+					$orbs = $character->orbs;
+
+					foreach ( $orbs as $orb )
+					{
+						// Si no cumple con los requerimientos...
+						if ( $character->level < $orb->min_level || $character->level > $orb->max_level )
+						{
+							$orb->give_to_random();
+						}
+					}
+				}
+
 				/* 
 				 *	Aumentamos la vida
 				 */

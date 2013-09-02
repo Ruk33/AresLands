@@ -46,6 +46,27 @@ class Orb extends Base_Model
 		$this->save();
 	}
 
+	/**
+	 *	Dar orbe a candidato aleatorio
+	 */
+	public function give_to_random()
+	{
+		$characters = Character::select(array('id'))->
+		where('level', '>=', $this->min_level)->
+		where('level', '<=', $this->max_level)->
+		order_by(DB::raw('RAND()'))->
+		get();
+
+		foreach ( $characters as $character )
+		{
+			if ( $character->orbs()->count() < 2 )
+			{
+				$this->give_to($character);
+				break;
+			}
+		}
+	}
+
 	public function give_periodic_reward()
 	{
 		$owner = $this->owner()->select(array('id', 'clan_id'))->first();

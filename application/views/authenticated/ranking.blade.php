@@ -125,7 +125,10 @@
 						@elseif ( $index == 3 )
 							<img src="{{ URL::base() }}/img/icons/crown-bronze-icon.png" alt="">
 						@endif
-						{{ $clanPuntuation->clan->get_link() }}
+
+						@if ( $clanPuntuation->clan )
+							{{ $clanPuntuation->clan->get_link() }}
+						@endif
 					</td>
 					<td>{{ $clanPuntuation->points }}</td>
 				</tr>
