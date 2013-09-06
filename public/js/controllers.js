@@ -143,6 +143,75 @@ controller('CharacterStatsController', ['$scope', '$http', '$timeout', function(
 	};
 }])
 
+.controller('Chat', ['$scope', '$http', '$timeout', function($scope, $http, $timeout) {
+	$scope.chat = {};
+	$scope.chat.messages = [];
+	$scope.chat.connected = [];
+	$scope.chat.last = [];
+	$scope.chat.show = false;
+	$scope.chat.channel = 0;
+
+	var getConnected = function() {
+		$http.get($scope.basePath + 'chat/connected/' + $scope.chat.channel).success(function (data) {
+			if ( ! $scope.chat.connected[$scope.chat.channel] ) {
+				$scope.chat.connected[$scope.chat.channel] = [];
+			}
+			
+			$scope.chat.connected[$scope.chat.channel] = data;
+		});
+
+		$timeout(getConnected, 300000);
+	};
+
+	var getMessages = function() {
+		$http.get($scope.basePath + 'chat/messages/' + $scope.chat.last[$scope.chat.channel] + '/' + $scope.chat.channel).success(function (data) {
+			if ( data.length > 0 ) {
+				if ( ! $scope.chat.last[$scope.chat.channel] ) {
+					$scope.chat.last[$scope.chat.channel] = [];
+				}
+
+				if ( ! $scope.chat.messages[$scope.chat.channel] ) {
+					$scope.chat.messages[$scope.chat.channel] = [];
+				}
+
+				$scope.chat.last[$scope.chat.channel] = data[data.length-1].time;
+
+				for (var i in data) {
+					$scope.chat.messages[$scope.chat.channel].unshift(data[i]);
+				}
+			}
+		});
+
+		$timeout(getMessages, 2000);
+	};
+
+	$scope.sendMessage = function() {
+		$http.post($scope.basePath + 'chat/message', { 'message': $scope.chat.input, 'channel': $scope.chat.channel });
+		$scope.chat.input = '';
+	};
+
+	$scope.switchChannel = function(channel) {
+		if ( channel != $scope.chat.channel ) {
+			$scope.chat.channel = channel;
+
+			if ( ! $scope.chat.messages[channel] ) {
+				$scope.chat.messages[channel] = [];
+			}
+
+			if ( channel > 0 ) {
+				$scope.chat.messages[channel].unshift({ 'name': 'AresLands BOT', 'message': 'Cambiaste de canal a: Clan' });
+			} else {
+				$scope.chat.messages[channel].unshift({ 'name': 'AresLands BOT', 'message': 'Cambiaste de canal a: General' });
+			}
+
+			getConnected();
+		}
+	};
+
+	getConnected();
+	getMessages();
+}])
+
 .controller('MyCtrl2', [function() {
 
 }]);

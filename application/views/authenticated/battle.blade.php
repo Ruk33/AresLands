@@ -1,16 +1,15 @@
 <h2>¡Batallar!</h2>
 
-<div class="span11">
-
-	@if ( Session::has('errorMessage') )
-		<div class="alert alert-error">
-			{{ Session::get('errorMessage') }}
-		</div>
-	@endif
+@if ( Session::has('errorMessage') )
+	<div class="alert alert-error">
+		{{ Session::get('errorMessage') }}
+	</div>
+@endif
 
 <p>¿Así que quieres probar suerte con algún contrincante?</p>
 
-<ul class="thumbnails" style="margin-left: -18px;">
+<h2 style="margin-bottom: -25px;">Personajes</h2>
+<ul style="margin-left: -15px;">
 	<li class="span4">
 		<div class="thumbnail">
 			<div class="caption">
@@ -84,4 +83,33 @@
 		</div>
 	</li>
 </ul>
-</div>
+
+<div class="clearfix"></div>
+
+@if ( count($monsters) > 0 )
+<h2>Monstruos</h2>
+<ul class="inline battle-monsters-content">
+	@foreach ( $monsters as $monster )
+	<li style="width: 230px; vertical-align: top; margin-bottom: 25px;">
+		@if ( $monster->level - $character->level > 10 )
+		<h4 style="color: #F52700; text-align: center;">
+		@elseif ( $monster->level - $character->level > 5 )
+		<h4 style="color: orange; text-align: center;">
+		@else
+		<h4 style="color: white; text-align: center;">
+		@endif
+		{{ $monster->name }}</h4>
+
+		@if ( file_exists('{{ URL::base() }}/img/npcs/{{ $monster->id }}.png') )
+		<img src="{{ URL::base() }}/img/npcs/{{ $monster->id }}.png" alt="" width="230px" height="400px">
+		@else
+		<img src="{{ URL::base() }}/img/npcs/monster-unknown.png" alt="" width="230px" height="400px">
+		@endif
+
+		<p>{{ $monster->dialog }}</p>
+
+		<center><a href="{{ URL::to('authenticated/toBattleMonster/' . $monster->id) }}" class="btn btn-warning" style="color: white;">Atacar</a></center>
+	</li>
+	@endforeach
+</ul>
+@endif

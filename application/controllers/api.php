@@ -13,6 +13,7 @@ interface Api_Interface
 	public function get_orb($id);
 	public function get_zone($id);
 	public function get_skill($id, $level);
+	public function get_mercenary($id);
 }
 
 class Api_Controller extends Base_Controller implements Api_Interface
@@ -206,12 +207,25 @@ class Api_Controller extends Base_Controller implements Api_Interface
 
 	public function get_skill($id, $level)
 	{
-		//$skill = Skill::where('skill_id', '=', (int) $id)->where('level', '=', (int) $level)->first();
 		$skill = Skill::get($id, $level);
 
 		if ( $skill )
 		{
 			return json_encode($skill);
+		}
+		else
+		{
+			return json_encode(null);
+		}
+	}
+
+	public function get_mercenary($id)
+	{
+		$mercenary = Item::where('type', '=', 'mercenary')->find((int) $id);
+
+		if ( $mercenary )
+		{
+			return json_encode($mercenary->attributes);
 		}
 		else
 		{

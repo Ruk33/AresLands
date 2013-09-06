@@ -183,6 +183,43 @@
 			</div>
 		</div>
 
+		@if ( Auth::check() )
+			<div style="position: fixed; border: 1px solid black; border-top-left-radius: 5px; border-top-right-radius: 5px; z-index: 999; bottom: 0; right: 10px; padding: 5px; width: auto; height: auto; background-color: #181818;" ng-controller="Chat">
+				<div>
+					<span style="cursor: pointer; padding-right: 150px;" ng-click="chat.show = ! chat.show;">Chat</span>
+				
+					<div class="pull-right" ng-show="chat.show">
+						<a href="" ng-click="switchChannel(0)">Cambiar a general</a>
+						@if ( $character->clan_id > 0 )
+						-
+						<a href="" ng-click="switchChannel({{ $character->clan_id }})">Cambiar a clan</a>
+						@endif
+					</div>
+				</div>
+				<div ng-show="chat.show" style="height: 300px; width: 460px;">
+						<div style="width: 100px; float: left; height: 270px; background-color: #0F0F0F; margin-right: 10px; overflow: auto;">
+							<ul class="unstyled">
+								<li ng-repeat="connected in chat.connected[chat.channel]">
+									[[ connected.name ]]
+								</li>
+							</ul>
+						</div>
+						<div style="width: 50; height: 270px; background-color: #0F0F0F; overflow: auto;">
+							<ul class="unstyled">
+								<li ng-repeat="message in chat.messages[chat.channel]" style="padding: 5px; border-bottom: 1px dashed #292929">
+									<strong>[[ message.name ]]:</strong> [[ message.message ]]
+								</li>
+							</ul>
+						</div>
+					</ul>
+
+					<form ng-submit="sendMessage()">
+						<input type="text" class="input-block-level" style="border-radius: 0;" ng-model="chat.input" />
+					</form>
+				</div>
+			</div>
+		@endif
+
 		<script src="{{ URL::base() }}/js/vendor/angular.min.js"></script>
 
 		<script src="{{ URL::base() }}/js/app.js"></script>

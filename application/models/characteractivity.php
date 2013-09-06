@@ -24,7 +24,6 @@ class CharacterActivity extends Base_Model
 
 	public function update_time()
 	{
-		//$character = Session::get('character');
 		$character = $this->character()->select(array('id', 'zone_id', 'is_traveling', 'is_exploring', 'xp', 'zone_id', 'points_to_change'))->first();
 
 		if ( ! $character )
@@ -78,16 +77,6 @@ class CharacterActivity extends Base_Model
 					 *	Enviamos informe de que terminó de explorar
 					 */
 					Message::completed_exploration($character, $data['time'] / 60 / 25 * Config::get('game.xp_rate'), $data['reward']);
-
-					/*
-					 *	Nuevo mounstruo para pelear
-					 */
-					$monster = Npc::select(array('id'))->where('zone_id', '=', $character->zone_id)->where('type', '=', 'monster')->order_by(DB::raw('RAND()'))->first();
-
-					if ( $monster )
-					{
-						Session::put('monster_id', $monster->id);
-					}
 
 					break;
 			}

@@ -11,6 +11,7 @@ Route::controller('Game');
 Route::controller('CharacterCreation');
 Route::controller('Home');
 Route::controller('Api');
+Route::controller('Chat');
 Route::controller('Cron');
 
 
@@ -462,23 +463,6 @@ Route::filter('before', function() {
 			 *	Y de sus habilidades
 			 */
 			$characterSkills = $character->skills()->select(array('id'))->where('end_time', '<>', 0)->where('end_time', '<=', $time)->delete();
-			/*
-			foreach ( $characterSkills as $characterSkill )
-			{
-				$characterSkill->update_time();
-			}
-			*/
-
-			/*
-			 *	Verificamos si tiene que pelear
-			 *	contra un bicho
-			 */
-			if ( Session::has('monster_id') )
-			{
-				$character = Character::get_character_of_logged_user();
-				$character->battle_against(Npc::find(Session::get('monster_id')));
-				Session::forget('monster_id');
-			}
 		}
 	}
 });

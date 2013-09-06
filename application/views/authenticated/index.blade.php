@@ -9,11 +9,16 @@
 				</a>
 			</li>
 		@endforeach
+
+		@foreach ( $blockedNpcs as $blockedNpc )
+			<li data-toggle="tooltip" data-placement="bottom" data-original-title="Bloqueado">
+				<img class="grayEffect" src="{{ URL::base() }}/img/icons/npcs/{{ $blockedNpc->id }}.png" alt="" width="72px" height="82px">
+			</li>
+		@endforeach
 		</ul>
 	</div>
 	@endif
 @endif
-<!--<hr class="line">-->
 
 <div class="row" ng-controller="Skill">
 	<!-- BUFFS -->
@@ -90,11 +95,12 @@
 			<!-- END ORBES -->
 
 			<!-- AYUDANTE -->
-			<!--
-			<div style="position: absolute; margin-left: 260px; margin-top: 50px;">
-				<img src="{{ URL::base() }}/img/characters/ayudante.png" alt="">
+			<div style="position: absolute; margin-left: 255px; margin-top: 65px;">
+				@if ( isset($items['mercenary']) && $mercenary = $items['mercenary'][0]->item )
+					<img src="{{ URL::base() }}/img/characters/ayudante.png" alt="" width="64px" height="64px" data-toggle="tooltip" data-placement="top" data-original-title="
+					{{ $mercenary->get_text_for_tooltip() }}">
+				@endif
 			</div>
-			-->
 			<!-- END AYUDANTE -->
 			
 			<!-- PERSONAJE -->
@@ -269,7 +275,7 @@
 		@endforeach
 	@endif
 	<div class="pull-left" style="margin-right: 10px;">
-		@if ( $zone->id < 11 )
+		@if ( $zone->type == 'city' )
 			<img src="{{ URL::base() }}/img/zones/32/{{ $zone->id }}.png" alt="{{ $zone->name }}" width="32px" height="32px">
 		@else
 			<img src="{{ URL::base() }}/img/zones/32/unknown.png" alt="{{ $zone->name }}" width="32px" height="32px">

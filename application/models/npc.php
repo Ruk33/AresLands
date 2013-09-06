@@ -35,7 +35,37 @@ class Npc extends Base_Model
 	 */
 	public static function get_npcs_from_zone(Zone $zone)
 	{
-		return Npc::select(array('id', 'name', 'dialog', 'tooltip_dialog'))->where('zone_id', '=', $zone->id)->where('type', '=', 'npc')->get();
+		if ( ! $zone )
+		{
+			return array();
+		}
+
+		$character = Character::get_character_of_logged_user(array('id'));
+		$exploringTime = $character->exploring_times()->select(array('character_id', 'time'))->where('zone_id', '=', $zone->id)->first();
+
+		return Npc::select(array('id', 'name', 'dialog', 'tooltip_dialog'))
+		->where('zone_id', '=', $zone->id)
+		->where('type', '=', 'npc')
+		->where('time_to_appear', '<=', ( isset($exploringTime->time) ) ? $exploringTime->time : 0 )
+		->get();
+	}
+
+	/**
+	 *	Detectamos si un npc está bloqueado para un personaje
+	 *
+	 *	@param <Character> $character
+	 *	@return <bool> true en caso de estar bloqueado, false de lo contrario
+	 */
+	public function is_blocked_to(Character $character)
+	{
+		if ( ! $character )
+		{
+			return true;
+		}
+
+		$exploringTime = $character->exploring_times()->select(array('character_id', 'time'))->where('zone_id', '=', $this->zone_id)->first();
+
+		return $this->time_to_appear > $exploringTime->time;
 	}
 
 	public function quests()

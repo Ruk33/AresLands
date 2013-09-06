@@ -756,19 +756,12 @@ class Character extends Base_Model
 			Message::attack_report($fighter_one['character'], $fighter_two['character'], $message, $winner['character']);
 			Message::defense_report($fighter_two['character'], $fighter_one['character'], $message, $winner['character']);
 		}
-		else
-		{
-			Message::exploration_finished($fighter_one['character'], $fighter_two['character'], $message, $winner['character']);
-		}
 
 		/*
 		 *	Agregamos tiempo de descanzo
 		 *	luego de la batalla
 		 */
-		if ( $fighter_two['is_player'] )
-		{
-			$this->after_battle();
-		}
+		$this->after_battle();
 
 		/*
 		 *	Disparamos el evento de batalla

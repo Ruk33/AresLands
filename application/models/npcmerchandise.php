@@ -11,4 +11,9 @@ class NpcMerchandise extends Base_Model
 	{
 		return $this->belongs_to('Item', 'item_id');
 	}
+
+	public function npc()
+	{
+		return $this->belongs_to('Npc', 'npc_id');
+	}
 }

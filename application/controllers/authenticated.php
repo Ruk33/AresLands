@@ -184,6 +184,13 @@ class Authenticated_Controller extends Base_Controller
 		 */
 		$npcs = Npc::get_npcs_from_zone($zone);
 
+		$exploringTime = $character->exploring_times()->select(array('character_id', 'time'))->where('zone_id', '=', $zone->id)->first();
+		$blockedNpcs = Npc::select('id')
+		->where('zone_id', '=', $zone->id)
+		->where('type', '=', 'npc')
+		->where('time_to_appear', '>', ( isset($exploringTime->time) ) ? $exploringTime->time : 0)
+		->get();
+
 		$this->layout->title = 'Inicio';
 		$this->layout->content = View::make('authenticated.index')
 		->with('character', $character)
@@ -194,7 +201,8 @@ class Authenticated_Controller extends Base_Controller
 		->with('negativeBonifications', $negativeBonifications)
 		->with('orbs', $orbs)
 		->with('zone', $zone)
-		->with('npcs', $npcs);
+		->with('npcs', $npcs)
+		->with('blockedNpcs', $blockedNpcs);
 	}
 
 	public function get_learnClanSkill($skillId = '', $level = 1)
@@ -1220,13 +1228,43 @@ class Authenticated_Controller extends Base_Controller
 		}
 	}
 
+	public function get_toBattleMonster($monsterId = false)
+	{
+		$character = Character::get_character_of_logged_user();
+		$monster = ( $monsterId ) ? Npc::where('type', '=', 'monster')->where('zone_id', '=', $character->zone_id)->find((int) $monsterId) : false;
+
+		if ( $monster )
+		{
+			if ( $character->can_fight() )
+			{
+				$battle = $character->battle_against($monster);
+			}
+			else
+			{
+				Session::flash('errorMessage', 'Aún no puedes pelear');
+				return Redirect::to('authenticated/battle/');
+			}
+
+			$this->layout->title = '¡Ganador ' . $battle['winner']->name . '!';
+			$this->layout->content = View::make('authenticated.finishedbattlemonster')
+			->with('character', $character)
+			->with('monster', $monster)
+			->with('winner', $battle['winner'])
+			->with('message', $battle['message']);
+		}
+		else
+		{
+			return Redirect::to('authenticated/battle/');
+		}
+	}
+
 	public function get_toBattle($characterName = false)
 	{
 		$character = Character::get_character_of_logged_user();
 
 		if ( $characterName )
 		{
-			$target = Character::where('name', '=', $characterName)->where('is_traveling', '=', false)->first();
+			$target = Character::where('name', '=', $characterName)->where('zone_id', '=', $character->zone_id)->where('is_traveling', '=', false)->first();
 
 			/*
 			 *	Verificamos que el personaje
@@ -1411,23 +1449,20 @@ class Authenticated_Controller extends Base_Controller
 		}
 	}
 
-	public function get_battle($characterToBattle = '')
+	public function get_battle()
 	{
-		/*
-		$character = Character::get_character_of_logged_user();
-		$characterToBattle = ( $characterToBattle ) ? Character::where('name', '=', $characterToBattle)->first() : false;
+		$character = Character::get_character_of_logged_user(array('zone_id', 'level'));
 
-		if ( $characterToBattle && $character->id != $characterToBattle->id )
-		{
+		$monsters = Npc::select(array('id', 'name', 'dialog', 'level'))
+		->where('zone_id', '=', $character->zone_id)
+		->where('type', '=', 'monster')
+		->order_by('level', 'asc')
+		->get();
 
-		}
-		else
-		{
-		*/
-			$this->layout->title = '¡Batallar!';
-			$this->layout->content = View::make('authenticated.battle')
-			->with('character', Character::get_character_of_logged_user(array('level')));
-		//}
+		$this->layout->title = '¡Batallar!';
+		$this->layout->content = View::make('authenticated.battle')
+		->with('monsters', $monsters)
+		->with('character', $character);
 	}
 
 	public function get_rewardFromQuest($questId = false)
@@ -1509,7 +1544,7 @@ class Authenticated_Controller extends Base_Controller
 		 *	decir que el personaje ya eligió
 		 *	la zona a la que quiere viajar
 		 */
-		$zone = ( $zoneId ) ? Zone::find((int) $zoneId) : false;
+		$zone = ( is_numeric($zoneId) ) ? Zone::where('min_level', '<=', $character->level)->find((int) $zoneId) : false;
 
 		$error = false;
 
@@ -1554,21 +1589,12 @@ class Authenticated_Controller extends Base_Controller
 			}
 		}
 
-		$cities = Zone::select(array('id', 'name', 'description'))->where('type', '=', 'city')->get();
-
-		foreach ($cities as $city)
-		{
-			$city->villages = Zone::select(array('id', 'name', 'description'))->where('type', '=', 'village')->where('belongs_to', '=', $city->id)->get();
-			$city->farm_zones = Zone::select(array('id', 'name', 'description'))->where('type', '=', 'farmzone')->where('belongs_to', '=', $city->id)->get();
-		}
-
-		$dungeons = Zone::select(array('id', 'name', 'description'))->where('type', '=', 'dungeon')->get();
+		$lands = Zone::where('type', '=', 'land')->select(array('id', 'name', 'description', 'min_level'))->get();
 
 		$this->layout->title = 'Viajar';
 		$this->layout->content = View::make('authenticated.travel')
 		->with('character', $character)
-		->with('cities', $cities)
-		->with('dungeons', $dungeons)
+		->with('lands', $lands)
 		->with('error', $error);
 	}
 
@@ -1590,12 +1616,17 @@ class Authenticated_Controller extends Base_Controller
 		 *	y que esté ubicado en la zona
 		 *	en donde está el personaje
 		 */
-		$npc = Npc::select(array('id', 'name', 'dialog'))->where('name', '=', $npcName)->where('zone_id', '=', $character->zone_id)->first();
+		$npc = Npc::select(array('id', 'name', 'dialog', 'time_to_appear', 'zone_id'))->where('name', '=', $npcName)->where('zone_id', '=', $character->zone_id)->first();
 
 		/*
 		 *	Si no existe, redireccionamos
 		 */
 		if ( ! $npc )
+		{
+			return Redirect::to('authenticated/index');
+		}
+
+		if ( $npc->is_blocked_to($character) )
 		{
 			return Redirect::to('authenticated/index');
 		}
@@ -1665,7 +1696,18 @@ class Authenticated_Controller extends Base_Controller
 		/*
 		 *	Obtenemos las mercancías del npc
 		 */
-		$merchandises = $npc->merchandises()->select(array('id', 'item_id', 'price_copper'))->get();
+		$merchandises = $npc->merchandises()
+		->left_join('items', 'items.id', '=', 'npc_merchandises.item_id')
+		->get(array(
+			'npc_merchandises.id', 
+			'npc_merchandises.item_id', 
+			'npc_merchandises.price_copper', 
+
+			'items.stackable',
+			'items.type',
+			'items.zone_to_explore',
+			'items.time_to_appear'
+		));
 
 		/*
 		 *	Disparamos el evento de hablar
@@ -1679,7 +1721,8 @@ class Authenticated_Controller extends Base_Controller
 		->with('merchandises', $merchandises)
 		->with('rewardQuests', $rewardQuests)
 		->with('startedQuests', $startedQuests)
-		->with('quests', $quests);
+		->with('quests', $quests)
+		->with('character', $character);
 	}
 
 	public function post_buyMerchandise()
@@ -1691,23 +1734,32 @@ class Authenticated_Controller extends Base_Controller
 
 		if ( $merchandise )
 		{
+			$character = Character::get_character_of_logged_user(array('id'));
+			$npc = $merchandise->npc()->select(array('id', 'zone_id', 'time_to_appear'))->first();
+
+			// Verificamos si el vendedor está desbloqueado
+			if ( ! $npc || $npc->is_blocked_to($character) )
+			{
+				// En caso de no estarlo, redireccionamos impidiendo
+				// así la compra
+				return Redirect::to('authenticated/index/');
+			}
+
 			/*
 			 *	Obtenemos la información del objeto
 			 *	a comprar
 			 */
-			$item = $merchandise->item()->select(array('id', 'stackable'))->first();
+			$item = $merchandise->item()->select(array('id', 'stackable', 'type', 'zone_to_explore', 'time_to_appear'))->first();
 
 			/*
 			 *	Si el objeto no es acumulable
 			 *	y se quiere comprar mas de uno,
 			 *	lo evitamos
 			 */
-			if ( ! $item->stackable && $amount > 1 )
+			if ( ! $item->stackable )
 			{
 				$amount = 1;
 			}
-
-			$character = Character::get_character_of_logged_user(array('id'));
 
 			/*
 			 *	Obtenemos las monedas del personaje
@@ -1723,48 +1775,77 @@ class Authenticated_Controller extends Base_Controller
 			{
 				$characterItem = null;
 
-				/*
-				 *	Verificamos si el objeto
-				 *	a comprar se puede acumular
-				 */
-				if ( $item->stackable )
+				if ( $item->type == 'mercenary' )
 				{
-					/*
-					 *	Se puede acumular, busquemos entonces
-					 *	si el personaje ya tiene un objeto igual
-					 */
-					$characterItem = $character->items()->select(array('id', 'count'))->where('item_id', '=', $item->id)->first();
-				}
+					// Si no se cumplen los requerimientos del mercenario...
+					if ( $item->zone_to_explore && $item->time_to_appear && $character->exploring_times()->where('zone_id', '=', $item->zone_to_explore)->where('time', '>=', $item->time_to_appear)->take(1)->count() == 0 )
+					{
+						return Redirect::to('authenticated/index/');
+					}
 
-				/*
-				 *	O no se puede acumular, o bien
-				 *	el personaje no tiene un objeto igual
-				 */
-				if ( ! $characterItem )
-				{
-					/*
-					 *	Buscamos un slot en el inventario
-					 */
-					$slotInInventory = CharacterItem::get_empty_slot();
+					// Buscamos su mercenario actual (en caso de tener)
+					// para reemplazarlo con este nuevo
+					$characterItem = $character->items()
+					->left_join('items', 'items.id', '=', 'character_items.item_id')
+					->where('items.type', '=', 'mercenary')
+					->first(array('character_items.id', 'character_items.item_id', 'character_items.count'));
 
-					/*
-					 *	Verificamos que exista
-					 */
-					if ( $slotInInventory )
+					if ( ! $characterItem )
 					{
 						$characterItem = new CharacterItem();
 
 						$characterItem->owner_id = $character->id;
-						$characterItem->item_id = $item->id;
-						$characterItem->location = 'inventory';
-						$characterItem->slot = $slotInInventory;
+						$characterItem->location = 'mercenary';
 					}
-					else
+
+					$characterItem->item_id = $item->id;
+					$characterItem->count = 0;
+				}
+				else
+				{
+					/*
+					 *	Verificamos si el objeto
+					 *	a comprar se puede acumular
+					 */
+					if ( $item->stackable )
 					{
 						/*
-						 *	No hay espacio en el inventario
+						 *	Se puede acumular, busquemos entonces
+						 *	si el personaje ya tiene un objeto igual
 						 */
-						return Redirect::to('authenticated/index');
+						$characterItem = $character->items()->select(array('id', 'count'))->where('item_id', '=', $item->id)->first();
+					}
+
+					/*
+					 *	O no se puede acumular, o bien
+					 *	el personaje no tiene un objeto igual
+					 */
+					if ( ! $characterItem )
+					{
+						/*
+						 *	Buscamos un slot en el inventario
+						 */
+						$slotInInventory = CharacterItem::get_empty_slot();
+
+						/*
+						 *	Verificamos que exista
+						 */
+						if ( $slotInInventory )
+						{
+							$characterItem = new CharacterItem();
+
+							$characterItem->owner_id = $character->id;
+							$characterItem->item_id = $item->id;
+							$characterItem->location = 'inventory';
+							$characterItem->slot = $slotInInventory;
+						}
+						else
+						{
+							/*
+							 *	No hay espacio en el inventario
+							 */
+							return Redirect::to('authenticated/index');
+						}
 					}
 				}
 

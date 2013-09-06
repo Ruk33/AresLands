@@ -7,7 +7,7 @@
 			@else
 			lose
 			@endif
-			.png" alt="">
+			.png" alt="" width="180px" height="181px">
 
 			<h3>{{ $character_two->name }}</h3>
 		</div>
@@ -25,7 +25,7 @@
 			@else
 			lose
 			@endif
-			.png" alt="">
+			.png" alt="" width="180px" height="181px">
 
 			<h3>{{ $character_one->name }}</h3>
 		</div>

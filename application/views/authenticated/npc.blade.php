@@ -89,6 +89,11 @@
 	@foreach ( $merchandises as $merchandise )
 		<li class="text-center" style="vertical-align: top; padding: 10px;">
 		@if ( $characterCoinsCount >= $merchandise->price_copper )
+			@if ( $merchandise->type == 'mercenary' )
+				@if ( $merchandise->zone_to_explore && $merchandise->time_to_appear && $character->exploring_times()->where('zone_id', '=', $merchandise->zone_to_explore)->where('time', '>=', $merchandise->time_to_appear)->take(1)->count() == 0 )
+					<?php continue; ?>
+				@endif
+			@endif
 			{{ Form::open('authenticated/buyMerchandise', 'POST') }}
 
 				{{ Form::hidden('merchandise_id', $merchandise->id) }}
@@ -98,7 +103,7 @@
 				</div>
 				
 				<div>
-				@if ( $merchandise->item->stackable )
+				@if ( $merchandise->stackable )
 					<?php
 
 					for ( $i = 1, $max = @($characterCoinsCount / $merchandise->price_copper), $amount = array(); $i <= $max; $i++ )
