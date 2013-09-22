@@ -1,8 +1,8 @@
 <?php
 
-class Quest_LasMinasEstanBajoAtaque
+class Quest_LasMinasEstanBajoAtaque extends Quest_Template_Fight_Against_Monster
 {
-	const QUEST_ID = 3;
+	protected static $questId = 31;
 	public static $monstersId = array(21, 22, 23, 24);
 
 	public static function onAcceptQuest(Character $character, Quest $quest)

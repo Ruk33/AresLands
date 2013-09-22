@@ -21,22 +21,23 @@
 @endif
 
 <div class="row" ng-controller="Skill">
-	<!-- BUFFS -->
-	<ul class="unstyled inline" style="margin-left: 20px;">
-		@foreach ( $skills as $skill )
-			<li class="text-center" style="vertical-align: top;">
-				<img src="{{ URL::base() }}/img/icons/skills/{{ $skill->skill_id }}.png" alt="" width="32px" height="32px" ng-mouseover="onMouseOver({{ $skill->skill_id }}, {{ $skill->level }}, false, false)" dynamic-tooltip="skill[{{ $skill->skill_id }}]">
-
-				@if ( $skill->end_time != 0 )
-				<small><div class='timer' data-endtime='{{ $skill->end_time - time() }}'></div></small>
-				@endif
-			</li>
-		@endforeach
-	</ul>
-	<!-- END BUFFS -->
-
 	<div class="span6" style="margin-left: 20px; margin-right: -20px;">
 		<h2>Personaje</h2>
+	
+		<!-- BUFFS -->
+		<ul class="unstyled inline">
+			@foreach ( $skills as $skill )
+				<li class="text-center" style="vertical-align: top;">
+					<img src="{{ URL::base() }}/img/icons/skills/{{ $skill->skill_id }}.png" alt="" width="32px" height="32px" ng-mouseover="onMouseOver({{ $skill->skill_id }}, {{ $skill->level }}, false, false)" dynamic-tooltip="skill[{{ $skill->skill_id }}]">
+
+					@if ( $skill->end_time != 0 )
+					<small><div class='timer' data-endtime='{{ $skill->end_time - time() }}'></div></small>
+					@endif
+				</li>
+			@endforeach
+		</ul>
+		<!-- END BUFFS -->
+
 		<div style="min-height: 405px;">
 			<!-- DOS MANOS -->
 			@if ( isset($items['lrhand']) && $lrhand = $items['lrhand'][0]->item )
@@ -275,11 +276,7 @@
 		@endforeach
 	@endif
 	<div class="pull-left" style="margin-right: 10px;">
-		@if ( $zone->type == 'city' )
-			<img src="{{ URL::base() }}/img/zones/32/{{ $zone->id }}.png" alt="{{ $zone->name }}" width="32px" height="32px">
-		@else
-			<img src="{{ URL::base() }}/img/zones/32/unknown.png" alt="{{ $zone->name }}" width="32px" height="32px">
-		@endif
+		<img src="{{ URL::base() }}/img/zones/32/{{ $zone->id }}.png" alt="{{ $zone->name }}" width="32px" height="32px">
 	</div>
 	<b>{{ $zone->name }}</b>
 	<p><i>{{ $zone->description }}</i></p>
@@ -287,6 +284,12 @@
 <!-- END ZONA -->
 
 <!-- INVENTARIO -->
+<script>
+	function confirmItemDestroy()
+	{
+		return confirm('¿Realmente deseas destruir el objeto?');
+	}
+</script>
 <h2>Inventario</h3>
 <ul class="inline">
 	@for ( $i = 1, $max = 6; $i <= $max; $i++ )
@@ -296,13 +299,15 @@
 			@foreach ( $items['inventory'] as $characterItem )
 				@if ( $characterItem->slot == $i && $item = $characterItem->item )
 					<img style="cursor: pointer;" src="{{ URL::base() }}/img/icons/items/{{ $characterItem->item_id }}.png" alt="" width="80px" height="80px" data-toggle="popover" data-placement="top" data-original-title="
+					<a href='{{ URL::to('authenticated/destroyItem/' . $characterItem->id) }}' onclick='return confirmItemDestroy();' class='btn btn-danger pull-right' style='padding: 0px 4px 0px 2px; color: white;'><i class='icon-trash icon-white'></i></a>
+	
 					{{ $item->get_text_for_tooltip() }}
 
-					<div style='padding: 20px;'>
+					<div class='text-center'>
 					@if ( $item->type == 'arrow' && isset($items['lrhand']) && $items['lrhand'][0]->item->type != 'bow' )
 						<span style='font-size: 11px;'>Debes tener equipado un arco para usar flechas</span>
 					@else
-						<a href='{{ URL::to('authenticated/manipulateItem/' . $characterItem->id) }}' class='btn btn-primary pull-left'>
+						<a href='{{ URL::to('authenticated/manipulateItem/' . $characterItem->id) }}'>
 							@if ( $item->type == 'potion' )
 								Usar
 							@else
@@ -310,8 +315,6 @@
 							@endif
 						</a>
 					@endif
-
-					<a href='{{ URL::to('authenticated/destroyItem/' . $characterItem->id) }}' class='btn btn-danger pull-right'>Destruir</a>
 					</div>">
 					<div class="inventory-item-amount" data-toggle="tooltip" data-placement="top" data-original-title="Cantidad">{{ $characterItem->count }}</div>
 				@endif

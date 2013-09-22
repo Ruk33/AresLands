@@ -65,6 +65,7 @@ Autoloader::map(array(
 	/*
 	 *	Registramos las misiones
 	 */
+	'Quest_Template_Fight_Against_Monster' => path('app').'libraries/quest_template_fight_against_monster.php',
 	'Quest_Starting' => path('app').'libraries/quest_starting.php',
 	'Quest_AyudaATuPueblo' => path('app').'libraries/quest_ayudaatupueblo.php',
 	'Quest_LasMinasEstanBajoAtaque' => path('app').'libraries/quest_lasminasestanbajoataque.php',
@@ -201,3 +202,5 @@ if ( ! Request::cli() and Config::get('session.driver') !== '')
 {
 	Session::load();
 }
+
+Laravel\Database\Eloquent\Pivot::$timestamps = false;

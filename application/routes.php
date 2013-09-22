@@ -13,6 +13,7 @@ Route::controller('Home');
 Route::controller('Api');
 Route::controller('Chat');
 Route::controller('Cron');
+Route::controller('Admin');
 
 
 /*
@@ -37,7 +38,7 @@ Event::listen('npcTalk', function(Character $character, Npc $npc)
 	 *	No nos olvidamos de trabajar con los
 	 *	triggers que tengan de evento 'npcTalk'
 	 */
-	$characterTriggers = $character->triggers()->where('event', '=', 'npcTalk')->select(array('class_name'))->get();
+	$characterTriggers = $character->triggers()->where('event', '=', 'npcTalk')->select(array('id', 'class_name'))->get();
 	$className = null;
 
 	foreach ($characterTriggers as $characterTrigger) {
@@ -51,11 +52,13 @@ Event::listen('npcTalk', function(Character $character, Npc $npc)
 
 Event::listen('acceptQuest', function(Character $character, Quest $quest)
 {
+	ActivityBar::add($character, 1);
+	
 	/*
 	 *	No nos olvidamos de trabajar con los
 	 *	triggers que tengan de evento 'acceptQuest'
 	 */
-	$characterTriggers = $character->triggers()->where('event', '=', 'acceptQuest')->select(array('class_name'))->get();
+	$characterTriggers = $character->triggers()->where('event', '=', 'acceptQuest')->select(array('id', 'class_name'))->get();
 	$className = null;
 
 	foreach ($characterTriggers as $characterTrigger) {
@@ -129,7 +132,7 @@ Event::listen('unequipItem', function(CharacterItem $characterItem)
 				 *	No nos olvidamos de trabajar con los
 				 *	triggers que tengan de evento 'equipItem'
 				 */
-				$characterTriggers = $character->triggers()->where('event', '=', 'unequipItem')->select(array('class_name'))->get();
+				$characterTriggers = $character->triggers()->where('event', '=', 'unequipItem')->select(array('id', 'class_name'))->get();
 				$className = null;
 
 				foreach ($characterTriggers as $characterTrigger) {
@@ -158,7 +161,7 @@ Event::listen('battle', function($character_one, $character_two)
 		 *	No nos olvidamos de trabajar con los
 		 *	triggers que tengan de evento 'battle'
 		 */
-		$characterTriggers = $character->triggers()->where('event', '=', 'battle')->select(array('class_name'))->get();
+		$characterTriggers = $character->triggers()->where('event', '=', 'battle')->select(array('id', 'class_name'))->get();
 		$className = null;
 
 		foreach ($characterTriggers as $characterTrigger) {
@@ -256,12 +259,12 @@ Event::listen('equipItem', function(CharacterItem $characterItem, $amount = 1)
 				 *	No nos olvidamos de trabajar con los
 				 *	triggers que tengan de evento 'equipItem'
 				 */
-				$characterTriggers = $character->triggers()->where('event', '=', 'equipItem')->select(array('class_name'))->get();
+				$characterTriggers = $character->triggers()->where('event', '=', 'equipItem')->select(array('id', 'class_name'))->get();
 				$className = null;
 
 				foreach ($characterTriggers as $characterTrigger) {
 					$className = $characterTrigger->class_name;
-					if ( $className::onEquipItem($item) )
+					if ( $className::onEquipItem($character, $item) )
 					{
 						$characterTrigger->delete();
 					}
@@ -279,7 +282,7 @@ Event::listen('pveBattle', function(Character $character, Npc $monster, $winner)
 		 *	No nos olvidamos de trabajar con los
 		 *	triggers que tengan de evento 'equipItem'
 		 */
-		$characterTriggers = $character->triggers()->where('event', '=', 'pveBattle')->select(array('class_name'))->get();
+		$characterTriggers = $character->triggers()->where('event', '=', 'pveBattle')->select(array('id', 'class_name'))->get();
 		$className = null;
 
 		foreach ($characterTriggers as $characterTrigger) {
@@ -294,7 +297,7 @@ Event::listen('pveBattle', function(Character $character, Npc $monster, $winner)
 		{
 			if ( $winner->id == $character->id )
 			{
-				$characterTriggers = $character->triggers()->where('event', '=', 'pveBattleWin')->select(array('class_name'))->get();
+				$characterTriggers = $character->triggers()->where('event', '=', 'pveBattleWin')->select(array('id', 'class_name'))->get();
 				$className = null;
 
 				foreach ($characterTriggers as $characterTrigger) {
@@ -365,19 +368,6 @@ Route::filter('before', function() {
 			{
 				$character->last_activity_time = $time;
 				$character->save();
-			}
-
-			/*
-			 *	Verificamos que tenga barra de actividad
-			 */
-			$activityBar = $character->activity_bar()->count();
-
-			if ( $activityBar == 0 )
-			{
-				$activityBar = new ActivityBar();
-				$activityBar->character_id = $character->id;
-				$activityBar->filled_amount = 0;
-				$activityBar->save();
 			}
 
 			/*
@@ -480,6 +470,17 @@ Route::filter('auth', function($redirectTo = 'home/index')
 	if ( Auth::guest() ) 
 	{
 		return Redirect::to($redirectTo);
+	}
+});
+
+/*
+ *	hard-coded, solo para salir del paso
+ */
+Route::filter('admin', function()
+{
+	if ( Auth::check() && Auth::user()->name != 'Ruke' )
+	{
+		return Redirect::to('home/index');
 	}
 });
 

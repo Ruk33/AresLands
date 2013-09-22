@@ -88,27 +88,23 @@
 
 @if ( count($monsters) > 0 )
 <h2>Monstruos</h2>
-<ul class="inline battle-monsters-content">
+<ul class="inline battle-monsters-content" style="margin-left: 20px;">
 	@foreach ( $monsters as $monster )
-	<li style="width: 230px; vertical-align: top; margin-bottom: 25px;">
+	<li class="text-center" style="width: 150px; vertical-align: top; margin-bottom: 25px;">
 		@if ( $monster->level - $character->level > 10 )
-		<h4 style="color: #F52700; text-align: center;">
+		<h4 style="color: #F52700;">
 		@elseif ( $monster->level - $character->level > 5 )
-		<h4 style="color: orange; text-align: center;">
+		<h4 style="color: orange;">
 		@else
-		<h4 style="color: white; text-align: center;">
+		<h4 style="color: white;">
 		@endif
 		{{ $monster->name }}</h4>
 
-		@if ( file_exists('{{ URL::base() }}/img/npcs/{{ $monster->id }}.png') )
-		<img src="{{ URL::base() }}/img/npcs/{{ $monster->id }}.png" alt="" width="230px" height="400px">
-		@else
-		<img src="{{ URL::base() }}/img/npcs/monster-unknown.png" alt="" width="230px" height="400px">
-		@endif
+		<img src="{{ URL::base() }}/img/npcs/{{ $monster->id }}.jpg" alt="" width="128px" height="128px">
 
 		<p>{{ $monster->dialog }}</p>
 
-		<center><a href="{{ URL::to('authenticated/toBattleMonster/' . $monster->id) }}" class="btn btn-warning" style="color: white;">Atacar</a></center>
+		<a href="{{ URL::to('authenticated/toBattleMonster/' . $monster->id) }}" class="btn btn-warning" style="color: white;">Atacar</a>
 	</li>
 	@endforeach
 </ul>

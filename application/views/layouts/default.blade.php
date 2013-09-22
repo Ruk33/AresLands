@@ -15,18 +15,34 @@
 		<!--<link rel="stylesheet" href="{{ URL::base() }}/css/main.min.css">-->
 		<link rel="stylesheet" href="{{ URL::base() }}/css/main.css">
 
-		<!--<script src="{{ URL::base() }}/js/vendor/ui-bootstrap-custom-0.4.0.min.js"></script>-->
-	
-		<script src="{{ URL::base() }}/js/vendor/jquery-1.9.1.min.js"></script>
-		<script src="{{ URL::base() }}/js/vendor/bootstrap.min.js"></script>
-		
+		@if ( Request::env() == 'local' )
+			<script src="{{ URL::base() }}/js/vendor/jquery-1.9.1.min.js"></script>
+			<script src="{{ URL::base() }}/js/vendor/bootstrap.min.js"></script>
+			<script src="{{ URL::base() }}/js/vendor/angular.min.js"></script>			
+			
+			<script src="{{ URL::base() }}/js/app.js"></script>
+			
+			<script src="{{ URL::base() }}/js/configuration.js"></script>
+			<script src="{{ URL::base() }}/js/services.js"></script>
+			<script src="{{ URL::base() }}/js/controllers.js"></script>
+			<script src="{{ URL::base() }}/js/filters.js"></script>
+			<script src="{{ URL::base() }}/js/directives.js"></script>
+		@else
+			<script src="{{ URL::base() }}/js/vendor.min.js"></script>
+			<script src="{{ URL::base() }}/js/app.min.js"></script>
+		@endif
 	</head>
+	<?php flush(); ?>
 	<body ng-init="basePath='{{ URL::base() }}/'">
 		<!--[if lt IE 7]>
 			<p class="chromeframe">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> or <a href="http://www.google.com/chromeframe/?redirect=true">activate Google Chrome Frame</a> to improve your experience.</p>
 		<![endif]-->
 
 		@if ( Session::has('modalMessage') )
+			<?php 
+			$modalMessage = Session::get('modalMessage');
+			Session::forget('modalMessage');
+			?>
 			<div id="modalMessage" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
 				<div class="modal-body">
 					<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
@@ -34,7 +50,7 @@
 						<i class="button-icon check"></i>
 						<span class="button-content" style="color: orange;">
 							<?php
-							switch ( Session::get('modalMessage') )
+							switch ( $modalMessage )
 							{
 								case 'activityBar':
 									echo '¡Completaste la barra de actividad!';
@@ -49,7 +65,7 @@
 					</span>
 					<p style="margin-top: 20px; margin-left: 120px;">
 						<?php
-						switch ( Session::get('modalMessage') )
+						switch ( $modalMessage )
 						{
 							case 'activityBar':
 								echo '¡Bien hecho!, haz completado la barra de actividades. Revisa tus mensajes para conocer tus <b>recompensas</b>.';
@@ -67,19 +83,10 @@
 			<script>
 				$('#modalMessage').modal();
 			</script>
-
-			<?php Session::forget('modalMessage'); ?>
 		@endif
 
 		<div id="wrap">
 			<div class="container">
-				@if ( Auth::check() && Auth::user()->name == 'Ruke' )
-					<div class="dark-box pull-left">
-						<b>Usuarios conectados:</b> 
-						{{ Character::where('last_activity_time', '>', time() - 300)->count() }}
-					</div>
-				@endif
-
 				<a href="{{ URL::base() }}"><div class="logo"></div></a>
 				<div class="row-fluid col-wrap">
 					<div class="span2 menu col" style="width: 176px; ">
@@ -219,32 +226,6 @@
 				</div>
 			</div>
 		@endif
-
-		<script src="{{ URL::base() }}/js/vendor/angular.min.js"></script>
-
-		<script src="{{ URL::base() }}/js/app.js"></script>
-			
-		<script src="{{ URL::base() }}/js/configuration.js"></script>
-		<script src="{{ URL::base() }}/js/services.js"></script>
-		<script src="{{ URL::base() }}/js/controllers.js"></script>
-		<script src="{{ URL::base() }}/js/filters.js"></script>
-		<script src="{{ URL::base() }}/js/directives.js"></script>
-	
-		<?php
-		/*
-		@if ( Request::env() == 'local' )
-			<script src="{{ URL::base() }}/js/app.js"></script>
-			
-			<script src="{{ URL::base() }}/js/configuration.js"></script>
-			<script src="{{ URL::base() }}/js/services.js"></script>
-			<script src="{{ URL::base() }}/js/controllers.js"></script>
-			<script src="{{ URL::base() }}/js/filters.js"></script>
-			<script src="{{ URL::base() }}/js/directives.js"></script>
-		@else
-			<script src="{{ URL::base() }}/js/app.min.js"></script>
-		@endif
-		*/
-		?>
 
 		<script src="{{ URL::base() }}/js/libs/jquery.countdown.min.js"></script>
 

@@ -7,16 +7,25 @@ class Quest extends Base_Model
 	public static $table = 'quests';
 	public static $key = 'id';
 
+	/**
+	 *	@deprecated
+	 */
 	public function get_data()
 	{
 		return unserialize($this->get_attribute('data'));
 	}
 
+	/**
+	 *	@deprecated
+	 */
 	public function set_data($data)
 	{
 		$this->set_attribute('data', serialize($data));
 	}
 
+	/**
+	 *	@deprecated
+	 */
 	private function get_value_from_data($valueName)
 	{
 		$data = $this->data;
@@ -30,6 +39,9 @@ class Quest extends Base_Model
 		return $value;
 	}
 
+	/**
+	 *	@deprecated
+	 */
 	public function get_triggers_array()
 	{
 		return $this->get_value_from_data('triggers');
@@ -40,6 +52,7 @@ class Quest extends Base_Model
 	 *	las recompensas
 	 *
 	 *	@return <array>
+	 *	@deprecated
 	 */
 	public function get_rewards_array()
 	{
@@ -51,6 +64,7 @@ class Quest extends Base_Model
 	 *	
 	 *	@param <string> $valueName
 	 *	@param <array> $value
+	 *	@deprecated
 	 */
 	private function add_value_to_data($valueName, $value)
 	{
@@ -84,6 +98,7 @@ class Quest extends Base_Model
 	 *
 	 *	@param <array> $rewards
 	 *	@return <bool>
+	 *	@deprecated
 	 */
 	public function add_rewards($rewards)
 	{
@@ -107,6 +122,7 @@ class Quest extends Base_Model
 	 *	momento de aceptar la quest
 	 *	
 	 *	@param <array> $triggers
+	 *	@deprecated
 	 */
 	public function add_triggers($triggers)
 	{
@@ -119,38 +135,39 @@ class Quest extends Base_Model
 	 *
 	 *	@return <string>
 	 */
-	public function get_reward_for_view()
+	public function get_rewards_for_view()
 	{
-		$rewards = $this->get_rewards_array();
+		$rewards = $this->rewards;
 		$formatedString = '';
 
 		foreach ( $rewards as $reward )
 		{
-			if ( isset($reward['text_for_view']) )
+			switch ( $reward->item_id )
 			{
-				$text = $reward['text_for_view'];
+				case Config::get('game.coin_id'):
+					$text = '<img src="' . URL::base() . '/img/copper.gif" width="14px" height="15px" />';
+					$text = '<span data-toggle="tooltip" data-original-title="Cantidad: ' . $reward->amount . '">' . $text . '</span>';
+					break;
+				
+				case Config::get('game.xp_item_id'):
+					$text = '<img src="' . URL::base() . '/img/xp.png" width="22px" height="18px" />';
+					$text = '<span data-toggle="tooltip" data-original-title="Cantidad: ' . $reward->amount . '">' . $text . '</span>';
+					break;
 
-				if ( $reward['item_id'] != Config::get('game.coin_id') )
-				{
-					$item = Item::find($reward['item_id']);
+				default:
+					$text = '<img src="' . URL::base() . '/img/icons/items/'. $reward->item_id .'.png" />';
+					$item = $reward->item;
 
 					if ( $item )
 					{
-						$text = '<span data-toggle="tooltip" data-original-title="' . $item->get_text_for_tooltip() . '<p>Cantidad: ' . $reward['amount'] . '</p>">' . $text . '</span>';
-					}	
-				}
-				else
-				{
-					$text = '<span data-toggle="tooltip" data-original-title="Cantidad: ' . $reward['amount'] . '">' . $text . '</span>';
-				}
-				
-				$formatedString .= '<li><div class="quest-reward-item">' . $text . '</div></li>';
+						$text = '<span data-toggle="tooltip" data-original-title="' . $item->get_text_for_tooltip() . '<p>Cantidad: ' . $reward->amount . '</p>">' . $text . '</span>';
+					}
+					break;
 			}
+
+			$formatedString .= '<li style="vertical-align: top;"><div class="quest-reward-item">' . $text . '</div></li>';
 		}
 
-		/*
-		 *	Removemos el último " | "
-		 */
 		return '<ul class="inline">' . $formatedString . '</ul>';
 	}
 
@@ -168,7 +185,7 @@ class Quest extends Base_Model
 		 *	Obtenemos todas las recompensas
 		 *	de la misión
 		 */
-		$rewards = $this->get_rewards_array();
+		$rewards = $this->rewards;
 
 		$characterItem = null;
 
@@ -177,15 +194,15 @@ class Quest extends Base_Model
 			/*
 			 *	Nos fijamos primero si no es experiencia
 			 */
-			if ( $reward['item_id'] == Config::get('game.xp_item_id') )
+			if ( $reward->item_id == Config::get('game.xp_item_id') )
 			{
-				$character->xp += $reward['amount'];
+				$character->xp += $reward->amount;
 				$character->save();
 
 				continue;
 			}
 
-			$item = Item::where('id', '=', $reward['item_id'])->select(array('id', 'stackable'))->first();
+			$item = $reward->item()->select(array('id', 'stackable'))->first();
 
 			if ( $item )
 			{
@@ -198,7 +215,7 @@ class Quest extends Base_Model
 					 *	ya tiene uno de los items
 					 *	que le vamos a recompensar
 					 */
-					$characterItem = $character->items()->where('item_id', '=', $reward['item_id'])->select(array('id', 'count', 'owner_id'))->first();
+					$characterItem = $character->items()->where('item_id', '=', $reward->item_id)->select(array('id', 'count', 'owner_id'))->first();
 				}
 
 				if ( ! $characterItem )
@@ -210,8 +227,8 @@ class Quest extends Base_Model
 						$characterItem = new CharacterItem();
 
 						$characterItem->owner_id = $character->id;
-						$characterItem->item_id = $reward['item_id'];
-						$characterItem->count = $reward['amount'];
+						$characterItem->item_id = $reward->item_id;
+						$characterItem->count = $reward->amount;
 						$characterItem->location = 'inventory';
 						$characterItem->slot = $emptySlot;
 					}
@@ -222,7 +239,7 @@ class Quest extends Base_Model
 				}
 				else
 				{
-					$characterItem->count += $reward['amount'];
+					$characterItem->count += $reward->amount;
 				}
 
 				$characterItem->save();
@@ -230,20 +247,58 @@ class Quest extends Base_Model
 		}
 	}
 
-	/*
-	 *	Aceptamos la misión para
-	 *	el personaje que esté logueado
+	/**
+	 *	Aceptamos la misión para un personaje
+	 *
+	 *	Se devuelve false en caso de que
+	 *	no se haya podido aceptar.
+	 *
+	 *	@return <bool>
 	 */
-	public function accept()
+	public function accept(Character $character)
 	{
-		$character = Character::get_character_of_logged_user(array('id', 'level', 'xp', 'clan_id'));
+		$characterQuest = null;
 
-		ActivityBar::add($character, 1);
+		if ( $this->complete_required )
+		{
+			if ( ! $character->has_quest_completed($this->complete_required) )
+			{
+				return false;
+			}
+		}
+
+		// Nos fijamos si ya no tiene pedida la mision
+		// y no la ha completado
+		if ( $character->has_unfinished_quest($this) )
+		{
+			return false;
+		}
+
+		if ( $character->has_quest_completed($this) )
+		{
+			if ( $this->repeatable )
+			{
+				$characterQuest = $character->quests()->where('quest_id', '=', $this->id)->first();
+
+				// Verificamos si ha pasado el tiempo requerido
+				// para volver a pedir nuevamente la misión
+				if ( $this->repeatable_after > time() - $characterQuest->time )
+				{
+					return false;
+				}
+			}
+			else
+			{
+				// Si no es repetible, y el personaje
+				// ya la ha completado...
+				return false;
+			}
+		}
 
 		/*
 		 *	Registramos los triggers
 		 */
-		$triggers = $this->get_triggers_array();
+		$triggers = $this->triggers;
 		$characterTrigger = null;
 
 		foreach ( $triggers as $trigger )
@@ -251,7 +306,7 @@ class Quest extends Base_Model
 			$characterTrigger = new CharacterTrigger();
 
 			$characterTrigger->character_id = $character->id;
-			$characterTrigger->event = $trigger;
+			$characterTrigger->event = $trigger->event;
 			$characterTrigger->class_name = $this->class_name;
 
 			$characterTrigger->save();
@@ -261,12 +316,39 @@ class Quest extends Base_Model
 		 *	Creamos el progreso
 		 *	para el personaje
 		 */
-		$characterQuest = new CharacterQuest();
+		if ( ! $characterQuest )
+		{
+			$characterQuest = new CharacterQuest();
 
-		$characterQuest->character_id = $character->id;
-		$characterQuest->quest_id = $this->id;
+			$characterQuest->character_id = $character->id;
+			$characterQuest->quest_id = $this->id;
+		}
+
 		$characterQuest->progress = 'started';
-
 		$characterQuest->save();
+
+		/*
+		 *	Disparamos el evento de aceptar
+		 *	misiones
+		 */
+		Event::fire('acceptQuest', array($character, $this));
+
+		return true;
+	}
+
+	public function npcs()
+	{
+		//return $this->has_many('NpcQuest', 'npc_id');
+		return $this->has_many_and_belongs_to('Npc', 'npc_quests');
+	}
+
+	public function triggers()
+	{
+		return $this->has_many('QuestTrigger', 'quest_id');
+	}
+
+	public function rewards()
+	{
+		return $this->has_many('QuestReward', 'quest_id');
 	}
 }

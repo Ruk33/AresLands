@@ -38,6 +38,88 @@ class Character extends Base_Model
 		return Character::where('user_id', '=', $user->id)->count() != 0;
 	}
 
+	/**
+	 *	Verificamos si el personaje tiene
+	 *	una quest completada
+	 *
+	 *	@param $questId <integer>
+	 *	@return <bool>
+	 */
+	public function has_quest_completed(Quest $quest)
+	{
+		$characterQuest = $this->quests()->where('quest_id', '=', $quest->id)->first();
+
+		if ( ! $characterQuest )
+		{
+			return false;
+		}
+
+		return $characterQuest->progress == 'finished';
+	}
+
+	/**
+	 *	Nos fijamos si el personaje tiene una misión.
+	 *	
+	 *	@param <mixed> $quest Puede ser directamente el id o una instancia de Quest.
+	 *	@return <bool> false si no tiene la mision (ya sea aceptada, completa, etc.) true de lo contrario.
+	 */
+	public function has_quest($quest)
+	{
+		$questId;
+
+		if ( $quest instanceof Quest )
+		{
+			$questId = $quest->id;
+		}
+		else
+		{
+			$questId = (int) $quest;
+		}
+
+		return $this->quests()->where('quest_id', '=', $questId)->count() > 0;
+	}
+
+	/**
+	 *	Nos fijamos si el personaje tiene
+	 *	una mision actualmente pedida pero que
+	 *	no la ha finalizado (es decir, su progreso
+	 *	no es finished)
+	 *
+	 *	@param <mixed> $quest
+	 *	@return <bool> true en caso de tener mision sin completar, false de lo contrario
+	 */
+	public function has_unfinished_quest($quest)
+	{
+		$questId;
+
+		if ( $quest instanceof Quest )
+		{
+			$questId = $quest->id;
+		}
+		else
+		{
+			$questId = (int) $quest;
+		}
+
+		return $this
+		->quests()
+		->where('quest_id', '=', $questId)
+		->where('progress', '<>', 'finished')
+		->count() > 0;
+	}
+
+	public function get_progress_for_view(Quest $quest)
+	{
+		$characterProgress = $this->quests()->where('quest_id', '=', $quest->id)->first();
+
+		if ( $characterProgress )
+		{
+			return $characterProgress->get_progress_for_view();
+		}
+
+		return null;
+	}
+
 	public function leave_clan()
 	{
 		$clan = $this->clan;
@@ -333,10 +415,10 @@ class Character extends Base_Model
 		 *	Daños
 		 */
 		$fighter_one['min_damage'] = ( $fighter_one['is_warrior'] ) ? $fighter_one['stats']['stat_strength'] : $fighter_one['stats']['stat_magic'];
-		$fighter_one['min_damage'] *= 0.75;
+		$fighter_one['min_damage'] *= 0.25;
 
 		$fighter_one['max_damage'] = ( $fighter_one['is_warrior'] ) ? $fighter_one['stats']['stat_strength'] : $fighter_one['stats']['stat_magic'];
-		$fighter_one['max_damage'] *= 1.25;
+		$fighter_one['max_damage'] *= 0.75;
 
 		/*
 		 *	Defensas
@@ -376,10 +458,10 @@ class Character extends Base_Model
 		 *	Daños
 		 */
 		$fighter_two['min_damage'] = ( $fighter_two['is_warrior'] ) ? $fighter_two['stats']['stat_strength'] : $fighter_two['stats']['stat_magic'];
-		$fighter_two['min_damage'] *= 0.75;
+		$fighter_two['min_damage'] *= 0.25;
 
 		$fighter_two['max_damage'] = ( $fighter_two['is_warrior'] ) ? $fighter_two['stats']['stat_strength'] : $fighter_two['stats']['stat_magic'];
-		$fighter_two['max_damage'] *= 1.25;
+		$fighter_two['max_damage'] *= 0.75;
 
 		/*
 		 *	Defensas
@@ -438,11 +520,11 @@ class Character extends Base_Model
 
 			if ( $attacker['is_warrior'] && mt_rand(0, 100) <= $attacker['stats']['stat_luck'] * 0.35 )
 			{
-				$damage = $attacker['average_damage'] * 1.75;
+				$damage = $attacker['average_damage'] * 1.50;
 			}
 			elseif ( ! $attacker['is_warrior'] && mt_rand(0, 100) <= $attacker['stats']['stat_luck'] * 0.25 )
 			{
-				$damage = $attacker['average_damage'] * 2.75;
+				$damage = $attacker['average_damage'] * 2.50;
 			}
 			elseif ( mt_rand(0, 100) <= 10 )
 			{
@@ -948,6 +1030,33 @@ class Character extends Base_Model
 		return $this->items()->select(array('id', 'count'))->where('item_id', '=', Config::get('game.coin_id'))->first();
 	}
 
+	/**
+	 *	Agregamos un objeto al personaje.
+	 *
+	 *	@param <int> $itemId
+	 *	@param <int> $amount
+	 *	@return <bool> false si no se pudo agregar el item
+	 */
+	public function add_item($itemId, $amount = 1)
+	{
+		$slot = $this->empty_slot();
+
+		if ( $slot ) // verificamos que haya espacio
+		{
+			$item = new CharacterItem();
+
+			$item->owner_id = $this->id;
+			$item->item_id = (int) $itemId;
+			$item->count = (int) $amount;
+			$item->location = 'inventory';
+			$item->slot = $slot;
+
+			return $item->save();
+		}
+
+		return false;
+	}
+
 	public function add_coins($amount)
 	{
 		$coins = $this->get_coins();
@@ -1131,6 +1240,16 @@ class Character extends Base_Model
 	public function can_enter_in_clan()
 	{
 		return $this->clan_id == 0;
+	}
+
+	public function started_quests()
+	{
+		return $this->quests()->where('progress', '=', 'started');
+	}
+
+	public function reward_quests()
+	{
+		return $this->quests()->where('progress', '=', 'reward');
 	}
 
 	public function zone()

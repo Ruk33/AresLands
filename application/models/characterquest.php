@@ -9,6 +9,11 @@ class CharacterQuest extends Base_Model
 
 	public function get_data()
 	{
+		if ( is_array($this->get_attribute('data')) )
+		{
+			return $this->get_attribute('data');
+		}
+
 		return unserialize($this->get_attribute('data'));
 	}
 
@@ -19,7 +24,15 @@ class CharacterQuest extends Base_Model
 
 	public function get_progress_for_view()
 	{
-		return $this->data['progress_for_view'];
+		$progresses = $this->data['progress_for_view'];
+		$stringToView = "";
+
+		foreach ( $progresses as $progress )
+		{
+			$stringToView .= "<li>$progress</li>";
+		}
+
+		return "<ul>$stringToView</ul>";
 	}
 
 	public function quest()

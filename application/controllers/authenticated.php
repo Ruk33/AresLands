@@ -104,7 +104,6 @@ class Authenticated_Controller extends Base_Controller
 		$quest->save();
 	}
 	*/
-
 	public function get_index()
 	{
 		$character = Character::get_character_of_logged_user(array(
@@ -1467,7 +1466,7 @@ class Authenticated_Controller extends Base_Controller
 
 	public function get_rewardFromQuest($questId = false)
 	{
-		$quest = ( $questId ) ? Quest::select(array('id'))->find((int) $questId) : false;
+		$quest = ( $questId ) ? Quest::select(array('id', 'repeatable', 'repeatable_after'))->find((int) $questId) : false;
 
 		if ( $quest )
 		{
@@ -1487,12 +1486,18 @@ class Authenticated_Controller extends Base_Controller
 				/*
 				 *	Recompensamos
 				 */
-				$characterQuest->quest()->select(array('data'))->first()->give_reward();
+				$characterQuest->quest->give_reward();
 
 				/*
 				 *	Y no nos olvidamos de guardar
 				 *	el progreso a finalizado
 				 */
+				$characterQuest->finished_time = time();
+
+				if ( $quest->repeatable )
+				{
+					$characterQuest->repeatable_at = time() + $quest->repeatable_after;
+				}
 				$characterQuest->progress = 'finished';
 
 				$characterQuest->save();
@@ -1508,28 +1513,7 @@ class Authenticated_Controller extends Base_Controller
 
 		if ( $quest )
 		{
-			$character = Character::get_character_of_logged_user();
-
-			/*
-			 *	Nos fijamos si el personaje
-			 *	ya tiene algún progreso con esta quest
-			 */
-			$characterQuest = $character->quests()->select(array('id'))->where('quest_id', '=', $quest->id)->first();
-
-			/*
-			 *	Si no lo tiene, entonces lo creamos
-			 *	y aceptamos la quest exitosamente
-			 */
-			if ( ! $characterQuest )
-			{
-				$quest->accept();
-
-				/*
-				 *	Disparamos el evento de aceptar
-				 *	misiones
-				 */
-				Event::fire('acceptQuest', array($character, $quest));
-			}
+			$quest->accept(Character::get_character_of_logged_user());
 		}
 
 		return Redirect::to('authenticated/index');
@@ -1589,12 +1573,15 @@ class Authenticated_Controller extends Base_Controller
 			}
 		}
 
-		$lands = Zone::where('type', '=', 'land')->select(array('id', 'name', 'description', 'min_level'))->get();
+		$zones = Zone::where('type', '=', 'city')->select(array('id', 'name', 'description', 'min_level'))->get();
+
+		$exploringTime = $character->exploring_times()->lists('time', 'zone_id');
 
 		$this->layout->title = 'Viajar';
 		$this->layout->content = View::make('authenticated.travel')
 		->with('character', $character)
-		->with('lands', $lands)
+		->with('zones', $zones)
+		->with('exploringTime', $exploringTime)
 		->with('error', $error);
 	}
 
@@ -1609,7 +1596,7 @@ class Authenticated_Controller extends Base_Controller
 			return Redirect::to('authenticated/index');
 		}
 
-		$character = Character::get_character_of_logged_user(array('id', 'zone_id', 'level'));
+		$character = Character::get_character_of_logged_user(array('id', 'zone_id', 'level', 'race', 'gender'));
 
 		/*
 		 *	Traemos al npc que tenga el nombre
@@ -1632,65 +1619,38 @@ class Authenticated_Controller extends Base_Controller
 		}
 
 		/*
-		 *	Obtenemos todas las misiones del npc
-		 *	que estén acorde con el nivel del personaje
+		 *	Disparamos el evento de hablar
 		 */
-		$quests = $npc->quests()->select(array('id', 'name', 'description', 'data'))->where('min_level', '<=', $character->level)->where('max_level', '>=', $character->level)->get();
-		
+		Event::fire('npcTalk', array($character, $npc));
+
+		/*
+		 *	Obtenemos todas las misiones del npc
+		 *	que el personaje pueda realmente realizar
+		 */
+		$quests = $npc->available_quests_of($character)->get();
+
+		/*
+		 *	Obtenemos las misiones que el personaje
+		 *	ha finalizado y sean repetibles
+		 */
+		$repeatableQuests = $npc->repeatable_quests_of($character)->get();
+
 		/*
 		 *	En este array vamos a guardar
 		 *	todas las misiones que están iniciadas
 		 */
-		$startedQuests = array();
+		$startedQuests = $npc->started_quests_of($character)->get();
 
 		/*
 		 *	En este array vamos a guardar
 		 *	las misiones que están hechas
 		 *	pero aún necesitan pedir la recompensa
 		 */
-		$rewardQuests = array();
-
-		$characterQuest = null;
+		$rewardQuests = $npc->reward_quests_of($character)->get();
 
 		/*
-		 *	Ahora las filtramos para que no
-		 *	aparezcan aquellas misiones que el
-		 *	jugador ya haya aceptado o finalizado
+		 *	Monedas del personaje
 		 */
-		for ( $i = 0, $max = count($quests); $i < $max; $i++ )
-		{
-			/*
-			 *	Vemos de obtener el progreso
-			 *	de la misión
-			 */
-			$characterQuest = $character->quests()->where('quest_id', '=', $quests[$i]->id)->first();
-
-			/*
-			 *	Verificamos si el resultado
-			 *	de la query existe y si el mismo
-			 *	aparece como finalizado (finished)
-			 */
-			if ( $characterQuest )
-			{
-				switch ( $characterQuest->progress )
-				{
-					case 'started':
-						$startedQuests[] = array('quest' => $quests[$i], 'characterQuest' => $characterQuest);
-						unset($quests[$i]);
-						break;
-
-					case 'reward':
-						$rewardQuests[] = $quests[$i];
-						unset($quests[$i]);
-						break;
-
-					case 'finished':
-						unset($quests[$i]);
-						break;
-				}
-			}
-		}
-
 		$characterCoins = $character->get_coins();
 
 		/*
@@ -1709,11 +1669,6 @@ class Authenticated_Controller extends Base_Controller
 			'items.time_to_appear'
 		));
 
-		/*
-		 *	Disparamos el evento de hablar
-		 */
-		Event::fire('npcTalk', array($character, $npc));
-
 		$this->layout->title = $npc->name;
 		$this->layout->content = View::make('authenticated.npc')
 		->with('npc', $npc)
@@ -1721,6 +1676,7 @@ class Authenticated_Controller extends Base_Controller
 		->with('merchandises', $merchandises)
 		->with('rewardQuests', $rewardQuests)
 		->with('startedQuests', $startedQuests)
+		->with('repeatableQuests', $repeatableQuests)
 		->with('quests', $quests)
 		->with('character', $character);
 	}

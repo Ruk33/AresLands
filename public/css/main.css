@@ -57,8 +57,24 @@ body {
 	font-size: 15px;
 }
 
+.popover {
+	background-color: #090909;
+	border: 1px solid #333;
+	border-top: 1px solid #5A5A5A;
+	color: white;
+}
+
+.popover-title {
+	background-color: #090909;
+	border: none;
+}
+
+.popover .arrow {
+	display: none;
+}
+
 .tooltip {
-	position: fixed;
+	/*position: fixed; arregla el problema del overflow, pero genera otros u.u */
 }
 
 /* thanks to http://www.karlhorky.com/2012/06/cross-browser-image-grayscale-with-css.html */

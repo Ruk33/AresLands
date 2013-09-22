@@ -1,58 +1,62 @@
 <?php
 
-class Quest_AyudaATuPueblo
+class Quest_AyudaATuPueblo extends Quest_Template_Fight_Against_Monster
 {
-	const QUEST_ID = 2;
-	public static $monstersId = array(9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20);
+	protected static $questId = 28;
+
+	const MONSTER_AMOUNT = 5;
+
+	const PHASE_BATTLE_MONSTER = 0;
 
 	public static function onAcceptQuest(Character $character, Quest $quest)
 	{
-		if ( $quest->id == self::QUEST_ID )
+		if ( $quest->id == self::$questId )
 		{
-			$characterQuest = $character->quests()->where('quest_id', '=', self::QUEST_ID)->first();
+			$characterQuest = self::get_character_quest($character);
 
-			$data = $characterQuest->data;
+			if ( $characterQuest )
+			{
+				self::update_progress_for_view($characterQuest, self::PHASE_BATTLE_MONSTER, '0/' . self::MONSTER_AMOUNT . ' - Mounstruo de cualquier ciudad');
+				self::add_phase($characterQuest, self::PHASE_BATTLE_MONSTER);
 
-			$data['progress_for_view'] = 'Mata 5 monstruos de cualquier ciudad';
+				$characterQuest->save();
 
-			$characterQuest->data = $data;
-			$characterQuest->save();
-
-			return true;
+				return true;
+			}
 		}
+
+		return false;
 	}
 
 	public static function onPveBattleWin(Character $character, Npc $monster)
 	{
-		if ( in_array($monster->id, self::$monstersId) )
+		if ( $character->has_quest(self::$questId) )
 		{
-			$characterQuest = $character->quests()->where('quest_id', '=', self::QUEST_ID)->first();
+			$characterQuest = self::get_character_quest($character);
 
 			if ( $characterQuest )
 			{
-				$data = $characterQuest->data;
+				self::add_count($characterQuest, 0, self::MONSTER_AMOUNT);
 
-				if ( is_array($data) && isset($data['count']) )
+				$counting = self::get_counting($characterQuest, 0);
+
+				self::update_progress_for_view($characterQuest, self::PHASE_BATTLE_MONSTER, $counting . '/' . self::MONSTER_AMOUNT . ' - Mounstruo de cualquier ciudad');
+
+				if ( $counting == self::MONSTER_AMOUNT )
 				{
-					$data['count']++;
+					self::mark_phase_as_completed($characterQuest, self::PHASE_BATTLE_MONSTER);
+					
+					$characterQuest->progress = 'reward';
 
-					if ( $data['count'] == 5 )
-					{
-						$characterQuest->progress = 'reward';
-						$characterQuest->save();
-						return true;
-					}
-				}
-				else
-				{
-					$data['count'] = 1;
+					$characterQuest->save();
+
+					return true;
 				}
 
-				$data['progress_for_view'] = sprintf('Mata %d/5 monstruos de cualquier ciudad.', 5-$data['count']);
-
-				$characterQuest->data = $data;
 				$characterQuest->save();
 			}
 		}
+
+		return false;
 	}
 }

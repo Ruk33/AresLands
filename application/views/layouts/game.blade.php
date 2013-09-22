@@ -13,6 +13,23 @@
 		<link rel="stylesheet" href="{{ URL::base() }}/css/normalize.min.css">
 		<link rel="stylesheet" href="{{ URL::base() }}/css/bootstrap.min.css">
 		<link rel="stylesheet" href="{{ URL::base() }}/css/main.css">
+
+		@if ( Request::env() == 'local' )
+			<script src="{{ URL::base() }}/js/vendor/jquery-1.9.1.min.js"></script>
+			<script src="{{ URL::base() }}/js/vendor/bootstrap.min.js"></script>
+			<script src="{{ URL::base() }}/js/vendor/angular.min.js"></script>			
+			
+			<script src="{{ URL::base() }}/js/app.js"></script>
+			
+			<script src="{{ URL::base() }}/js/configuration.js"></script>
+			<script src="{{ URL::base() }}/js/services.js"></script>
+			<script src="{{ URL::base() }}/js/controllers.js"></script>
+			<script src="{{ URL::base() }}/js/filters.js"></script>
+			<script src="{{ URL::base() }}/js/directives.js"></script>
+		@else
+			<script src="{{ URL::base() }}/js/vendor.min.js"></script>
+			<script src="{{ URL::base() }}/js/app.min.js"></script>
+		@endif
 	</head>
 	<body>
 		<!--[if lt IE 7]>
@@ -45,5 +62,13 @@
 				</div>
 			</div>
 		</div>
+
+		<script>
+			/*
+			 *	Iniciamos los tooltips
+			 */
+			$('[data-toggle="tooltip"]').tooltip({ html: true });
+			$('[data-toggle="popover"]').popover({ html: true });
+		</script>
 	</body>
 </html>

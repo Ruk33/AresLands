@@ -45,44 +45,86 @@ class Item extends Base_Model
 	{
 		$message = "<div style='width: 600px; text-align: left;'>";
 
-		$message .= "<strong>$this->name</strong> (<small>$this->type</small>)";
-		$message .= "<p style='width: 210px;'><em>$this->description</em></p>";
+		$message .= "<img src='" . URL::base() . "/img/icons/items/$this->id.png' class='pull-left' width='32px' height='32px'>";
 
-		$message .= '<ul>';
+		$message .= "<strong style='color: orange;'>$this->name</strong> (<small>$this->type</small>)";
+		$message .= "<p style='color: #FFE000;'>Requiere nivel $this->level</p>";
+		$message .= "<p><small><em>$this->description</em></small></p>";
+
+		$message .= "<ul class='unstyled'>";
+
+		switch ( $this->body_part )
+		{
+			case 'chest':
+				$message .= '<li>Pecho</li>';
+				break;
+
+			case 'legs':
+				$message .= '<li>Piernas</li>';
+				break;
+
+			case 'feet':
+				$message .= '<li>Pies</li>';
+				break;
+
+			case 'head':
+				$message .= '<li>Cabeza</li>';
+				break;
+
+			case 'hands':
+				$message .= '<li>Manos</li>';
+				break;
+
+			case 'lhand':
+				$message .= '<li>Mano izquierda</li>';
+				break;
+
+			case 'rhand':
+				$message .= '<li>Mano derecha</li>';
+				break;
+
+			case 'lrhand':
+				$message .= '<li>Mano izquierda y derecha</li>';
+				break;
+
+			case 'mercenary':
+				$message .= '<li>Mercenario</li>';
+				break;
+		}
 
 		if ( $this->p_defense != 0 )
 		{
-			$message .= "<li><b>Defensa física:</b> $this->p_defense</li>";
+			$message .= "<li>Defensa física: $this->p_defense</li>";
 		}
 
 		if ( $this->m_defense != 0 )
 		{
-			$message .= "<li><b>Defensa mágica:</b> $this->m_defense</li>";
+			$message .= "<li>Defensa mágica: $this->m_defense</li>";
 		}
 
 		if ( $this->stat_life != 0 )
 		{
-			$message .= "<li><b>Vitalidad:</b> $this->stat_life</li>";
+			$message .= "<li>Vitalidad: $this->stat_life</li>";
 		}
 
 		if ( $this->stat_dexterity != 0 )
 		{
-			$message .= "<li><b>Destreza:</b> $this->stat_dexterity</li>";
+			$message .= "<li>Destreza: $this->stat_dexterity</li>";
 		}
 
 		if ( $this->stat_magic != 0 )
 		{
-			$message .= "<li><b>Magia:</b> $this->stat_magic</li>";
+			$message .= "<li>Magia: $this->stat_magic</li>";
 		}
 
 		if ( $this->stat_strength != 0 )
 		{
-			$message .= "<li><b>Fuerza:</b> $this->stat_strength</li>";
+			$message .= "<li>Fuerza: $this->stat_strength</li>";
 		}
 
 		if ( $this->stat_luck != 0 )
 		{
-			$message .= "<li><b>Suerte:</b> $this->stat_luck</li>";
+			$message .= "<li>Suerte: $this->stat_luck</li>";
 		}
 
 		$message .= '</ul>';
