@@ -88,23 +88,20 @@
 
 @if ( count($monsters) > 0 )
 <h2>Monstruos</h2>
-<ul class="inline battle-monsters-content" style="margin-left: 20px;">
+<ul class="inline battle-monsters-content" style="margin-left: -7px;">
 	@foreach ( $monsters as $monster )
-	<li class="text-center" style="width: 150px; vertical-align: top; margin-bottom: 25px;">
+	<li class="text-center clan-member-link" style="width: 30%; vertical-align: top; margin-bottom: 25px;" data-toggle="tooltip" data-original-title="{{ $monster->get_text_for_tooltip() }}">
+		<img src="{{ URL::base() }}/img/icons/npcs/{{ $monster->id }}.png" alt="" width="32px" height="32px" class="monster-image">
+		
+		<a href="{{ URL::to('authenticated/toBattleMonster/' . $monster->id) }}">
 		@if ( $monster->level - $character->level > 10 )
-		<h4 style="color: #F52700;">
+		<strong style="color: #F52700;">
 		@elseif ( $monster->level - $character->level > 5 )
-		<h4 style="color: orange;">
+		<strong style="color: orange;">
 		@else
-		<h4 style="color: white;">
+		<strong style="color: white;">
 		@endif
-		{{ $monster->name }}</h4>
-
-		<img src="{{ URL::base() }}/img/npcs/{{ $monster->id }}.jpg" alt="" width="128px" height="128px">
-
-		<p>{{ $monster->dialog }}</p>
-
-		<a href="{{ URL::to('authenticated/toBattleMonster/' . $monster->id) }}" class="btn btn-warning" style="color: white;">Atacar</a>
+		{{ $monster->name }}</strong></a>
 	</li>
 	@endforeach
 </ul>

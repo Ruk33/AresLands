@@ -261,7 +261,7 @@ class Quest extends Base_Model
 
 		if ( $this->complete_required )
 		{
-			if ( ! $character->has_quest_completed($this->complete_required) )
+			if ( ! $character->has_quest_completed(Quest::find($this->complete_required)) )
 			{
 				return false;
 			}

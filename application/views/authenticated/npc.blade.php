@@ -95,6 +95,7 @@
 				<span class="label label-warning">DIARIA</span>
 			@endif
 			<strong style="line-height: 60px;">{{ $quest->name }}</strong>
+						
 			<div class="pull-right">
 				<small>Recompensa(s)</small>
 				{{ $quest->get_rewards_for_view() }}
@@ -164,7 +165,6 @@
 			{{ Form::close() }}
 		@else
 			<div class="inventory-item">
-				<!--<img src="{{ URL::base() }}/img/icons/items/{{ $merchandise->item_id }}.png" alt="" ng-mouseover="onMouseOver({{ $merchandise->item_id }})" data-toggle="tooltip" data-placement="top" data-original-title="[[ item[{{ $merchandise->item_id }}] ]]<p>Precio: {{ $merchandise->price_copper }}</p>">-->
 				<img src="{{ URL::base() }}/img/icons/items/{{ $merchandise->item_id }}.png" ng-mouseover="onMouseOver({{ $merchandise->item_id }})" dynamic-tooltip="item[{{ $merchandise->item_id }}]" ng-init="price[{{ $merchandise->item_id }}] = {{ $merchandise->price_copper }}" width="80px" height="80px">
 			</div>
 			<div class="btn disabled" style="font-size: 10px;" data-toggle="tooltip" data-title="No tienes suficientes monedas">Comprar</div>

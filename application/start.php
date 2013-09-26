@@ -61,17 +61,33 @@ Laravel\Autoloader::$aliases = $aliases;
 Autoloader::map(array(
 	'Base_Controller' => path('app').'controllers/base.php',
 	'Base_Model' => path('app').'models/base_model.php',
+	
+	'QuestAction' => path('app').'libraries/questaction.php',
+	'QuestActionPve' => path('app').'libraries/questactionpve.php',
+	'QuestActionPveWin' => path('app').'libraries/questactionpvewin.php',
+	'QuestActionNpcTalk' => path('app').'libraries/questactionnpctalk.php',
+	'QuestActionNpcTalkAndGiveItem' => path('app').'libraries/questactionnpctalkandgiveitem.php',
 
 	/*
 	 *	Registramos las misiones
 	 */
-	'Quest_Template_Fight_Against_Monster' => path('app').'libraries/quest_template_fight_against_monster.php',
 	'Quest_Starting' => path('app').'libraries/quest_starting.php',
+	
 	'Quest_AyudaATuPueblo' => path('app').'libraries/quest_ayudaatupueblo.php',
+	'Quest_PlagaDeSerpientes' => path('app').'libraries/quest_plagadeserpientes.php',
+	'Quest_CazadoresImplacables' => path('app').'libraries/quest_cazadoresimplacables.php',
+	'Quest_PlagaDeRatas' => path('app').'libraries/quest_plagaderatas.php',
+	
 	'Quest_LasMinasEstanBajoAtaque' => path('app').'libraries/quest_lasminasestanbajoataque.php',
 	'Quest_CuidadoLaCosecha' => path('app').'libraries/quest_cuidadolacosecha.php',
 	'Quest_LaTribuDeOrcos' => path('app').'libraries/quest_latribudeorcos.php',
 	'Quest_SuenoPerturbado' => path('app').'libraries/quest_suenoperturbado.php',
+	
+	'Quest_VoladoresNocturnos' => path('app').'libraries/quest_voladoresnocturnos.php',
+	'Quest_EnemigoEscondido' => path('app').'libraries/quest_enemigoescondido.php',
+	'Quest_BandidosAlAcecho' => path('app').'libraries/quest_bandidosalacecho.php',
+	
+	/*
 	'Quest_HieloYRoca' => path('app').'libraries/quest_hieloyroca.php',
 	'Quest_NuevosProblemas' => path('app').'libraries/quest_nuevosproblemas.php',
 	'Quest_RecuperarLoPerdido' => path('app').'libraries/quest_recuperarloperdido.php',
@@ -91,6 +107,7 @@ Autoloader::map(array(
 	'Quest_PocionesYPociones' => path('app') . 'libraries/quest_pocionesypociones.php',
 	'Quest_LaVenganzaDelAlquimista' => path('app') . 'libraries/quest_lavenganzadelalquimista.php',
 	'Quest_AsegurarZona' => path('app') . 'libraries/quest_asegurarzona.php',
+	*/
 ));
 
 /*

@@ -1,88 +1,13 @@
 <?php
 
-class Quest_LaTribuDeOrcos
+class Quest_LaTribuDeOrcos extends QuestAction
 {
-	const QUEST_ID = 5;
-	public static $monstersId = array(29, 30, 31, 32);
-
-	public static function onAcceptQuest(Character $character, Quest $quest)
+	protected static $questId = 36;
+	
+	protected function setup()
 	{
-		if ( $quest->id == self::QUEST_ID )
-		{
-			$characterQuest = $character->quests()->where('quest_id', '=', self::QUEST_ID)->first();
-
-			$data = $characterQuest->data;
-
-			$data['progress_for_view'] = 'Mata 3 Orco, 4 Orco Guerrero, 2 Orco Shaman y 1 Orco lider.';
-
-			$characterQuest->data = $data;
-			$characterQuest->save();
-
-			return true;
-		}
-	}
-
-	public static function onPveBattleWin(Character $character, Npc $monster)
-	{
-		if ( ! $character || ! $monster )
-		{
-			return false;
-		}
-
-		if ( in_array($monster->id, self::$monstersId) )
-		{
-			$characterQuest = $character->quests()->where('quest_id', '=', self::QUEST_ID)->first();
-
-			if ( $characterQuest )
-			{
-				$data = $characterQuest->data;
-
-				if ( ! is_array($data) || ! isset($data['count']) )
-				{
-					$data = array();
-					$data['count'] = array(
-						29 => 3,
-						30 => 4,
-						31 => 2,
-						32 => 1
-					);
-				}
-
-				if ( $data['count'][$monster->id] > 0 )
-				{
-					$data['count'][$monster->id]--;
-				}
-
-				$finished = true;
-				foreach ( $data['count'] as $monsterCount )
-				{
-					if ( $monsterCount != 0 )
-					{
-						$finished = false;
-						break;
-					}
-				}
-
-				if ( $finished )
-				{
-					$characterQuest->quest->give_reward();
-					$characterQuest->delete();
-
-					return true;
-				}
-				else
-				{
-					$data['progress_for_view'] = sprintf('Mata %d/3 Orco, %d/4 Orco Guerrero, %d/2 Orco Shaman y %d/1 Orco lider.',
-						3-$data['count'][29],
-						4-$data['count'][30],
-						2-$data['count'][31],
-						1-$data['count'][32]
-					);
-
-					$characterQuest->data = $data;
-					$characterQuest->save();
-				}
-			}
-		}
+		$this->actionPveBattleWin = new QuestActionPveWin($this->characterQuest, array(29, 30, 31, 32), array(3, 4, 2, 1));
+		//$this->actionNpcTalk = new QuestActionNpcTalk($this->characterQuest, array(6));
+		//$this->actionNpcTalk = new QuestActionNpcTalkAndGiveItem($this->characterQuest, array(6), array(6 => array(16)), array(16 => 3));
 	}
 }

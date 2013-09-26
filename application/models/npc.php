@@ -6,6 +6,48 @@ class Npc extends Base_Model
 	public static $timestamps = false;
 	public static $table = 'npcs';
 	public static $key = 'id';
+	
+	public function get_text_for_tooltip()
+	{
+		$message = "<div style='width: 600px; text-align: left;'>";
+
+		$message .= "<img src='" . URL::base() . "/img/icons/npcs/$this->id.png' class='pull-left' width='32px' height='32px' style='margin-right: 10px;'>";
+
+		$message .= "<strong style='color: orange; margin-top: 10px;'>$this->name</strong>";
+		$message .= "<br>Nivel: $this->level";
+		$message .= "<p><small><em>$this->dialog</em></small></p>";
+
+		if ( $this->stat_life != 0 )
+		{
+			$message .= "<li>Vitalidad: $this->stat_life</li>";
+		}
+
+		if ( $this->stat_dexterity != 0 )
+		{
+			$message .= "<li>Destreza: $this->stat_dexterity</li>";
+		}
+
+		if ( $this->stat_magic != 0 )
+		{
+			$message .= "<li>Magia: $this->stat_magic</li>";
+		}
+
+		if ( $this->stat_strength != 0 )
+		{
+			$message .= "<li>Fuerza: $this->stat_strength</li>";
+		}
+
+		if ( $this->stat_luck != 0 )
+		{
+			$message .= "<li>Suerte: $this->stat_luck</li>";
+		}
+
+		$message .= '</ul>';
+
+		$message .= '</div>';
+
+		return $message;
+	}
 
 	public function get_stats()
 	{
@@ -62,8 +104,18 @@ class Npc extends Base_Model
 		{
 			return true;
 		}
+		
+		if ( ! $this->time_to_appear )
+		{
+			return false;
+		}
 
 		$exploringTime = $character->exploring_times()->select(array('character_id', 'time'))->where('zone_id', '=', $this->zone_id)->first();
+
+		if ( ! $exploringTime )
+		{
+			return true;
+		}
 
 		return $this->time_to_appear > $exploringTime->time;
 	}
@@ -80,7 +132,7 @@ class Npc extends Base_Model
 		return $this
 		->quests()
 		//->join('quests as quest', 'npc_quests.quest_id', '=', 'quest.id')
-		->where('quests.id', 'NOT IN', DB::raw("(SELECT quest_id FROM character_quests WHERE character_id = '$character->id' AND repeatable_at > ".time()." OR progress <> 'finished')"))
+		->where('quests.id', 'NOT IN', DB::raw("(SELECT quest_id FROM character_quests WHERE character_id = '$character->id' AND repeatable_at IS NULL OR repeatable_at > ".time().")"))
 		->where('min_level', '<=', $character->level)
 		->where('max_level', '>=', $character->level)
 		->where_in("$character->race", array($character->gender, 'both'));

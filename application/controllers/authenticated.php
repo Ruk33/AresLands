@@ -1452,8 +1452,7 @@ class Authenticated_Controller extends Base_Controller
 	{
 		$character = Character::get_character_of_logged_user(array('zone_id', 'level'));
 
-		$monsters = Npc::select(array('id', 'name', 'dialog', 'level'))
-		->where('zone_id', '=', $character->zone_id)
+		$monsters = Npc::where('zone_id', '=', $character->zone_id)
 		->where('type', '=', 'monster')
 		->order_by('level', 'asc')
 		->get();

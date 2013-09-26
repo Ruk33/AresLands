@@ -1,0 +1,178 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<diagram program="umlet" version="12.1">
+  <zoom_level>10</zoom_level>
+  <element>
+    <type>com.umlet.element.Class</type>
+    <coordinates>
+      <x>0</x>
+      <y>140</y>
+      <w>270</w>
+      <h>130</h>
+    </coordinates>
+    <panel_attributes>/QuestAction/
+--
+_# $questId : int_
+# $characterQuest : CharacterQuest
+# $actionPve : QuestActionPve
+--
+- is_right_quest(int executedQuest)
+# setup()
++ __construct(string event)</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <type>com.umlet.element.Note</type>
+    <coordinates>
+      <x>0</x>
+      <y>40</y>
+      <w>150</w>
+      <h>90</h>
+    </coordinates>
+    <panel_attributes># = protected
++ = public
+- = private
+cursiva = abstract
+subrayado = static
+bg=yellow</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <type>com.umlet.element.Class</type>
+    <coordinates>
+      <x>0</x>
+      <y>300</y>
+      <w>100</w>
+      <h>30</h>
+    </coordinates>
+    <panel_attributes>QuestA</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <type>com.umlet.element.Relation</type>
+    <coordinates>
+      <x>20</x>
+      <y>240</y>
+      <w>50</w>
+      <h>80</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;-</panel_attributes>
+    <additional_attributes>30;30;30;60</additional_attributes>
+  </element>
+  <element>
+    <type>com.umlet.element.Class</type>
+    <coordinates>
+      <x>170</x>
+      <y>300</y>
+      <w>100</w>
+      <h>30</h>
+    </coordinates>
+    <panel_attributes>QuestB</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <type>com.umlet.element.Relation</type>
+    <coordinates>
+      <x>190</x>
+      <y>240</y>
+      <w>50</w>
+      <h>80</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;-</panel_attributes>
+    <additional_attributes>30;30;30;60</additional_attributes>
+  </element>
+  <element>
+    <type>com.umlet.element.Class</type>
+    <coordinates>
+      <x>370</x>
+      <y>400</y>
+      <w>150</w>
+      <h>30</h>
+    </coordinates>
+    <panel_attributes>QuestActionPveA</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <type>com.umlet.element.Class</type>
+    <coordinates>
+      <x>750</x>
+      <y>400</y>
+      <w>150</w>
+      <h>30</h>
+    </coordinates>
+    <panel_attributes>QuestActionPveB</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <type>com.umlet.element.Class</type>
+    <coordinates>
+      <x>370</x>
+      <y>240</y>
+      <w>590</w>
+      <h>120</h>
+    </coordinates>
+    <panel_attributes>QuestActionPve
+--
+# $characterQuest : CharacterQuest
+# $monstersId = int[]
+# $monstersAmount = int[]
+--
++ execute(Npc $monster)
++ __construct (CharacterQuest $characterQuest, int[] $monstersId, int[] $monstersAmount)</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <type>com.umlet.element.Relation</type>
+    <coordinates>
+      <x>410</x>
+      <y>330</y>
+      <w>50</w>
+      <h>90</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;-</panel_attributes>
+    <additional_attributes>30;30;30;70</additional_attributes>
+  </element>
+  <element>
+    <type>com.umlet.element.Relation</type>
+    <coordinates>
+      <x>800</x>
+      <y>330</y>
+      <w>50</w>
+      <h>90</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;-</panel_attributes>
+    <additional_attributes>30;30;30;70</additional_attributes>
+  </element>
+  <element>
+    <type>com.umlet.element.Relation</type>
+    <coordinates>
+      <x>240</x>
+      <y>180</y>
+      <w>150</w>
+      <h>90</h>
+    </coordinates>
+    <panel_attributes>lt=-&gt;</panel_attributes>
+    <additional_attributes>30;30;130;70</additional_attributes>
+  </element>
+  <element>
+    <type>com.umlet.element.Note</type>
+    <coordinates>
+      <x>370</x>
+      <y>0</y>
+      <w>590</w>
+      <h>220</h>
+    </coordinates>
+    <panel_attributes>- setup()
+Donde se establecen las acciones de la misión
+Ejemplo: Si es pve
+$this-&gt;actionPve = new QuestActionPve($this-&gt;characterQuest, array(1, 2), array(3, 6));
+
+setup es llamado por __construct antes de
+ejecutar acciones.
+---------------------------------------------------------------
+Los ejemplos de QuestActionPve (A y B)
+pueden servir para establecer plantillas.
+Como por ejemplo, misiones en las que sus
+condiciones suelen repetirse</panel_attributes>
+    <additional_attributes/>
+  </element>
+</diagram>

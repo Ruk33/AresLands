@@ -24,12 +24,12 @@ Route::controller('Admin');
 
 Event::listen('fullActivityBar', function(Character $character)
 {
-	Session::put('modalMessage', 'activityBar');
+	Session::flash('modalMessage', 'activityBar');
 });
 
 Event::listen('loggedOfDayReward', function(Character $character)
 {
-	Session::put('modalMessage', 'loggedOfDay');
+	Session::flash('modalMessage', 'loggedOfDay');
 });
 
 Event::listen('npcTalk', function(Character $character, Npc $npc)
@@ -41,9 +41,20 @@ Event::listen('npcTalk', function(Character $character, Npc $npc)
 	$characterTriggers = $character->triggers()->where('event', '=', 'npcTalk')->select(array('id', 'class_name'))->get();
 	$className = null;
 
+	$obj;
+
 	foreach ($characterTriggers as $characterTrigger) {
 		$className = $characterTrigger->class_name;
+		$obj = new $className($character);
+		
+		/*
 		if ( $className::onNpcTalk($character, $npc) )
+		{
+			$characterTrigger->delete();
+		}
+		*/
+		
+		if ( $obj->run('npcTalk', $npc) )
 		{
 			$characterTrigger->delete();
 		}
@@ -60,10 +71,19 @@ Event::listen('acceptQuest', function(Character $character, Quest $quest)
 	 */
 	$characterTriggers = $character->triggers()->where('event', '=', 'acceptQuest')->select(array('id', 'class_name'))->get();
 	$className = null;
+	
+	$obj;
 
 	foreach ($characterTriggers as $characterTrigger) {
 		$className = $characterTrigger->class_name;
-		if ( $className::onAcceptQuest($character, $quest) )
+		$obj = new $className($character);
+		
+		/*if ( $className::onAcceptQuest($character, $quest) )
+		{
+			$characterTrigger->delete();
+		}*/
+		
+		if ( $obj->run('acceptQuest', $quest) )
 		{
 			$characterTrigger->delete();
 		}
@@ -285,9 +305,23 @@ Event::listen('pveBattle', function(Character $character, Npc $monster, $winner)
 		$characterTriggers = $character->triggers()->where('event', '=', 'pveBattle')->select(array('id', 'class_name'))->get();
 		$className = null;
 
+		/*
 		foreach ($characterTriggers as $characterTrigger) {
 			$className = $characterTrigger->class_name;
 			if ( $className::onPveBattle($character, $monster) )
+			{
+				$characterTrigger->delete();
+			}
+		}
+		*/
+		
+		$obj;
+
+		foreach ($characterTriggers as $characterTrigger) {
+			$className = $characterTrigger->class_name;
+			$obj = new $className($character);
+			
+			if ( $obj->run('pveBattle', $monster) )
 			{
 				$characterTrigger->delete();
 			}
@@ -300,9 +334,22 @@ Event::listen('pveBattle', function(Character $character, Npc $monster, $winner)
 				$characterTriggers = $character->triggers()->where('event', '=', 'pveBattleWin')->select(array('id', 'class_name'))->get();
 				$className = null;
 
+				/*
 				foreach ($characterTriggers as $characterTrigger) {
 					$className = $characterTrigger->class_name;
+					
 					if ( $className::onPveBattleWin($character, $monster) )
+					{
+						$characterTrigger->delete();
+					}
+				}
+				*/
+				
+				foreach ($characterTriggers as $characterTrigger) {
+					$className = $characterTrigger->class_name;
+					$obj = new $className($character);
+					
+					if ( $obj->run('pveBattleWin', $monster) )
 					{
 						$characterTrigger->delete();
 					}
