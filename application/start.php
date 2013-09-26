@@ -70,9 +70,7 @@ Autoloader::map(array(
 
 	/*
 	 *	Registramos las misiones
-	 */
-	'Quest_Starting' => path('app').'libraries/quest_starting.php',
-	
+	 */	
 	'Quest_AyudaATuPueblo' => path('app').'libraries/quest_ayudaatupueblo.php',
 	'Quest_PlagaDeSerpientes' => path('app').'libraries/quest_plagadeserpientes.php',
 	'Quest_CazadoresImplacables' => path('app').'libraries/quest_cazadoresimplacables.php',
@@ -88,6 +86,7 @@ Autoloader::map(array(
 	'Quest_BandidosAlAcecho' => path('app').'libraries/quest_bandidosalacecho.php',
 	
 	/*
+	'Quest_Starting' => path('app').'libraries/quest_starting.php',
 	'Quest_HieloYRoca' => path('app').'libraries/quest_hieloyroca.php',
 	'Quest_NuevosProblemas' => path('app').'libraries/quest_nuevosproblemas.php',
 	'Quest_RecuperarLoPerdido' => path('app').'libraries/quest_recuperarloperdido.php',
