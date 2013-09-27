@@ -1277,7 +1277,7 @@ class Authenticated_Controller extends Base_Controller
 			 */
 			if ( ! $target )
 			{
-				Session::flash('errorMessage', $target->name . ' está en otra zona.');
+				Session::flash('errorMessage', $characterName . ' está en otra zona.');
 				return Redirect::to('authenticated/battle');
 			}
 			
