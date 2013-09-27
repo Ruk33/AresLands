@@ -1263,7 +1263,7 @@ class Authenticated_Controller extends Base_Controller
 
 		if ( $characterName )
 		{
-			$target = Character::where('name', '=', $characterName)->where('zone_id', '=', $character->zone_id)->where('is_traveling', '=', false)->first();
+			$target = Character::where('name', '=', $characterName)->where('zone_id', '=', $character->zone_id)->first();
 
 			/*
 			 *	Verificamos que el personaje
@@ -1271,6 +1271,13 @@ class Authenticated_Controller extends Base_Controller
 			 */
 			if ( ! $target )
 			{
+				Session::flash('errorMessage', 'Ese personaje no existe.');
+				return Redirect::to('authenticated/battle');
+			}
+			
+			if ( $target->is_traveling )
+			{
+				Session::flash('errorMessage', $target->name . ' acaba de irse de esta zona.');
 				return Redirect::to('authenticated/battle');
 			}
 
@@ -1313,8 +1320,6 @@ class Authenticated_Controller extends Base_Controller
 	public function post_battle()
 	{
 		$character = Character::get_character_of_logged_user(array('id', 'zone_id', 'name'));
-		$zone = $character->zone()->select(array('id', 'type', 'belongs_to'))->first();
-		$zones = array();
 		$searchMethod = Input::get('search_method');
 
 		$valuesToTake = array(
@@ -1332,28 +1337,12 @@ class Authenticated_Controller extends Base_Controller
 			'stat_luck',
 		);
 
-		if ( $zone->type != 'city' || $zone->type != 'land' )
-		{
-			//$zones = Zone::where('belongs_to', '=', $zone->belongs_to)->select(array('id'))->get();
-			$zones = DB::table('zones')->where('belongs_to', '=', $zone->belongs_to)->select(array('id'))->get();
-		}
-		else
-		{
-			//$zones = Zone::where('belongs_to', '=', $zone->id)->select(array('id'))->get();
-			$zones = DB::table('zones')->where('belongs_to', '=', $zone->id)->select(array('id'))->get();
-		}
-
-		foreach ( $zones as $key => $value )
-		{
-			$zones[$key] = $value->id;
-		}
-
 		$characterFinded = null;
 
 		switch ( $searchMethod ) 
 		{
 			case 'name':
-				$characterFinded = Character::where('name', '=', Input::get('character_name'))->where('name', '<>', $character->name)->where('is_traveling', '=', false)->where_in('zone_id', $zones)->select($valuesToTake)->first();
+				$characterFinded = Character::where('name', '=', Input::get('character_name'))->where('name', '<>', $character->name)->where('is_traveling', '=', false)->where('zone_id', '=', $character->zone_id)->select($valuesToTake)->first();
 				break;
 
 			case 'random':
@@ -1398,11 +1387,11 @@ class Authenticated_Controller extends Base_Controller
 					$level = 1;
 				}
 
-				$characterFinded = Character::where_in('race', $race)->where('level', $operation, $level)->where('name', '<>', $character->name)->where('is_traveling', '=', false)->where_in('zone_id', $zones)->select($valuesToTake)->order_by(DB::raw('RAND()'))->first();
+				$characterFinded = Character::where_in('race', $race)->where('level', $operation, $level)->where('name', '<>', $character->name)->where('is_traveling', '=', false)->where('zone_id', '=', $character->zone_id)->select($valuesToTake)->order_by(DB::raw('RAND()'))->first();
 				break;
 
 			case 'group':
-				$characterFinded = Character::where('clan_id', '=', Input::get('clan'))->where('name', '<>', $character->name)->where('is_traveling', '=', false)->where_in('zone_id', $zones)->select($valuesToTake)->order_by(DB::raw('RAND()'))->first();
+				$characterFinded = Character::where('clan_id', '=', Input::get('clan'))->where('name', '<>', $character->name)->where('is_traveling', '=', false)->where('zone_id', '=', $character->zone_id)->select($valuesToTake)->order_by(DB::raw('RAND()'))->first();
 				break;
 		}
 
