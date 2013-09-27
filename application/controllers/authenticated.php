@@ -1263,15 +1263,21 @@ class Authenticated_Controller extends Base_Controller
 
 		if ( $characterName )
 		{
+			// Verificamos que el personaje exista
+			if ( Character::where_name($characterName)->take(1)->count() == 0 )
+			{
+				Session::flash('errorMessage', 'Ese personaje no existe.');
+				return Redirect::to('authenticated/battle');
+			}
+			
 			$target = Character::where('name', '=', $characterName)->where('zone_id', '=', $character->zone_id)->first();
 
 			/*
-			 *	Verificamos que el personaje
-			 *	exista
+			 *	Verificamos que el personaje este en la zona
 			 */
 			if ( ! $target )
 			{
-				Session::flash('errorMessage', 'Ese personaje no existe.');
+				Session::flash('errorMessage', $target->name . ' está en otra zona.');
 				return Redirect::to('authenticated/battle');
 			}
 			
