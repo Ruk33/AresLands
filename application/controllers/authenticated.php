@@ -1528,6 +1528,12 @@ class Authenticated_Controller extends Base_Controller
 
 		if ( $zone )
 		{
+			// Evitamos que viajen a zonas bloqueadas
+			if ( $zone->type != 'city' )
+			{
+				return Redirect::to('authenticated/travel/');
+			}
+			
 			/*
 			 *	Antes de hacer nada, nos fijamos
 			 *	si el personaje realmente puede viajar
