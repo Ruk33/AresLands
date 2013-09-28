@@ -53,8 +53,9 @@
 
 			<!-- AYUDANTE -->
 			<div style="position: absolute; margin-left: 255px; margin-top: 65px;">
-				@if ( isset($items['mercenary']) && $mercenary = $items['mercenary'][0]->item )
-					<img src="{{ URL::base() }}/img/characters/ayudante.png" alt="" width="64px" height="64px" data-toggle="tooltip" data-container="body" data-placement="top" data-original-title="
+				@if ( isset($items['mercenary']) )
+					<?php $mercenary = $items['mercenary'][0]->item; ?>
+					<img src="{{ URL::base() }}/img/icons/items/{{ $mercenary->id }}.png" alt="" width="64px" height="64px" data-toggle="tooltip" data-container="body" data-placement="top" data-original-title="
 					{{ $mercenary->get_text_for_tooltip() }}">
 				@endif
 			</div>
