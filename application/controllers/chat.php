@@ -77,6 +77,7 @@ class Chat_Controller extends Base_Controller
 
 		DB::table('chat')->insert($data);
 
-		DB::table('chat')->where('time', '<', time() - 5 * 60)->delete();
+		// borra todos los mensajes de 1 día de antiguedad
+		DB::table('chat')->where('time', '<', time() - 1440 * 60)->delete();
 	}
 }
