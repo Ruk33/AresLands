@@ -1029,31 +1029,112 @@ class Character extends Base_Model
 	{
 		return $this->items()->select(array('id', 'count'))->where('item_id', '=', Config::get('game.coin_id'))->first();
 	}
+	
+	/**
+	 *	Contamos la cantidad de slots disponibles
+	 * 
+	 *	@return bool
+	 */
+	public function get_available_slots()
+	{
+		return Config::get('game.inventory_slot_amount') - $this->items()->where_location('inventory')->count();
+	}
 
 	/**
 	 *	Agregamos un objeto al personaje.
 	 *
-	 *	@param <int> $itemId
+	 *	@param <mixed> $itemId
 	 *	@param <int> $amount
 	 *	@return <bool> false si no se pudo agregar el item
 	 */
-	public function add_item($itemId, $amount = 1)
+	public function add_item($item, $amount = 1)
 	{
-		$slot = $this->empty_slot();
-
-		if ( $slot ) // verificamos que haya espacio
+		if ( $amount <= 0 )
 		{
-			$item = new CharacterItem();
-
-			$item->owner_id = $this->id;
-			$item->item_id = (int) $itemId;
-			$item->count = (int) $amount;
-			$item->location = 'inventory';
-			$item->slot = $slot;
-
-			return $item->save();
+			return false;
 		}
-
+		
+		if ( ! $item instanceof Item )
+		{
+			$item = Item::find($item);
+			
+			if ( ! $item )
+			{
+				return false;
+			}
+		}
+		
+		if ( $item->id == Config::get('game.coin_id') )
+		{
+			$this->add_coins($amount);
+			
+			return true;
+		}
+		
+		if ( $item->id == Config::get('game.xp_item_id') )
+		{			
+			$this->xp += $amount;
+			$this->points_to_change += $amount;
+			
+			$this->save();
+			
+			return true;
+		}
+		
+		if ( $item->stackable )
+		{
+			$characterItem = $this->items()->where_item_id($item->id);
+			
+			if ( $characterItem )
+			{
+				$characterItem->count += $amount;
+				$characterItem->save();
+				
+				return true;
+			}
+			else
+			{
+				$slot = $this->empty_slot();
+				
+				if ( $slot )
+				{
+					$characterItem = new CharacterItem();
+					
+					$characterItem->owner_id = $this->id;
+					$characterItem->item_id = $item->id;
+					$characterItem->count = $amount;
+					$characterItem->location = 'inventory';
+					$characterItem->slot = $slot;
+					
+					$characterItem->save();
+					
+					return true;
+				}
+			}
+		}
+		else
+		{
+			if ( $this->get_available_slots() >= $amount )
+			{
+				for ( $i = 1; $i < $amount; $i++ )
+				{
+					$slot = $this->empty_slot();
+					
+					$characterItem = new CharacterItem();
+					
+					$characterItem->owner_id = $this->id;
+					$characterItem->item_id = $item->id;
+					$characterItem->count = 1;
+					$characterItem->location = 'inventory';
+					$characterItem->slot = $slot;
+					
+					$characterItem->save();
+				}
+				
+				return true;
+			}
+		}
+		
 		return false;
 	}
 

@@ -177,7 +177,7 @@ class Quest extends Base_Model
 	 */
 	public function give_reward()
 	{
-		$character = Character::get_character_of_logged_user(array('id', 'xp', 'level', 'clan_id'));
+		$character = Character::get_character_of_logged_user(array('id', 'xp', 'points_to_change', 'level', 'clan_id'));
 
 		ActivityBar::add($character, 3);
 
@@ -191,59 +191,7 @@ class Quest extends Base_Model
 
 		foreach ( $rewards as $reward )
 		{
-			/*
-			 *	Nos fijamos primero si no es experiencia
-			 */
-			if ( $reward->item_id == Config::get('game.xp_item_id') )
-			{
-				$character->xp += $reward->amount;
-				$character->save();
-
-				continue;
-			}
-
-			$item = $reward->item()->select(array('id', 'stackable'))->first();
-
-			if ( $item )
-			{
-				$characterItem = null;
-
-				if ( $item->stackable )
-				{
-					/*
-					 *	Nos fijamos si el personaje
-					 *	ya tiene uno de los items
-					 *	que le vamos a recompensar
-					 */
-					$characterItem = $character->items()->where('item_id', '=', $reward->item_id)->select(array('id', 'count', 'owner_id'))->first();
-				}
-
-				if ( ! $characterItem )
-				{
-					$emptySlot = $character->empty_slot();
-
-					if ( $emptySlot )
-					{
-						$characterItem = new CharacterItem();
-
-						$characterItem->owner_id = $character->id;
-						$characterItem->item_id = $reward->item_id;
-						$characterItem->count = $reward->amount;
-						$characterItem->location = 'inventory';
-						$characterItem->slot = $emptySlot;
-					}
-					else
-					{
-						continue;
-					}
-				}
-				else
-				{
-					$characterItem->count += $reward->amount;
-				}
-
-				$characterItem->save();
-			}
+			$character->add_item($reward->item_id, $reward->amount);
 		}
 	}
 
@@ -286,6 +234,12 @@ class Quest extends Base_Model
 				{
 					return false;
 				}
+				else
+				{
+					// Borramos así creamos de nuevo
+					// (porque recordemos, el progreso se guarda)
+					$characterQuest->delete();
+				}
 			}
 			else
 			{
@@ -316,14 +270,10 @@ class Quest extends Base_Model
 		 *	Creamos el progreso
 		 *	para el personaje
 		 */
-		if ( ! $characterQuest )
-		{
-			$characterQuest = new CharacterQuest();
+		$characterQuest = new CharacterQuest();
 
-			$characterQuest->character_id = $character->id;
-			$characterQuest->quest_id = $this->id;
-		}
-
+		$characterQuest->character_id = $character->id;
+		$characterQuest->quest_id = $this->id;
 		$characterQuest->progress = 'started';
 		$characterQuest->save();
 

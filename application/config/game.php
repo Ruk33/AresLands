@@ -5,6 +5,11 @@ return array(
 	'login_url' => '//ironfist.com.ar/home/login',
 
 	/*
+	 *	Cantidad de slots de inventario
+	 */
+	'inventory_slot_amount' => 6,
+
+	/*
 	 *	Id del objeto que hace
 	 *	de experiencia
 	 */
