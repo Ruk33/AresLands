@@ -57,6 +57,27 @@ body {
 	font-size: 15px;
 }
 
+.level-very-low {
+	color: #737779 !important;
+}
+
+.level-low {
+	color: #B2E238 !important;
+}
+
+.level-normal {
+	color: #F3B32B !important;
+}
+
+.level-high {
+	color: #DA7111 !important;
+}
+
+.level-very-high {
+	color: #F83909 !important;
+	text-shadow: 0px 0px 5px #F00 !important;
+}
+
 .monster-image {
 	border: 1px solid black;
 	border-radius: 5px;

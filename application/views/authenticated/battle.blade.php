@@ -94,13 +94,23 @@
 		<img src="{{ URL::base() }}/img/icons/npcs/{{ $monster->id }}.png" alt="" width="32px" height="32px" class="monster-image">
 		
 		<a href="{{ URL::to('authenticated/toBattleMonster/' . $monster->id) }}">
-		@if ( $monster->level - $character->level > 10 )
-		<strong style="color: #F52700;">
-		@elseif ( $monster->level - $character->level > 5 )
-		<strong style="color: orange;">
+		
+		<?php
+		$monsterCharacterDifference = $monster->level - $character->level;
+		?>
+		
+		@if ( $monsterCharacterDifference >= 6 )
+			<strong class="level-very-high">
+		@elseif ( $monsterCharacterDifference >= 4 )
+			<strong class="level-high">
+		@elseif ( $monsterCharacterDifference >= 2 )
+			<strong class="level-normal">
+		@elseif ( $monsterCharacterDifference >= -2 )
+			<strong class="level-low">
 		@else
-		<strong style="color: white;">
+			<strong class="level-very-low">
 		@endif
+		
 		{{ $monster->name }}</strong></a>
 	</li>
 	@endforeach
