@@ -84,6 +84,7 @@ Autoloader::map(array(
 	'Quest_VoladoresNocturnos' => path('app').'libraries/quest_voladoresnocturnos.php',
 	'Quest_EnemigoEscondido' => path('app').'libraries/quest_enemigoescondido.php',
 	'Quest_BandidosAlAcecho' => path('app').'libraries/quest_bandidosalacecho.php',
+	'Quest_PocoPorAquiMuchoPorAlli' => path('app').'libraries/quest_pocoporaquimuchoporalli.php',
 	
 	/*
 	'Quest_Starting' => path('app').'libraries/quest_starting.php',
