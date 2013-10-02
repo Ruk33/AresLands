@@ -242,12 +242,9 @@ class Authenticated_Controller extends Base_Controller
 
 	public function get_orbs()
 	{
-		$character = Character::get_character_of_logged_user(array('level'));
-		$orbs = Orb::where('min_level', '<=', $character->level)->where('max_level', '>=', $character->level)->get();
-
 		$this->layout->title = 'Orbes';
 		$this->layout->content = View::make('authenticated.orbs')
-		->with('orbs', $orbs);
+		->with('orbs', Orb::order_by('min_level', 'asc')->get());
 	}
 
 	public function get_destroyItem($characterItemId = false)
