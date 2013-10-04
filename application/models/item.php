@@ -45,10 +45,10 @@ class Item extends Base_Model
 	{
 		$message = "<div style='width: 600px; text-align: left;'>";
 
-		$message .= "<img src='" . URL::base() . "/img/icons/items/$this->id.png' class='pull-left' width='32px' height='32px'>";
+		//$message .= "<img src='" . URL::base() . "/img/icons/items/$this->id.png' class='pull-left' width='32px' height='32px'>";
 
-		$message .= "<strong style='color: orange;'>$this->name</strong> (<small>$this->type</small>)";
-		$message .= "<p style='color: #FFE000;'>Requiere nivel $this->level</p>";
+		$message .= "<strong style='color: white;'>$this->name</strong> (<small>$this->type</small>)";
+		$message .= "<p style='color: #ADFF00;'>Requiere nivel $this->level</p>";
 		$message .= "<p><small><em>$this->description</em></small></p>";
 
 		$message .= "<ul class='unstyled'>";

@@ -103,27 +103,33 @@ class Admin_Controller extends Base_Controller
 		
 		$npc->save();
 		
-		$npcMerchandise = null;
-		foreach ($inputs['merchandises'] as $merchandise)
+		if ( isset($inputs['merchandises']) )
 		{
-			$npcMerchandise = new NpcMerchandise();
-			
-			$npcMerchandise->npc_id = $npc->id;
-			$npcMerchandise->item_id = $merchandise;
-			$npcMerchandise->price_copper = $merchandisesPrice[$merchandise];
-			
-			$npcMerchandise->save();
+			$npcMerchandise = null;
+			foreach ($inputs['merchandises'] as $merchandise)
+			{
+				$npcMerchandise = new NpcMerchandise();
+				
+				$npcMerchandise->npc_id = $npc->id;
+				$npcMerchandise->item_id = $merchandise;
+				$npcMerchandise->price_copper = $merchandisesPrice[$merchandise];
+				
+				$npcMerchandise->save();
+			}
 		}
 		
-		$npcQuest = null;
-		foreach ($inputs['quests'] as $quest)
+		if ( isset($inputs['quests']) )
 		{
-			$npcQuest = new NpcQuest();
-			
-			$npcQuest->npc_id = $npc->id;
-			$npcQuest->quest_id = $quest;
-			
-			$npcQuest->save();
+			$npcQuest = null;
+			foreach ($inputs['quests'] as $quest)
+			{
+				$npcQuest = new NpcQuest();
+				
+				$npcQuest->npc_id = $npc->id;
+				$npcQuest->quest_id = $quest;
+				
+				$npcQuest->save();
+			}
 		}
 		
 		return Redirect::to('admin/npc');

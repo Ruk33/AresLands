@@ -86,6 +86,16 @@ Autoloader::map(array(
 	'Quest_BandidosAlAcecho' => path('app').'libraries/quest_bandidosalacecho.php',
 	'Quest_PocoPorAquiMuchoPorAlli' => path('app').'libraries/quest_pocoporaquimuchoporalli.php',
 	
+	'Quest_EnsenandoUnaLeccion' => path('app').'libraries/quest_ensenandounaleccion.php',
+	'Quest_AplastaALasTectites' => path('app').'libraries/quest_aplastaalastectites.php',
+	'Quest_LosDemoniosCaeran' => path('app').'libraries/quest_losdemonioscaeran.php',
+	'Quest_MostrandoSupremacia' => path('app').'libraries/quest_mostrandosupremacia.php',
+	
+	'Quest_RicosMinerales' => path('app').'libraries/quest_ricosminerales.php',
+	'Quest_AcabaConElMal' => path('app').'libraries/quest_acabaconelmal.php',
+	'Quest_VenceAUnaReina' => path('app').'libraries/quest_venceaunareina.php',
+	'Quest_DestruyeASusLideres' => path('app').'libraries/quest_destruyeasuslideres.php',
+	
 	/*
 	'Quest_Starting' => path('app').'libraries/quest_starting.php',
 	'Quest_HieloYRoca' => path('app').'libraries/quest_hieloyroca.php',
