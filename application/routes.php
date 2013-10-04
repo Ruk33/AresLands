@@ -525,7 +525,7 @@ Route::filter('auth', function($redirectTo = 'home/index')
  */
 Route::filter('admin', function()
 {
-	if ( Auth::check() && Auth::user()->name != 'Ruke' && Auth::user()->name != 'Astrus' )
+	if ( Auth::guest() || (Auth::user()->name != 'Ruke' && Auth::user()->name != 'Astrus'))
 	{
 		return Redirect::to('home/index');
 	}
