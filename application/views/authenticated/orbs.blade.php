@@ -14,7 +14,12 @@
 		@foreach ( $orbs as $orb )
 			<li style="vertical-align: top; width: 230px; margin-bottom: 25px;">
 				<h2>{{ $orb->name }}</h2>
+				
+				@if ( $character->level > $orb->max_level || $character->level < $orb->min_level )
+				<img class="grayEffect" src="{{ URL::base() }}/img/icons/orbs/{{ $orb->id }}.png" width="150px" height="150px" data-toggle="tooltip" data-title="<h6>{{ $orb->name }}</h6><p style='color: red;'>No cumples con los requisitos</p><p class='text-left'>{{ $orb->description }}</p><ul class='unstyled'><li><strong>Monedas:</strong> {{ $orb->coins }}</li><li><strong>Puntos:</strong> {{ $orb->points }}</li><li><strong>Nivel:</strong> {{ $orb->min_level }}-{{ $orb->max_level }}</li></ul>">
+				@else
 				<img src="{{ URL::base() }}/img/icons/orbs/{{ $orb->id }}.png" width="150px" height="150px" data-toggle="tooltip" data-title="<h6>{{ $orb->name }}</h6><p class='text-left'>{{ $orb->description }}</p><ul class='unstyled'><li><strong>Monedas:</strong> {{ $orb->coins }}</li><li><strong>Puntos:</strong> {{ $orb->points }}</li><li><strong>Nivel:</strong> {{ $orb->min_level }}-{{ $orb->max_level }}</li></ul>">
+				@endif
 				
 				<p>
 					<strong>Poseedor:</strong> 

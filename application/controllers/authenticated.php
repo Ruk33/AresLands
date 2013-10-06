@@ -244,6 +244,7 @@ class Authenticated_Controller extends Base_Controller
 	{
 		$this->layout->title = 'Orbes';
 		$this->layout->content = View::make('authenticated.orbs')
+		->with('character', Character::get_character_of_logged_user(array('id', 'level')))
 		->with('orbs', Orb::order_by('min_level', 'asc')->get());
 	}
 

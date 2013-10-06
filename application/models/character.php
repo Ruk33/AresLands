@@ -718,17 +718,33 @@ class Character extends Base_Model
 
 			if ( $loserCoins )
 			{
-				$stolenCoins += $loserCoins->count * 0.10;
-
-				$loserCoins->count -= $loserCoins->count * 0.10;
-
-				if ( $loserCoins->count > 0 )
+				if ( $loser['character']->level > $winner['character']->level )
 				{
-					$loserCoins->save();
+					// si el perdedor tiene mas nivel que el ganador
+					// entonces cada nivel de diferencia lo sumamos al porcentaje
+					$percentage = 0.10 + ($loser['character']->level - $winner['character']->level) * 0.01;
 				}
 				else
 				{
-					$loserCoins->delete();
+					// si el ganador tiene mas nivel que el perdedor
+					// entonces cada nivel de diferencia lo restamos al porcentaje
+					$percentage = 0.10 - ($winner['character']->level - $loser['character']->level) * 0.01;
+				}
+				
+				if ( $percentage > 0 )
+				{
+					$stolenCoins += $loserCoins->count * $percentage;
+		
+					$loserCoins->count -= $loserCoins->count * $percentage;
+		
+					if ( $loserCoins->count > 0 )
+					{
+						$loserCoins->save();
+					}
+					else
+					{
+						$loserCoins->delete();
+					}
 				}
 			}
 
