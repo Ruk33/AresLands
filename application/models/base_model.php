@@ -22,4 +22,22 @@ abstract class Base_Model extends Eloquent
 	{
 		return $this->errors;
 	}
+	
+	public function get_attribute($attribute)
+	{
+		if ( ! isset($this->attributes[$attribute]) || ! isset($this->original[$attribute]) )
+		{
+			if ( isset($this->attributes['id']) )
+			{
+				$field = static::select($attribute)->where_id($this->attributes['id'])->first();
+				
+				if ( isset($field->attributes[$attribute]) )
+				{
+					$this->set_attribute($attribute, $field->attributes[$attribute]);
+				}
+			}
+		}
+		
+		return parent::get_attribute($attribute);
+	}
 }
