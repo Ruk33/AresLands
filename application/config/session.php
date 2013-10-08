@@ -79,7 +79,7 @@ return array(
 	|
 	*/
 
-	'cookie' => 'areslands_session',
+	'cookie' => 'ironfist_session',
 
 	/*
 	|--------------------------------------------------------------------------
