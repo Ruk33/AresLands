@@ -263,7 +263,7 @@ class Authenticated_Controller extends Base_Controller
 
 	public function post_explore()
 	{
-		$character = Character::get_character_of_logged_user(array('id', 'is_traveling', 'is_exploring', 'level', 'xp', 'clan_id'));
+		$character = Character::get_character_of_logged_user(array('id', 'is_traveling', 'is_exploring', 'level', 'xp', 'points_to_change', 'clan_id'));
 		$time = Input::get('time');
 
 		if ( ($time <= Config::get('game.max_explore_time') && $time >= Config::get('game.min_explore_time')) && $character->can_explore() )
