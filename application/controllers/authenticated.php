@@ -21,7 +21,8 @@ class Authenticated_Controller extends Base_Controller
 		 */
 		$this->filter('before', 'hasNoCharacter');
 		
-		$this->filter('before', 'csrf')->on('post');
+		// Prevenimos csrf
+		$this->filter('before', 'csrf')->on(array('post'))->except(array('addstat', 'characters', 'editclanmessage'));
 
 		/*
 		 *	Si, supuestamente usamos
@@ -57,55 +58,6 @@ class Authenticated_Controller extends Base_Controller
 		}
 	}
 
-	/*
-	public function get_setSkillData()
-	{
-		$skill = new Skill();
-
-		$skill->name = 'Clan - Fuerza legendaria';
-		$skill->level = 1;
-		$skill->duration = 0;
-		$skill->data = [
-			'stat_strength' => 15,
-		];
-
-		$skill->save();
-	}
-	*/
-	/*
-	public function get_setQuestData()
-	{
-		$quest = new Quest();
-
-		$quest->id = 26;
-		$quest->npc_id = 162;
-		$quest->class_name = 'Quest_AsegurarZona';
-		$quest->name = 'Asegurar zona';
-		$quest->description = '<p>Estamos en busqueda de combatientes que nos ayuden a despejar el camino hacia Valle de Cenisa. Desconozco cuál sea la razón, pero el valle ya no es el mismo, no con todos esos espectros merodeando y acechando. ¿Te unes?, hay buena paga.</p><p>Derrota a 15 monstruos de Valle de Cenisa.</p>';
-		$quest->min_level = 1;
-		$quest->max_level = 5;
-
-		$quest->add_triggers(array(
-			'acceptQuest',
-			'pveBattleWin'
-		));
-
-		$quest->add_rewards(array(
-			array(
-				'item_id' => 27,
-				'amount' => 1,
-				'text_for_view' => '<img src="/img/icons/items/27.png" style="vertical-align: text-top;">'
-			),
-			array(
-				'item_id' => Config::get('game.coin_id'),
-				'amount' => 7500,
-				'text_for_view' => '<img src="/img/copper.gif">'
-			)
-		));
-
-		$quest->save();
-	}
-	*/
 	public function get_index()
 	{
 		$character = Character::get_character_of_logged_user(array(
