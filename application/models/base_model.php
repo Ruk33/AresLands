@@ -25,7 +25,7 @@ abstract class Base_Model extends Eloquent
 	
 	public function get_attribute($attribute)
 	{
-		if ( ! isset($this->attributes[$attribute]) || ! isset($this->original[$attribute]) )
+		if ( ! isset($this->attributes[$attribute]) && ! @is_null($this->attributes[$attribute]) )
 		{
 			if ( isset($this->attributes['id']) )
 			{
