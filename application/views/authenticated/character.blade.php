@@ -153,7 +153,12 @@
 				    	{{ $characterToSee->name }} pertenece al mismo grupo en el que estás.
 				    </p>
 			@endif
-			<a href="{{ URL::to('authenticated/toBattle/' . $characterToSee->name) }}">Luchar contra <b>{{ $characterToSee->name }}</b></a>
+			
+			{{ Form::open(URL::to('authenticated/toBattle')) }}
+				{{ Form::token() }}
+				{{ Form::hidden('name', $characterToSee->name) }}
+				{{ Form::submit('Luchar contra ' . $characterToSee->name, array('class' => 'btn btn-link', 'style' => 'color: white; text-shadow: none;')) }}
+			{{ Form::close() }}
 		@endif
 	</div>
 	<!-- END ESTADISTICAS -->

@@ -415,8 +415,7 @@ class Character extends Base_Model
 		}
 
 		$battle = new Battle($this, $target);
-
-		return array('winner' => $battle->get_winner(), 'message' => $battle->get_log());
+		return $battle;
 	}
 
 	public function give_explore_reward($reward)

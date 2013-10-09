@@ -58,24 +58,33 @@ body {
 }
 
 .level-very-low {
+	font-weight: bold;
+	text-shadow: none !important;
 	color: #737779 !important;
 }
 
 .level-low {
+	font-weight: bold;
+	text-shadow: none !important;
 	color: #B2E238 !important;
 }
 
 .level-normal {
+	font-weight: bold;
+	text-shadow: none !important;
 	color: #F3B32B !important;
 }
 
 .level-high {
+	font-weight: bold;
+	text-shadow: none !important;
 	color: #DA7111 !important;
 }
 
 .level-very-high {
-	color: #F83909 !important;
+	font-weight: bold;
 	text-shadow: 0px 0px 5px #F00 !important;
+	color: #F83909 !important;
 }
 
 .monster-image {

@@ -18,6 +18,8 @@
 	@endif
 
 	{{ Form::open() }}
+		{{ Form::token() }}
+	
 		<div>
 		{{ Form::label('name', 'Nombre del personaje') }}
 		{{ Form::text('name', Input::old('name'), array('class' => 'input-block-level')) }}

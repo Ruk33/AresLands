@@ -126,7 +126,7 @@
 				@endif
 			@endif
 			{{ Form::open('authenticated/buyMerchandise', 'POST') }}
-
+				{{ Form::token() }}
 				{{ Form::hidden('merchandise_id', $merchandise->id) }}
 				
 				<div class="inventory-item">

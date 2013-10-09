@@ -13,6 +13,8 @@
 	@endif
 
 	{{ Form::open() }}
+		{{ Form::token() }}
+	
 		<div>
 		{{ Form::label('name', 'Nombre del grupo') }}
 		{{ Form::text('name', '', array('class' => 'input-block-level')) }}

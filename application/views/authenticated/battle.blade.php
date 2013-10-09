@@ -15,6 +15,7 @@
 			<div class="caption">
 				<h2>Por nombre</h2>
 				{{ Form::open() }}
+					{{ Form::token() }}
 					{{ Form::hidden('search_method', 'name') }}
 
 					{{ Form::label('character_name', 'Nombre') }}
@@ -38,6 +39,7 @@
 			<div class="caption">
 				<h2>Aleatoriamente</h2>
 				{{ Form::open() }}
+					{{ Form::token() }}
 					{{ Form::hidden('search_method', 'random') }}
 
 					{{ Form::label('race_label', 'Raza') }}
@@ -65,6 +67,7 @@
 			<div class="caption">
 				<h2>En grupo</h2>
 				{{ Form::open() }}
+					{{ Form::token() }}
 					{{ Form::hidden('search_method', 'group') }}
 
 					{{ Form::label('clan', 'Grupo') }}
@@ -93,25 +96,29 @@
 	<li class="text-center clan-member-link" style="width: 30%; vertical-align: top; margin-bottom: 25px;" data-toggle="tooltip" data-original-title="{{ $monster->get_text_for_tooltip() }}">
 		<img src="{{ URL::base() }}/img/icons/npcs/{{ $monster->id }}.png" alt="" width="32px" height="32px" class="monster-image">
 		
-		<a href="{{ URL::to('authenticated/toBattleMonster/' . $monster->id) }}">
-		
-		<?php
-		$monsterCharacterDifference = $monster->level - $character->level;
-		?>
-		
-		@if ( $monsterCharacterDifference >= 6 )
-			<strong class="level-very-high">
-		@elseif ( $monsterCharacterDifference >= 4 )
-			<strong class="level-high">
-		@elseif ( $monsterCharacterDifference >= 2 )
-			<strong class="level-normal">
-		@elseif ( $monsterCharacterDifference >= -2 )
-			<strong class="level-low">
-		@else
-			<strong class="level-very-low">
-		@endif
-		
-		{{ $monster->name }}</strong></a>
+		{{ Form::open(URL::to('authenticated/toBattleMonster')) }}
+			{{ Form::token() }}
+			{{ Form::hidden('monster_id', $monster->id) }}
+			
+			<?php
+			
+			$monsterCharacterDifference = $monster->level - $character->level;
+			
+			if ( $monsterCharacterDifference >= 6 )
+				$class = 'level-very-high';
+			elseif ( $monsterCharacterDifference >= 4 )
+				$class = 'level-high';
+			elseif ( $monsterCharacterDifference >= 2 )
+				$class = 'level-normal';
+			elseif ( $monsterCharacterDifference >= -2 )
+				$class = 'level-low';
+			else
+				$class = 'level-very-low';
+			
+			?>
+			
+			{{ Form::submit($monster->name, array('class' => 'btn btn-link ' . $class)) }}
+		{{ Form::close() }}
 	</li>
 	@endforeach
 </ul>

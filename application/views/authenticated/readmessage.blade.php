@@ -31,6 +31,7 @@
 	@endif
 	
 	{{ Form::open(URL::to('authenticated/deleteMessage')) }}
+		{{ Form::token() }}
 		{{ Form::hidden('messages[]', $message->id) }}
 		<span class="ui-button button pull-right">
 			<i class="button-icon fire"></i>

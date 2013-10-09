@@ -41,6 +41,7 @@
 
 		@if ( count($messages['received']) > 0 )
 		{{ Form::open(URL::to('authenticated/deleteMessage')) }}
+			{{ Form::token() }}
 			<div style="margin-top: 15px;">
 				<span class="ui-button button pull-right">
 					<i class="button-icon cross"></i>
@@ -103,6 +104,8 @@
 		<strong style="color: white;">Informes de ataque</strong>
 		@if ( count($messages['attack']) > 0 )
 		{{ Form::open(URL::to('authenticated/deleteMessage')) }}
+			{{ Form::token() }}
+		
 			<div style="margin-top: 15px;">
 				<span class="ui-button button pull-right">
 					<i class="button-icon cross"></i>
@@ -165,6 +168,8 @@
 	<strong style="color: white;">Informes de defensa</strong>
 		@if ( count($messages['defense']) > 0 )
 		{{ Form::open(URL::to('authenticated/deleteMessage')) }}
+			{{ Form::token() }}
+		
 			<div style="margin-top: 15px;">
 				<span class="ui-button button pull-right">
 					<i class="button-icon cross"></i>

@@ -74,9 +74,9 @@ class Battle
 	/**
 	 *	Registro de la batalla
 	 * 
-	 * 	@var string
+	 * 	@var BattleLog
 	 */
-	private $log = '';
+	public $log = null;
 	
 	/**
 	 *	Obtenemos el ganador
@@ -89,13 +89,13 @@ class Battle
 	}
 	
 	/**
-	 * 	Obtenemos el log
-	 * 
-	 * 	@return String
+	 *	Obtenemos al perdedor
+	 *
+	 * 	@return Character/Npc
 	 */
-	public function get_log()
+	public function get_loser()
 	{
-		return '<ul class="unstyled">' . $this->log . '</ul>';
+		return $this->loser;
 	}
 	
 	private static function on_excellent_attack_warrior($attacker, $defender, &$damage){}
@@ -130,11 +130,11 @@ class Battle
 	{
 		if ( $onTop )
 		{
-			$this->log = '<li>' . $message . '</li>' . $this->log;
+			$this->log->message = '<li>' . $message . '</li>' . $this->log->message;
 		}
 		else
 		{
-			$this->log .= '<li>' . $message . '</li>';
+			$this->log->message .= '<li>' . $message . '</li>';
 		}
 	}
 	
@@ -315,8 +315,8 @@ class Battle
 	{		
 		if ( $this->fighter_two['character'] instanceof Character )
 		{
-			Message::attack_report($this->fighter_one['character'], $this->fighter_two['character'], $this->get_log(), $this->winner);
-			Message::defense_report($this->fighter_two['character'], $this->fighter_one['character'], $this->get_log(), $this->winner);
+			Message::attack_report($this->fighter_one['character'], $this->fighter_two['character'], $this->log->message, $this->winner);
+			Message::defense_report($this->fighter_two['character'], $this->fighter_one['character'], $this->log->message, $this->winner);
 		}
 	}
 	
@@ -551,6 +551,8 @@ class Battle
 			return;
 		}
 		
+		$this->log = new BattleLog();
+		
 		$this->fighter_one['character'] = $fighter_one;
 		$this->fighter_two['character'] = $fighter_two;
 		
@@ -558,6 +560,9 @@ class Battle
 		self::set_variables($this->fighter_two);
 		
 		self::init_battle();
+		
+		$this->log->message = '<ul class="unstyled">' . $this->log->message . '</ul>';
+		$this->log->save();
 		
 		$fighter_one->after_battle();
 	}

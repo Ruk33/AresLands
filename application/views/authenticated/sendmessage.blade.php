@@ -14,7 +14,7 @@
 	@endif
 
 	{{ Form::open() }}
-
+		{{ Form::token() }}
 		<div>
 			<i class="icon-user"></i>
 			{{ Form::label('to', 'Para:', array('style' => 'display: inline;')) }}
@@ -44,6 +44,5 @@
 		<div class="text-center">
 		{{ Form::submit('Enviar', array('class' => 'normal-button', 'style' => 'width: 222px;')) }}
 		</div>
-
 	{{ Form::close() }}
 </div>

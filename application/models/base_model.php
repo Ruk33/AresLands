@@ -25,15 +25,18 @@ abstract class Base_Model extends Eloquent
 	
 	public function get_attribute($attribute)
 	{
-		if ( ! isset($this->attributes[$attribute]) && ! @is_null($this->attributes[$attribute]) )
+		if ( $this->exists )
 		{
-			if ( isset($this->attributes['id']) )
+			if ( ! isset($this->attributes[$attribute]) && ! @is_null($this->attributes[$attribute]) )
 			{
-				$field = static::select($attribute)->where_id($this->attributes['id'])->first();
-				
-				if ( isset($field->attributes[$attribute]) )
+				if ( isset($this->attributes['id']) )
 				{
-					$this->set_attribute($attribute, $field->attributes[$attribute]);
+					$field = static::select($attribute)->where_id($this->attributes['id'])->first();
+					
+					if ( isset($field->attributes[$attribute]) )
+					{
+						$this->set_attribute($attribute, $field->attributes[$attribute]);
+					}
 				}
 			}
 		}

@@ -8,7 +8,7 @@ class Authenticated_Controller extends Base_Controller
 	public function __construct()
 	{
 		parent::__construct();
-
+		
 		/*
 		 *	Solo queremos logueados
 		 */
@@ -20,6 +20,8 @@ class Authenticated_Controller extends Base_Controller
 		 *	para que se pueda crear uno
 		 */
 		$this->filter('before', 'hasNoCharacter');
+		
+		$this->filter('before', 'csrf')->on('post');
 
 		/*
 		 *	Si, supuestamente usamos
@@ -1225,11 +1227,39 @@ class Authenticated_Controller extends Base_Controller
 		}
 	}
 
-	public function get_toBattleMonster($monsterId = false)
+	public function get_toBattleMonster()
 	{
+		if ( Session::has('character_id') && Session::has('monster_id') && Session::has('winner_id') && Session::has('log_id') )
+		{
+			$character = Character::find((int) Session::get('character_id'));
+			$monster = Npc::find((int) Session::get('monster_id'));
+			$winner = ( $character->id == Session::get('winner_id') ) ? $character : $monster;
+			$log = BattleLog::find((int) Session::get('log_id'));
+			
+			$message = $log->message;
+			
+			$log->delete();
+			
+			$this->layout->title = '¡Ganador ' . $winner->name . '!';
+			$this->layout->content = View::make('authenticated.finishedbattlemonster')
+			->with('character', $character)
+			->with('monster', $monster)
+			->with('winner', $winner)
+			->with('message', $message);
+		}
+		else
+		{
+			return Redirect::to('authenticated/index/');
+		}
+	}
+
+	public function post_toBattleMonster()
+	{
+		$monsterId = Input::get('monster_id');
+		
 		$character = Character::get_character_of_logged_user();
 		$monster = ( $monsterId ) ? Npc::where('type', '=', 'monster')->where('zone_id', '=', $character->zone_id)->find((int) $monsterId) : false;
-
+		
 		if ( $monster )
 		{
 			if ( $character->can_fight() )
@@ -1241,32 +1271,62 @@ class Authenticated_Controller extends Base_Controller
 				Session::flash('errorMessage', 'Aún no puedes pelear');
 				return Redirect::to('authenticated/battle/');
 			}
-
-			$this->layout->title = '¡Ganador ' . $battle['winner']->name . '!';
-			$this->layout->content = View::make('authenticated.finishedbattlemonster')
-			->with('character', $character)
-			->with('monster', $monster)
-			->with('winner', $battle['winner'])
-			->with('message', $battle['message']);
+			
+			$winner = $battle->get_winner();
+			
+			return Redirect::to('authenticated/toBattleMonster')
+			->with('character_id', $character->id)
+			->with('monster_id', $monster->id)
+			->with('winner_id', $winner->id)
+			->with('log_id', $battle->log->id);
 		}
 		else
 		{
 			return Redirect::to('authenticated/battle/');
 		}
 	}
-
-	public function get_toBattle($characterName = false)
+	
+	public function get_toBattle()
 	{
-		$character = Character::get_character_of_logged_user();
+		if ( Session::has('winner_id') && Session::has('loser_id') && Session::has('log_id') )
+		{
+			$fieldsToSelect = array('id', 'name', 'race', 'gender');
+			
+			$winner = Character::select($fieldsToSelect)->find((int) Session::get('winner_id'));
+			$loser = Character::select($fieldsToSelect)->find((int) Session::get('loser_id'));
+			$log = BattleLog::find((int) Session::get('log_id'));
+			
+			$message = $log->message;
+			
+			// Ya usamos el log, lo borramos
+			$log->delete();
+			
+			$this->layout->title = '¡Ganador ' . $winner->name . '!';
+			$this->layout->content = View::make('authenticated.finishedbattle')
+			->with('winner', $winner)
+			->with('loser', $loser)
+			->with('message', $message);
+		}
+		else
+		{
+			return Redirect::to('authenticated/index/');
+		}
+	}
+
+	public function post_toBattle()
+	{
+		$characterName = Input::get('name');
 
 		if ( $characterName )
-		{
+		{			
 			// Verificamos que el personaje exista
 			if ( Character::where_name($characterName)->take(1)->count() == 0 )
 			{
 				Session::flash('errorMessage', 'Ese personaje no existe.');
 				return Redirect::to('authenticated/battle');
 			}
+			
+			$character = Character::get_character_of_logged_user();
 			
 			$target = Character::where('name', '=', $characterName)->where('zone_id', '=', $character->zone_id)->first();
 
@@ -1312,13 +1372,14 @@ class Authenticated_Controller extends Base_Controller
 			Session::flash('errorMessage', 'Aún no puedes pelear');
 			return Redirect::to('authenticated/battle');
 		}
-
-		$this->layout->title = '¡Ganador ' . $battle['winner']->name . '!';
-		$this->layout->content = View::make('authenticated.finishedbattle')
-		->with('character_one', $character)
-		->with('character_two', $target)
-		->with('winner', $battle['winner'])
-		->with('message', $battle['message']);
+		
+		$winner = $battle->get_winner();
+		$loser = $battle->get_loser();
+		
+		return Redirect::to('authenticated/toBattle')
+		->with('winner_id', $winner->id)
+		->with('loser_id', $loser->id)
+		->with('log_id', $battle->log->id);
 	}
 
 	public function post_battle()
