@@ -53,9 +53,6 @@ class Npc extends Base_Model
 	{
 		$stats = array();
 
-		$stats['p_damage'] = $this->p_damage;
-		$stats['m_damage'] = $this->m_damage;
-
 		$stats['p_defense'] = $this->p_defense;
 		$stats['m_defense'] = $this->m_defense;
 

@@ -62,6 +62,8 @@ Autoloader::map(array(
 	'Base_Controller' => path('app').'controllers/base.php',
 	'Base_Model' => path('app').'models/base_model.php',
 	
+	'Battle' => path('app').'libraries/battle.php',
+	
 	'QuestAction' => path('app').'libraries/questaction.php',
 	'QuestActionPve' => path('app').'libraries/questactionpve.php',
 	'QuestActionPveWin' => path('app').'libraries/questactionpvewin.php',
