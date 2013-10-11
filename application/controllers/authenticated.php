@@ -8,7 +8,7 @@ class Authenticated_Controller extends Base_Controller
 	public function __construct()
 	{
 		parent::__construct();
-		
+        
 		/*
 		 *	Solo queremos logueados
 		 */
@@ -22,7 +22,13 @@ class Authenticated_Controller extends Base_Controller
 		$this->filter('before', 'hasNoCharacter');
 		
 		// Prevenimos csrf
-		$this->filter('before', 'csrf')->on(array('post'))->except(array('addstat', 'characters', 'editclanmessage'));
+		$this->filter('before', 'csrf')
+		->on(array('post'))
+		->except(array(
+			'addstat',
+			'characters',
+			'editclanmessage'
+		));
 
 		/*
 		 *	Si, supuestamente usamos
@@ -57,7 +63,7 @@ class Authenticated_Controller extends Base_Controller
 			$this->layout->with('character', $character);
 		}
 	}
-
+    
 	public function get_index()
 	{
 		$character = Character::get_character_of_logged_user(array(
