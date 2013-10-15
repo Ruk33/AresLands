@@ -20,7 +20,12 @@
 	@endif
 @endif
 
-<div class="row" ng-controller="Skill">
+<div ng-controller="Skill">
+	@if ( Session::has('error') )
+		<div class="alert alert-error">
+			{{ Session::get('error') }}
+		</div>
+	@endif
 	<div class="span6" style="margin-left: 20px; margin-right: -20px;">
 		<h2>Personaje</h2>
 	
@@ -240,6 +245,8 @@
 	</div>
 	<!-- END ESTADÍSTICAS -->
 </div>
+
+<div class="clearfix"></div>
 
 <!-- ACTIVIDADES -->
 @if ( count($activities) > 0 )

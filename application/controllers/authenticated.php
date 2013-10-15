@@ -1853,7 +1853,7 @@ class Authenticated_Controller extends Base_Controller
 
 			if ( $character )
 			{
-				$characterItem = $character->items()->find($id);
+				$characterItem = $character->items()->find((int) $id);
 
 				if ( $characterItem )
 				{
@@ -1875,7 +1875,7 @@ class Authenticated_Controller extends Base_Controller
 							/*
 							 *	No tiene espacio, lo notificamos
 							 */
-							Session::flash('error', 'No tienes espacio en el inventario');
+							Session::flash('error', 'No tenes espacio en el inventario');
 						}
 					}
 					else
@@ -1895,6 +1895,10 @@ class Authenticated_Controller extends Base_Controller
 									if ( $character->equip_item($characterItem) )
 									{
 										Event::fire('equipItem', array($characterItem));
+									}
+									else
+									{
+										Session::flash('error', 'No tenes espacio en el inventario');
 									}
 
 									break;
