@@ -9,7 +9,7 @@ class Npc extends Base_Model
 	
 	public function get_text_for_tooltip()
 	{
-		$message = "<div style='width: 600px; text-align: left;'>";
+		$message = "<div style='min-width: 250px; text-align: left;'>";
 
 		$message .= "<img src='" . URL::base() . "/img/icons/npcs/$this->id.png' class='pull-left' width='32px' height='32px' style='margin-right: 10px;'>";
 
@@ -17,6 +17,7 @@ class Npc extends Base_Model
 		$message .= "<br>Nivel: $this->level";
 		$message .= "<p><small><em>$this->dialog</em></small></p>";
 
+		$message .= "<ul class='unstyled'>";
 		if ( $this->stat_life != 0 )
 		{
 			$message .= "<li>Vitalidad: $this->stat_life</li>";

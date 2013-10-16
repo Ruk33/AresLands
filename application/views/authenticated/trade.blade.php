@@ -56,9 +56,11 @@
 						@endif
 					</td>
 					<td>
-						<div class="inventory-item">
-							<img src="{{ URL::base() }}/img/icons/items/{{ $trade->item_id }}.png" alt="" data-toggle="tooltip" data-placement="top" data-original-title="{{ $trade->item->get_text_for_tooltip() }}">
+						<span data-toggle="tooltip" data-placement="top" data-original-title="{{ $trade->item->get_text_for_tooltip() }}">
+						<div class="inventory-item" style="zoom: 0.5;">
+							<img src="{{ URL::base() }}/img/icons/items/{{ $trade->item_id }}.png" alt="" width="80px" height="80px">
 						</div>
+						</span>
 					</td>
 					<td>{{ $trade->amount }}</td>
 					<td>

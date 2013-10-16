@@ -1,7 +1,7 @@
 <h2>Explorar</h2>
 <p>Estas son tierras de aventuras y de tesoros ocultos. Explora para encontrar tesoros... y quién sabe qué más puedes encontrar. Recuerda que cuanto mayor nivel tengas, tus exploraciones serán más efectivas.</p>
 
-<div class="text-center" style="width: 250px; margin: 50px auto;">
+<div class="text-center" style="width: 300px; margin: 50px auto;">
 <strong>¿Cuánto tiempo quieres explorar?</strong>
 {{ Form::open() }}
 	{{ Form::token() }}

@@ -54,6 +54,7 @@
 		}
 	
 	?>
+	
 		<h2>Personaje</h2>
 	
 		<!-- BUFFS -->
@@ -301,111 +302,111 @@
 	</div>
 	<!-- END ESTADÍSTICAS -->
 
-<div class="clearfix" style="margin-bottom: 35px;"></div>
+	<div class="clearfix" style="margin-bottom: 35px;"></div>
 
-<div class="span6 pull-left" style="margin-right: -20px;">
-<!-- INVENTARIO -->
-<script>
-	function confirmItemDestroy()
-	{
-		return confirm('¿Realmente deseas destruir el objeto?');
-	}
-</script>
-<h2>Inventario</h3>
-<ul class="inline">
-	@for ( $i = 1, $max = 6; $i <= $max; $i++ )
-		@if ( $i == 5 )
-			</ul>
-			<ul class="inline">
-		@endif
-		<li style="vertical-align: top;">
-		<div class="inventory-item">
-		@if ( isset($items['inventory']) )
-			@foreach ( $items['inventory'] as $characterItem )
-				@if ( $characterItem->slot == $i && $item = $characterItem->item )
-					<img style="cursor: pointer;" src="{{ URL::base() }}/img/icons/items/{{ $characterItem->item_id }}.png" alt="" width="80px" height="80px" data-toggle="popover" data-placement="top" data-original-title="
-					{{ $item->get_text_for_tooltip() }}
-
-					<div class='text-center' style='margin-top: 20px;'>
-					@if ( $item->type == 'arrow' && isset($items['lrhand']) && $items['lrhand'][0]->item->type != 'bow' )
-						<span style='font-size: 11px;'>Debes tener equipado un arco para usar flechas</span>
-					@else
-						<a href='{{ URL::to('authenticated/manipulateItem/' . $characterItem->id) }}' class='pull-left'>
-							@if ( $item->type == 'potion' )
-								Usar
-							@else
-								Equipar
-							@endif
-						</a>
-						
-						<a href='{{ URL::to('authenticated/destroyItem/' . $characterItem->id) }}' onclick='return confirmItemDestroy();' class='pull-right' color: white;'>Tirar</a>
-					@endif
-					</div>">
-					<div class="inventory-item-amount" data-toggle="tooltip" data-placement="top" data-original-title="Cantidad">{{ $characterItem->count }}</div>
+	<div class="span6" style="margin-right: -20px;">
+		<!-- INVENTARIO -->
+		<script>
+			function confirmItemDestroy()
+			{
+				return confirm('¿Realmente deseas destruir el objeto?');
+			}
+		</script>
+		<h2>Inventario</h3>
+		<ul class="inline">
+			@for ( $i = 1, $max = 6; $i <= $max; $i++ )
+				@if ( $i == 5 )
+					</ul>
+					<ul class="inline">
 				@endif
-			@endforeach
+				<li style="vertical-align: top;">
+				<div class="inventory-item">
+				@if ( isset($items['inventory']) )
+					@foreach ( $items['inventory'] as $characterItem )
+						@if ( $characterItem->slot == $i && $item = $characterItem->item )
+							<img style="cursor: pointer;" src="{{ URL::base() }}/img/icons/items/{{ $characterItem->item_id }}.png" alt="" width="80px" height="80px" data-toggle="popover" data-placement="top" data-original-title="
+							{{ $item->get_text_for_tooltip() }}
+
+							<div class='text-center' style='margin-top: 20px;'>
+							@if ( $item->type == 'arrow' && isset($items['lrhand']) && $items['lrhand'][0]->item->type != 'bow' )
+								<span style='font-size: 11px;'>Debes tener equipado un arco para usar flechas</span>
+							@else
+								<a href='{{ URL::to('authenticated/manipulateItem/' . $characterItem->id) }}' class='pull-left'>
+									@if ( $item->type == 'potion' )
+										Usar
+									@else
+										Equipar
+									@endif
+								</a>
+
+								<a href='{{ URL::to('authenticated/destroyItem/' . $characterItem->id) }}' onclick='return confirmItemDestroy();' class='pull-right' color: white;'>Tirar</a>
+							@endif
+							</div>">
+							<div class="inventory-item-amount" data-toggle="tooltip" data-placement="top" data-original-title="Cantidad">{{ $characterItem->count }}</div>
+						@endif
+					@endforeach
+				@endif
+				</div>
+				</li>
+			@endfor
+
+			<li style="vertical-align: top;" data-toggle="tooltip" data-original-title="Casillero bloqueado">
+				<div class="inventory-item">
+					<i class="icon-lock" style="vertical-align: -25px;"></i>
+				</div>
+			</li>
+
+			<li style="vertical-align: top;" data-toggle="tooltip" data-original-title="Casillero bloqueado">
+				<div class="inventory-item">
+					<i class="icon-lock" style="vertical-align: -25px;"></i>
+				</div>
+			</li>
+		</ul>
+		<!-- END INVENTARIO -->
+	</div>
+
+	<div class="span6">
+		<!-- ACTIVIDADES -->
+		@if ( count($activities) > 0 )
+		<div>
+			<h2>Actividad(es)</h2>
+			<ul class="unstyled">
+				@foreach ( $activities as $activity )
+				<li style="padding: 5px;">
+					<img src="{{ URL::base() }}/img/icons/actions/{{ $activity->name }}.jpg" alt="{{ $zone->name }}" width="32px" height="32px" style="margin-right: 5px;">
+					<b>
+					@if ( $activity->name == 'travel' )
+						Viajando a {{ $activity->data['zone']->name }}: 
+					@elseif ( $activity->name == 'battlerest' )
+						Descanzo de batalla: 
+					@elseif ( $activity->name == 'explore' )
+						Explorando: 
+					@endif
+					</b>
+					<span class="timer" data-endtime="{{ $activity->end_time - time() }}"></span>
+				</li>
+				@endforeach
+			</ul>
+		</div>
 		@endif
-		</div>
-		</li>
-	@endfor
-	
-	<li style="vertical-align: top;" data-toggle="tooltip" data-original-title="Casillero bloqueado">
-		<div class="inventory-item">
-			<i class="icon-lock" style="vertical-align: -25px;"></i>
-		</div>
-	</li>
-	
-	<li style="vertical-align: top;" data-toggle="tooltip" data-original-title="Casillero bloqueado">
-		<div class="inventory-item">
-			<i class="icon-lock" style="vertical-align: -25px;"></i>
-		</div>
-	</li>
-</ul>
-<!-- END INVENTARIO -->
-</div>
+		<!-- END ACTIVIDADES -->
 
-<div class="span6">
-<!-- ACTIVIDADES -->
-@if ( count($activities) > 0 )
-<div>
-	<h2>Actividad(es)</h2>
-	<ul class="unstyled">
-		@foreach ( $activities as $activity )
-		<li style="padding: 5px;">
-			<img src="{{ URL::base() }}/img/icons/actions/{{ $activity->name }}.jpg" alt="{{ $zone->name }}" width="32px" height="32px" style="margin-right: 5px;">
-			<b>
-			@if ( $activity->name == 'travel' )
-				Viajando a {{ $activity->data['zone']->name }}: 
-			@elseif ( $activity->name == 'battlerest' )
-				Descanzo de batalla: 
-			@elseif ( $activity->name == 'explore' )
-				Explorando: 
+		<!-- ZONA -->
+		<div>
+			<h2>Ubicación</h2>
+			@if ( count($activities) > 0 )
+				@foreach ( $activities as $activity )
+					@if ( $activity->name == 'travel' )
+						Saliendo de 
+					@endif
+				@endforeach
 			@endif
-			</b>
-			<span class="timer" data-endtime="{{ $activity->end_time - time() }}"></span>
-		</li>
-		@endforeach
-	</ul>
-</div>
-@endif
-<!-- END ACTIVIDADES -->
 
-<!-- ZONA -->
-<div>
-	<h2>Ubicación</h2>
-	@if ( count($activities) > 0 )
-		@foreach ( $activities as $activity )
-			@if ( $activity->name == 'travel' )
-				Saliendo de 
-			@endif
-		@endforeach
-	@endif
-	
-	<span data-toggle="tooltip" data-original-title="{{ $zone->description }}">
-		<img src="{{ URL::base() }}/img/zones/32/{{ $zone->id }}.png" alt="{{ $zone->name }}" width="32px" height="32px">
-		<b>{{ $zone->name }}</b>
-	</span>
-</div>
-<!-- END ZONA -->
-</div>
+			<span data-toggle="tooltip" data-original-title="{{ $zone->description }}">
+				<img src="{{ URL::base() }}/img/zones/32/{{ $zone->id }}.png" alt="{{ $zone->name }}" width="32px" height="32px">
+				<b>{{ $zone->name }}</b>
+			</span>
+		</div>
+		<!-- END ZONA -->
+	</div>
 </div>

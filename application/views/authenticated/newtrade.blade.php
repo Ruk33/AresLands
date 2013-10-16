@@ -29,10 +29,10 @@
 		<ul class="inline">
 		@foreach ( $characterItems as $characterItem )
 			<li style="display: table-cell; vertical-align: top; padding: 10px;" class="text-center">
-				{{ Form::radio('item', $characterItem->id, true, array('id' => $characterItem->id)) }}
-				<label for="{{ $characterItem->id }}">
+				{{ Form::radio('item', $characterItem->id, false, array('id' => $characterItem->id)) }}
+				<label for="{{ $characterItem->id }}" data-toggle="tooltip" data-placement="top" data-original-title="{{ $characterItem->item->get_text_for_tooltip() }}">
 					<div class="inventory-item">
-						<img src="{{ URL::base() }}/img/icons/items/{{ $characterItem->item_id }}.png" alt="" width="80px" height="80px" data-toggle="tooltip" data-placement="top" data-original-title="{{ $characterItem->item->get_text_for_tooltip() }}">
+						<img src="{{ URL::base() }}/img/icons/items/{{ $characterItem->item_id }}.png" alt="" width="80px" height="80px">
 					</div>
 				</label>
 
@@ -48,7 +48,9 @@
 					}
 				?>
 
-				{{ Form::select('amount['.$characterItem->id.']', $amount, 1, array('style' => 'width: 64px;')) }}
+				<span data-toggle="tooltip" data-original-title="Cantidad">
+					{{ Form::select('amount['.$characterItem->id.']', $amount, 1, array('style' => 'width: 64px;')) }}
+				</span>
 			</li>
 		@endforeach
 		</ul>
