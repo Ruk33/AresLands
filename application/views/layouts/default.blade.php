@@ -10,6 +10,8 @@
 		<meta name="description" content="Juego derivado del antiguo Tierra de Leyenda, restaurado y mejorado por IronFist. ¡Únete a este mundo épico y vive grandes aventuras!">
 		<meta name="viewport" content="width=device-width">
 
+		<link href='http://fonts.googleapis.com/css?family=Roboto+Slab' rel='stylesheet' type='text/css'>
+		
 		<link rel="stylesheet" href="{{ URL::base() }}/css/normalize.min.css">
 		<link rel="stylesheet" href="{{ URL::base() }}/css/bootstrap.min.css">
 		<!--<link rel="stylesheet" href="{{ URL::base() }}/css/main.min.css">-->
@@ -233,7 +235,7 @@
 			/*
 			 *	Iniciamos los tooltips
 			 */
-			$('[data-toggle="tooltip"]').tooltip({ html: true });
+			$('[data-toggle="tooltip"]').tooltip({ html: true, container: '#wrap' });
 			$('[data-toggle="popover"]').popover({ html: true });
 
 			/*

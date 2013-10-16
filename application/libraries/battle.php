@@ -322,9 +322,9 @@ class Battle
 	
 	private function init_battle()
 	{
-		$damage;
-		$defense;
-		$realDamage;
+		$damage = 0;
+		$defense = 0;
+		$realDamage = 0;
 		
 		// Mientras tengan vida
 		while ( $this->fighter_one['current_life'] > 0 && $this->fighter_two['current_life'] > 0 )

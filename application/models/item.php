@@ -43,12 +43,76 @@ class Item extends Base_Model
 
 	public function get_text_for_tooltip()
 	{
-		$message = "<div style='width: 600px; text-align: left;'>";
+		$message = "<div style='min-width: 250px; text-align: left;'>";
 
 		//$message .= "<img src='" . URL::base() . "/img/icons/items/$this->id.png' class='pull-left' width='32px' height='32px'>";
-
-		$message .= "<strong style='color: white;'>$this->name</strong> (<small>$this->type</small>)";
-		$message .= "<p style='color: #ADFF00;'>Requiere nivel $this->level</p>";
+		
+		$message .= "<small class='pull-right' style='color: #AFAFAF;'>";
+		switch ( $this->type )
+		{
+			case 'blunt':
+				$message .= 'Mazo';
+				break;
+				
+			case 'bigblunt':
+				$message .= 'Mazo de dos manos';
+				break;
+				
+			case 'sword':
+				$message .= 'Espada';
+				break;
+			
+			case 'bigsword':
+				$message .= 'Espada de dos manos';
+				break;
+			
+			case 'bow':
+				$message .= 'Arco';
+				break;
+			
+			case 'dagger':
+				$message .= 'Daga';
+				break;
+			
+			case 'staff':
+				$message .= 'Váculo';
+				break;
+			
+			case 'bigstaff':
+				$message .= 'Váculo de dos manos';
+				break;
+			
+			case 'shield':
+				$message .= 'Escudo';
+				break;
+			
+			case 'potion':
+				$message .= 'Poción';
+				break;
+			
+			case 'arrow':
+				$message .= 'Flecha';
+				break;
+			
+			case 'etc':
+				$message .= 'Misceláneo';
+				break;
+			
+			case 'mercenary':
+				$message .= 'Mercenario';
+				break;
+			
+			case 'none':
+				break;
+			
+			default:
+				$message .= 'Desconocido';
+				break;
+		}
+		$message .= '</small>';
+		
+		$message .= "<strong style='color: white;'>$this->name</strong>";
+		$message .= "<p style='color: #FFC200;'>Requiere nivel $this->level</p>";
 		$message .= "<p><small><em>$this->description</em></small></p>";
 
 		$message .= "<ul class='unstyled'>";

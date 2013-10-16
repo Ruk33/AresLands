@@ -53,8 +53,9 @@ textarea {
 body {
 	/*background-color: #360000;*/
 	background-color: black;
-	color: rgb(92, 89, 87);
+	color: #9B928C;
 	font-size: 15px;
+	font-family: "Roboto Slab";
 }
 
 .level-very-low {
@@ -100,6 +101,7 @@ body {
 	border: 1px solid #333;
 	border-top: 1px solid #5A5A5A;
 	color: white;
+	box-shadow: #000 0 0 15px;
 }
 
 .popover-title {
@@ -111,8 +113,24 @@ body {
 	display: none;
 }
 
+.tooltip.top {
+	padding-bottom: 15px;
+}
+
 .tooltip {
-	/*position: fixed; arregla el problema del overflow, pero genera otros u.u */
+	font-size: 13px;
+	margin-top: -15px;
+}
+
+.tooltip-arrow {
+	display: none !important;
+}
+
+.tooltip-inner {
+	max-width: 350px !important;
+	padding: 10px;
+	border: 1px solid #353837;
+	box-shadow: #000 0 0 15px;
 }
 
 /* thanks to http://www.karlhorky.com/2012/06/cross-browser-image-grayscale-with-css.html */
@@ -193,7 +211,7 @@ a:hover {
 
 .ui-input-button {
 	color: orange;
-	font: normal normal 12px Verdana;
+	font: normal normal 12px "Roboto Slab";
 	margin-top: -5px;
 }
 
@@ -497,7 +515,28 @@ a:hover {
 	margin-left: -10px;
 	display: inline-block;
 	overflow: hidden;
-	font: normal normal 12px/33px Verdana;
+	font: normal normal 12px/33px "Roboto Slab";
+	float: left;
+}
+
+.montes-background {
+	background-image: url('/img/zones/background/1.png');
+	background-repeat: no-repeat;
+}
+
+.valle-background {
+	background-image: url('/img/zones/background/2.png');
+	background-repeat: no-repeat;
+}
+
+.lago-background {
+	background-image: url('/img/zones/background/3.png');
+	background-repeat: no-repeat;
+}
+
+.piramides-background {
+	background-image: url('/img/zones/background/4.png');
+	background-repeat: no-repeat;
 }
 
 html, body {
@@ -522,9 +561,18 @@ body {
 	padding-top: 70px;
 }
 
+h1 {
+	color: #c7b299;
+	padding-left: 5px;
+	min-width: 169px;
+	height: 51px;
+	font-family: Georgia;
+	font-size: 24px;
+	margin: 0 !important;
+}
+
 h2 {
 	color: #c7b299;
-	padding-top: 20px;
 	padding-left: 5px;
 	min-width: 169px;
 	height: 51px;
@@ -533,6 +581,7 @@ h2 {
 	background-image: url('/img/header-background.png');
 	background-repeat: no-repeat;
 	margin: 0;
+	background-position-y: -20px;
 }
 
 h4 {
