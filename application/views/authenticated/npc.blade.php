@@ -1,5 +1,5 @@
 <div class="pull-left">
-	<img src="{{ URL::base() }}/img/npcs/{{ $npc->id }}.jpg" alt="" width="150px" height="193px">
+	<img src="{{ URL::base() }}/img/npcs/{{ $npc->id }}.jpg" alt="" width="150px" height="193px" style="border: 2px solid #160500;">
 </div>
 
 <div style="margin-left: 175px;">

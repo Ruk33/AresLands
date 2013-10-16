@@ -145,8 +145,15 @@ class Quest extends Base_Model
 			switch ( $reward->item_id )
 			{
 				case Config::get('game.coin_id'):
+					$coins = Item::get_divided_coins($reward->amount);
+					
 					$text = '<img src="' . URL::base() . '/img/copper.gif" width="14px" height="15px" />';
-					$text = '<span data-toggle="tooltip" data-original-title="Cantidad: ' . $reward->amount . '">' . $text . '</span>';
+					$text = '<span data-toggle="tooltip" data-original-title="Cantidad: 
+						<ul class=\'inline\' style=\'margin: 0;\'>
+						<li><i class=\'coin coin-gold pull-left\'></i> ' . $coins['gold'] . '</li>
+						<li><i class=\'coin coin-silver pull-left\'></i> ' . $coins['silver'] . '</li>
+						<li><i class=\'coin coin-copper pull-left\'></i> ' . $coins['copper'] . '</li>
+					</ul>">' . $text . '</span>';
 					break;
 				
 				case Config::get('game.xp_item_id'):

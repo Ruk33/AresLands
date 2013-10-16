@@ -8,6 +8,22 @@ class Item extends Base_Model
 	public static $key = 'id';
 
 	/**
+	 *	Obtenemos las monedas dividas en
+	 *	oro, plata y cobre de un personaje
+	 *
+	 *  @param <integer> $coins Cantidad de monedas
+	 *	@return <Array> Monedas dividas en oro, plata y cobre
+	 */
+	public static function get_divided_coins($coins)
+	{
+		return array(
+			'gold' => substr($coins, 0, -4) ? substr($coins, 0, -4) : 0,
+			'silver' => substr($coins, -4, -2) ? substr($coins, -4, -2) : 0,
+			'copper' => substr($coins, -2) ? substr($coins, -2) : 0,
+		);
+	}
+	
+	/**
 	 *	@return <array> Array de Skill (model)
 	 */
 	public function get_skills()
