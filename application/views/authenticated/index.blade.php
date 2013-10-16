@@ -160,7 +160,9 @@
 			<li data-toggle="tooltip" data-placement="top" data-original-title="<b>Barra de actividad:</b> Completa la barra de actividad realizando acciones (explorar, batallar, viajar, etc.) para obtener las <b>recompensas</b>.">
 				<span style="font-size: 11px;">BARRA DE ACTIVIDAD</span>
 				<div class="progress" style="height: 5px;">
+					@if ( $character->activity_bar )
 					<div id="activityBar" class="bar bar-success" style="width: {{ 100 * $character->activity_bar->filled_amount / Config::get('game.activity_bar_max') }}%"></div>
+					@endif
 				</div>
 			</li>
 
