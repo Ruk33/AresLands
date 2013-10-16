@@ -104,23 +104,23 @@
 								</div>
 
 								<ul class="inline pull-right">
-									<li style="padding: 0; vertical-align: middle;">
-										<img src="{{ URL::base() }}/img/xp.png" alt="Experiencia" width="22px" height="18px" data-toggle="tooltip" data-placement="top" data-original-title="<b>Experiencia</b><br>{{ $character->xp }}/{{ $character->xp_next_level }}">
+									<li style="padding: 0; vertical-align: top;" data-toggle="tooltip" data-placement="top" data-original-title="<b>Experiencia</b><br>{{ $character->xp }}/{{ $character->xp_next_level }}">
+										<img src="{{ URL::base() }}/img/xp.png" alt="Experiencia" width="22px" height="18px">
 									</li>
 
-									<li style="padding: 0; vertical-align: middle;">
-										<i class="coin coin-copper" data-toggle="tooltip" data-placement="top" data-original-title="
+									<li style="padding: 0; vertical-align: top;" data-toggle="tooltip" data-placement="top" data-original-title="
 										<b>Monedas</b>
 										<ul class='inline' style='margin: 0;'>
 											<li><i class='coin coin-gold pull-left'></i> {{ $coins['gold'] }}</li>
 											<li><i class='coin coin-silver pull-left'></i> {{ $coins['silver'] }}</li>
 											<li><i class='coin coin-copper pull-left'></i> {{ $coins['copper'] }}</li>
-										</ul>" alt="Monedas"></i>
+										</ul>">
+										<i class="coin coin-copper" alt="Monedas"></i>
 									</li>
 	
 									@if ( $character->clan_id != 0 )
-										<li style="padding: 0; vertical-align: middle;">
-											<a href="{{ URL::to('authenticated/clan/' . $character->clan_id) }}" data-toggle="tooltip" data-placement="top" data-original-title="Accede a la página de tu grupo"><img src="{{ URL::base() }}/img/shield-icon.png" alt="Grupo" width="16px" height="19px"></a>
+										<li style="padding: 0; vertical-align: top;" data-toggle="tooltip" data-placement="top" data-original-title="Accede a la página de tu grupo">
+											<a href="{{ URL::to('authenticated/clan/' . $character->clan_id) }}"><img src="{{ URL::base() }}/img/shield-icon.png" alt="Grupo" width="16px" height="19px"></a>
 										</li>
 									@endif
 								</ul>

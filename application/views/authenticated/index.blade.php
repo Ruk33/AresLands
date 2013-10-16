@@ -4,7 +4,7 @@
 	<div class="bar">
 		<ul class="inline">
 		@foreach ( $npcs as $npc )
-			<li data-toggle="tooltip" data-placement="bottom" data-original-title="{{ $npc->tooltip_dialog }}">
+			<li data-toggle="tooltip" data-placement="bottom" data-original-title="Mercader {{ $npc->name }}<br>{{ $npc->tooltip_dialog }}">
 				<a href="{{ URL::to('authenticated/npc/' . $npc->name) }}">
 					<img src="{{ URL::base() }}/img/icons/npcs/{{ $npc->id }}.png" alt="" width="72px" height="82px">
 				</a>
@@ -187,7 +187,7 @@
 
 			<li style="margin-bottom: 10px;" ng-init="stats['stat_life']='{{ $character->stat_life }}'" data-toggle="tooltip" data-placement="top" data-original-title="<b>Vitalidad:</b> Aumenta los puntos de vida que posees y la regeneración de los mismos.">
 				<span class="ui-button button" style="cursor: default; width: 250px;">
-					<a ng-click="addStat('stat_life')" class="button-icon" ng-show="remainingPoints>0">+</a>
+					<a ng-click="addStat('stat_life')" class="button-icon" ng-show="remainingPoints>0" style="cursor: pointer;">+</a>
 					<i class="button-icon hearth" ng-show="remainingPoints<=0"></i>
 					<span class="button-content" style="width: 200px;">
 						<b class="pull-left">Vitalidad:</b>
@@ -208,7 +208,7 @@
 			</li>
 			<li style="margin-bottom: 10px;" ng-init="stats['stat_dexterity']='{{ $character->stat_dexterity }}'" data-toggle="tooltip" data-placement="top" data-original-title="<b>Destreza:</b> Aumenta tu velocidad de golpeo en las batallas, pudiendo lograr así múltiples ataques consecutivos.">
 				<span class="ui-button button" style="cursor: default; width: 250px;">
-					<a ng-click="addStat('stat_dexterity')" class="button-icon" ng-show="remainingPoints>0">+</a>
+					<a ng-click="addStat('stat_dexterity')" class="button-icon" ng-show="remainingPoints>0" style="cursor: pointer;">+</a>
 					<i class="button-icon boot" ng-show="remainingPoints<=0"></i>
 					<span class="button-content" style="width: 200px;">
 						<b class="pull-left">Destreza:</b>
@@ -229,7 +229,7 @@
 			</li>
 			<li style="margin-bottom: 10px;" ng-init="stats['stat_magic']='{{ $character->stat_magic }}'" data-toggle="tooltip" data-placement="top" data-original-title="<b>Magia:</b> Aumenta el poder de los ataques mágicos.">
 				<span class="ui-button button" style="cursor: default; width: 250px;">
-					<a ng-click="addStat('stat_magic')" class="button-icon" ng-show="remainingPoints>0">+</a>
+					<a ng-click="addStat('stat_magic')" class="button-icon" ng-show="remainingPoints>0" style="cursor: pointer;">+</a>
 					<i class="button-icon fire" ng-show="remainingPoints<=0"></i>
 					<span class="button-content" style="width: 200px;">
 						<b class="pull-left">Magia:</b>
@@ -250,7 +250,7 @@
 			</li>
 			<li style="margin-bottom: 10px;" ng-init="stats['stat_strength']='{{ $character->stat_strength }}'" data-toggle="tooltip" data-placement="top" data-original-title="<b>Fuerza:</b> Aumenta el poder de los ataques físicos.">
 				<span class="ui-button button" style="cursor: default; width: 250px;">
-					<a ng-click="addStat('stat_strength')" class="button-icon" ng-show="remainingPoints>0">+</a>
+					<a ng-click="addStat('stat_strength')" class="button-icon" ng-show="remainingPoints>0" style="cursor: pointer;">+</a>
 					<i class="button-icon axe" ng-show="remainingPoints<=0"></i>
 					<span class="button-content" style="width: 200px;">
 						<b class="pull-left">Fuerza:</b>
@@ -271,7 +271,7 @@
 			</li>
 			<li style="margin-bottom: 10px;" ng-init="stats['stat_luck']='{{ $character->stat_luck }}'" data-toggle="tooltip" data-placement="top" data-original-title="<b>Suerte:</b> Aumenta la probabilidad de asestar un golpe crítico, ya sea mágico o físico.">
 				<span class="ui-button button" style="cursor: default; width: 250px;">
-					<a ng-click="addStat('stat_luck')" class="button-icon" ng-show="remainingPoints>0">+</a>
+					<a ng-click="addStat('stat_luck')" class="button-icon" ng-show="remainingPoints>0" style="cursor: pointer;">+</a>
 					<i class="button-icon thunder" ng-show="remainingPoints<=0"></i>
 					<span class="button-content" style="width: 200px;">
 						<b class="pull-left">Suerte:</b>
