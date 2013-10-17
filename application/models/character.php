@@ -601,7 +601,7 @@ class Character extends Base_Model
 	/**
 	 *	Agregamos un objeto al personaje.
 	 *
-	 *	@param <mixed> $itemId
+	 *	@param <mixed> $item Id del objeto o instancia de Item
 	 *	@param <int> $amount
 	 *	@return <bool> false si no se pudo agregar el item
 	 */
@@ -614,7 +614,7 @@ class Character extends Base_Model
 		
 		if ( ! $item instanceof Item )
 		{
-			$item = Item::find($item);
+			$item = Item::select(array('id', 'stackable'))->find((int) $item);
 			
 			if ( ! $item )
 			{
@@ -641,7 +641,7 @@ class Character extends Base_Model
 		
 		if ( $item->stackable )
 		{
-			$characterItem = $this->items()->where_item_id($item->id);
+			$characterItem = $this->items()->where('item_id', '=', $item->id)->get();
 			
 			if ( $characterItem )
 			{
@@ -674,7 +674,7 @@ class Character extends Base_Model
 		{
 			if ( $this->get_available_slots() >= $amount )
 			{
-				for ( $i = 1; $i < $amount; $i++ )
+				while ( $amount > 0 )
 				{
 					$slot = $this->empty_slot();
 					
@@ -687,6 +687,8 @@ class Character extends Base_Model
 					$characterItem->slot = $slot;
 					
 					$characterItem->save();
+					
+					$amount--;
 				}
 				
 				return true;

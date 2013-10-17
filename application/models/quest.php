@@ -194,8 +194,6 @@ class Quest extends Base_Model
 		 */
 		$rewards = $this->rewards;
 
-		$characterItem = null;
-
 		foreach ( $rewards as $reward )
 		{
 			$character->add_item($reward->item_id, $reward->amount);
