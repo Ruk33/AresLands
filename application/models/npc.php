@@ -127,13 +127,28 @@ class Npc extends Base_Model
 	 */
 	public function available_quests_of(Character $character)
 	{
-		return $this
-		->quests()
-		//->join('quests as quest', 'npc_quests.quest_id', '=', 'quest.id')
-		->where('quests.id', 'NOT IN', DB::raw("(SELECT quest_id FROM character_quests WHERE character_id = '$character->id' AND repeatable_at IS NULL OR repeatable_at > ".time().")"))
-		->where('min_level', '<=', $character->level)
-		->where('max_level', '>=', $character->level)
-		->where_in("$character->race", array($character->gender, 'both'));
+		$characterQuests = DB::raw("(
+			SELECT 
+				quest_id 
+			FROM 
+				character_quests 
+			WHERE 
+				character_id = $character->id
+				
+				AND
+				
+				(
+					repeatable_at IS NULL
+					OR
+					repeatable_at > " . time() . "
+				)
+		)");
+		
+		return $this->
+				quests()->
+				where('quests.id', 'NOT IN', $characterQuests)->
+				where('min_level', '<=', $character->level)->
+				where('max_level', '>=', $character->level);
 	}
 
 	/**
@@ -148,12 +163,11 @@ class Npc extends Base_Model
 		return $this
 		->quests()
 		->join('character_quests as character_quest', 'quests.id', '=', 'character_quest.quest_id')
-		->where('quests.repeatable', '=', true)
+		->where('repeatable', '=', 1)
 		->where('character_quest.character_id', '=', $character->id)
 		->where('character_quest.repeatable_at', '>', time())
 		->where('character_quest.progress', '=', 'finished')
 		->select(array('character_quest.repeatable_at', 'quests.*'));
-		//->where('quests.id', 'IN', DB::raw("(SELECT quest_id FROM character_quests WHERE character_id = '$character->id' AND progress = 'finished')"));
 	}
 
 	/**
@@ -178,7 +192,7 @@ class Npc extends Base_Model
 		return $this
 		->quests()
 		//->join('quests as quest', 'npc_quests.quest_id', '=', 'quest.id')
-		->join('character_quests', 'npc_quests.quest_id', '=', 'character_quests.quest_id')
+		->join('character_quests', 'quests.id', '=', 'character_quests.quest_id')
 		->where('character_quests.character_id', '=', $character->id)
 		->where('character_quests.progress', '=', 'reward');
 	}

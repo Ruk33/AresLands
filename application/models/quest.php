@@ -147,7 +147,7 @@ class Quest extends Base_Model
 				case Config::get('game.coin_id'):
 					$coins = Item::get_divided_coins($reward->amount);
 					
-					$text = '<img src="' . URL::base() . '/img/copper.gif" width="14px" height="15px" />';
+					$text = '<i class="coin coin-copper"></i>';
 					$text = '<span data-toggle="tooltip" data-original-title="Cantidad: 
 						<ul class=\'inline\' style=\'margin: 0;\'>
 						<li><i class=\'coin coin-gold pull-left\'></i> ' . $coins['gold'] . '</li>

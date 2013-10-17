@@ -320,6 +320,7 @@ a:hover {
     background-image: url("/img/icons/coin-sprite.png");
     background-repeat: no-repeat;
     display: block;
+	margin: 0 auto;
 }
 
 .coin-copper {
@@ -724,6 +725,8 @@ h4 {
 	width: 32px;
 	height: 32px;
 	text-align: center;
+	display: table-cell;
+	vertical-align: middle;
 }
 
 .inventory-item {
