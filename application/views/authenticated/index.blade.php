@@ -206,7 +206,7 @@
 					</span>
 				</span>
 			</li>
-			<li style="margin-bottom: 10px;" ng-init="stats['stat_dexterity']='{{ $character->stat_dexterity }}'" data-toggle="tooltip" data-placement="top" data-original-title="<p><b>Destreza:</b> Aumenta tu velocidad de golpeo en las batallas, pudiendo lograr así múltiples ataques consecutivos si tienes mucha mas velocidad que tu adversario.</p><p>Tu velocidad de golpeo aumenta por cada punto de destreza.</p><p class='positive'>Tiempo de golpeo (menor es mejor): {{ number_format(1000 / ($character->stat_dexterity + $positiveBonifications['stat_dexterity'] - $negativeBonifications['stat_dexterity']), 2) }}</p>">
+			<li style="margin-bottom: 10px;" ng-init="stats['stat_dexterity']='{{ $character->stat_dexterity }}'" data-toggle="tooltip" data-placement="top" data-original-title="<p><b>Destreza:</b> Aumenta tu velocidad de golpeo en las batallas, pudiendo lograr así múltiples ataques consecutivos si tienes mucha mas velocidad que tu adversario.</p><p>Tu tiempo de golpeo se reduce por cada punto de destreza (cuanto menos tiempo de golpeo mejor).</p><p class='positive'>Tiempo de golpeo (menor es mejor): {{ number_format(1000 / ($character->stat_dexterity + $positiveBonifications['stat_dexterity'] - $negativeBonifications['stat_dexterity']), 2) }}</p>">
 				<span class="ui-button button" style="cursor: default; width: 250px;">
 					<a ng-click="addStat('stat_dexterity')" class="button-icon" ng-show="remainingPoints>0" style="cursor: pointer;">+</a>
 					<i class="button-icon boot" ng-show="remainingPoints<=0"></i>
