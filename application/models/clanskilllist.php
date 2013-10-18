@@ -38,6 +38,11 @@ class ClanSkillList
 
 	public function can_learn(Clan $clan, $skillId, $level)
 	{
+		if ( $clan->points_to_change <= 0 )
+		{
+			return false;
+		}
+		
 		$skill = isset($this->_json[$skillId][$level]) ? $this->_json[$skillId][$level] : false;
 
 		if ( $skill )

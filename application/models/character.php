@@ -26,6 +26,157 @@ class Character extends Base_Model
 		'gender_match' => 'El género es incorrecto',
 	);
 	
+	/**
+	 * Obtenemos el tooltip del personaje
+	 * 
+	 * @return <string>
+	 */
+	public function get_tooltip()
+	{
+		$message = "<div style='width: 350px; text-align: left;'>";
+		$message .= "<div class='pull-left icon-race-30 icon-race-30-".$this->race."_".$this->gender."' style='margin-right: 10px;'></div>";
+		$message .= $this->name . ' - Nivel ' . $this->level;
+		
+		$message .= "<small class='pull-right' style='color: #AFAFAF;'>";
+		
+		switch ( $this->race )
+		{
+			case 'dwarf':
+				$message .= 'Enano';
+				break;
+			
+			case 'human':
+				$message .= 'Humano';
+				break;
+			
+			case 'drow':
+				$message .= 'Drow';
+				break;
+			
+			case 'elf':
+				$message .= 'Elfo';
+				break;
+			
+			default:
+				$message .= 'Desconocido';
+				break;
+		}
+		$message .= '</small>';
+		
+		if ( $this->clan_id != 0 )
+		{
+			$message .= '<p>Miembro de: ' . $this->clan->name . '</p>';
+		}
+		
+		$message .= "<ul class='unstyled text-center' style='width: 340px;'>";
+		
+		$message .= "
+		<li>
+			<span class='ui-button button'>
+				<i class='button-icon hearth'></i>
+				<span class='button-content' style='width: 200px;'>
+					<b class='pull-left'>Vitalidad:</b>
+					<div class='pull-right'>" . mt_rand($this->stat_life, $this->stat_life * 1.3) . "</div>
+				</span>
+			</span>
+		</li>
+		";
+		
+		$message .= "
+		<li>
+			<span class='ui-button button'>
+				<i class='button-icon boot'></i>
+				<span class='button-content' style='width: 200px;'>
+					<b class='pull-left'>Destreza:</b>
+					<div class='pull-right'>" . mt_rand($this->stat_dexterity, $this->stat_dexterity * 1.3) . "</div>
+				</span>
+			</span>
+		</li>
+		";
+		
+		$message .= "
+		<li>
+			<span class='ui-button button'>
+				<i class='button-icon fire'></i>
+				<span class='button-content' style='width: 200px;'>
+					<b class='pull-left'>Magia:</b>
+					<div class='pull-right'>" . mt_rand($this->stat_magic, $this->stat_magic * 1.3) . "</div>
+				</span>
+			</span>
+		</li>
+		";
+		
+		$message .= "
+		<li>
+			<span class='ui-button button'>
+				<i class='button-icon axe'></i>
+				<span class='button-content' style='width: 200px;'>
+					<b class='pull-left'>Fuerza:</b>
+					<div class='pull-right'>" . mt_rand($this->stat_strength, $this->stat_strength * 1.3) . "</div>
+				</span>
+			</span>
+		</li>
+		";
+		
+		$message .= "
+		<li>
+			<span class='ui-button button'>
+				<i class='button-icon thunder'></i>
+				<span class='button-content' style='width: 200px;'>
+					<b class='pull-left'>Suerte:</b>
+					<div class='pull-right'>" . mt_rand($this->stat_luck, $this->stat_luck * 1.3) . "</div>
+				</span>
+			</span>
+		</li>
+		";
+		
+		$message .= "</ul>";
+		
+		$message .= "</div>";
+		
+		return $message;
+	}
+	
+	public function has_permission($permission)
+	{
+		if ( $this->clan_id == 0 )
+		{
+			return false;
+		}
+		
+		return $this->clan->has_permission($this, $permission);
+	}
+	
+	public function add_permission($permission, $save = true)
+	{
+		$this->clan->add_permission($this, $permission, $save);
+	}
+	
+	public function revoke_permission($permission, $save = true)
+	{
+		$this->clan->revoke_permission($this, $permission, $save);
+	}
+	
+	/**
+	 * Wraper. Si $value es true, agregamos el permiso,
+	 * de lo contrario lo removemos.
+	 * 
+	 * @param <integer> $permission
+	 * @param <boolean> $value
+	 * @param <boolean> $save
+	 */
+	public function set_permission($permission, $value, $save = true)
+	{
+		if ( $value )
+		{
+			$this->add_permission($permission, $save);
+		}
+		else
+		{
+			$this->revoke_permission($permission, $save);
+		}
+	}
+	
 	// Evitamos vida por debajo de 0 o mayor a max_life
 	public function set_current_life($value)
 	{		

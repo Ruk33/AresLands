@@ -2,7 +2,7 @@
 
 interface Api_Interface
 {
-	public function get_character($name);
+	public function get_character($name, $tooltip);
 	public function get_item($id);
 	public function get_itemTooltip($id);
 	public function get_clan($id);
@@ -20,7 +20,7 @@ class Api_Controller extends Base_Controller implements Api_Interface
 {
 	public $restful = true;
 
-	public function get_character($name)
+	public function get_character($name, $tooltip = false)
 	{
 		$selectableFields = array(
 			'name',
@@ -44,19 +44,26 @@ class Api_Controller extends Base_Controller implements Api_Interface
 		 */
 		if ( ! $character )
 		{
-			return json_encode(null);
+			return Response::json(null);
 		}
 
 		/*
-		 *	Nada de stats reales, solo aproximados
+		 *	Nada de stats reales, solo aproximados BOAJAJA >:3
 		 */
-		$character->stat_life = mt_rand($character->stat_life, $character->stat_life * 2);
-		$character->stat_dexterity = mt_rand($character->stat_dexterity, $character->stat_dexterity * 2);
-		$character->stat_magic = mt_rand($character->stat_magic, $character->stat_magic * 2);
-		$character->stat_strength = mt_rand($character->stat_strength, $character->stat_strength * 2);
-		$character->stat_luck = mt_rand($character->stat_luck, $character->stat_luck * 2);
-
-		return json_encode($character->attributes);
+		$character->stat_life = mt_rand($character->stat_life, $character->stat_life * 1.3);
+		$character->stat_dexterity = mt_rand($character->stat_dexterity, $character->stat_dexterity * 1.3);
+		$character->stat_magic = mt_rand($character->stat_magic, $character->stat_magic * 1.3);
+		$character->stat_strength = mt_rand($character->stat_strength, $character->stat_strength * 1.3);
+		$character->stat_luck = mt_rand($character->stat_luck, $character->stat_luck * 1.3);
+		
+		if ( $tooltip )
+		{
+			return Response::json(array('tooltip' => $character->get_tooltip()));
+		}
+		else
+		{
+			return Response::json($character->attributes);
+		}
 	}
 
 	public function get_item($id)

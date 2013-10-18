@@ -81,7 +81,7 @@ class Authenticated_Controller extends Base_Controller
 			'current_life',
 			'max_life',
 			'last_logged',
-			'level'
+			'level',
 		));
 
 		/*
@@ -168,7 +168,7 @@ class Authenticated_Controller extends Base_Controller
 	{
 		if ( $skillId && $level > 0 )
 		{
-			$character = Character::get_character_of_logged_user(array('id', 'clan_id'));
+			$character = Character::get_character_of_logged_user(array('id', 'clan_id', 'clan_permission'));
 
 			if ( $character->clan_id > 0 )
 			{
@@ -176,7 +176,7 @@ class Authenticated_Controller extends Base_Controller
 
 				if ( $clan )
 				{
-					if ( $clan->leader_id == $character->id )
+					if ( $clan->leader_id == $character->id || $character->has_permission(Clan::PERMISSION_LEARN_SPELL) )
 					{
 						if ( ClanSkillList::get_instance()->can_learn($clan, $skillId, $level) )
 						{
@@ -606,20 +606,18 @@ class Authenticated_Controller extends Base_Controller
 
 	public function post_editClanMessage()
 	{
-		$character = Character::get_character_of_logged_user(array('id', 'clan_id'));
+		$character = Character::get_character_of_logged_user(array('id', 'clan_id', 'clan_permission'));
 
 		if ( $character )
 		{
 			$clan = $character->clan;
 			
-			if ( $clan && $character->id == $clan->leader_id )
+			if ( $clan && $character->id == $clan->leader_id || $character->has_permission(Clan::PERMISSION_EDIT_MESSAGE) )
 			{
 				$clan->message = Input::json()->message;
 				$clan->save();
 			}
 		}
-
-		die();
 	}
 
 	public function post_createClan()
@@ -719,7 +717,7 @@ class Authenticated_Controller extends Base_Controller
 
 	public function get_clanRemoveMember($memberName = '')
 	{
-		$character = Character::get_character_of_logged_user(array('id', 'name', 'clan_id'));
+		$character = Character::get_character_of_logged_user(array('id', 'name', 'clan_id', 'clan_permission'));
 		$clan = $character->clan()->select(array('id', 'leader_id'))->first();
 
 		/*
@@ -729,9 +727,9 @@ class Authenticated_Controller extends Base_Controller
 		{
 			/*
 			 *	Verificamos que el personaje
-			 *	es el lider
+			 *	es el lider o tenga permisos
 			 */
-			if ( $character->id == $clan->leader_id )
+			if ( $character->id == $clan->leader_id || $character->has_permission(Clan::PERMISSION_KICK_MEMBER) )
 			{
 				/*
 				 *	No se puede sacar a él mismo, 
@@ -779,12 +777,12 @@ class Authenticated_Controller extends Base_Controller
 
 		if ( $petition )
 		{
-			$character = Character::get_character_of_logged_user(array('id'));
+			$character = Character::get_character_of_logged_user(array('id', 'clan_id', 'clan_permission'));
 			$clan = $petition->clan;
 
 			if ( $clan )
 			{
-				if ( $character->id == $clan->leader_id )
+				if ( $character->id == $clan->leader_id || $character->has_permission(Clan::PERMISSION_DECLINE_PETITION) )
 				{
 					Message::clan_reject_message($character, $petition->character()->select(array('id'))->first(), $clan);
 					$petition->delete();
@@ -808,7 +806,7 @@ class Authenticated_Controller extends Base_Controller
 
 		if ( $petition )
 		{
-			$character = Character::get_character_of_logged_user(array('id'));
+			$character = Character::get_character_of_logged_user(array('id', 'clan_id', 'clan_permission'));
 			$clan = $petition->clan;
 			
 			/*
@@ -817,10 +815,10 @@ class Authenticated_Controller extends Base_Controller
 			if ( $clan )
 			{
 				/*
-				 *	Esta operación solamente
-				 *	la pueden realizar los líderes de clan
+				 *	Verificamos que el usuario tenga los permisos
+				 *	para realizar esta accion
 				 */
-				if ( $character->id == $clan->leader_id )
+				if ( $character->id == $clan->leader_id || $character->has_permission(Clan::PERMISSION_ACCEPT_PETITION) )
 				{
 					/*
 					 *	Obtenemos la información del personaje
@@ -947,24 +945,52 @@ class Authenticated_Controller extends Base_Controller
 		 */
 		return Redirect::to('authenticated/clan/');
 	}
+	
+	public function post_clanModifyMemberPermissions()
+	{		
+		$character = Character::get_character_of_logged_user(array('id', 'clan_id'));
+		$clan = $character->clan;
+		
+		if ( $character->id == $clan->leader_id )
+		{
+			$input = Input::all();
+			$member = Character::select(array('id', 'clan_id', 'clan_permission'))->find((int) $input['id']);
+			
+			if ( $member )
+			{
+				if ( $member->clan_id == $clan->id )
+				{
+					$member->set_permission(Clan::PERMISSION_ACCEPT_PETITION, isset($input['can_accept_petition']), false);
+					$member->set_permission(Clan::PERMISSION_DECLINE_PETITION, isset($input['can_decline_petition']), false);
+					$member->set_permission(Clan::PERMISSION_KICK_MEMBER, isset($input['can_kick_member']), false);
+					$member->set_permission(Clan::PERMISSION_LEARN_SPELL, isset($input['can_learn_spell']), false);
+					$member->set_permission(Clan::PERMISSION_EDIT_MESSAGE, isset($input['can_edit_message']), false);
+
+					$member->save();
+				}
+			}
+		}
+		
+		return Redirect::to('authenticated/clan/' . $clan->id);
+	}
 
 	public function get_clan($clanId = false)
 	{
-		$clan = ( $clanId ) ? Clan::find($clanId) : false;
-		$character = Character::get_character_of_logged_user(array('id', 'clan_id'));
+		$clan = ( $clanId ) ? Clan::find((int) $clanId) : false;
+		$character = Character::get_character_of_logged_user(array('id', 'clan_id', 'clan_permission'));
 
 		if ( $clan )
 		{
 			$dataToView = array();
 
 			$dataToView['clan'] = $clan;
-			$dataToView['members'] = $clan->members()->select(array('name', 'race', 'gender', 'level'))->get();
+			$dataToView['members'] = $clan->members()->select(array('id' ,'name', 'race', 'gender', 'level', 'clan_id', 'clan_permission'))->get();
 			$dataToView['character'] = $character;
 			$dataToView['skills'] = $clan->skills;
 
 			$dataToView['skillsToLearn'] = ClanSkillList::get_instance()->get_skills();
 
-			if ( $character->id == $clan->leader_id )
+			if ( $character->id == $clan->leader_id || $character->has_permission(Clan::PERMISSION_ACCEPT_PETITION) || $character->has_permission(Clan::PERMISSION_DECLINE_PETITION) )
 			{
 				$dataToView['petitions'] = $clan->petitions()->get();
 			}

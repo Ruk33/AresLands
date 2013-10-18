@@ -6,6 +6,31 @@ class Clan extends Base_Model
 	public static $timestamps = false;
 	public static $table = 'clans';
 	public static $key = 'id';
+	
+	/**
+	 * @var <integer> Permiso para aceptar peticiones de ingreso
+	 */
+	const PERMISSION_ACCEPT_PETITION = 1;
+	
+	/**
+	 * @var <integer> Permiso para declinar peticiones de ingreso
+	 */
+	const PERMISSION_DECLINE_PETITION = 2;
+	
+	/**
+	 * @var <integer> Permiso para expulsar a un miembro
+	 */
+	const PERMISSION_KICK_MEMBER = 4;
+	
+	/**
+	 * @var <integer> Permiso para aprender una habilidad
+	 */
+	const PERMISSION_LEARN_SPELL = 8;
+	
+	/**
+	 * @var <integer> Permiso para editar el mensaje del clan
+	 */
+	const PERMISSION_EDIT_MESSAGE = 16;
 
 	protected $rules = array(
 		'name' => 'required|between:3,35|unique:clans',
@@ -19,6 +44,53 @@ class Clan extends Base_Model
 
 		'message_between' => 'El mensaje del grupo puede tener hasta 1000 caracteres',
 	);
+	
+	/**
+	 * Verificamos si el personaje tiene un permiso
+	 * en específico
+	 * 
+	 * @param <Character> $character
+	 * @param <integer> $permission
+	 * @return <boolean>
+	 */
+	public function has_permission(Character $character, $permission)
+	{
+		return (bool) ($character->clan_permission & $permission);
+	}
+	
+	/**
+	 * Agregamos permiso a personaje
+	 * 
+	 * @param <Character> $character
+	 * @param <integer> $permission
+	 * @param <boolean> $save true para guarda el registro (util cuando se hacen muchas modificaciones)
+	 */
+	public function add_permission(Character $character, $permission, $save = true)
+	{
+		$character->clan_permission |= $permission;
+		
+		if ( $save )
+		{
+			$character->save();
+		}
+	}
+	
+	/**
+	 * Removemos permiso a personaje
+	 * 
+	 * @param <Character> $character
+	 * @param <integer> $permission
+	 * @param <boolean> $save true para guarda el registro (util cuando se hacen muchas modificaciones)
+	 */
+	public function revoke_permission(Character $character, $permission, $save = true)
+	{
+		$character->clan_permission &= ~$permission;
+		
+		if ( $save )
+		{
+			$character->save();
+		}
+	}
 
 	public function add_xp($amount)
 	{
@@ -130,11 +202,17 @@ class Clan extends Base_Model
 
 	public function join(Character $member)
 	{
+		$member->clan_permission = 0;
+		$member->save();
+		
 		$this->give_clan_skills_to_member($member);
 	}
 
 	public function leave(Character $member)
 	{
+		$member->clan_permission = 0;
+		$member->save();
+		
  		$this->remove_clan_skills_from_member($member);
 	}
 

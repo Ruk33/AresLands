@@ -17,10 +17,11 @@
 		<!--<link rel="stylesheet" href="{{ URL::base() }}/css/main.min.css">-->
 		<link rel="stylesheet" href="{{ URL::base() }}/css/main.css">
 
-		@if ( Request::env() == 'local' )
+		@if ( false && Request::env() == 'local' )
 			<script src="{{ URL::base() }}/js/vendor/jquery-1.9.1.min.js"></script>
-			<script src="{{ URL::base() }}/js/vendor/bootstrap.min.js"></script>
-			<script src="{{ URL::base() }}/js/vendor/angular.min.js"></script>			
+			<script src="{{ URL::base() }}/js/vendor/bootstrap.js"></script>
+			<script src="{{ URL::base() }}/js/vendor/angular.min.js"></script>
+			<script src="{{ URL::base() }}/js/vendor/angular-resource.min.js"></script>
 			
 			<script src="{{ URL::base() }}/js/app.js"></script>
 			
@@ -30,8 +31,8 @@
 			<script src="{{ URL::base() }}/js/filters.js"></script>
 			<script src="{{ URL::base() }}/js/directives.js"></script>
 		@else
-			<script src="{{ URL::base() }}/js/vendor.min.js"></script>
-			<script src="{{ URL::base() }}/js/app.min.js"></script>
+			<script src="{{ URL::base() }}/js/vendor-1.0.0.min.js"></script>
+			<script src="{{ URL::base() }}/js/app-0.0.1.min.js"></script>
 		@endif
 	</head>
 	<?php flush(); ?>

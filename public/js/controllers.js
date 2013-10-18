@@ -88,6 +88,16 @@ controller('CharacterStatsController', ['$scope', '$http', '$timeout', function(
 	);
 }])
 
+.controller('Character', ['$scope', '$http', function($scope, $http) {
+	$scope.character = [];
+	
+	$scope.getCharacter = function(name) {
+		$http.get($scope.basePath + 'api/character/' + name).success(function(data) {
+			$scope.characters[name] = data;
+		});
+	};
+}])
+
 .controller('Item', ['$scope', '$http', function($scope, $http) {
 	$scope.item = [];
 	$scope.price = [];

@@ -5,10 +5,15 @@ angular.module('areslands.directives', []).
 directive('dynamicTooltip', function() {
 	return function(scope, element, attrs) {
 		var content;
+		var mouseIsOver = false;
 
 		function updateToolTip(value)
 		{
-			$(element).attr('data-original-title', value).tooltip('fixTitle').tooltip('show');
+			$(element).attr('data-original-title', value).tooltip('fixTitle')
+			
+			if ( mouseIsOver ) {
+				$(element).tooltip('show');
+			}
 		}
 
 		/*
@@ -17,14 +22,59 @@ directive('dynamicTooltip', function() {
 		scope.$watch(attrs.dynamicTooltip, function(value) {
 			updateToolTip(value);
 		});
-
-		$(element).tooltip({
-			html: true, 
-			/*placement: 'top', 
-			title: attrs.dinamicTooltip*/
+		
+		$(element).on('mouseover', function() {
+			mouseIsOver = true;
 		});
+		
+		$(element).on('mouseout', function() {
+			mouseIsOver = false;
+		});
+		
+		$(element).tooltip({ html: true, container: '#wrap' });
 	};
 }).
+		
+directive('characterTooltip', ['Character', function(Character) {
+	return function(scope, element, attrs) {
+		var cache = {};
+		
+		cache.element = $(element);
+		cache.character = null;
+		
+		var mouseIsOver = false;
+		
+		var updateTooltip = function(message) {
+			cache.element.attr('data-original-title', message).tooltip('fixTitle');
+			
+			if ( mouseIsOver ) {
+				cache.element.tooltip('show');
+			}
+			
+			cache.element.unbind('mouseenter.characterTooltip').unbind('mouseleave.characterTooltip');
+		};
+		
+		var onMouseEnter = function() {
+			mouseIsOver = true;
+			
+			if ( ! cache.character ) {
+				Character.tooltip({ name: attrs.characterTooltip }, function(data) {
+					cache.character = data.tooltip;
+					updateTooltip(data.tooltip);
+				});
+			}
+		};
+		
+		var onMouseLeave = function() {
+			mouseIsOver = false;
+		};
+		
+		cache.element.bind('mouseenter.characterTooltip', onMouseEnter);
+		cache.element.bind('mouseleave.characterTooltip', onMouseLeave);
+		
+		cache.element.tooltip({ html: true, title: 'Cargando...', container: '#wrap' });
+	};
+}]).
 
 /*
 directive('droppable', function() {
