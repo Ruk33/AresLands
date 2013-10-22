@@ -121,7 +121,7 @@
 
 		<ul class="inline" ng-controller="Item">
 		@foreach ( $merchandises as $merchandise )
-			<li class="text-center" style="vertical-align: top; padding: 10px;">
+			<li class="text-center" style="vertical-align: top; padding: 10px;" ng-mouseover="onMouseOver({{ $merchandise->item_id }})" dynamic-tooltip="item[{{ $merchandise->item_id }}]" ng-init="price[{{ $merchandise->item_id }}] = {{ $merchandise->price_copper }}">
 			@if ( $characterCoinsCount >= $merchandise->price_copper )
 				@if ( $merchandise->type == 'mercenary' )
 					@if ( $merchandise->zone_to_explore && $merchandise->time_to_appear && $character->exploring_times()->where('zone_id', '=', $merchandise->zone_to_explore)->where('time', '>=', $merchandise->time_to_appear)->take(1)->count() == 0 )
@@ -133,7 +133,7 @@
 					{{ Form::hidden('merchandise_id', $merchandise->id) }}
 
 					<div class="inventory-item">
-						<img src="{{ URL::base() }}/img/icons/items/{{ $merchandise->item_id }}.png" ng-mouseover="onMouseOver({{ $merchandise->item_id }})" dynamic-tooltip="item[{{ $merchandise->item_id }}]" ng-init="price[{{ $merchandise->item_id }}] = {{ $merchandise->price_copper }}" width="80px" height="80px">
+						<img src="{{ URL::base() }}/img/icons/items/{{ $merchandise->item_id }}.png" width="80px" height="80px">
 					</div>
 
 					<div>
