@@ -100,10 +100,13 @@
 									<a href="{{ URL::to('authenticated/character/' . $character->name) }}" style="color: rgb(231, 180, 47); font-size: 12px;">
 										<b>{{ $character->name }}</b>
 									</a>
-									<br>
+									
+									<div class="clear-fix"></div>
+									
+									<span>
 									Nivel: {{ $character->level }}
+									</span>
 								</div>
-
 								<ul class="inline pull-right">
 									<li style="padding: 0; vertical-align: top;" data-toggle="tooltip" data-placement="top" data-original-title="<b>Experiencia</b><br>{{ $character->xp }}/{{ $character->xp_next_level }}">
 										<img src="{{ URL::base() }}/img/xp.png" alt="Experiencia" width="22px" height="18px">
@@ -118,7 +121,7 @@
 										</ul>">
 										<i class="coin coin-copper" alt="Monedas"></i>
 									</li>
-	
+
 									@if ( $character->clan_id != 0 )
 										<li style="padding: 0; vertical-align: top;" data-toggle="tooltip" data-placement="top" data-original-title="Accede a la página de tu grupo">
 											<a href="{{ URL::to('authenticated/clan/' . $character->clan_id) }}"><img src="{{ URL::base() }}/img/shield-icon.png" alt="Grupo" width="16px" height="19px"></a>

@@ -148,7 +148,7 @@
 			<!-- END AYUDANTE -->
 			
 			<!-- PERSONAJE -->
-			<img src="{{ URL::base() }}/img/characters/{{ $character->race }}_{{ $character->gender }}_0.png" alt="">
+			<img src="{{ URL::base() }}/img/characters/{{ $character->race }}_{{ $character->gender }}_999.png" alt="">
 			<!-- END PERSONAJE -->
 		</div>
 	</div>

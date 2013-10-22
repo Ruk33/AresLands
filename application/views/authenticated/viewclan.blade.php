@@ -1,4 +1,4 @@
-<h2>{{{ $clan->name }}}</h2>
+<h1 class="text-center" style="padding-top: 25px; padding-bottom: 25px;">{{{ $clan->name }}}</h1>
 
 <div class="span11" ng-controller="ViewClanController">
 	@if ( Session::has('errorMessage') )
