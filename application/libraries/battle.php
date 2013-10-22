@@ -69,6 +69,17 @@ class Battle
 		'%1$s ataca salvajemente a %2$s que sufre dolorosas heridas',
 		'%1$s se mueve ágil y velozmente hacia %2$s para propinarle un gran golpe',
 		'%2$s se ve algo cansado, intenta esquivar pero el ataque %1$s lo alcanza',
+		'%1$s se dirige a toda marcha hacia %2$s logrando un gran golpe',
+		'%2$s da un paso en falso y %1$s aprovecha la oportunidad para golpear',
+		'%1$s se avalanza sobre %2$s para propinarle un zarpazo',
+		'%2$s lanza un ataque a %1$s, ¡pero éste lo esquiva y lo devuelve!',
+		'%2$s intenta defenderse, pero %1$s se las arregla para herirlo',
+		'%1$s lanza un sanguinareo ataque contra %2$s el cual da en el blanco',
+		'%2$s se distrae y no se percata del ataque de %1$s',
+		'%1$s titubea un poco, pero finalmente logra acertar un golpe a %2$s',
+		'%1$s con mucha suerte, logra golpear eficazmente a %2$s',
+		'%2$s se avalanza contra %1$s, pero %1$s lo sorprende con un inesperado golpe',
+		'%1$s hace uso de su agilidad para llegar rápidamente a %2$s y propinar un gran golpe',
 	);
 	
 	/**
