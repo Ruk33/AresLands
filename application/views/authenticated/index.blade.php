@@ -166,7 +166,7 @@
 				</div>
 			</li>
 
-			<li style="margin-bottom: 30px;">
+			<li>
 				<span style="font-size: 11px;" ng-init="currentLife='{{ $character->current_life }}'; maxLife='{{ $character->max_life }}'">
 					<b>SALUD:</b> 
 					<span data-toggle="tooltip" data-placement="top" data-original-title="Salud actual / Salud máxima">
@@ -175,6 +175,18 @@
 				</span>
 				<div class="progress" style="height: 5px;">
 					<div class="bar bar-success" id="lifeBar"></div>
+				</div>
+			</li>
+			
+			<li style="margin-bottom: 30px;">
+				<span style="font-size: 11px;">
+					<b>EXPERIENCIA:</b> 
+					<span data-toggle="tooltip" data-placement="top" data-original-title="Experiencia actual / Experiencia para subir de nivel">
+						{{ $character->xp }}/{{ $character->xp_next_level }}
+					</span>
+				</span>
+				<div class="progress" style="height: 5px;">
+					<div class="bar bar-success" id="experienceBar" style="width: {{ 100 * $character->xp / $character->xp_next_level }}%"></div>
 				</div>
 			</li>
 			

@@ -45,8 +45,6 @@ class Authenticated_Controller extends Base_Controller
 			'level',
 			'gender',
 			'race',
-			'xp',
-			'xp_next_level',
 			'clan_id',
 			'is_exploring',
 			'is_traveling'
@@ -54,6 +52,11 @@ class Authenticated_Controller extends Base_Controller
 
 		if ( Auth::check() && $character )
 		{
+			/**
+			* Obtenemos las misiones del personaje
+			*/
+		   $startedQuests = $character->quests()->where('progress', '=', 'started')->or_where('progress', '=', 'reward')->get();
+			
 			/*
 			 *	Debemos pasar las monedas directamente
 			 *	al layout, puesto que es ahí donde
@@ -61,6 +64,7 @@ class Authenticated_Controller extends Base_Controller
 			 */
 			$this->layout->with('coins', $character->get_divided_coins());
 			$this->layout->with('character', $character);
+			$this->layout->with('startedQuests', $startedQuests);
 		}
 	}
     
@@ -82,6 +86,8 @@ class Authenticated_Controller extends Base_Controller
 			'max_life',
 			'last_logged',
 			'level',
+			'xp',
+			'xp_next_level'
 		));
 
 		/*
