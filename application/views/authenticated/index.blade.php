@@ -330,6 +330,41 @@
 				@if ( isset($items['inventory']) )
 					@foreach ( $items['inventory'] as $characterItem )
 						@if ( $characterItem->slot == $i && $item = $characterItem->item )
+							@if ( $item->type == 'potion' )
+							<div id="{{ $characterItem->id }}" class="modal hide fade" style="background-color: #0C0B0B; border: 1px solid #353535; box-shadow: #4282D5 0px 0px 15px; top: 35%;">
+								<div class="modal-body">
+								{{ Form::open('authenticated/manipulateItem') }}
+									{{ Form::token() }}
+									{{ Form::hidden('id', $characterItem->id) }}
+									
+									<h4>¿Qué cantidad de deseas usar?</h4>
+									
+									<?php
+
+									for ( $n = 1, $amount = array(); $n <= $characterItem->count; $n++ )
+									{
+										if ( $n > 25 )
+										{
+											$n += 4;
+										}
+
+										if ( $n > 50 )
+										{
+											break;
+										}
+
+										$amount[$n] = $n;
+									}
+
+									?>
+
+									<div>{{ Form::select('amount', $amount) }}</div>
+									
+									{{ Form::submit('Usar', array('class' => 'btn btn-primary')) }}
+								{{ Form::close() }}
+								</div>
+							</div>
+							@endif
 							<img style="cursor: pointer;" src="{{ URL::base() }}/img/icons/items/{{ $characterItem->item_id }}.png" alt="" width="80px" height="80px" data-toggle="popover" data-placement="top" data-original-title="
 							{{ $item->get_text_for_tooltip() }}
 
@@ -337,13 +372,11 @@
 							@if ( $item->type == 'arrow' && isset($items['lrhand']) && $items['lrhand'][0]->item->type != 'bow' )
 								<span style='font-size: 11px;'>Debes tener equipado un arco para usar flechas</span>
 							@else
-								<a href='{{ URL::to('authenticated/manipulateItem/' . $characterItem->id) }}' class='pull-left'>
-									@if ( $item->type == 'potion' )
-										Usar
-									@else
-										Equipar
-									@endif
-								</a>
+								@if ( $item->type == 'potion' )
+									<a href='#{{ $characterItem->id }}' data-toggle='modal' class='pull-left'>Usar</a>
+								@else
+									<a href='{{ URL::to('authenticated/manipulateItem/' . $characterItem->id) }}' class='pull-left'>Equipar</a>
+								@endif
 
 								<a href='{{ URL::to('authenticated/destroyItem/' . $characterItem->id) }}' onclick='return confirmItemDestroy();' class='pull-right' color: white;'>Tirar</a>
 							@endif

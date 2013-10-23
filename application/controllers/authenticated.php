@@ -1876,7 +1876,58 @@ class Authenticated_Controller extends Base_Controller
 
 		return Redirect::to('authenticated/index');
 	}
-
+	
+	/**
+	 * Se usa POST para cuando la cantidad es mayor a 1
+	 * 
+	 * @return Redirect
+	 */
+	public function post_manipulateItem()
+	{
+		$inputs = Input::get();
+		$error = null;
+		
+		if ( isset($inputs['id']) && isset($inputs['amount']) )
+		{
+			$character = Character::get_character_of_logged_user(array('id'));
+			$characterItem = $character->items()->find((int) $inputs['id']);
+			
+			if ( $characterItem )
+			{
+				$amount = $inputs['amount'];
+				
+				if ( $characterItem->count >= $amount )
+				{
+					$character->use_consumable_of_inventory($characterItem, $amount);
+				}
+				else
+				{
+					$error = 'No tienes esa cantidad';
+				}
+			}
+			else
+			{
+				$error = 'No tienes ese objeto';
+			}
+		}
+		
+		if ( $error )
+		{
+			return Redirect::to('authenticated/index/')->with('error', $error);
+		}
+		else
+		{
+			return Redirect::to('authenticated/index/');
+		}
+	}
+	
+	/**
+	 * Se usa GET para cuando la cantidad es 1
+	 * 
+	 * @param type $id Id del objeto del personaje (no del item)
+	 * @param type $count deprecated
+	 * @return Redirect
+	 */
 	public function get_manipulateItem($id = 0, $count = 1)
 	{
 		if ( $id > 0 && $count > 0 )

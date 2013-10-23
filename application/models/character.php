@@ -27,6 +27,74 @@ class Character extends Base_Model
 	);
 	
 	/**
+	 * Usar consumible (pocion, etc.)
+	 * 
+	 * @param Item $consumable
+	 * @param integer $amount
+	 * @return boolean
+	 */
+	public function use_consumable(Item $consumable, $amount)
+	{
+		if ( ! $consumable )
+		{
+			return false;
+		}
+		
+		if ( $consumable->type != 'potion' )
+		{
+			return false;
+		}
+		
+		if ( $amount <= 0 )
+		{
+			return false;
+		}
+		
+		switch ( $consumable->type )
+		{
+			case 'potion':
+				$this->current_life += $consumable->stat_life * $amount;
+				$this->save();
+				
+				break;
+		}
+		
+		return true;
+	}
+	
+	/**
+	 * Usar consumible de inventario
+	 * 
+	 * @param CharacterItem $consumable
+	 * @param integer $amount
+	 * @return boolean
+	 */
+	public function use_consumable_of_inventory(CharacterItem $consumable, $amount)
+	{
+		if ( ! $consumable )
+		{
+			return false;
+		}
+		
+		if ( $consumable->count < $amount )
+		{
+			return false;
+		}
+		
+		$item = $consumable->item;
+		
+		if ( ! $this->use_consumable($item, $amount) )
+		{
+			return true;
+		}
+		
+		$consumable->count -= $amount;
+		$consumable->save();
+		
+		return true;
+	}
+	
+	/**
 	 * Obtenemos el tooltip del personaje
 	 * 
 	 * @return <string>

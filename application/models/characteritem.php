@@ -6,7 +6,20 @@ class CharacterItem extends Base_Model
 	public static $timestamps = false;
 	public static $table = 'character_items';
 	public static $key = 'id';
-
+	
+	public function save()
+	{
+		// Si la cantidad es menor o igual a 0 y el objeto no son monedas...
+		if ( $this->count <= 0 && $this->item_id != Config::get('game.coin_id') )
+		{
+			$this->delete();
+		}
+		else
+		{
+			parent::save();
+		}
+	}
+	
 	public function item()
 	{
 		return $this->belongs_to('Item', 'item_id');
