@@ -414,7 +414,6 @@ Route::filter('before', function() {
 			if ( ! $character->last_activity_time || $time - $character->last_activity_time >= 300 )
 			{
 				$character->last_activity_time = $time;
-				$character->save();
 			}
 
 			/*
@@ -443,8 +442,6 @@ Route::filter('before', function() {
 					{
 						$character->current_life = $character->max_life;
 					}
-
-					$character->save();
 				}
 			}
 
@@ -481,8 +478,6 @@ Route::filter('before', function() {
 				$character->max_life = $character->max_life + $character->level * 40;
 
 				$character->points_to_change += Config::get('game.points_per_level');
-
-				$character->save();
 			}
 
 			/*
@@ -500,6 +495,7 @@ Route::filter('before', function() {
 			 *	Y de sus habilidades
 			 */
 			$characterSkills = $character->skills()->select(array('id'))->where('end_time', '<>', 0)->where('end_time', '<=', $time)->delete();
+			$character->save();
 		}
 	}
 });
