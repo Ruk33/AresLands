@@ -1,7 +1,19 @@
 <?php
 
 return array(
-
+	
+	/*
+	|--------------------------------------------------------------------------
+	| Maintenance mode
+	|--------------------------------------------------------------------------
+	|
+	| Is the application on maintenance mode?. If true, this will
+	| throw and 503 http code.
+	|
+	*/
+	
+	'maintenance' => false,
+	
 	/*
 	|--------------------------------------------------------------------------
 	| Application URL

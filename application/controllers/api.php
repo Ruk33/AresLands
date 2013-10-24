@@ -30,11 +30,12 @@ class Api_Controller extends Base_Controller implements Api_Interface
 			'pvp_points',
 			'race',
 			'clan_id',
-			'stat_life',
-			'stat_dexterity',
-			'stat_magic',
 			'stat_strength',
-			'stat_luck',
+			'stat_dexterity',
+			'stat_resistance',
+			'stat_magic',
+			'stat_magic_skill',
+			'stat_magic_resistance',
 		);
 
 		$character = Character::where_name($name)->select($selectableFields)->first();
@@ -50,11 +51,12 @@ class Api_Controller extends Base_Controller implements Api_Interface
 		/*
 		 *	Nada de stats reales, solo aproximados BOAJAJA >:3
 		 */
-		$character->stat_life = mt_rand($character->stat_life, $character->stat_life * 1.3);
-		$character->stat_dexterity = mt_rand($character->stat_dexterity, $character->stat_dexterity * 1.3);
-		$character->stat_magic = mt_rand($character->stat_magic, $character->stat_magic * 1.3);
 		$character->stat_strength = mt_rand($character->stat_strength, $character->stat_strength * 1.3);
-		$character->stat_luck = mt_rand($character->stat_luck, $character->stat_luck * 1.3);
+		$character->stat_dexterity = mt_rand($character->stat_dexterity, $character->stat_dexterity * 1.3);
+		$character->stat_resistance = mt_rand($character->stat_resistance, $character->stat_resistance * 1.3);
+		$character->stat_magic = mt_rand($character->stat_magic, $character->stat_magic * 1.3);
+		$character->stat_magic_skill = mt_rand($character->stat_magic_skill, $character->stat_magic_skill * 1.3);
+		$character->stat_magic_resistance = mt_rand($character->stat_magic_resistance, $character->stat_magic_resistance * 1.3);
 		
 		if ( $tooltip )
 		{

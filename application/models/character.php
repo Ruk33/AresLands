@@ -26,6 +26,43 @@ class Character extends Base_Model
 		'gender_match' => 'El género es incorrecto',
 	);
 	
+	public function set_xp($value)
+	{
+		if ( $value >= $this->xp_next_level )
+		{
+			$this->level++;
+			$this->xp_next_level = $this->xp_next_level + 10 * $this->level;
+
+			/*
+			 *	Verificamos que siga cumpliendo
+			 *	con los requerimientos de sus orbes
+			 *	(en caso de tener alguno)
+			 */
+			if ( $this->has_orb() )
+			{
+				$orbs = $this->orbs;
+
+				foreach ( $orbs as $orb )
+				{
+					// Si no cumple con los requerimientos...
+					if ( $this->level < $orb->min_level || $this->level > $orb->max_level )
+					{
+						$orb->give_to_random();
+					}
+				}
+			}
+
+			/* 
+			 *	Aumentamos la vida
+			 */
+			$this->max_life = $this->max_life + $this->level * 40;
+
+			$this->points_to_change += Config::get('game.points_per_level');
+		}
+		
+		return parent::set_xp($value);
+	}
+	
 	/**
 	 * Usar consumible (pocion, etc.)
 	 * 
@@ -40,7 +77,7 @@ class Character extends Base_Model
 			return false;
 		}
 		
-		if ( $consumable->type != 'potion' )
+		if ( $consumable->class != 'consumable' )
 		{
 			return false;
 		}
@@ -53,8 +90,8 @@ class Character extends Base_Model
 		switch ( $consumable->type )
 		{
 			case 'potion':
-				$this->current_life += $consumable->stat_life * $amount;
-				$this->save();
+				//$this->current_life += $consumable->stat_life * $amount;
+				//$this->save();
 				
 				break;
 		}
@@ -143,8 +180,8 @@ class Character extends Base_Model
 			<span class='ui-button button'>
 				<i class='button-icon hearth'></i>
 				<span class='button-content' style='width: 200px;'>
-					<b class='pull-left'>Vitalidad:</b>
-					<div class='pull-right'>" . mt_rand($this->stat_life, $this->stat_life * 1.3) . "</div>
+					<b class='pull-left'>Fuerza física:</b>
+					<div class='pull-right'>" . mt_rand($this->stat_strength, $this->stat_strength * 1.3) . "</div>
 				</span>
 			</span>
 		</li>
@@ -155,7 +192,7 @@ class Character extends Base_Model
 			<span class='ui-button button'>
 				<i class='button-icon boot'></i>
 				<span class='button-content' style='width: 200px;'>
-					<b class='pull-left'>Destreza:</b>
+					<b class='pull-left'>Destreza física:</b>
 					<div class='pull-right'>" . mt_rand($this->stat_dexterity, $this->stat_dexterity * 1.3) . "</div>
 				</span>
 			</span>
@@ -167,8 +204,8 @@ class Character extends Base_Model
 			<span class='ui-button button'>
 				<i class='button-icon fire'></i>
 				<span class='button-content' style='width: 200px;'>
-					<b class='pull-left'>Magia:</b>
-					<div class='pull-right'>" . mt_rand($this->stat_magic, $this->stat_magic * 1.3) . "</div>
+					<b class='pull-left'>Resistencia:</b>
+					<div class='pull-right'>" . mt_rand($this->stat_resistance, $this->stat_resistance * 1.3) . "</div>
 				</span>
 			</span>
 		</li>
@@ -179,8 +216,8 @@ class Character extends Base_Model
 			<span class='ui-button button'>
 				<i class='button-icon axe'></i>
 				<span class='button-content' style='width: 200px;'>
-					<b class='pull-left'>Fuerza:</b>
-					<div class='pull-right'>" . mt_rand($this->stat_strength, $this->stat_strength * 1.3) . "</div>
+					<b class='pull-left'>Poder mágico:</b>
+					<div class='pull-right'>" . mt_rand($this->stat_magic, $this->stat_magic * 1.3) . "</div>
 				</span>
 			</span>
 		</li>
@@ -191,8 +228,20 @@ class Character extends Base_Model
 			<span class='ui-button button'>
 				<i class='button-icon thunder'></i>
 				<span class='button-content' style='width: 200px;'>
-					<b class='pull-left'>Suerte:</b>
-					<div class='pull-right'>" . mt_rand($this->stat_luck, $this->stat_luck * 1.3) . "</div>
+					<b class='pull-left'>Habilidad mágica:</b>
+					<div class='pull-right'>" . mt_rand($this->stat_magic_skill, $this->stat_magic_skill * 1.3) . "</div>
+				</span>
+			</span>
+		</li>
+		";
+		
+		$message .= "
+		<li>
+			<span class='ui-button button'>
+				<i class='button-icon thunder'></i>
+				<span class='button-content' style='width: 200px;'>
+					<b class='pull-left'>Contraconjuro:</b>
+					<div class='pull-right'>" . mt_rand($this->stat_magic_resistance, $this->stat_magic_resistance * 1.3) . "</div>
 				</span>
 			</span>
 		</li>
@@ -248,7 +297,7 @@ class Character extends Base_Model
 	// Evitamos vida por debajo de 0 o mayor a max_life
 	public function set_current_life($value)
 	{		
-		if ( $value < 0 )
+		if ( $value <= 0 )
 		{
 			$value = 0;
 		}
@@ -670,14 +719,12 @@ class Character extends Base_Model
 		$positive_stats = $this->get_bonifications(true);
 		$negative_stats = $this->get_bonifications(false);
 
-		$stats['p_defense'] = $positive_stats['p_defense'] - $negative_stats['p_defense'];
-		$stats['m_defense'] = $positive_stats['m_defense'] - $negative_stats['m_defense'];
-
-		$stats['stat_life'] = $this->stat_life + $positive_stats['stat_life'] - $negative_stats['stat_life'];
-		$stats['stat_dexterity'] = $this->stat_dexterity + $positive_stats['stat_dexterity'] - $negative_stats['stat_dexterity'];
-		$stats['stat_magic'] = $this->stat_magic + $positive_stats['stat_magic'] - $negative_stats['stat_magic'];
 		$stats['stat_strength'] = $this->stat_strength + $positive_stats['stat_strength'] - $negative_stats['stat_strength'];
-		$stats['stat_luck'] = $this->stat_luck + $positive_stats['stat_luck'] - $negative_stats['stat_luck'];
+		$stats['stat_dexterity'] = $this->stat_dexterity + $positive_stats['stat_dexterity'] - $negative_stats['stat_dexterity'];
+		$stats['stat_resistance'] = $this->stat_resistance + $positive_stats['stat_resistance'] - $negative_stats['stat_resistance'];
+		$stats['stat_magic'] = $this->stat_magic + $positive_stats['stat_magic'] - $negative_stats['stat_magic'];
+		$stats['stat_magic_skill'] = $this->stat_magic_skill + $positive_stats['stat_magic_skill'] - $negative_stats['stat_magic_skill'];
+		$stats['stat_magic_resistance'] = $this->stat_magic_resistance + $positive_stats['stat_magic_resistance'] - $negative_stats['stat_magic_resistance'];
 
 		return $stats;
 	}
@@ -696,14 +743,12 @@ class Character extends Base_Model
 
 		$bonification = array();
 
-		$bonification['p_defense'] = 0;
-		$bonification['m_defense'] = 0;
-
-		$bonification['stat_life'] = 0;
-		$bonification['stat_dexterity'] = 0;
-		$bonification['stat_magic'] = 0;
 		$bonification['stat_strength'] = 0;
-		$bonification['stat_luck'] = 0;
+		$bonification['stat_dexterity'] = 0;
+		$bonification['stat_resistance'] = 0;
+		$bonification['stat_magic'] = 0;
+		$bonification['stat_magic_skill'] = 0;
+		$bonification['stat_magic_resistance'] = 0;
 
 		/*
 		 *	Obtenemos todos los objetos
@@ -714,13 +759,12 @@ class Character extends Base_Model
 		foreach ( $characterItems as $characterItem )
 		{
 			$item = $characterItem->item()->select(array(
-				'm_defense', 
-				'p_defense', 
-				'stat_life', 
+				'stat_strength', 
 				'stat_dexterity',
+				'stat_resistance',
 				'stat_magic',
-				'stat_strength',
-				'stat_luck'
+				'stat_magic_skill',
+				'stat_magic_resistance'
 			))->first();
 
 			if ( ! $item )
@@ -730,25 +774,21 @@ class Character extends Base_Model
 
 			if ( $positive )
 			{
-				$bonification['p_defense']		+= ( $item->p_defense > 0 )			? $item->p_defense : 0;
-				$bonification['m_defense']		+= ( $item->m_defense > 0 )			? $item->m_defense : 0;
-
-				$bonification['stat_life']		+= ( $item->stat_life > 0 )			? $item->stat_life : 0;
-				$bonification['stat_dexterity']	+= ( $item->stat_dexterity > 0 )	? $item->stat_dexterity : 0;
-				$bonification['stat_magic']		+= ( $item->stat_magic > 0 )		? $item->stat_magic : 0;
-				$bonification['stat_strength']	+= ( $item->stat_strength > 0 )		? $item->stat_strength : 0;
-				$bonification['stat_luck']		+= ( $item->stat_luck > 0 )			? $item->stat_luck : 0;
+				$bonification['stat_strength']			+= ( $item->stat_strength > 0 )			? $item->stat_strength			: 0;
+				$bonification['stat_dexterity']			+= ( $item->stat_dexterity > 0 )		? $item->stat_dexterity			: 0;
+				$bonification['stat_resistance']		+= ( $item->stat_resistance > 0	)		? $item->stat_resistance		: 0;
+				$bonification['stat_magic']				+= ( $item->stat_magic > 0 )			? $item->stat_magic				: 0;
+				$bonification['stat_magic_skill']		+= ( $item->stat_magic_skill > 0 )		? $item->stat_magic_skill		: 0;
+				$bonification['stat_magic_resistance']	+= ( $item->stat_magic_resistance > 0 )	? $item->stat_magic_resistance	: 0;
 			}
 			else
 			{
-				$bonification['p_defense']		-= ( $item->p_defense < 0 )			? $item->p_defense : 0;
-				$bonification['m_defense']		-= ( $item->m_defense < 0 )			? $item->m_defense : 0;
-
-				$bonification['stat_life']		-= ( $item->stat_life < 0 )			? $item->stat_life : 0;
-				$bonification['stat_dexterity']	-= ( $item->stat_dexterity < 0 )	? $item->stat_dexterity : 0;
-				$bonification['stat_magic']		-= ( $item->stat_magic < 0 )		? $item->stat_magic : 0;
-				$bonification['stat_strength']	-= ( $item->stat_strength < 0 )		? $item->stat_strength : 0;
-				$bonification['stat_luck']		-= ( $item->stat_luck < 0 )			? $item->stat_luck : 0;
+				$bonification['stat_strength']			-= ( $item->stat_strength < 0 )			? $item->stat_strength			: 0;
+				$bonification['stat_dexterity']			-= ( $item->stat_dexterity < 0 )		? $item->stat_dexterity			: 0;
+				$bonification['stat_resistance']		-= ( $item->stat_resistance < 0	)		? $item->stat_resistance		: 0;
+				$bonification['stat_magic']				-= ( $item->stat_magic < 0 )			? $item->stat_magic				: 0;
+				$bonification['stat_magic_skill']		-= ( $item->stat_magic_skill < 0 )		? $item->stat_magic_skill		: 0;
+				$bonification['stat_magic_resistance']	-= ( $item->stat_magic_resistance < 0 )	? $item->stat_magic_resistance	: 0;
 			}
 		}
 
@@ -760,36 +800,30 @@ class Character extends Base_Model
 
 		foreach ( $characterSkills as $characterSkill )
 		{
-			$skill = $characterSkill->skill()/*->select(array('data'))->first()*/;
+			$skill = $characterSkill->skill;
 
 			if ( ! $skill )
 			{
 				continue;
 			}
 
-			//$skill = $skill->data;
-
 			if ( $positive )
 			{
-				$bonification['p_defense']		+= ( isset($skill['p_defense']) && $skill['p_defense'] > 0 )			? $skill['p_defense'] * $characterSkill->amount : 0;
-				$bonification['m_defense']		+= ( isset($skill['m_defense']) && $skill['m_defense'] > 0 )			? $skill['m_defense'] * $characterSkill->amount : 0;
-
-				$bonification['stat_life']		+= ( isset($skill['stat_life']) && $skill['stat_life'] > 0 )			? $skill['stat_life'] * $characterSkill->amount : 0;
-				$bonification['stat_dexterity']	+= ( isset($skill['stat_dexterity']) && $skill['stat_dexterity'] > 0 )	? $skill['stat_dexterity'] * $characterSkill->amount : 0;
-				$bonification['stat_magic']		+= ( isset($skill['stat_magic']) && $skill['stat_magic'] > 0 )			? $skill['stat_magic'] * $characterSkill->amount : 0;
-				$bonification['stat_strength']	+= ( isset($skill['stat_strength']) && $skill['stat_strength'] > 0 )	? $skill['stat_strength'] * $characterSkill->amount : 0;
-				$bonification['stat_luck']		+= ( isset($skill['stat_luck']) && $skill['stat_luck'] > 0 )			? $skill['stat_luck'] * $characterSkill->amount : 0;
+				$bonification['stat_strength']			+= ( isset($skill['stat_strength']) && $skill['stat_strength'] > 0 )					? $skill['stat_strength'] * $characterSkill->amount			: 0;
+				$bonification['stat_dexterity']			+= ( isset($skill['stat_dexterity']) && $skill['stat_dexterity'] > 0 )					? $skill['stat_dexterity'] * $characterSkill->amount		: 0;
+				$bonification['stat_resistance']		+= ( isset($skill['stat_resistance']) && $skill['stat_resistance'] > 0 )				? $skill['stat_resistance'] * $characterSkill->amount		: 0;
+				$bonification['stat_magic']				+= ( isset($skill['stat_magic']) && $skill['stat_magic'] > 0 )							? $skill['stat_magic'] * $characterSkill->amount			: 0;
+				$bonification['stat_magic_skill']		+= ( isset($skill['stat_magic_skill']) && $skill['stat_magic_skill'] > 0 )				? $skill['stat_magic_skill'] * $characterSkill->amount		: 0;
+				$bonification['stat_magic_resistance']	+= ( isset($skill['stat_magic_resistance']) && $skill['stat_magic_resistance'] > 0 )	? $skill['stat_magic_resistance'] * $characterSkill->amount : 0;
 			}
 			else
 			{
-				$bonification['p_defense']		-= ( isset($skill['p_defense']) && $skill['p_defense'] < 0 )			? $skill['p_defense'] * $characterSkill->amount : 0;
-				$bonification['m_defense']		-= ( isset($skill['m_defense']) && $skill['m_defense'] < 0 )			? $skill['m_defense'] * $characterSkill->amount : 0;
-
-				$bonification['stat_life']		-= ( isset($skill['stat_life']) && $skill['stat_life'] < 0 )			? $skill['stat_life'] * $characterSkill->amount : 0;
-				$bonification['stat_dexterity']	-= ( isset($skill['stat_dexterity']) && $skill['stat_dexterity'] < 0 )	? $skill['stat_dexterity'] * $characterSkill->amount : 0;
-				$bonification['stat_magic']		-= ( isset($skill['stat_magic']) && $skill['stat_magic'] < 0 )			? $skill['stat_magic'] * $characterSkill->amount : 0;
-				$bonification['stat_strength']	-= ( isset($skill['stat_strength']) && $skill['stat_strength'] < 0 )	? $skill['stat_strength'] * $characterSkill->amount : 0;
-				$bonification['stat_luck']		-= ( isset($skill['stat_luck']) && $skill['stat_luck'] < 0 )			? $skill['stat_luck'] * $characterSkill->amount : 0;
+				$bonification['stat_strength']			-= ( isset($skill['stat_strength']) && $skill['stat_strength'] < 0 )					? $skill['stat_strength'] * $characterSkill->amount			: 0;
+				$bonification['stat_dexterity']			-= ( isset($skill['stat_dexterity']) && $skill['stat_dexterity'] < 0 )					? $skill['stat_dexterity'] * $characterSkill->amount		: 0;
+				$bonification['stat_resistance']		-= ( isset($skill['stat_resistance']) && $skill['stat_resistance'] < 0 )				? $skill['stat_resistance'] * $characterSkill->amount		: 0;
+				$bonification['stat_magic']				-= ( isset($skill['stat_magic']) && $skill['stat_magic'] < 0 )							? $skill['stat_magic'] * $characterSkill->amount			: 0;
+				$bonification['stat_magic_skill']		-= ( isset($skill['stat_magic_skill']) && $skill['stat_magic_skill'] < 0 )				? $skill['stat_magic_skill'] * $characterSkill->amount		: 0;
+				$bonification['stat_magic_resistance']	-= ( isset($skill['stat_magic_resistance']) && $skill['stat_magic_resistance'] < 0 )	? $skill['stat_magic_resistance'] * $characterSkill->amount : 0;
 			}
 		}
 

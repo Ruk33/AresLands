@@ -76,11 +76,12 @@ class Authenticated_Controller extends Base_Controller
 			'zone_id',
 			'race',
 			'gender',
-			'stat_life',
-			'stat_dexterity',
-			'stat_magic',
 			'stat_strength',
-			'stat_luck',
+			'stat_dexterity',
+			'stat_resistance',
+			'stat_magic',
+			'stat_magic_skill',
+			'stat_magic_resistance',
 			'points_to_change',
 			'current_life',
 			'max_life',
@@ -261,11 +262,12 @@ class Authenticated_Controller extends Base_Controller
 		$character = Character::get_character_of_logged_user(array(
 			'id',
 			'points_to_change',
-			'stat_life',
-			'stat_dexterity',
-			'stat_magic',
 			'stat_strength',
-			'stat_luck',
+			'stat_dexterity',
+			'stat_resistance',
+			'stat_magic',
+			'stat_magic_skill',
+			'stat_magic_resistance',
 		));
 
 		$stat = Input::json()->stat_name;
@@ -275,24 +277,28 @@ class Authenticated_Controller extends Base_Controller
 		{
 			switch ( $stat ) 
 			{
-				case 'stat_life':
-					$character->stat_life += $amount;
+				case 'stat_strength':
+					$character->stat_strength += $amount;
 					break;
 
 				case 'stat_dexterity':
 					$character->stat_dexterity += $amount;
+					break;
+				
+				case 'stat_resistance':
+					$character->stat_resistance += $amount;
 					break;
 
 				case 'stat_magic':
 					$character->stat_magic += $amount;
 					break;
 
-				case 'stat_strength':
-					$character->stat_strength += $amount;
+				case 'stat_magic_skill':
+					$character->stat_magic_skill += $amount;
 					break;
 
-				case 'stat_luck':
-					$character->stat_luck += $amount;
+				case 'stat_magic_resistance':
+					$character->stat_magic_resistance += $amount;
 					break;
 
 				default:
@@ -1174,11 +1180,12 @@ class Authenticated_Controller extends Base_Controller
 			'race', 
 			'gender', 
 			'zone_id',
-			'stat_life',
-			'stat_dexterity',
-			'stat_magic',
 			'stat_strength',
-			'stat_luck',
+			'stat_dexterity',
+			'stat_resistance',
+			'stat_magic',
+			'stat_magic_skill',
+			'stat_magic_resistance',
 		))->first() : false;
 
 		if ( $characterToSee )
@@ -1385,11 +1392,12 @@ class Authenticated_Controller extends Base_Controller
 			'race', 
 			'gender', 
 			'zone_id',
-			'stat_life',
-			'stat_dexterity',
-			'stat_magic',
 			'stat_strength',
-			'stat_luck',
+			'stat_dexterity',
+			'stat_resistance',
+			'stat_magic',
+			'stat_magic_skill',
+			'stat_magic_resistance',
 		);
 
 		$characterFinded = null;
@@ -1494,7 +1502,7 @@ class Authenticated_Controller extends Base_Controller
 
 	public function get_battle()
 	{
-		$character = Character::get_character_of_logged_user(array('zone_id', 'level'));
+		$character = Character::get_character_of_logged_user(array('id', 'zone_id', 'level'));
 
 		$monsters = Npc::where('zone_id', '=', $character->zone_id)
 		->where('type', '=', 'monster')
@@ -2001,14 +2009,8 @@ class Authenticated_Controller extends Base_Controller
 										/*
 										 *	Curamos
 										 */
-										$character->current_life += $item->stat_life * $count;
-
-										if ( $character->current_life > $character->max_life )
-										{
-											$character->current_life = $character->max_life;
-										}
-
-										$character->save();
+										//$character->current_life += $item->stat_life * $count;
+										//$character->save();
 
 										/*
 										 *	Si se quedó con cero o menos simplemente

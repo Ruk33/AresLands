@@ -5,11 +5,12 @@ angular.module('areslands.controllers', []).
 controller('CharacterStatsController', ['$scope', '$http', '$timeout', function($scope, $http, $timeout) {
 	$scope.remainingPoints = 0;
 	$scope.stats = {
-		'stat_life': 0,
-		'stat_dexterity': 0,
-		'stat_magic': 0,
 		'stat_strength': 0,
-		'stat_luck': 0
+		'stat_dexterity': 0,
+		'stat_resistance': 0,
+		'stat_magic': 0,
+		'stat_magic_skill': 0,
+		'stat_magic_resistance': 0
 	};
 
 	var lifeBar = $('#lifeBar');
@@ -26,11 +27,10 @@ controller('CharacterStatsController', ['$scope', '$http', '$timeout', function(
 		{
 			currentLife = Number($scope.currentLife);
 			maxLife = Number($scope.maxLife);
-			statLife = Number($scope.stats['stat_life']);
 			
 			if ( currentLife < maxLife )
 			{
-				currentLife += (0.05 + statLife * 0.01);
+				currentLife += (0.05 + 0.01);
 				$scope.currentLife = currentLife.toFixed(2);
 
 				updateLifeBar($scope.currentLife);

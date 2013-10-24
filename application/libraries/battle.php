@@ -358,16 +358,19 @@ class Battle
 			// Calculamos el daño
 			$this->attacker['average_damage'] = mt_rand($this->attacker['min_damage'], $this->attacker['max_damage']);
 
-			if ( $this->attacker['is_warrior'] && mt_rand(0, 100) <= $this->attacker['stats']['stat_luck'] * 0.35 )
+			// 35% de crítico físico
+			if ( $this->attacker['is_warrior'] && mt_rand(0, 100) <= 35 )
 			{
 				$damage = $this->attacker['average_damage'] * 1.50;
 				self::on_excellent_attack_warrior($this->attacker, $this->defender, $damage);
 			}
-			elseif ( ! $this->attacker['is_warrior'] && mt_rand(0, 100) <= $this->attacker['stats']['stat_luck'] * 0.25 )
+			// 25% de crítico mágico
+			elseif ( ! $this->attacker['is_warrior'] && mt_rand(0, 100) <= 25 )
 			{
 				$damage = $this->attacker['average_damage'] * 2.50;
 				self::on_excellent_attack_mage($this->attacker, $this->defender, $damage);
 			}
+			// 10% de golpe fallido
 			elseif ( mt_rand(0, 100) <= 10 )
 			{
 				$damage = $this->attacker['average_damage'] * 0.75;
@@ -381,12 +384,14 @@ class Battle
 			
 			// Calculamos la defensa
 			$this->defender['average_defense'] = mt_rand($this->defender['min_defense'], $this->defender['max_defense']);
-
-			if ( mt_rand(0, 100) <= $this->defender['stats']['stat_luck'] * 0.30 )
+			
+			// 30% de defensa exitosa
+			if ( mt_rand(0, 100) <= 30 )
 			{
 				$defense = $this->defender['average_defense'] * 1.75;
 				self::on_excellent_defense($this->attacker, $this->defender, $defense);
 			}
+			// 10% de defensa fallida
 			elseif ( mt_rand(0, 100) <= 10 )
 			{
 				$defense = $this->defender['average_defense'] * 0.75;
@@ -462,17 +467,17 @@ class Battle
 		$this->add_message_to_log('Daño realizado por ' . $this->fighter_two['character']->name . ': ' . number_format($this->fighter_two['damage_done'], 2), true);
 		
 		// Actualizamos las vidas
-		$this->fighter_one['character']->current_life = $this->fighter_one['current_life'] - $this->fighter_one['stats']['stat_life'] * 1.25;
+		$this->fighter_one['character']->current_life = $this->fighter_one['current_life'];
 		$this->fighter_one['character']->save();
 		
-		if ( $this->fighter_two['character'] instanceof Character )
+		if ( $this->fighter_two['is_player'] )
 		{
-			$this->fighter_two['character']->current_life = $this->fighter_two['current_life'] - $this->fighter_two['stats']['stat_life'] * 1.25;
+			$this->fighter_two['character']->current_life = $this->fighter_two['current_life'];
 			$this->fighter_two['character']->save();
 		}
 		
 		// Disparamos el evento de batalla
-		if ( $this->fighter_two['character'] instanceof Character )
+		if ( $this->fighter_two['is_player'] )
 		{
 			Event::fire('battle', array($this->fighter_one['character'], $this->fighter_two['character']));
 		}
@@ -512,8 +517,6 @@ class Battle
 			$fighter['current_life'] = $fighter['character']->life;
 		}
 		
-		$fighter['current_life'] += $fighter['stats']['stat_life'] * 1.25;
-		
 		if ( $fighter['stats']['stat_dexterity'] > 0 )
 		{
 			$fighter['cd'] = 1000 / $fighter['stats']['stat_dexterity'];
@@ -540,7 +543,7 @@ class Battle
 		// --------------------------------
 		//    VER ESTA PARTE, ¡RE-HACER!
 		// --------------------------------
-		$fighter['min_defense'] = ( $fighter['is_warrior'] ) ? $fighter['stats']['p_defense'] : $fighter['stats']['m_defense'];
+		$fighter['min_defense'] = ( $fighter['is_warrior'] ) ? $fighter['stats']['stat_resistance'] : $fighter['stats']['stat_magic_resistance'];
 		$fighter['max_defense'] = $fighter['min_defense'];
 		
 		$fighter['min_defense'] *= 0.75;

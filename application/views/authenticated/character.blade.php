@@ -10,17 +10,17 @@
 		
 		<ul class="inline" style="margin-top: 40px; margin-bottom: 25px;">
 			<li>
-				<span data-toggle="tooltip" data-placement="top" data-original-title="<b>Vitalidad:</b> Aumenta los puntos de vida que posees y la regeneración de los mismos.">
+				<span data-toggle="tooltip" data-placement="top" data-original-title="<b>Fuerza física:</b> Aumenta la potencia de tus ataques físicos.">
 					<span class="ui-button button" style="cursor: default;">
 						<i class="button-icon hearth"></i>
 						<span class="button-content">
-							{{ mt_rand($characterToSee->stat_life, $characterToSee->stat_life * 1.3) }}
+							{{ mt_rand($characterToSee->stat_strength, $characterToSee->stat_strength * 1.3) }}
 						</span>
 					</span>
 				</span>
 			</li>
 			<li>
-				<span data-toggle="tooltip" data-placement="top" data-original-title="<b>Destreza:</b> Aumenta tu velocidad de golpeo en las batallas, pudiendo lograr así múltiples ataques consecutivos.">
+				<span data-toggle="tooltip" data-placement="top" data-original-title="<b>Destreza física:</b> Aumenta tu velocidad de golpeo en las batallas, pudiendo lograr así múltiples ataques consecutivos.">
 					<span class="ui-button button" style="cursor: default;">
 						<i class="button-icon boot"></i>
 						<span class="button-content">
@@ -30,7 +30,17 @@
 				</span>
 			</li>
 			<li>
-				<span data-toggle="tooltip" data-placement="top" data-original-title="<b>Magia:</b> Aumenta el poder de los ataques mágicos.">
+				<span data-toggle="tooltip" data-placement="top" data-original-title="<b>Resistencia:</b> Aumenta tu defensa contra ataques físicos.">
+					<span class="ui-button button" style="cursor: default;">
+						<i class="button-icon boot"></i>
+						<span class="button-content">
+							{{ mt_rand($characterToSee->stat_resistance, $characterToSee->stat_resistance * 1.3) }}
+						</span>
+					</span>
+				</span>
+			</li>
+			<li>
+				<span data-toggle="tooltip" data-placement="top" data-original-title="<b>Poder mágico:</b> Aumenta el poder de los ataques mágicos.">
 					<span class="ui-button button" style="cursor: default;">
 						<i class="button-icon fire"></i>
 						<span class="button-content">
@@ -40,21 +50,21 @@
 				</span>
 			</li>
 			<li>
-				<span data-toggle="tooltip" data-placement="top" data-original-title="<b>Fuerza:</b> Aumenta el poder de los ataques físicos.">
+				<span data-toggle="tooltip" data-placement="top" data-original-title="<b>Habilidad mágica:</b> Aumenta tu velocidad de golpeo en las batallas, pudiendo lograr así múltiples ataques consecutivos.">
 					<span class="ui-button button" style="cursor: default;">
 						<i class="button-icon axe"></i>
 						<span class="button-content">
-							{{ mt_rand($characterToSee->stat_strength, $characterToSee->stat_strength * 1.3) }}
+							{{ mt_rand($characterToSee->stat_magic_skill, $characterToSee->stat_magic_skill * 1.3) }}
 						</span>
 					</span>
 				</span>
 			</li>
 			<li>
-				<span data-toggle="tooltip" data-placement="top" data-original-title="<b>Suerte:</b> Aumenta la probabilidad de asestar un golpe crítico, ya sea mágico o físico.">
+				<span data-toggle="tooltip" data-placement="top" data-original-title="<b>Contraconjuro:</b> Aumenta tu defensa contra ataques mágicos.">
 					<span class="ui-button button" style="cursor: default;">
 						<i class="button-icon thunder"></i>
 						<span class="button-content">
-							{{ mt_rand($characterToSee->stat_luck, $characterToSee->stat_luck * 1.3) }}
+							{{ mt_rand($characterToSee->stat_magic_resistance, $characterToSee->stat_magic_resistance * 1.3) }}
 						</span>
 					</span>
 				</span>

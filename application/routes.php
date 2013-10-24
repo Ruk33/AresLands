@@ -383,6 +383,11 @@ Event::listen('500', function($exception)
  *	guardarlo en session
  */
 Route::filter('before', function() {
+	if ( Config::get('application.maintenance') )
+	{
+		return Response::error('503');
+	}
+	
 	$character = null;
 
 	if ( Auth::check() )
@@ -396,7 +401,6 @@ Route::filter('before', function() {
 			'last_activity_time',
 			'current_life',
 			'max_life',
-			'stat_life',
 			'last_regeneration_time',
 			'xp',
 			'xp_next_level',
@@ -427,57 +431,13 @@ Route::filter('before', function() {
 					$character->last_regeneration_time = $time;
 				}
 
-				$regeneration = (0.05 + $character->stat_life * 0.01) * ($time - $character->last_regeneration_time);
+				$regeneration = (0.05 + 0.01) * ($time - $character->last_regeneration_time);
 
 				if ( $regeneration > 0 )
 				{
 					$character->current_life += $regeneration;
 					$character->last_regeneration_time = $time;
-
-					/*
-					 *	Verificamos que la vida actual
-					 *	no sea mayor a la vida máxima
-					 */
-					if ( $character->current_life > $character->max_life )
-					{
-						$character->current_life = $character->max_life;
-					}
 				}
-			}
-
-			/*
-			 *	Verificamos si no subió de nivel
-			 */
-			if ( $character->xp >= $character->xp_next_level )
-			{
-				$character->level++;
-				$character->xp_next_level = $character->xp_next_level + 10 * $character->level;
-
-				/*
-				 *	Verificamos que siga cumpliendo
-				 *	con los requerimientos de sus orbes
-				 *	(en caso de tener alguno)
-				 */
-				if ( $character->has_orb() )
-				{
-					$orbs = $character->orbs;
-
-					foreach ( $orbs as $orb )
-					{
-						// Si no cumple con los requerimientos...
-						if ( $character->level < $orb->min_level || $character->level > $orb->max_level )
-						{
-							$orb->give_to_random();
-						}
-					}
-				}
-
-				/* 
-				 *	Aumentamos la vida
-				 */
-				$character->max_life = $character->max_life + $character->level * 40;
-
-				$character->points_to_change += Config::get('game.points_per_level');
 			}
 
 			/*

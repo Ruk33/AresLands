@@ -172,39 +172,34 @@ class Item extends Base_Model
 				break;
 		}
 
-		if ( $this->p_defense != 0 )
+		if ( $this->stat_strength != 0 )
 		{
-			$message .= "<li>Defensa física: $this->p_defense</li>";
-		}
-
-		if ( $this->m_defense != 0 )
-		{
-			$message .= "<li>Defensa mágica: $this->m_defense</li>";
-		}
-
-		if ( $this->stat_life != 0 )
-		{
-			$message .= "<li>Vitalidad: $this->stat_life</li>";
+			$message .= "<li>Fuerza física: $this->stat_strength</li>";
 		}
 
 		if ( $this->stat_dexterity != 0 )
 		{
-			$message .= "<li>Destreza: $this->stat_dexterity</li>";
+			$message .= "<li>Destreza física: $this->stat_dexterity</li>";
+		}
+		
+		if ( $this->stat_resistance != 0 )
+		{
+			$message .= "<li>Resistencia: $this->stat_resistance</li>";
 		}
 
 		if ( $this->stat_magic != 0 )
 		{
-			$message .= "<li>Magia: $this->stat_magic</li>";
+			$message .= "<li>Poder mágico: $this->stat_magic</li>";
 		}
 
-		if ( $this->stat_strength != 0 )
+		if ( $this->stat_magic_skill != 0 )
 		{
-			$message .= "<li>Fuerza: $this->stat_strength</li>";
+			$message .= "<li>Habilidad mágica: $this->stat_magic_skill</li>";
 		}
 
-		if ( $this->stat_luck != 0 )
+		if ( $this->stat_magic_resistance != 0 )
 		{
-			$message .= "<li>Suerte: $this->stat_luck</li>";
+			$message .= "<li>Contraconjuro: $this->stat_magic_resistance</li>";
 		}
 
 		$message .= '</ul>';

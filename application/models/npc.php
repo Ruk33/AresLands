@@ -18,29 +18,35 @@ class Npc extends Base_Model
 		$message .= "<p><small><em>$this->dialog</em></small></p>";
 
 		$message .= "<ul class='unstyled'>";
-		if ( $this->stat_life != 0 )
+		
+		if ( $this->stat_strength != 0 )
 		{
-			$message .= "<li>Vitalidad: $this->stat_life</li>";
+			$message .= "<li>Fuerza física: $this->stat_strength</li>";
 		}
 
 		if ( $this->stat_dexterity != 0 )
 		{
-			$message .= "<li>Destreza: $this->stat_dexterity</li>";
+			$message .= "<li>Destreza física: $this->stat_dexterity</li>";
+		}
+		
+		if ( $this->stat_resistance != 0 )
+		{
+			$message .= "<li>Resistencia: $this->stat_resistance</li>";
 		}
 
 		if ( $this->stat_magic != 0 )
 		{
-			$message .= "<li>Magia: $this->stat_magic</li>";
+			$message .= "<li>Poder mágico: $this->stat_magic</li>";
 		}
 
-		if ( $this->stat_strength != 0 )
+		if ( $this->stat_magic_skill != 0 )
 		{
-			$message .= "<li>Fuerza: $this->stat_strength</li>";
+			$message .= "<li>Habilidad mágica: $this->stat_magic_skill</li>";
 		}
 
-		if ( $this->stat_luck != 0 )
+		if ( $this->stat_magic_resistance != 0 )
 		{
-			$message .= "<li>Suerte: $this->stat_luck</li>";
+			$message .= "<li>Contraconjuro: $this->stat_magic_resistance</li>";
 		}
 
 		$message .= '</ul>';
@@ -54,14 +60,12 @@ class Npc extends Base_Model
 	{
 		$stats = array();
 
-		$stats['p_defense'] = $this->p_defense;
-		$stats['m_defense'] = $this->m_defense;
-
-		$stats['stat_life'] = $this->stat_life;
-		$stats['stat_dexterity'] = $this->stat_dexterity;
-		$stats['stat_magic'] = $this->stat_magic;
 		$stats['stat_strength'] = $this->stat_strength;
-		$stats['stat_luck'] = $this->stat_luck;
+		$stats['stat_dexterity'] = $this->stat_dexterity;
+		$stats['stat_resistance'] = $this->stat_resistance;
+		$stats['stat_magic'] = $this->stat_magic;
+		$stats['stat_magic_skill'] = $this->stat_magic_skill;
+		$stats['stat_magic_resistance'] = $this->stat_magic_resistance;
 
 		return $stats;
 	}
