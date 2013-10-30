@@ -17,7 +17,7 @@
 		<!--<link rel="stylesheet" href="{{ URL::base() }}/css/main.min.css">-->
 		<link rel="stylesheet" href="{{ URL::base() }}/css/main.css">
 
-		@if ( false && Request::env() == 'local' )
+		@if ( Request::env() == 'local' )
 			<script src="{{ URL::base() }}/js/vendor/jquery-1.9.1.min.js"></script>
 			<script src="{{ URL::base() }}/js/vendor/bootstrap.js"></script>
 			<script src="{{ URL::base() }}/js/vendor/angular.min.js"></script>

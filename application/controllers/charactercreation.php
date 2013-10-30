@@ -55,55 +55,65 @@ class CharacterCreation_Controller extends Base_Controller
 
 			switch ($character->race) {
 				case 'dwarf':
-					$character->stat_life = 18;
-					$character->stat_dexterity = 5;
-					$character->stat_magic = 3;
 					$character->stat_strength = 28;
-					$character->stat_luck = 5;
-					//59
+					$character->stat_dexterity = 9;
+					$character->stat_resistance = 13;
+					
+					$character->stat_magic = 0;
+					$character->stat_magic_skill = 0;
+					$character->stat_magic_resistance = 0;
+					//50
 
 					$character->max_life = 500;
 					$character->zone_id = 1;
 					break;
 
 				case 'human':
-					$character->stat_life = 15;
+					$character->stat_strength = 22;
 					$character->stat_dexterity = 10;
-					$character->stat_magic = 13;
-					$character->stat_strength = 17;
-					$character->stat_luck = 5;
-					//59
+					$character->stat_resistance = 0;
+					
+					$character->stat_magic = 10;
+					$character->stat_magic_skill = 8;
+					$character->stat_magic_resistance = 0;
+					//50
 
 					$character->max_life = 400;
 					$character->zone_id = 3;
 					break;
 
 				case 'drow':
-					$character->stat_life = 4;
-					$character->stat_dexterity = 6;
+					$character->stat_strength = 0;
+					$character->stat_dexterity = 0;
+					$character->stat_resistance = 0;
+					
 					$character->stat_magic = 37;
-					$character->stat_strength = 7;
-					$character->stat_luck = 5;
-					//59
+					$character->stat_magic_skill = 13;
+					$character->stat_magic_resistance = 0;
+					//50
 
 					$character->max_life = 150;
 					$character->zone_id = 2;
 					break;
 
 				case 'elf':
-					$character->stat_life = 10;
-					$character->stat_dexterity = 17;
-					$character->stat_magic = 15;
 					$character->stat_strength = 12;
-					$character->stat_luck = 5;
-					//59
+					$character->stat_dexterity = 8;
+					$character->stat_resistance = 3;
+					
+					$character->stat_magic = 17;
+					$character->stat_magic_skill = 8;
+					$character->stat_magic_resistance = 2;
+					//50
 
 					$character->max_life = 300;
 					$character->zone_id = 4;
 					break;
 			}
 
-			$character->level = 0;
+			$character->level = 1;
+			$character->xp_next_level = 10;
+			
 			$character->current_life = $character->max_life;
 
 			$character->save();
