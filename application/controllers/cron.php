@@ -9,4 +9,10 @@ class Cron_Controller extends Base_Controller
 	{
 		Command::run(array('orb'));
 	}
+	
+	// 63bc2e05a572acaacb1342a1573b8eab = /-*/periodic//skill|cc
+	public function get_63bc2e05a572acaacb1342a1573b8eab()
+	{
+		Command::run(array('skill'));
+	}
 }

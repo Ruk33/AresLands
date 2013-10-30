@@ -50,7 +50,7 @@ class Item extends Base_Model
 
 			if ( $skillId != 0 && $skillLevel > 0 )
 			{
-				$skills[] = Skill::get($skillId, $skillLevel);
+				$skills[] = Skill::where('level', '=', (int) $skillLevel)->where('id', '=', (int) $skillId)->first();
 			}
 		}
 

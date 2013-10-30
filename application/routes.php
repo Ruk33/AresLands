@@ -385,7 +385,10 @@ Event::listen('500', function($exception)
 Route::filter('before', function() {
 	if ( Config::get('application.maintenance') )
 	{
-		return Response::error('503');
+		if ( Auth::guest() || Auth::user()->name != 'Ruke' )
+		{
+			return Response::error('503');
+		}
 	}
 	
 	$character = null;
@@ -450,11 +453,7 @@ Route::filter('before', function() {
 			{
 				$characterActivity->update_time();
 			}
-
-			/*
-			 *	Y de sus habilidades
-			 */
-			$characterSkills = $character->skills()->select(array('id'))->where('end_time', '<>', 0)->where('end_time', '<=', $time)->delete();
+			
 			$character->save();
 		}
 	}

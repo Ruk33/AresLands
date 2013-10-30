@@ -13,13 +13,13 @@ return array(
 	 *	Id del objeto que hace
 	 *	de experiencia
 	 */
-	'xp_item_id' => 9998,
+	'xp_item_id' => 2,
 
 	/*
 	 *	Id del objeto que hace de moneda
 	 *	(cobre)
 	 */
-	'coin_id' => 9999,
+	'coin_id' => 1,
 
 	/*
 	 *	Nivel máximo de los clanes

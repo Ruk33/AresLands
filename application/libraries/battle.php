@@ -507,6 +507,7 @@ class Battle
 		
 		$fighter['is_player'] = $fighter['character'] instanceof Character;
 		$fighter['stats'] = $fighter['character']->get_stats();
+		$fighter['is_warrior'] = $fighter['stats']['stat_strength'] > $fighter['stats']['stat_magic'];
 		
 		if ( $fighter['is_player'] )
 		{
@@ -517,17 +518,31 @@ class Battle
 			$fighter['current_life'] = $fighter['character']->life;
 		}
 		
-		if ( $fighter['stats']['stat_dexterity'] > 0 )
+		if ( $fighter['is_warrior'] )
 		{
-			$fighter['cd'] = 1000 / $fighter['stats']['stat_dexterity'];
+			if ( $fighter['stats']['stat_dexterity'] > 0 )
+			{
+				$fighter['cd'] = 1000 / $fighter['stats']['stat_dexterity'];
+			}
+			else
+			{
+				$fighter['cd'] = 1000;
+			}
 		}
 		else
 		{
-			$fighter['cd'] = 1000;
+			if ( $fighter['stats']['stat_magic_skill'] > 0 )
+			{
+				$fighter['cd'] = 1000 / $fighter['stats']['stat_magic_skill'];
+			}
+			else
+			{
+				$fighter['cd'] = 1000;
+			}
 		}
 		
 		$fighter['current_cd'] = $fighter['cd'];
-		$fighter['is_warrior'] = $fighter['stats']['stat_strength'] > $fighter['stats']['stat_magic'];
+		
 		
 		// Daños
 		// --------------------------------

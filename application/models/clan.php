@@ -113,39 +113,35 @@ class Clan extends Base_Model
 		}
 	}
 
-	public function remove_clan_skill_from_member(Character $member, ClanSkill $clanSkill)
+	public function remove_clan_skill_from_member(Character $member, Skill $skill)
 	{
-		$memberSkill = $member->skills()->where('skill_id', '=', $clanSkill->skill_id)->first();
+		$memberSkill = $member->skills()->where('skill_id', '=', $skill->id)->where('level', '=', $skill->level)->first();
 
 		if ( $memberSkill )
 		{
-			$memberSkill->delete();
+			$memberSkill->end_time = 1;
+			$memberSkill->save();
+			
+			$skill->periodic($member);
 		}
 	}
 
 	public function remove_clan_skills_from_member(Character $member)
 	{
-		$clanSkills = $this->skills()->select(array('skill_id'))->get();
+		$clanSkills = $this->skills()->select(array('id', 'skill_id', 'level'))->get();
 
 		foreach ( $clanSkills as $clanSkill )
 		{
-			$this->remove_clan_skill_from_member($member, $clanSkill);
+			$skill = Skill::where('id', '=', $clanSkill->skill_id)->where('level', '=', $clanSkill->level)->first();
+			$this->remove_clan_skill_from_member($member, $skill);
 		}
 	}
 
-	public function give_clan_skill_to_member(Character $member, ClanSkill $clanSkill)
+	public function give_clan_skill_to_member(Character $member, Skill $skill)
 	{
-		if ( $member->skills()->where('skill_id', '=', $clanSkill->skill_id)->take(1)->count() == 0 )
+		if ( $member->skills()->where('skill_id', '=', $skill->id)->take(1)->count() == 0 )
 		{
-			$characterSkill = new CharacterSkill();
-
-			$characterSkill->skill_id = $clanSkill->skill_id;
-			$characterSkill->level = $clanSkill->level;
-			$characterSkill->character_id = $member->id;
-			$characterSkill->end_time = 0;
-			$characterSkill->amount = 1;
-
-			$characterSkill->save();
+			$skill->cast($this->lider()->select(array('id', 'clan_id'))->first(), $member, 1);
 		}
 	}
 
@@ -155,33 +151,30 @@ class Clan extends Base_Model
 
 		foreach ( $clanSkills as $clanSkill )
 		{
-			$this->give_clan_skill_to_member($member, $clanSkill);
+			$skill = Skill::where('id', '=', $clanSkill->skill_id)->where('level', '=', $clanSkill->level)->first();
+			$this->give_clan_skill_to_member($member, $skill);
 		}
 	}
 
-	public function update_members_skill(ClanSkill $clanSkill)
+	public function update_members_skill(Skill $skill)
 	{
-		$members = $this->members()->select(array('id'))->get();
+		$members = $this->members()->select(array('id', 'clan_id'))->get();
+		$prevSkill = Skill::where('id', '=', $skill->id)->where('level', '=', $skill->level - 1)->first();
 
 		foreach ( $members as $member )
 		{
-			$memberSkill = $member->skills()->where('skill_id', '=', $clanSkill->skill_id)->select(array('id', 'level'))->first();
-
-			if ( $memberSkill )
+			if ( $prevSkill )
 			{
-				$memberSkill->level = $clanSkill->level;
-				$memberSkill->save();
+				$this->remove_clan_skill_from_member($member, $prevSkill);
 			}
-			else
-			{
-				$this->give_clan_skill_to_member($member, $clanSkill);
-			}
+			
+			$this->give_clan_skill_to_member($member, $skill);
 		}
 	}
 
-	public function learn_skill($skill)
+	public function learn_skill(Skill $skill)
 	{
-		$clanSkill = $this->skills()->where('skill_id', '=', $skill['skill_id'])->select(array('id', 'skill_id', 'level'))->first();
+		$clanSkill = $this->skills()->where('skill_id', '=', $skill->id)->select(array('id', 'skill_id', 'level'))->first();
 
 		if ( $clanSkill )
 		{
@@ -192,12 +185,12 @@ class Clan extends Base_Model
 			$clanSkill = new ClanSkill();
 
 			$clanSkill->clan_id = $this->id;
-			$clanSkill->skill_id = $skill['skill_id'];
-			$clanSkill->level = 1;
+			$clanSkill->skill_id = $skill->id;
+			$clanSkill->level = $skill->level;
 		}
 
 		$clanSkill->save();
-		$this->update_members_skill($clanSkill);
+		$this->update_members_skill($skill);
 	}
 
 	public function join(Character $member)

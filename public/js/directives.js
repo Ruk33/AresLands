@@ -34,7 +34,59 @@ directive('dynamicTooltip', function() {
 		$(element).tooltip({ html: true, container: '#wrap' });
 	};
 }).
+
+directive('skillTooltip', ['Skill', function(Skill) {
+	return function(scope, element, attrs) {
+		var cache = {};
 		
+		cache.element = $(element);
+		cache.skill = null;
+		
+		var mouseIsOver = false;
+		
+		var updateTooltip = function(message) {
+			cache.element.attr('data-original-title', message).tooltip('fixTitle');
+			
+			if ( mouseIsOver ) {
+				cache.element.tooltip('show');
+			}
+			
+			cache.element.unbind('mouseenter.skillTooltip').unbind('mouseleave.skillTooltip');
+		};
+		
+		var onMouseEnter = function() {
+			mouseIsOver = true;
+			
+			if ( ! cache.skill ) {
+				Skill.tooltip({ id: attrs.skillId, level: attrs.skillLevel }, function(data) {
+					cache.skill = data.tooltip;
+					
+					if ( attrs.skillShowNextLevel ) {
+						Skill.tooltip({ id: attrs.skillId, level: Number(attrs.skillLevel) + 1 }, function(data) {
+							if ( data.tooltip ) {
+								updateTooltip(cache.skill + data.tooltip);
+							} else {
+								updateTooltip(cache.skill);
+							}
+						});
+					} else {
+						updateTooltip(data.tooltip);
+					}
+				});
+			}
+		};
+		
+		var onMouseLeave = function() {
+			mouseIsOver = false;
+		};
+		
+		cache.element.bind('mouseenter.skillTooltip', onMouseEnter);
+		cache.element.bind('mouseleave.skillTooltip', onMouseLeave);
+		
+		cache.element.tooltip({ html: true, title: 'Cargando...', container: '#wrap' });
+	};
+}]).
+
 directive('characterTooltip', ['Character', function(Character) {
 	return function(scope, element, attrs) {
 		var cache = {};

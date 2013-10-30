@@ -90,15 +90,14 @@ class Admin_Controller extends Base_Controller
 		$npc->type = $inputs['type'];
 		$npc->level = $inputs['level'];
 		$npc->life = $inputs['life'];
-		$npc->stat_life = $inputs['stat_life'];
-		$npc->stat_dexterity = $inputs['stat_dexterity'];
-		$npc->stat_magic = $inputs['stat_magic'];
 		$npc->stat_strength = $inputs['stat_strength'];
-		$npc->stat_luck = $inputs['stat_luck'];
+		$npc->stat_dexterity = $inputs['stat_dexterity'];
+		$npc->stat_resistance = $inputs['stat_resistance'];
+		$npc->stat_magic = $inputs['stat_magic'];
+		$npc->stat_magic_skill = $inputs['stat_magic_skill'];
+		$npc->stat_magic_resistance = $inputs['stat_magic_resistance'];
 		$npc->lhand = $inputs['lhand'];
 		$npc->rhand = $inputs['rhand'];
-		$npc->p_defense = $inputs['p_defense'];
-		$npc->m_defense = $inputs['m_defense'];
 		$npc->xp = $inputs['xp'];
 		
 		$npc->save();

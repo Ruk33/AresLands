@@ -15,6 +15,9 @@
  *
  */
 
+/**
+ * @deprecated
+ */
 class ClanSkillList
 {
 	private static $_instance = null;

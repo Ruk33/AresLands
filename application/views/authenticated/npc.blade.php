@@ -117,12 +117,17 @@
 	<div class="clearfix"></div>
 
 	@if ( count($merchandises) > 0 )
-		<h2>Mercancías</h2>
+		<h2 style="margin-top: 50px;">Mercancías</h2>
 
 		<ul class="inline" ng-controller="Item">
 		@foreach ( $merchandises as $merchandise )
 			@if ( $merchandise->type == 'mercenary' )
 				@if ( $merchandise->zone_to_explore && $merchandise->time_to_appear && $character->exploring_times()->where('zone_id', '=', $merchandise->zone_to_explore)->where('time', '>=', $merchandise->time_to_appear)->take(1)->count() == 0 )
+					<li class="text-center" style="vertical-align: top; padding: 10px;" data-toggle="tooltip" data-original-title="Bloqueado, necesitas explorar mas para que este mercenario se te habilite">
+						<div class="inventory-item grayEffect">
+							<img src="{{ URL::base() }}/img/icons/items/{{ $merchandise->item_id }}.png" width="80px" height="80px">
+						</div>
+					</li>
 					<?php continue; ?>
 				@endif
 			@endif

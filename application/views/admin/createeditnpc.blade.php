@@ -72,8 +72,8 @@
 </div>
 
 <div>
-<label>stat_life</label>
-{{ Form::number('stat_life', Input::old('stat_life', ( $editMode ) ? $npc->stat_life : 0)) }}
+<label>stat_strength</label>
+{{ Form::number('stat_strength', Input::old('stat_strength', ( $editMode ) ? $npc->stat_strength : 0)) }}
 </div>
 
 <div>
@@ -82,18 +82,23 @@
 </div>
 
 <div>
+<label>stat_resistance</label>
+{{ Form::number('stat_resistance', Input::old('stat_resistance', ( $editMode ) ? $npc->stat_resistance : 0)) }}
+</div>
+
+<div>
 <label>stat_magic</label>
 {{ Form::number('stat_magic', Input::old('stat_magic', ( $editMode ) ? $npc->stat_magic : 0)) }}
 </div>
 
 <div>
-<label>stat_strength</label>
-{{ Form::number('stat_strength', Input::old('stat_strength', ( $editMode ) ? $npc->stat_strength : 0)) }}
+<label>stat_magic_skill</label>
+{{ Form::number('stat_magic_skill', Input::old('stat_magic_skill', ( $editMode ) ? $npc->stat_magic_skill : 0)) }}
 </div>
 
 <div>
-<label>stat_luck</label>
-{{ Form::number('stat_luck', Input::old('stat_luck', ( $editMode ) ? $npc->stat_luck : 0)) }}
+<label>stat_magic_resistance</label>
+{{ Form::number('stat_magic_resistance', Input::old('stat_magic_resistance', ( $editMode ) ? $npc->stat_magic_resistance : 0)) }}
 </div>
 
 <h4>Armas/escudos</h4>

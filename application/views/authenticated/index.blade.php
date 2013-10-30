@@ -5,14 +5,14 @@
 		<ul class="inline">
 		@foreach ( $npcs as $npc )
 			<li data-toggle="tooltip" data-placement="bottom" data-original-title="<div style='color: #FFC200;'>Mercader {{ $npc->name }}</div>{{ $npc->tooltip_dialog }}">
-				<a href="{{ URL::to('authenticated/npc/' . $npc->name) }}">
+				<a href="{{ URL::to('authenticated/npc/' . $npc->id . '/' . $npc->name) }}">
 					<img src="{{ URL::base() }}/img/icons/npcs/{{ $npc->id }}.png" alt="" width="72px" height="82px">
 				</a>
 			</li>
 		@endforeach
 
 		@foreach ( $blockedNpcs as $blockedNpc )
-			<li data-toggle="tooltip" data-placement="bottom" data-original-title="Bloqueado">
+			<li data-toggle="tooltip" data-placement="bottom" data-original-title="<strong>Bloqueado</strong><br>Debes explorar un poco mas para que este mercader se habilite.">
 				<img class="grayEffect" src="{{ URL::base() }}/img/icons/npcs/{{ $blockedNpc->id }}.png" alt="" width="72px" height="82px">
 			</li>
 		@endforeach
@@ -27,6 +27,29 @@
 			{{ Session::get('error') }}
 		</div>
 	@endif
+	
+	<!-- BUFFS -->
+	@if ( count($skills) > 0 )
+		<h2>Magias activas</h2>
+		<ul class="unstyled inline">
+			@foreach ( $skills as $skill )
+				<li class="text-center clan-member-link" style="vertical-align: top;">
+					<img src="{{ URL::base() }}/img/icons/skills/{{ $skill->skill_id }}.png" alt="" width="32px" height="32px" skill-tooltip skill-id="{{ $skill->skill_id }}" skill-level="{{ $skill->level }}">
+
+					<div>
+					@if ( $skill->end_time != 0 )
+					<small><span class='timer' data-endtime='{{ $skill->end_time - time() }}'></span></small>
+					@else
+						∞
+					@endif
+					</div>
+
+					<div><small>Cantidad: {{ $skill->amount }}</small></div>
+				</li>
+			@endforeach
+		</ul>
+	@endif
+	<!-- END BUFFS -->
 	
 	<?php
 	
@@ -56,20 +79,6 @@
 	?>
 	
 		<h2>Personaje</h2>
-	
-		<!-- BUFFS -->
-		<ul class="unstyled inline">
-			@foreach ( $skills as $skill )
-				<li class="text-center" style="vertical-align: top;">
-					<img src="{{ URL::base() }}/img/icons/skills/{{ $skill->skill_id }}.png" alt="" width="32px" height="32px" ng-mouseover="onMouseOver({{ $skill->skill_id }}, {{ $skill->level }}, false, false)" dynamic-tooltip="skill[{{ $skill->skill_id }}]">
-
-					@if ( $skill->end_time != 0 )
-					<small><div class='timer' data-endtime='{{ $skill->end_time - time() }}'></div></small>
-					@endif
-				</li>
-			@endforeach
-		</ul>
-		<!-- END BUFFS -->
 
 		<div style="min-height: 405px;">
 			<!-- DOS MANOS -->
@@ -197,7 +206,7 @@
 				</div>
 			</li>
 			
-			<?php $physicalDamage = $character->stat_strength + $positiveBonifications['stat_strength'] - $negativeBonifications['stat_strength']; ?>
+			<?php $physicalDamage = $character->stat_strength + $character->stat_strength_extra; ?>
 			<li style="margin-bottom: 10px;" ng-init="stats['stat_strength']='{{ $character->stat_strength }}'" data-toggle="tooltip" data-placement="top" data-original-title="<p><b>Fuerza:</b> Aumenta el poder de los ataques físicos.</p><p>Si posees mas Fuerza que Magia, tu personaje golpeará únicamente con ataques físicos.</p><p class='positive'>Poder de ataque físico: {{ $physicalDamage * 0.25 }}-{{ $physicalDamage * 0.75 }}</p>">
 				<span class="ui-button button" style="cursor: default; width: 250px;">
 					<a ng-click="addStat('stat_strength')" class="button-icon" ng-show="remainingPoints>0" style="cursor: pointer;">+</a>
@@ -207,19 +216,19 @@
 
 						<div class="pull-right">
 							<span ng-bind="stats['stat_strength'] || '?'">?</span>
-
-							@if ( isset($positiveBonifications['stat_strength']) && $positiveBonifications['stat_strength'] > 0 )
-								<span class="positive">+{{ $positiveBonifications['stat_strength'] }}</span>
-							@endif
-
-							@if ( isset($negativeBonifications['stat_strength']) && $negativeBonifications['stat_strength'] > 0 )
-								<span class="negative">-{{ $negativeBonifications['stat_strength'] }}</span>
+							
+							@if ( $character->stat_strength_extra != 0 )
+								@if ( $character->stat_strength_extra > 0 )
+									<span class="positive">+{{ $character->stat_strength_extra }}</span>
+								@else
+									<span class="negative">{{ $character->stat_strength_extra }}</span>
+								@endif
 							@endif
 						</div>
 					</span>
 				</span>
 			</li>
-			<li style="margin-bottom: 10px;" ng-init="stats['stat_dexterity']='{{ $character->stat_dexterity }}'" data-toggle="tooltip" data-placement="top" data-original-title="<p><b>Destreza:</b> Aumenta tu velocidad de golpeo en las batallas, pudiendo lograr así múltiples ataques consecutivos si tienes mucha mas velocidad que tu adversario.</p><p>Tu tiempo de golpeo se reduce por cada punto de destreza (cuanto menos tiempo de golpeo mejor).</p><p class='positive'>Tiempo de golpeo (menor es mejor): {{ number_format(1000 / ($character->stat_dexterity + $positiveBonifications['stat_dexterity'] - $negativeBonifications['stat_dexterity']), 2) }}</p>">
+			<li style="margin-bottom: 10px;" ng-init="stats['stat_dexterity']='{{ $character->stat_dexterity }}'" data-toggle="tooltip" data-placement="top" data-original-title="<p><b>Destreza:</b> Aumenta tu velocidad de golpeo en las batallas, pudiendo lograr así múltiples ataques consecutivos si tienes mucha mas velocidad que tu adversario.</p><p>Tu tiempo de golpeo se reduce por cada punto de destreza (cuanto menos tiempo de golpeo mejor).</p><p class='positive'>Tiempo de golpeo (menor es mejor): {{ number_format(1000 / ($character->stat_dexterity + $character->stat_dexterity_extra), 2) }}</p>">
 				<span class="ui-button button" style="cursor: default; width: 250px;">
 					<a ng-click="addStat('stat_dexterity')" class="button-icon" ng-show="remainingPoints>0" style="cursor: pointer;">+</a>
 					<i class="button-icon boot" ng-show="remainingPoints<=0"></i>
@@ -229,18 +238,18 @@
 						<div class="pull-right">
 							<span ng-bind="stats['stat_dexterity'] || '?'">?</span>
 
-							@if ( isset($positiveBonifications['stat_dexterity']) && $positiveBonifications['stat_dexterity'] > 0 )
-								<span class="positive">+{{ $positiveBonifications['stat_dexterity'] }}</span>
-							@endif
-
-							@if ( isset($negativeBonifications['stat_dexterity']) && $negativeBonifications['stat_dexterity'] > 0 )
-								<span class="negative">-{{ $negativeBonifications['stat_dexterity'] }}</span>
+							@if ( $character->stat_dexterity_extra != 0 )
+								@if ( $character->stat_dexterity_extra > 0 )
+									<span class="positive">+{{ $character->stat_dexterity_extra }}</span>
+								@else
+									<span class="negative">{{ $character->stat_dexterity_extra }}</span>
+								@endif
 							@endif
 						</div>
 					</span>
 				</span>
 			</li>
-			<li style="margin-bottom: 10px;" ng-init="stats['stat_resistance']='{{ $character->stat_resistance }}'" data-toggle="tooltip" data-placement="top" data-original-title="<p><b>Destreza:</b> Aumenta tu velocidad de golpeo en las batallas, pudiendo lograr así múltiples ataques consecutivos si tienes mucha mas velocidad que tu adversario.</p><p>Tu tiempo de golpeo se reduce por cada punto de destreza (cuanto menos tiempo de golpeo mejor).</p><p class='positive'>Tiempo de golpeo (menor es mejor): {{ number_format(1000 / ($character->stat_dexterity + $positiveBonifications['stat_dexterity'] - $negativeBonifications['stat_dexterity']), 2) }}</p>">
+			<li style="margin-bottom: 10px;" ng-init="stats['stat_resistance']='{{ $character->stat_resistance }}'" data-toggle="tooltip" data-placement="top" data-original-title="<p><b>Resistencia física:</b> Aumenta tu defensa contra ataques físicos.</p>">
 				<span class="ui-button button" style="cursor: default; width: 250px;">
 					<a ng-click="addStat('stat_resistance')" class="button-icon" ng-show="remainingPoints>0" style="cursor: pointer;">+</a>
 					<i class="button-icon boot" ng-show="remainingPoints<=0"></i>
@@ -250,18 +259,18 @@
 						<div class="pull-right">
 							<span ng-bind="stats['stat_resistance'] || '?'">?</span>
 
-							@if ( isset($positiveBonifications['stat_resistance']) && $positiveBonifications['stat_resistance'] > 0 )
-								<span class="positive">+{{ $positiveBonifications['stat_resistance'] }}</span>
-							@endif
-
-							@if ( isset($negativeBonifications['stat_resistance']) && $negativeBonifications['stat_resistance'] > 0 )
-								<span class="negative">-{{ $negativeBonifications['stat_resistance'] }}</span>
+							@if ( $character->stat_resistance_extra != 0 )
+								@if ( $character->stat_resistance_extra > 0 )
+									<span class="positive">+{{ $character->stat_resistance_extra }}</span>
+								@else
+									<span class="negative">{{ $character->stat_resistance_extra }}</span>
+								@endif
 							@endif
 						</div>
 					</span>
 				</span>
 			</li>
-			<?php $magicDamage = $character->stat_magic + $positiveBonifications['stat_magic'] - $negativeBonifications['stat_magic']; ?>
+			<?php $magicDamage = $character->stat_magic + $character->stat_magic_extra; ?>
 			<li style="margin-bottom: 10px;" ng-init="stats['stat_magic']='{{ $character->stat_magic }}'" data-toggle="tooltip" data-placement="top" data-original-title="<p><b>Magia:</b> Aumenta el poder de los ataques mágicos.</p><p>Si posees mas Magia que Fuerza, tu personaje golpeará únicamente con ataques mágicos.</p><p class='positive'>Poder de ataque mágico: {{ $magicDamage * 0.25 }}-{{ $magicDamage * 0.75 }}</p>">
 				<span class="ui-button button" style="cursor: default; width: 250px;">
 					<a ng-click="addStat('stat_magic')" class="button-icon" ng-show="remainingPoints>0" style="cursor: pointer;">+</a>
@@ -272,18 +281,18 @@
 						<div class="pull-right">
 							<span ng-bind="stats['stat_magic'] || '?'">?</span>
 
-							@if ( isset($positiveBonifications['stat_magic']) && $positiveBonifications['stat_magic'] > 0 )
-								<span class="positive">+{{ $positiveBonifications['stat_magic'] }}</span>
-							@endif
-
-							@if ( isset($negativeBonifications['stat_magic']) && $negativeBonifications['stat_magic'] > 0 )
-								<span class="negative">-{{ $negativeBonifications['stat_magic'] }}</span>
+							@if ( $character->stat_magic_extra != 0 )
+								@if ( $character->stat_magic_extra > 0 )
+									<span class="positive">+{{ $character->stat_magic_extra }}</span>
+								@else
+									<span class="negative">{{ $character->stat_magic_extra }}</span>
+								@endif
 							@endif
 						</div>
 					</span>
 				</span>
 			</li>
-			<li style="margin-bottom: 10px;" ng-init="stats['stat_magic_skill']='{{ $character->stat_magic_skill }}'" data-toggle="tooltip" data-placement="top" data-original-title="<p><b>Fuerza:</b> Aumenta el poder de los ataques físicos.</p><p>Si posees mas Fuerza que Magia, tu personaje golpeará únicamente con ataques físicos.</p><p class='positive'>Poder de ataque físico: {{ $physicalDamage * 0.25 }}-{{ $physicalDamage * 0.75 }}</p>">
+			<li style="margin-bottom: 10px;" ng-init="stats['stat_magic_skill']='{{ $character->stat_magic_skill }}'" data-toggle="tooltip" data-placement="top" data-original-title="<p><b>Habilidad mágica:</b> Aumenta tu velocidad al lanzar magias, pudiendo lograr así, múltiples ataques consecutivos.</p>">
 				<span class="ui-button button" style="cursor: default; width: 250px;">
 					<a ng-click="addStat('stat_magic_skill')" class="button-icon" ng-show="remainingPoints>0" style="cursor: pointer;">+</a>
 					<i class="button-icon axe" ng-show="remainingPoints<=0"></i>
@@ -293,12 +302,12 @@
 						<div class="pull-right">
 							<span ng-bind="stats['stat_magic_skill'] || '?'">?</span>
 
-							@if ( isset($positiveBonifications['stat_magic_skill']) && $positiveBonifications['stat_magic_skill'] > 0 )
-								<span class="positive">+{{ $positiveBonifications['stat_magic_skill'] }}</span>
-							@endif
-
-							@if ( isset($negativeBonifications['stat_magic_skill']) && $negativeBonifications['stat_magic_skill'] > 0 )
-								<span class="negative">-{{ $negativeBonifications['stat_magic_skill'] }}</span>
+							@if ( $character->stat_magic_skill_extra != 0 )
+								@if ( $character->stat_magic_skill_extra > 0 )
+									<span class="positive">+{{ $character->stat_magic_skill_extra }}</span>
+								@else
+									<span class="negative">{{ $character->stat_magic_skill_extra }}</span>
+								@endif
 							@endif
 						</div>
 					</span>
@@ -314,12 +323,12 @@
 						<div class="pull-right">
 							<span ng-bind="stats['stat_magic_resistance'] || '?'">?</span>
 
-							@if ( isset($positiveBonifications['stat_magic_resistance']) && $positiveBonifications['stat_magic_resistance'] > 0 )
-								<span class="positive">+{{ $positiveBonifications['stat_magic_resistance'] }}</span>
-							@endif
-
-							@if ( isset($negativeBonifications['stat_magic_resistance']) && $negativeBonifications['stat_magic_resistance'] > 0 )
-								<span class="negative">-{{ $negativeBonifications['stat_magic_resistance'] }}</span>
+							@if ( $character->stat_magic_resistance_extra != 0 )
+								@if ( $character->stat_magic_resistance_extra > 0 )
+									<span class="positive">+{{ $character->stat_magic_resistance_extra }}</span>
+								@else
+									<span class="negative">{{ $character->stat_magic_resistance_extra }}</span>
+								@endif
 							@endif
 						</div>
 					</span>

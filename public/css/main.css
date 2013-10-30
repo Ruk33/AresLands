@@ -55,7 +55,7 @@ body {
 	background-color: black;
 	color: #9B928C;
 	font-size: 15px;
-	font-family: "Roboto Slab";
+	font-family: "Roboto Slab", Georgia, Verdana, Arial;
 }
 
 .level-very-low {
@@ -217,7 +217,7 @@ a:hover {
 
 .ui-input-button {
 	color: orange;
-	font: normal normal 12px "Roboto Slab";
+	font: normal normal 12px "Roboto Slab", Georgia, Verdana, Arial;
 	margin-top: -5px;
 }
 

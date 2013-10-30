@@ -77,11 +77,17 @@ class Authenticated_Controller extends Base_Controller
 			'race',
 			'gender',
 			'stat_strength',
+			'stat_strength_extra',
 			'stat_dexterity',
+			'stat_dexterity_extra',
 			'stat_resistance',
+			'stat_resistance_extra',
 			'stat_magic',
+			'stat_magic_extra',
 			'stat_magic_skill',
+			'stat_magic_skill_extra',
 			'stat_magic_resistance',
+			'stat_magic_resistance_extra',
 			'points_to_change',
 			'current_life',
 			'max_life',
@@ -130,13 +136,6 @@ class Authenticated_Controller extends Base_Controller
 		$activities = $character->activities()->select(array('end_time', 'name', 'data'))->get();
 
 		/*
-		 *	Obtenemos las bonificaciones
-		 *	tanto negativas como positivas
-		 */
-		$positiveBonifications = $character->get_bonifications(true);
-		$negativeBonifications = $character->get_bonifications(false);
-
-		/*
 		 *	Obtenemos los orbes
 		 */
 		$orbs = $character->orbs()->select(array('id', 'name', 'description'))->get();
@@ -163,8 +162,6 @@ class Authenticated_Controller extends Base_Controller
 		->with('activities', $activities)
 		->with('items', $itemsToView)
 		->with('skills', $skills)
-		->with('positiveBonifications', $positiveBonifications)
-		->with('negativeBonifications', $negativeBonifications)
 		->with('orbs', $orbs)
 		->with('zone', $zone)
 		->with('npcs', $npcs)
@@ -185,11 +182,11 @@ class Authenticated_Controller extends Base_Controller
 				{
 					if ( $clan->leader_id == $character->id || $character->has_permission(Clan::PERMISSION_LEARN_SPELL) )
 					{
-						if ( ClanSkillList::get_instance()->can_learn($clan, $skillId, $level) )
+						$skill = Skill::where('id', '=', (int) $skillId)->where('level', '=', (int) $level)->first();
+						
+						if ( $skill )
 						{
-							$skill = Skill::get((int) $skillId, (int) $level);
-							
-							if ( $skill )
+							if ( $clan->points_to_change > 0 && $skill->can_be_learned_by_clan($clan) )
 							{
 								$clan->learn_skill($skill);
 
@@ -998,9 +995,12 @@ class Authenticated_Controller extends Base_Controller
 			$dataToView['clan'] = $clan;
 			$dataToView['members'] = $clan->members()->select(array('id' ,'name', 'race', 'gender', 'level', 'clan_id', 'clan_permission'))->get();
 			$dataToView['character'] = $character;
-			$dataToView['skills'] = $clan->skills;
+			$dataToView['clanSkills'] = $clan->skills;
 
-			$dataToView['skillsToLearn'] = ClanSkillList::get_instance()->get_skills();
+			$dataToView['skills'] = Skill::clan_skills()->
+					where('level', '=', 1)->
+					where('id', 'NOT IN', DB::raw("( SELECT skill_id FROM clan_skills WHERE clan_id = $clan->id )"))->
+					get();
 
 			if ( $character->id == $clan->leader_id || $character->has_permission(Clan::PERMISSION_ACCEPT_PETITION) || $character->has_permission(Clan::PERMISSION_DECLINE_PETITION) )
 			{
@@ -1642,17 +1642,8 @@ class Authenticated_Controller extends Base_Controller
 		->with('error', $error);
 	}
 
-	public function get_npc($npcName = '')
+	public function get_npc($npcId, $npcName = '')
 	{
-		/*
-		 *	Si no hay nombre, redireccionamos
-		 *	al index
-		 */
-		if ( ! $npcName )
-		{
-			return Redirect::to('authenticated/index');
-		}
-
 		$character = Character::get_character_of_logged_user(array('id', 'zone_id', 'level', 'race', 'gender'));
 
 		/*
@@ -1660,7 +1651,7 @@ class Authenticated_Controller extends Base_Controller
 		 *	y que esté ubicado en la zona
 		 *	en donde está el personaje
 		 */
-		$npc = Npc::select(array('id', 'name', 'dialog', 'time_to_appear', 'zone_id'))->where('name', '=', $npcName)->where('zone_id', '=', $character->zone_id)->first();
+		$npc = Npc::select(array('id', 'name', 'dialog', 'time_to_appear', 'zone_id'))->where('id', '=', (int) $npcId)->where('zone_id', '=', $character->zone_id)->first();
 
 		/*
 		 *	Si no existe, redireccionamos
@@ -1762,7 +1753,7 @@ class Authenticated_Controller extends Base_Controller
 			 *	Obtenemos la información del objeto
 			 *	a comprar
 			 */
-			$item = $merchandise->item()->select(array('id', 'stackable', 'type', 'zone_to_explore', 'time_to_appear'))->first();
+			$item = $merchandise->item;
 
 			/*
 			 *	Si el objeto no es acumulable
@@ -1801,7 +1792,7 @@ class Authenticated_Controller extends Base_Controller
 					$characterItem = $character->items()
 					->left_join('items', 'items.id', '=', 'character_items.item_id')
 					->where('items.type', '=', 'mercenary')
-					->first(array('character_items.id', 'character_items.item_id', 'character_items.count'));
+					->first(array('character_items.*'));
 
 					if ( ! $characterItem )
 					{
@@ -1810,9 +1801,15 @@ class Authenticated_Controller extends Base_Controller
 						$characterItem->owner_id = $character->id;
 						$characterItem->location = 'mercenary';
 					}
+					else
+					{
+						$character->update_extra_stat($characterItem->item->to_array(), false);
+					}
 
 					$characterItem->item_id = $item->id;
 					$characterItem->count = 0;
+					
+					$character->update_extra_stat($item->to_array(), true);
 				}
 				else
 				{
