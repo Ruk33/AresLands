@@ -149,11 +149,12 @@ class Authenticated_Controller extends Base_Controller
 		 */
 		$npcs = Npc::get_npcs_from_zone($zone);
 
-		$exploringTime = $character->exploring_times()->select(array('character_id', 'time'))->where('zone_id', '=', $zone->id)->first();
+		$exploringTime = $character->exploring_times()->where('zone_id', '=', $zone->id)->first();
 		$blockedNpcs = Npc::select('id')
 		->where('zone_id', '=', $zone->id)
 		->where('type', '=', 'npc')
 		->where('time_to_appear', '>', ( isset($exploringTime->time) ) ? $exploringTime->time : 0)
+		->order_by('time_to_appear', 'asc')
 		->get();
 
 		$this->layout->title = 'Inicio';
@@ -165,6 +166,7 @@ class Authenticated_Controller extends Base_Controller
 		->with('orbs', $orbs)
 		->with('zone', $zone)
 		->with('npcs', $npcs)
+		->with('exploringTime', $exploringTime)
 		->with('blockedNpcs', $blockedNpcs);
 	}
 
@@ -237,12 +239,12 @@ class Authenticated_Controller extends Base_Controller
 			 *	de actividad si se explora
 			 *	30 minutos o mas
 			 */
-			if ( $time / 60 >= 30 )
+			if ( $time >= 30 )
 			{
 				ActivityBar::add($character, 2);
 			}
 
-			$character->explore($time);
+			$character->explore($time * 60);
 		}
 
 		return Redirect::to('authenticated/index/');

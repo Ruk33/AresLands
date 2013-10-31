@@ -15,7 +15,7 @@
 		<link rel="stylesheet" href="{{ URL::base() }}/css/normalize.min.css">
 		<link rel="stylesheet" href="{{ URL::base() }}/css/bootstrap.min.css">
 		<!--<link rel="stylesheet" href="{{ URL::base() }}/css/main.min.css">-->
-		<link rel="stylesheet" href="{{ URL::base() }}/css/main.css">
+		<link rel="stylesheet" href="{{ URL::base() }}/css/main-0.0.1.css">
 
 		@if ( Request::env() == 'local' )
 			<script src="{{ URL::base() }}/js/vendor/jquery-1.9.1.min.js"></script>
@@ -230,7 +230,7 @@
 		</div>
 
 		@if ( Auth::check() && isset($character) )
-			<div style="position: fixed; border: 1px solid black; border-top-left-radius: 5px; border-top-right-radius: 5px; z-index: 999; bottom: 0; right: 10px; padding: 5px; width: auto; height: auto; background-color: #181818;" ng-controller="Chat">
+			<div style="position: fixed; border: 2px solid #E99337; border-bottom: 0; border-top-left-radius: 5px; border-top-right-radius: 5px; z-index: 999; bottom: 0; right: 10px; padding: 5px; width: auto; height: auto; background-color: #181818;" ng-controller="Chat">
 				<div>
 					<span style="cursor: pointer; padding-right: 150px;" ng-click="chat.show = ! chat.show;">Chat</span>
 				

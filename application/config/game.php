@@ -68,16 +68,16 @@ return array(
 	'points_per_level' => 7,
 
 	/*
-	 *	Mínima cantidad (en segundos)
+	 *	Mínima cantidad (en minutos)
 	 *	de tiempo para explorar
 	 */
-	'min_explore_time' => 300,
+	'min_explore_time' => 5,
 
 	/*
-	 *	Máxima cantidad (en segundos)
+	 *	Máxima cantidad (en minutos)
 	 *	de tiempo para explorar
 	 */
-	'max_explore_time' => 14400,
+	'max_explore_time' => 240,
 
 	/*
 	 *	Rates

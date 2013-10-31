@@ -1042,6 +1042,10 @@ class Character extends Base_Model
 		$characterExploringTime->save();
 	}
 
+	/**
+	 * Explorar. Tiempo en segundos.
+	 * @param integer $time
+	 */
 	public function explore($time)
 	{
 		$this->is_exploring = true;
@@ -1051,7 +1055,7 @@ class Character extends Base_Model
 
 		$characterActivity->character_id = $this->id;
 		$characterActivity->name = 'explore';
-		$characterActivity->data = array( 'reward' => $this->level * ($time / 60) * Config::get('game.explore_reward_rate'), 'time' => $time );
+		$characterActivity->data = array( 'reward' => $this->level * $time * Config::get('game.explore_reward_rate'), 'time' => $time );
 		$characterActivity->end_time = time() + $time;
 
 		$characterActivity->save();

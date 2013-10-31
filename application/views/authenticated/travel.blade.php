@@ -28,10 +28,10 @@
 					<strong>{{ $zone->name }}</strong>
 					<p style="font-size: 12px;">{{ $zone->description }}</p>
 					<p><strong>Tiempo explorado:</strong><br>
-					@if ( isset($exploringTime[$zone->id]) )
-					{{ date('d \d\í\a\(\s\) H:i:s', $exploringTime[$zone->id]) }}
+					@if ( isset($exploringTime[$zone->id]) && $exploringTime[$zone->id] > 0 )
+					{{ date('z \d\í\a\(\s\) H:i:s', $exploringTime[$zone->id]) }}
 					@else
-					00 00:00:00
+					00 días 00:00:00
 					@endif</p>
 				</li>
 			</ul>

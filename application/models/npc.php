@@ -91,6 +91,7 @@ class Npc extends Base_Model
 		->where('zone_id', '=', $zone->id)
 		->where('type', '=', 'npc')
 		->where('time_to_appear', '<=', ( isset($exploringTime->time) ) ? $exploringTime->time : 0 )
+		->order_by('time_to_appear', 'asc')
 		->get();
 	}
 

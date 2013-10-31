@@ -5,7 +5,7 @@
 <strong>¿Cuánto tiempo quieres explorar?</strong>
 {{ Form::open() }}
 	{{ Form::token() }}
-	{{ Form::select('time', array(300 => '5 minutos', 600 => '10 minutos', 1200 => '20 minutos', 1800 => '30 minutos', 3600 => '1 hora', 7200 => '2 horas', 10800 => '3 horas', 14400 => '4 horas')) }}
+	{{ Form::select('time', array(5 => '5 minutos', 10 => '10 minutos', 20 => '20 minutos', 30 => '30 minutos', 60 => '1 hora', 120 => '2 horas', 180 => '3 horas', 240 => '4 horas')) }}
 	
 	<span class="ui-button button">
 		<i class="button-icon map"></i>

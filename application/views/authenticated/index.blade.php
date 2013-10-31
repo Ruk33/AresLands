@@ -471,7 +471,11 @@
 				@endforeach
 			@endif
 
-			<span data-toggle="tooltip" data-original-title="{{ $zone->description }}">
+			@if ( $exploringTime && $exploringTime->time > 0 )
+			<span data-toggle="tooltip" data-original-title="<p>{{ $zone->description }}</p><p><b>Tiempo explorado:</b> {{ date('z \d\í\a\(\s\) H:i:s', $exploringTime->time) }}</p>">
+			@else
+			<span data-toggle="tooltip" data-original-title="<p>{{ $zone->description }}</p><p><b>Tiempo explorado:</b> 0 días 00:00:00</p>">
+			@endif
 				<img src="{{ URL::base() }}/img/zones/32/{{ $zone->id }}.png" alt="{{ $zone->name }}" width="32px" height="32px">
 				<b>{{ $zone->name }}</b>
 			</span>
