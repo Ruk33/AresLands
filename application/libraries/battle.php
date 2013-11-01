@@ -566,7 +566,7 @@ class Battle
 		
 		if ( $fighter['min_defense'] > $fighter['max_defense'] )
 		{
-			$fighter['max_defense'] += $fighter['min_defense'];
+			$fighter['max_defense'] = $fighter['min_defense'];
 		}
 		
 		// Log
