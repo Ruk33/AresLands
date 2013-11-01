@@ -127,6 +127,47 @@ directive('characterTooltip', ['Character', function(Character) {
 		cache.element.tooltip({ html: true, title: 'Cargando...', container: '#wrap' });
 	};
 }]).
+	
+directive('itemTooltipWithPrice', ['Item', function(Item) {
+	return function(scope, element, attrs) {
+		var cache = {};
+		
+		cache.element = $(element);
+		cache.item = null;
+		
+		var mouseIsOver = false;
+		
+		var updateTooltip = function(message) {
+			cache.element.attr('data-original-title', message).tooltip('fixTitle');
+			
+			if ( mouseIsOver ) {
+				cache.element.tooltip('show');
+			}
+			
+			cache.element.unbind('mouseenter.itemTooltipWithPrice').unbind('mouseleave.itemTooltipWithPrice');
+		};
+		
+		var onMouseEnter = function() {
+			mouseIsOver = true;
+			
+			if ( ! cache.character ) {
+				Item.tooltip({ id: attrs.itemId, price: attrs.itemPrice }, function(data) {
+					cache.item = data.tooltip;
+					updateTooltip(cache.item + '<div>Precio:</div>' + data.price_string);
+				});
+			}
+		};
+		
+		var onMouseLeave = function() {
+			mouseIsOver = false;
+		};
+		
+		cache.element.bind('mouseenter.itemTooltipWithPrice', onMouseEnter);
+		cache.element.bind('mouseleave.itemTooltipWithPrice', onMouseLeave);
+		
+		cache.element.tooltip({ html: true, title: 'Cargando...', container: '#wrap' });
+	};
+}]).
 
 /*
 directive('droppable', function() {

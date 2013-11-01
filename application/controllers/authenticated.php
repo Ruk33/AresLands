@@ -169,6 +169,26 @@ class Authenticated_Controller extends Base_Controller
 		->with('exploringTime', $exploringTime)
 		->with('blockedNpcs', $blockedNpcs);
 	}
+	
+	public function get_claimOrb($orbId = 0)
+	{
+		if ( $orbId > 0 )
+		{
+			$orb = Orb::find((int) $orbId);
+			
+			if ( $orb )
+			{
+				$character = Character::get_character_of_logged_user(array('id'));
+				
+				if ( ! $orb->owner_id && $orb->can_be_stolen_by($character) )
+				{
+					$orb->give_to($character);
+				}
+			}
+		}
+		
+		return Laravel\Redirect::to('authenticated/orbs/');
+	}
 
 	public function get_learnClanSkill($skillId = '', $level = 1)
 	{
@@ -1783,6 +1803,11 @@ class Authenticated_Controller extends Base_Controller
 
 				if ( $item->type == 'mercenary' )
 				{
+					if ( $item->level > $character->level )
+					{
+						return Redirect::to('authenticated/index/')->with('error', 'No tienes suficiente nivel para ese mercenario.');
+					}
+					
 					// Si no se cumplen los requerimientos del mercenario...
 					if ( $item->zone_to_explore && $item->time_to_appear && $character->exploring_times()->where('zone_id', '=', $item->zone_to_explore)->where('time', '>=', $item->time_to_appear)->take(1)->count() == 0 )
 					{
@@ -1898,24 +1923,9 @@ class Authenticated_Controller extends Base_Controller
 		{
 			$character = Character::get_character_of_logged_user(array('id'));
 			$characterItem = $character->items()->find((int) $inputs['id']);
+			$amount = (int) $inputs['amount'];
 			
-			if ( $characterItem )
-			{
-				$amount = $inputs['amount'];
-				
-				if ( $characterItem->count >= $amount )
-				{
-					$character->use_consumable_of_inventory($characterItem, $amount);
-				}
-				else
-				{
-					$error = 'No tienes esa cantidad';
-				}
-			}
-			else
-			{
-				$error = 'No tienes ese objeto';
-			}
+			$error = $character->use_consumable_of_inventory($characterItem, $amount);
 		}
 		
 		if ( $error )
@@ -1982,47 +1992,15 @@ class Authenticated_Controller extends Base_Controller
 								case 'lhand':
 								case 'rhand':
 								case 'lrhand':
-									if ( $character->equip_item($characterItem) )
+									$error = $character->equip_item($characterItem);
+									
+									if ( ! $error )
 									{
 										Event::fire('equipItem', array($characterItem));
 									}
 									else
 									{
-										Session::flash('error', 'No tenes espacio en el inventario');
-									}
-
-									break;
-
-								case 'none':
-									/*
-									 *	Que sea none no significa que sea
-									 *	poción, así que nos aseguramos
-									 */
-									if ( $item->type == 'potion' )
-									{
-										/*
-										 *	Restamos la cantidad que vamos a usar
-										 */
-										$characterItem->count -= $count;
-
-										/*
-										 *	Curamos
-										 */
-										//$character->current_life += $item->stat_life * $count;
-										//$character->save();
-
-										/*
-										 *	Si se quedó con cero o menos simplemente
-										 *	borramos el registro
-										 */
-										if ( $characterItem->count <= 0 )
-										{
-											$characterItem->delete();
-										}
-										else
-										{
-											$characterItem->save();
-										}
+										Session::flash('error', $error);
 									}
 
 									break;

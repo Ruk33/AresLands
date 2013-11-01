@@ -181,11 +181,11 @@ class Battle
 				// Experiencia del ganador
 				if ( $this->winner->level <= $this->loser->level )
 				{
-					$winnerExperience = (5 + ($this->loser->level - $this->winner->level)) * Config::get('game.xp_rate');
+					$winnerExperience = (3 + ($this->loser->level - $this->winner->level)) * Config::get('game.xp_rate');
 				}
 				
 				// Experiencia del perdedor
-				$loserExperience = 2 * Config::get('game.xp_rate');
+				$loserExperience = 1 * Config::get('game.xp_rate');
 				
 				// Actualizamos en db
 				$this->winner->xp += $winnerExperience;
@@ -209,7 +209,7 @@ class Battle
 		
 		if ( $this->winner instanceof Character )
 		{
-			$coins = (15 + $this->loser->level) * Config::get('game.coins_rate');
+			$coins = (60 + $this->loser->level) * Config::get('game.coins_rate');
 			$percentage = 0;
 			
 			if ( $this->loser instanceof Character )
@@ -563,6 +563,11 @@ class Battle
 		
 		$fighter['min_defense'] *= 0.75;
 		$fighter['max_defense'] *= 1.25;
+		
+		if ( $fighter['min_defense'] > $fighter['max_defense'] )
+		{
+			$fighter['max_defense'] += $fighter['min_defense'];
+		}
 		
 		// Log
 		$fighter['initial_life'] = $fighter['current_life'];

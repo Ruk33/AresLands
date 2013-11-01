@@ -169,31 +169,53 @@ class Character extends Base_Model
 	 * 
 	 * @param CharacterItem $consumable
 	 * @param integer $amount
-	 * @return boolean
+	 * @return string
 	 */
 	public function use_consumable_of_inventory(CharacterItem $consumable, $amount)
 	{
 		if ( ! $consumable )
 		{
-			return false;
+			return 'Ese consumible no existe.';
+		}
+		
+		if ( $amount <= 0 )
+		{
+			return '¿Usar una cantidad igual o menor a 0?.';
 		}
 		
 		if ( $consumable->count < $amount )
 		{
-			return false;
+			return 'No tienes esa cantidad.';
 		}
 		
 		$item = $consumable->item;
 		
+		if ( ! $item )
+		{
+			return 'El objeto no existe. Por favor, repórtalo a la administración.';
+		}
+		
+		$character = $consumable->character()->select(array('id', 'level'))->first();
+		
+		if ( ! $character )
+		{
+			return 'El dueño de ese consumible no existe.';
+		}
+		
+		if ( $item->level > $character->level )
+		{
+			return 'No tienes suficiente nivel para usar ese consumible.';
+		}
+		
 		if ( ! $this->use_consumable($item, $amount) )
 		{
-			return false;
+			return 'Ese objeto no es de tipo consumible.';
 		}
 		
 		$consumable->count -= $amount;
 		$consumable->save();
 		
-		return true;
+		return '';
 	}
 	
 	/**
@@ -632,19 +654,19 @@ class Character extends Base_Model
 	{
 		if ( ! $this || ! $characterItem )
 		{
-			return false;
+			return 'El personaje o el objeto del personaje no existe.';
 		}
 
 		$item = $characterItem->item;
 
 		if ( ! $item )
 		{
-			return false;
+			return 'El objeto no existe. Por favor, repórtalo a la administración.';
 		}
 
 		if ( $item->level > $this->level )
 		{
-			return false;
+			return 'No tienes suficiente nivel equipar este objeto.';
 		}
 				
 		$itemBodyPart = $item->body_part;
@@ -658,7 +680,7 @@ class Character extends Base_Model
 				{
 					if ( ! $this->unequip_item($lrhand) )
 					{
-						return false;
+						return 'No tienes espacio en el inventario para desequiparte el objeto de dos manos que ya tienes equipado.';
 					}
 				}
 				break;
@@ -671,7 +693,7 @@ class Character extends Base_Model
 				{
 					if ( ! $this->unequip_item($lhand) )
 					{
-						return false;
+						return 'No tienes espacio en el inventario para desequiparte el objeto que ya tienes en la mano izquierda.';
 					}
 				}
 
@@ -679,7 +701,7 @@ class Character extends Base_Model
 				{
 					if ( ! $this->unequip_item($rhand) )
 					{
-						return false;
+						return 'No tienes espacio en el inventario para desequiparte el objeto que ya tienes en la mano derecha.';
 					}
 				}
 				break;
@@ -691,7 +713,7 @@ class Character extends Base_Model
 		{
 			if ( ! $this->unequip_item($equippedItem) )
 			{
-				return false;
+				return 'No tienes espacio en el inventario para desequiparte el objeto que ya tienes equipado.';
 			}
 		}
 		

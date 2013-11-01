@@ -131,7 +131,7 @@
 					<?php continue; ?>
 				@endif
 			@endif
-			<li class="text-center" style="vertical-align: top; padding: 10px;" ng-mouseover="onMouseOver({{ $merchandise->item_id }})" dynamic-tooltip="item[{{ $merchandise->item_id }}]" ng-init="price[{{ $merchandise->item_id }}] = {{ $merchandise->price_copper }}">
+			<li class="text-center" style="vertical-align: top; padding: 10px;" item-tooltip-with-price item-id="{{ $merchandise->item_id }}" item-price="{{ $merchandise->price_copper }}">
 			@if ( $characterCoinsCount >= $merchandise->price_copper )
 				{{ Form::open('authenticated/buyMerchandise', 'POST') }}
 					{{ Form::token() }}

@@ -3,8 +3,7 @@
 interface Api_Interface
 {
 	public function get_character($name, $tooltip);
-	public function get_item($id);
-	public function get_itemTooltip($id);
+	public function get_item($id, $price, $tooltip);
 	public function get_clan($id);
 	public function get_membersOfClan($clanId);
 	public function get_npc($name);
@@ -19,7 +18,7 @@ interface Api_Interface
 class Api_Controller extends Base_Controller implements Api_Interface
 {
 	public $restful = true;
-
+	
 	public function get_character($name, $tooltip = false)
 	{
 		$selectableFields = array(
@@ -68,31 +67,35 @@ class Api_Controller extends Base_Controller implements Api_Interface
 		}
 	}
 
-	public function get_item($id)
+	public function get_item($id, $price = 0, $tooltip = false)
 	{
 		$item = Item::find((int) $id);
+		$result = array();
 
 		if ( $item )
 		{
-			return json_encode($item->attributes);
+			if ( $tooltip )
+			{
+				$result['tooltip'] = $item->get_text_for_tooltip();
+			}
+			
+			if ( $price > 0 )
+			{
+				$result['price'] = Item::get_divided_coins((int) $price);
+				$result['price_string'] = "<ul class='inline' style='margin: 0;'>
+					<li><i class='coin coin-gold pull-left'></i> " . $result['price']['gold'] . "</li>
+					<li><i class='coin coin-silver pull-left'></i> " . $result['price']['silver'] . "</li>
+					<li><i class='coin coin-copper pull-left'></i> " . $result['price']['copper'] . "</li>
+				</ul>";
+			}
+			
+			$result['item'] = $item;
+			
+			return Response::json($result);
 		}
 		else
 		{
 			return json_encode(null);
-		}
-	}
-
-	public function get_itemTooltip($id)
-	{
-		$item = Item::find((int) $id);
-
-		if ( $item )
-		{
-			return $item->get_text_for_tooltip();
-		}
-		else
-		{
-			return 'Objeto no encontrado';
 		}
 	}
 

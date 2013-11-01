@@ -22,8 +22,15 @@ factory('Skill', ['$resource', 'BASE_PATH', function($resource, BASE_PATH) {
 			}
 		}
 	});
-}])
-
-/*factory('Item', ['$resource', 'BASE_PATH', function($resource, BASE_PATH) {
-	return $resource(BASE_PATH + '/item/index/:itemId');
-}])*/;
+}]).
+	
+factory('Item', ['$resource', 'BASE_PATH', function($resource, BASE_PATH) {
+	return $resource(BASE_PATH + 'api/item/:id/:price/:tooltip', {}, {
+		tooltip: {
+			method: 'GET',
+			params: {
+				'tooltip': true
+			}
+		}
+	});
+}]);

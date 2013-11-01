@@ -12,7 +12,7 @@
 
 		<link rel="stylesheet" href="{{ URL::base() }}/css/normalize.min.css">
 		<link rel="stylesheet" href="{{ URL::base() }}/css/bootstrap.min.css">
-		<link rel="stylesheet" href="{{ URL::base() }}/css/main.css">
+		<link rel="stylesheet" href="{{ URL::base() }}/css/main-0.0.1.css">
 
 		@if ( Request::env() == 'local' )
 			<script src="{{ URL::base() }}/js/vendor/jquery-1.9.1.min.js"></script>
