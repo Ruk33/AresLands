@@ -74,6 +74,19 @@ class Admin_Controller extends Base_Controller
 		return Redirect::back();
 	}
 	
+	public function get_removeEquippedCharacterItem($characterItem = 0)
+	{
+		$characterItem = CharacterItem::find((int) $characterItem);
+		
+		if ( $characterItem )
+		{
+			$characterItem->character->update_extra_stat($characterItem->item->to_array(), false);
+			$characterItem->delete();
+		}
+		
+		return Redirect::back();
+	}
+	
 	public function get_npc($npcId = 0, $action = 'all')
 	{
 		if ( $npcId > 0 )

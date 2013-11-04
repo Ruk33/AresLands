@@ -1215,7 +1215,7 @@ class Authenticated_Controller extends Base_Controller
 			/*
 			 *	Obtenemos los objetos del personaje
 			 */
-			$items = $characterToSee->items()->select(array('item_id', 'location', 'data'))->where_not_in('location', array('inventory', 'none'))->get();
+			$items = $characterToSee->items()->select(array('id', 'item_id', 'location', 'data'))->where_not_in('location', array('inventory', 'none'))->get();
 			$itemsToView = array();
 
 			/*

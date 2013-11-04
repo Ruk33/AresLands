@@ -211,6 +211,10 @@
 			@if ( isset($items['lrhand']) && $lrhand = $items['lrhand'][0]->item )
 				<div style="position: absolute; margin-top: 150px;">
 					<div class="equipped-item">
+						@if ( $character->is_admin() )
+							<a style="position: absolute; top: -2px; right: 5px;" href="{{ URL::to('admin/removeEquippedCharacterItem/' . $items['lrhand'][0]->id) }}">&times;</a>
+						@endif
+						
 						<img src="{{ URL::base() }}/img/icons/items/{{ $items['lrhand'][0]->item->id }}.png" alt="" width="80px" height="80px" data-toggle="tooltip" data-container="body" data-placement="top" data-original-title="{{ $lrhand->get_text_for_tooltip() }}">
 					</div>
 				</div>
@@ -220,6 +224,10 @@
 				<div style="position: absolute; margin-top: 150px;">
 					<div class="equipped-item">
 					@if ( isset($items['rhand']) && $rhand = $items['rhand'][0]->item )
+						@if ( $character->is_admin() )
+							<a style="position: absolute; top: -2px; right: 5px;" href="{{ URL::to('admin/removeEquippedCharacterItem/' . $items['rhand'][0]->id) }}">&times;</a>
+						@endif
+						
 						<img src="{{ URL::base() }}/img/icons/items/{{ $rhand->id }}.png" alt="" width="80px" height="80px" data-toggle="tooltip" data-container="body" data-placement="top" data-original-title="{{ $rhand->get_text_for_tooltip() }}">
 					@endif
 					</div>
@@ -230,6 +238,10 @@
 				<div style="position: absolute; margin-left: 250px; margin-top: 150px;">
 					<div class="equipped-item">
 					@if ( isset($items['lhand']) && $lhand = $items['lhand'][0]->item )
+						@if ( $character->is_admin() )
+							<a style="position: absolute; top: -2px; right: 5px;" href="{{ URL::to('admin/removeEquippedCharacterItem/' . $items['lhand'][0]->id) }}">&times;</a>
+						@endif
+						
 						<img src="{{ URL::base() }}/img/icons/items/{{ $lhand->id }}.png" alt="" width="80px" height="80px" data-toggle="tooltip" data-container="body" data-placement="top" data-original-title="{{ $lhand->get_text_for_tooltip() }}">
 					@endif
 					</div>
@@ -255,6 +267,11 @@
 			<div style="position: absolute; margin-left: 255px; margin-top: 65px;">
 				@if ( isset($items['mercenary']) )
 					<?php $mercenary = $items['mercenary'][0]->item; ?>
+				
+					@if ( $character->is_admin() )
+						<a style="position: absolute; top: -10px; right: 0px;" href="{{ URL::to('admin/removeEquippedCharacterItem/' . $items['mercenary'][0]->id) }}">&times;</a>
+					@endif
+					
 					<img src="{{ URL::base() }}/img/icons/items/{{ $mercenary->id }}.png" alt="" width="64px" height="64px" data-toggle="tooltip" data-container="body" data-placement="top" data-original-title="
 					{{ $mercenary->get_text_for_tooltip() }}">
 				@endif
