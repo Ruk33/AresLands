@@ -75,7 +75,7 @@ class Skill extends Base_Model
 		
 		if ( $characterSkill ) 
 		{
-			if ( $characterSkill->end_time != 0 && time() > $characterSkill->end_time )
+			if ( $characterSkill->end_time != 0 && time() >= $characterSkill->end_time )
 			{
 				$data = $characterSkill->data;
 				$extraStat = $data['extra_stat'];
