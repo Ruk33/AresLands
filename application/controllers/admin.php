@@ -17,6 +17,63 @@ class Admin_Controller extends Base_Controller
 		$this->layout->content = View::make('admin.index');
 	}
 	
+	public function get_removeCharacterSkill($characterSkill = 0)
+	{
+		$characterSkill = CharacterSkill::find((int) $characterSkill);
+		
+		if ( $characterSkill )
+		{
+			$characterSkill->end_time = 1;
+			$characterSkill->skill->periodic($characterSkill->character);
+		}
+		
+		return Redirect::back();
+	}
+	
+	public function post_modifyCharacterStats()
+	{
+		$inputs = Input::get();
+		
+		$character = Character::find((int) $inputs['character']);
+		
+		if ( $character )
+		{
+			$character->stat_strength = $inputs['stat_strength'];
+			$character->stat_dexterity = $inputs['stat_dexterity'];
+			$character->stat_resistance = $inputs['stat_resistance'];
+			
+			$character->stat_magic = $inputs['stat_magic'];
+			$character->stat_magic_skill = $inputs['stat_magic_skill'];
+			$character->stat_magic_resistance = $inputs['stat_magic_resistance'];
+			
+			$character->save();
+		}
+		
+		return Redirect::back();
+	}
+	
+	public function post_modifyCharacterExtraStats()
+	{
+		$inputs = Input::get();
+		
+		$character = Character::find((int) $inputs['character']);
+		
+		if ( $character )
+		{
+			$character->stat_strength_extra = $inputs['stat_strength_extra'];
+			$character->stat_dexterity_extra = $inputs['stat_dexterity_extra'];
+			$character->stat_resistance_extra = $inputs['stat_resistance_extra'];
+			
+			$character->stat_magic_extra = $inputs['stat_magic_extra'];
+			$character->stat_magic_skill_extra = $inputs['stat_magic_skill_extra'];
+			$character->stat_magic_resistance_extra = $inputs['stat_magic_resistance_extra'];
+			
+			$character->save();
+		}
+		
+		return Redirect::back();
+	}
+	
 	public function get_npc($npcId = 0, $action = 'all')
 	{
 		if ( $npcId > 0 )

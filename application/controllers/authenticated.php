@@ -1231,12 +1231,21 @@ class Authenticated_Controller extends Base_Controller
 			 *	Obtenemos los orbes
 			 */
 			$orbs = $characterToSee->orbs()->select(array('id', 'name', 'description'))->get();
+			
+			$character = Character::get_character_of_logged_user(array('id', 'name', 'zone_id', 'clan_id'));
+			$skills = array();
+			
+			if ( $character->is_admin() )
+			{
+				$skills = $characterToSee->skills;
+			}
 
 			$this->layout->title = $characterToSee->name;
 			$this->layout->content = View::make('authenticated.character')
-			->with('character', Character::get_character_of_logged_user(array('id', 'zone_id', 'clan_id')))
+			->with('character', $character)
 			->with('items', $itemsToView)
 			->with('orbs', $orbs)
+			->with('skills', $skills)
 			->with('characterToSee', $characterToSee);
 		}
 		else

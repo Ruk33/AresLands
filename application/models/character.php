@@ -27,6 +27,18 @@ class Character extends Base_Model
 	);
 	
 	/**
+	 * Verificamos si un personaje es admin
+	 * @return boolean
+	 */
+	public function is_admin()
+	{
+		// hard-coded, hacerlo de la misma
+		// forma que estan los privilegios
+		// de los clanes
+		return $this->name == 'Ruke';
+	}
+	
+	/**
 	 * Actualizamos los stats extra
 	 * restando o agregando
 	 * @param array $stats
