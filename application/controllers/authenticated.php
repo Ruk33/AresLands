@@ -2003,13 +2003,13 @@ class Authenticated_Controller extends Base_Controller
 								case 'lrhand':
 									$error = $character->equip_item($characterItem);
 									
-									if ( ! $error )
+									if ( $error )
 									{
-										Event::fire('equipItem', array($characterItem));
+										Session::flash('error', $error);
 									}
 									else
 									{
-										Session::flash('error', $error);
+										Event::fire('equipItem', array($characterItem));
 									}
 
 									break;

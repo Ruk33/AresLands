@@ -735,7 +735,7 @@ class Character extends Base_Model
 		$characterItem->slot = 0;
 		$characterItem->save();
 
-		return true;
+		return '';
 	}
 
 	/**
