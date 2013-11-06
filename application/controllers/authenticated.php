@@ -52,12 +52,13 @@ class Authenticated_Controller extends Base_Controller
 
 		if ( Auth::check() && $character )
 		{
-			/**
-			* Obtenemos las misiones del personaje
-			*/
-		   $startedQuests = $character->quests()->where('progress', '=', 'started')->or_where('progress', '=', 'reward')->get();
-			
 			/*
+			 * Obtenemos las misiones del personaje
+			 */
+		   $startedQuests = $character->started_quests()->get();
+           $startedQuests = array_merge($startedQuests, $character->reward_quests()->get());
+
+            /*
 			 *	Debemos pasar las monedas directamente
 			 *	al layout, puesto que es ahí donde
 			 *	las utilizamos
