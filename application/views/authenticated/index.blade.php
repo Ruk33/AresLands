@@ -448,7 +448,7 @@
 					@if ( $activity->name == 'travel' )
 						Viajando a {{ $activity->data['zone']->name }}: 
 					@elseif ( $activity->name == 'battlerest' )
-						Descanzo de batalla: 
+						Descanso de batalla: 
 					@elseif ( $activity->name == 'explore' )
 						Explorando: 
 					@endif
