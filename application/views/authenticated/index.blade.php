@@ -1,3 +1,4 @@
+
 <div style="margin-left: -15px;">
 @if ( count($npcs) > 0 )
 	@if ( ! $character->is_traveling )
