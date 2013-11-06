@@ -1,3 +1,5 @@
+<div style="position: absolute; right: 15px;">Hora del servidor: <span id='serverTime'>00:00:00</span></div>
+
 <div style="margin-left: -15px;">
 @if ( count($npcs) > 0 )
 	@if ( ! $character->is_traveling )

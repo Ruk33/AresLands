@@ -290,6 +290,11 @@
 					expiryText: '<a href="" onclick="location.reload();">Actualizar</a>'
 				});
 			});
+            
+            $('#serverTime').countdown({
+                since: (new Date({{ time() }})),
+                layout: '{hnn}:{mnn}:{snn}'
+            }); 
 		</script>
 
 		<!--

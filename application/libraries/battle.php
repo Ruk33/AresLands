@@ -278,6 +278,10 @@ class Battle
 					if ( $winnerOrb->can_be_stolen_by($this->loser) )
 					{
 						$winnerOrb->failed_robbery($this->loser);
+                        
+                        // Evitamos que el tiempo se duplique
+                        // en caso de que tenga dos orbes
+                        break;
 					}
 				}
 			}
