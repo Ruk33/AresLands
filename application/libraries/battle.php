@@ -209,7 +209,7 @@ class Battle
 		
 		if ( $this->winner instanceof Character )
 		{
-			$coins = (60 + $this->loser->level) * Config::get('game.coins_rate');
+			$coins = (50 * $this->loser->level) * Config::get('game.coins_rate');
 			$percentage = 0;
 			
 			if ( $this->loser instanceof Character )
@@ -226,13 +226,13 @@ class Battle
 					{
 						// Si el perdedor tiene mas nivel que el ganador
 						// entonces cada nivel de diferencia lo sumamos al porcentaje
-						$percentage = 0.10 + ($this->loser->level - $this->winner->level) * 0.01;
+						$percentage = 0.25 + ($this->loser->level - $this->winner->level) * 0.01;
 					}
 					else
 					{
 						// Si el ganador tiene mas nivel que el perdedor
 						// entonces cada nivel de diferencia lo restamos al porcentaje
-						$percentage = 0.10 - ($this->winner->level - $this->loser->level) * 0.01;
+						$percentage = 0.25 - ($this->winner->level - $this->loser->level) * 0.01;
 					}
 					
 					$percentage = round(abs($percentage));
@@ -404,7 +404,7 @@ class Battle
 			}
 			
 			// Calculamos el daño verdadero
-			$realDamage = $damage - $defense * 0.4;
+			$realDamage = min($damage - $defense * 0.4, $this->defender['current_life']);
 
 			// Evitamos que un daño negativo
 			// cure al oponente

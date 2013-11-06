@@ -1089,7 +1089,7 @@ class Character extends Base_Model
 
 		$characterActivity->character_id = $this->id;
 		$characterActivity->name = 'explore';
-		$characterActivity->data = array( 'reward' => $this->level * $time * Config::get('game.explore_reward_rate'), 'time' => $time );
+		$characterActivity->data = array( 'reward' => ($this->level * ($time/60)/2) * Config::get('game.explore_reward_rate'), 'time' => $time );
 		$characterActivity->end_time = time() + $time;
 
 		$characterActivity->save();
