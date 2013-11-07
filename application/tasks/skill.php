@@ -43,7 +43,7 @@ class Skill_Task
 		foreach ( $characterSkills as $characterSkill )
 		{
             $characterSkill = new CharacterSkill((array) $characterSkill, true);
-			$characterSkill->skill->periodic($characterSkill->character);
+			$characterSkill->skill->periodic($characterSkill);
 		}
 	}
 }

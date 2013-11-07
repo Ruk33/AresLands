@@ -10,7 +10,7 @@ class Admin_Controller extends Base_Controller
 		parent::__construct();
 		$this->filter('before', 'admin');
 	}
-
+    
 	public function get_index()
 	{
 		$this->layout->title = 'Admin';
@@ -24,7 +24,7 @@ class Admin_Controller extends Base_Controller
 		if ( $characterSkill )
 		{
 			$characterSkill->end_time = 1;
-			$characterSkill->skill->periodic($characterSkill->character);
+			$characterSkill->skill->periodic($characterSkill);
 		}
 		
 		return Redirect::back();

@@ -44,28 +44,10 @@ class CharacterSkill extends Base_Model
 	 * @param Character $character
 	 * @param Skill $skill
 	 * @param integer $amount
+     * @return CharacterSkill
 	 */
 	public static function register(Character $character, Skill $skill, $amount = 1)
-	{
-		$characterSkill = $character->skills()->where('skill_id', '=', (int) $skill->id)->first();
-		
-		if ( $characterSkill )
-		{
-			if ( (bool) $skill->stackable && $characterSkill->level == $skill->level )
-			{
-				$characterSkill->amount += $amount;
-				$characterSkill->save();
-				
-				return;
-			}
-			else
-			{
-				// Si no encaja, entonces debemos cancelar el anterior
-				$characterSkill->end_time = 1;
-				$characterSkill->skill->periodic($character);
-			}
-		}
-		
+	{		
 		$characterSkill = new CharacterSkill();
 		
 		$characterSkill->character_id = $character->id;
@@ -94,6 +76,8 @@ class CharacterSkill extends Base_Model
 		);
 		
 		$characterSkill->save();
+        
+        return $characterSkill;
 	}
 
 	public function character()

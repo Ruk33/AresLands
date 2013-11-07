@@ -1916,7 +1916,7 @@ class Authenticated_Controller extends Base_Controller
 			}
 		}
 
-		return Redirect::to('authenticated/index');
+		return Redirect::back();
 	}
 	
 	/**
