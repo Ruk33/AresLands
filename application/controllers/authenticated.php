@@ -1213,6 +1213,13 @@ class Authenticated_Controller extends Base_Controller
 
 		if ( $characterToSee )
 		{
+            $characterActivities = $characterToSee->activities()->where('end_time', '<=', time())->get();
+
+			foreach ( $characterActivities as $characterActivity )
+			{
+				$characterActivity->update_time();
+			}
+            
 			/*
 			 *	Obtenemos los objetos del personaje
 			 */
