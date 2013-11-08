@@ -365,7 +365,8 @@
 						@if ( $characterItem->slot == $i && $item = $characterItem->item )
 							@if ( $item->type == 'potion' )
 							<div id="{{ $characterItem->id }}" class="modal hide fade" style="background-color: #0C0B0B; border: 1px solid #353535; box-shadow: #4282D5 0px 0px 15px; top: 35%;">
-								<div class="modal-body">
+                                <button type="button" class="close" data-dismiss="modal" style="color: white; margin-right: 10px; margin-top: 5px; opacity: 1;">&times;</button>
+								<div class="modal-body">                                    
 								{{ Form::open('authenticated/manipulateItem') }}
 									{{ Form::token() }}
 									{{ Form::hidden('id', $characterItem->id) }}
@@ -373,12 +374,20 @@
 									<h4>¿Qué cantidad de deseas usar?</h4>
 
 									<div>
-                                        <small>Cantidad máxima: {{ $characterItem->count }}</small>
+                                        <span class="positive">Cantidad máxima: {{ $characterItem->count }}</span>
                                         <br>
-                                        {{ Form::number('amount', 0, array('max' => $characterItem->count)) }}
+                                        {{ Form::number('amount', 1, array('min' => 1, 'max' => $characterItem->count)) }}
                                     </div>
 									
-									{{ Form::submit('Usar', array('class' => 'btn btn-primary')) }}
+                                    <script>
+                                        function useAmountConfirmation(element)
+                                        {
+                                            var amount = $(element).parent().find('[name="amount"]').val();
+                                            return confirm('¿Seguro que quieres usar ' + amount + '?');
+                                        }
+                                    </script>
+                                    
+									{{ Form::submit('Usar', array('class' => 'btn btn-primary', 'onclick' => 'return useAmountConfirmation(this);')) }}
 								{{ Form::close() }}
 								</div>
 							</div>
