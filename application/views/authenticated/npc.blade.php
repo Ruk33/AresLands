@@ -143,26 +143,9 @@
 
 					<div>
 					@if ( $merchandise->stackable )
-						<?php
-
-						for ( $i = 1, $max = @($characterCoinsCount / $merchandise->price_copper), $amount = array(); $i <= $max; $i++ )
-						{
-							if ( $i > 25 )
-							{
-								$i += 4;
-							}
-
-							if ( $i > 100 )
-							{
-								break;
-							}
-
-							$amount[$i] = $i;
-						}
-
-						?>
-
-						{{ Form::select('amount', $amount, null, array('style' => 'width: 64px;')) }}
+                        <div data-toggle="tooltip" data-original-title="Podes comprar {{ number_format($characterCoinsCount / $merchandise->price_copper, 0, ',', '.') }}">
+                        {{ Form::number('amount', 0, array('max' => number_format($characterCoinsCount / $merchandise->price_copper, 0, '', ''), 'style' => 'width: 55px;')) }}
+                        </div>
 					@endif
 					</div>
 

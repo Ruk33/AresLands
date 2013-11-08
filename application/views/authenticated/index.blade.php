@@ -371,27 +371,12 @@
 									{{ Form::hidden('id', $characterItem->id) }}
 									
 									<h4>¿Qué cantidad de deseas usar?</h4>
-									
-									<?php
 
-									for ( $n = 1, $amount = array(); $n <= $characterItem->count; $n++ )
-									{
-										if ( $n > 25 )
-										{
-											$n += 4;
-										}
-
-										if ( $n > 50 )
-										{
-											break;
-										}
-
-										$amount[$n] = $n;
-									}
-
-									?>
-
-									<div>{{ Form::select('amount', $amount) }}</div>
+									<div>
+                                        <small>Cantidad máxima: {{ $characterItem->count }}</small>
+                                        <br>
+                                        {{ Form::number('amount', 0, array('max' => $characterItem->count)) }}
+                                    </div>
 									
 									{{ Form::submit('Usar', array('class' => 'btn btn-primary')) }}
 								{{ Form::close() }}
