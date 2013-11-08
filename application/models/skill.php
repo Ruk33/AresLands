@@ -20,7 +20,7 @@ class Skill extends Base_Model
 		foreach ( $skills as $skill )
 		{
 			list($skillId, $skillLevel) = explode('-', $skill);
-			$requiredSkills[] = array('id' => $skillId, 'level' => $skillLevel);
+			$requiredSkills[] = array('id' => (int) $skillId, 'level' => (int) $skillLevel);
 		}
 		
 		return $requiredSkills;
@@ -46,7 +46,9 @@ class Skill extends Base_Model
 				continue;
 			}
 			
-			if ( $clan->skills()->where('skill_id', '=', $requiredSkill['id'])->where('level', '<=', $requiredSkill['level'])->take(1)->count() == 0 )
+            $skill = Skill::where('id', '=', $requiredSkill['id'])->where('level', '=', $requiredSkill['level'])->first();
+            
+			if ( ! $skill || ! $clan->has_skill($skill) )
 			{
 				return false;
 			}

@@ -91,6 +91,16 @@ class Clan extends Base_Model
 			$character->save();
 		}
 	}
+    
+    /**
+     * Verificamos si un clan tiene una habilidad
+     * @param Skill $skill
+     * @return boolean
+     */
+    public function has_skill(Skill $skill)
+    {
+        return $this->skills()->where('skill_id', '=', $skill->id)->where('level', '=', $skill->level)->take(1)->count() == 1;
+    }
 
 	public function add_xp($amount)
 	{

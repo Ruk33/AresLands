@@ -191,7 +191,7 @@ class Authenticated_Controller extends Base_Controller
 		return Laravel\Redirect::to('authenticated/orbs/');
 	}
 
-	public function get_learnClanSkill($skillId = '', $level = 1)
+	public function get_learnClanSkill($skillId = 0, $level = 1)
 	{
 		if ( $skillId && $level > 0 )
 		{
@@ -209,7 +209,7 @@ class Authenticated_Controller extends Base_Controller
 						
 						if ( $skill )
 						{
-							if ( $clan->points_to_change > 0 && $skill->can_be_learned_by_clan($clan) )
+							if ( $clan->points_to_change > 0 && ! $clan->has_skill($skill) && $skill->can_be_learned_by_clan($clan) )
 							{
 								$clan->learn_skill($skill);
 

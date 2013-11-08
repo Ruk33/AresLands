@@ -94,6 +94,13 @@
 				<td>Experiencia</td>
 				<td>{{ $clan->xp }}/{{ $clan->xp_next_level }}</td>
 			</tr>
+            
+            @if ( $character->id == $clan->leader_id || $clan->has_permission($character, Clan::PERMISSION_LEARN_SPELL) )
+            <tr>
+				<td>Puntos para cambiar</td>
+				<td>{{ $clan->points_to_change }}</td>
+			</tr>
+            @endif
 		</thead>
 	</table>
 
