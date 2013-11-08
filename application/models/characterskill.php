@@ -44,10 +44,9 @@ class CharacterSkill extends Base_Model
 	 * @param Character $character
 	 * @param Skill $skill
 	 * @param integer $amount
-     * @return CharacterSkill
 	 */
 	public static function register(Character $character, Skill $skill, $amount = 1)
-	{		
+	{
 		$characterSkill = new CharacterSkill();
 		
 		$characterSkill->character_id = $character->id;
@@ -77,7 +76,7 @@ class CharacterSkill extends Base_Model
 		
 		$characterSkill->save();
         
-        return $characterSkill;
+        Skill::periodic($characterSkill);
 	}
 
 	public function character()

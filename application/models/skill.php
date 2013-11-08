@@ -71,45 +71,45 @@ class Skill extends Base_Model
 	 * (timeout) y al recibir habilidad
 	 * @param Character $target
 	 */
-	public function periodic(CharacterSkill $characterSkill)
+	public static function periodic(CharacterSkill $characterSkill)
 	{
         $target = $characterSkill->character;
         
-        if ( $characterSkill->end_time != 0 && time() >= $characterSkill->end_time )
+        $data = $characterSkill->data;
+        $extraStat = $data['extra_stat'];
+        
+        $time = time();
+        
+        if ( $characterSkill->end_time != 0 && $time >= $characterSkill->end_time )
         {
-            $data = $characterSkill->data;
-            $extraStat = $data['extra_stat'];
-
             $target->update_extra_stat($extraStat, false);
-
             $characterSkill->delete();
 
             return;
         }
+        
+        $skill = $characterSkill->skill;
 
-        if ( mt_rand(0, 100) <= $this->chance )
+        if ( mt_rand(0, 100) <= $skill->chance )
         {
-            $characterSkill->last_execution_time = time();
+            $characterSkill->last_execution_time = $time;
 
-            $data = $characterSkill->data;
-            $extraStat = $data['extra_stat'];
-
-            $strengthBonus = $this->stat_strength * $characterSkill->amount;
+            $strengthBonus = $skill->stat_strength * $characterSkill->amount;
             $extraStat['stat_strength'] += $strengthBonus;
 
-            $dexterityBonus = $this->stat_dexterity * $characterSkill->amount;
+            $dexterityBonus = $skill->stat_dexterity * $characterSkill->amount;
             $extraStat['stat_dexterity'] += $dexterityBonus;
 
-            $resistanceBonus = $this->stat_resistance * $characterSkill->amount;
+            $resistanceBonus = $skill->stat_resistance * $characterSkill->amount;
             $extraStat['stat_resistance'] += $resistanceBonus;
 
-            $magicBonus = $this->stat_magic * $characterSkill->amount;
+            $magicBonus = $skill->stat_magic * $characterSkill->amount;
             $extraStat['stat_magic'] += $magicBonus;
 
-            $magicSkillBonus = $this->stat_magic_skill * $characterSkill->amount;
+            $magicSkillBonus = $skill->stat_magic_skill * $characterSkill->amount;
             $extraStat['stat_magic_skill'] += $magicSkillBonus;
 
-            $magicResistanceBonus = $this->stat_magic_resistance * $characterSkill->amount;
+            $magicResistanceBonus = $skill->stat_magic_resistance * $characterSkill->amount;
             $extraStat['stat_magic_resistance'] += $magicResistanceBonus;
 
             $target->update_extra_stat(array(
@@ -122,10 +122,10 @@ class Skill extends Base_Model
             ), true);
 
             // Usar formula de batalla!
-            $target->current_life -= $this->physical_damage * $characterSkill->amount;
-            $target->current_life -= $this->magical_damage * $characterSkill->amount;
+            $target->current_life -= $skill->physical_damage * $characterSkill->amount;
+            $target->current_life -= $skill->magical_damage * $characterSkill->amount;
 
-            $target->current_life += $this->life * $characterSkill->amount;
+            $target->current_life += $skill->life * $characterSkill->amount;
 
             $data['extra_stat'] = $extraStat;
             $characterSkill->data = $data;
@@ -226,7 +226,7 @@ class Skill extends Base_Model
 		
 		if ( $this->duration != -1 )
 		{
-			$this->periodic(CharacterSkill::register($target, $this, $amount));
+			CharacterSkill::register($target, $this, $amount);
 		}
 		else
 		{
