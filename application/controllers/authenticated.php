@@ -203,7 +203,7 @@ class Authenticated_Controller extends Base_Controller
 
 				if ( $clan )
 				{
-					if ( $clan->leader_id == $character->id || $character->has_permission(Clan::PERMISSION_LEARN_SPELL) )
+					if ( $clan->leader_id == $character->id || $clan->has_permission($character, Clan::PERMISSION_LEARN_SPELL) )
 					{
 						$skill = Skill::where('id', '=', (int) $skillId)->where('level', '=', (int) $level)->first();
 						
@@ -814,7 +814,7 @@ class Authenticated_Controller extends Base_Controller
 
 			if ( $clan )
 			{
-				if ( $character->id == $clan->leader_id || $character->has_permission(Clan::PERMISSION_DECLINE_PETITION) )
+				if ( $character->id == $clan->leader_id || $clan->has_permission($character, Clan::PERMISSION_DECLINE_PETITION) )
 				{
 					Message::clan_reject_message($character, $petition->character()->select(array('id'))->first(), $clan);
 					$petition->delete();
@@ -850,7 +850,7 @@ class Authenticated_Controller extends Base_Controller
 				 *	Verificamos que el usuario tenga los permisos
 				 *	para realizar esta accion
 				 */
-				if ( $character->id == $clan->leader_id || $character->has_permission(Clan::PERMISSION_ACCEPT_PETITION) )
+				if ( $character->id == $clan->leader_id || $clan->has_permission($character, Clan::PERMISSION_ACCEPT_PETITION) )
 				{
 					/*
 					 *	Obtenemos la información del personaje
@@ -1025,7 +1025,7 @@ class Authenticated_Controller extends Base_Controller
 					where('id', 'NOT IN', DB::raw("( SELECT skill_id FROM clan_skills WHERE clan_id = $clan->id )"))->
 					get();
 
-			if ( $character->id == $clan->leader_id || $character->has_permission(Clan::PERMISSION_ACCEPT_PETITION) || $character->has_permission(Clan::PERMISSION_DECLINE_PETITION) )
+			if ( $character->id == $clan->leader_id || $clan->has_permission($character, Clan::PERMISSION_ACCEPT_PETITION) || $clan->has_permission($character, Clan::PERMISSION_DECLINE_PETITION) )
 			{
 				$dataToView['petitions'] = $clan->petitions()->get();
 			}
