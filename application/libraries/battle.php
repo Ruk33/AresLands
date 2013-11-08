@@ -264,66 +264,49 @@ class Battle
 
 	private function check_for_orbs()
 	{
-		if ( $this->winner instanceof Character && $this->loser instanceof Character )
+		if ( $this->fighter_one['is_player'] && $this->fighter_two['is_player'] )
 		{
-            $winnerOrbs = $this->winner->orbs;
-
-            // Primero verificamos si el perdedor
-            // intentó robar alguno de los orbes
-            // del ganador
-            if ( $this->winner->has_orb() )
+            if ( $this->fighter_one['character'] == $this->winner )
             {
-                foreach ( $winnerOrbs as $winnerOrb )
+                // Verificamos si el perdedor tiene orbes
+                // y si éstos pueden ser robados por el ganador
+                if ( $this->loser->has_orb() && $this->winner->orbs()->count() < 2 )
                 {
-                    if ( $winnerOrb->can_be_stolen_by($this->loser) )
-                    {
-                        $winnerOrb->failed_robbery($this->loser);
+                    $loserOrbs = $this->loser->orbs;
+                    $stolenOrb = null;
 
-                        // Evitamos que el tiempo se duplique
-                        // en caso de que tenga dos orbes
-                        break;
+                    foreach ( $loserOrbs as $loserOrb )
+                    {
+                        if ( $loserOrb->can_be_stolen_by($this->winner) )
+                        {
+                            $loserOrb->give_to($this->winner);
+                            $stolenOrb = $loserOrb;
+
+                            break;
+                        }
+                    }
+                    
+                    // Si se robó un orbe, entonces
+                    // lo notificamos
+                    if ( $stolenOrb )
+                    {
+                        $this->add_blank_space();
+                        $this->add_message_to_log('<p>¡' . $this->winner->name . ' ha robado ' . $stolenOrb->name . ' de ' . $this->loser->name . '!</p>', true);
                     }
                 }
             }
-	
-			// Verificamos si el perdedor tiene orbes
-			// y si éstos pueden ser robados por el ganador
-			if ( $this->loser->has_orb() && count($winnerOrbs) < 2 )
-			{
-				$loserOrbs = $this->loser->orbs;
-				$stolenOrb = null;
-
-				foreach ( $loserOrbs as $loserOrb )
-				{
-					if ( $loserOrb->can_be_stolen_by($this->winner) )
-					{
-						$loserOrb->give_to($this->winner);
-						$stolenOrb = $loserOrb;
-						
-						break;
-					}
-				}
-				
-				// Si se robó un orbe, entonces
-				// lo notificamos
-				if ( $stolenOrb )
-				{
-					$this->add_blank_space();
-					$this->add_message_to_log('<p>¡' . $this->winner->name . ' ha robado ' . $stolenOrb->name . ' de ' . $this->loser->name . '!</p>', true);
-				}
-			}
 		}
 	}
 	
 	private function check_for_protection()
 	{
-		if ( $this->winner instanceof Character && $this->loser instanceof Character )
-		{
-			if ( $this->winner->level > $this->loser->level )
-			{
-				AttackProtection::add($this->winner, $this->loser, Config::get('game.protection_time_on_lower_level_pvp'));
-			}
-		}
+        if ( $this->fighter_one['is_player'] && $this->fighter_two['is_player'] )
+        {
+            if ( $this->fighter_one['character']->level > $this->fighter_two['character']->level )
+            {
+                AttackProtection::add($this->fighter_one['character'], $this->fighter_two['character'], Config::get('game.protection_time_on_lower_level_pvp'));
+            }
+        }
 	}
 	
 	private function send_notification_message()
