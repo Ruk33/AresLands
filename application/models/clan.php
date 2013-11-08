@@ -55,7 +55,7 @@ class Clan extends Base_Model
 	 */
 	public function has_permission(Character $character, $permission)
 	{
-		return (bool) ($character->clan_permission & $permission);
+		return (bool) ($character->clan_permission & $permission) && $character->clan_id == $this->id;
 	}
 	
 	/**

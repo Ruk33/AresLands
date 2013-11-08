@@ -266,25 +266,25 @@ class Battle
 	{
 		if ( $this->winner instanceof Character && $this->loser instanceof Character )
 		{
-			$winnerOrbs = $this->winner->orbs;
-			
-			// Primero verificamos si el perdedor
-			// intentó robar alguno de los orbes
-			// del ganador
-			if ( $this->winner->has_orb() )
-			{
-				foreach ( $winnerOrbs as $winnerOrb )
-				{
-					if ( $winnerOrb->can_be_stolen_by($this->loser) )
-					{
-						$winnerOrb->failed_robbery($this->loser);
-                        
+            $winnerOrbs = $this->winner->orbs;
+
+            // Primero verificamos si el perdedor
+            // intentó robar alguno de los orbes
+            // del ganador
+            if ( $this->winner->has_orb() )
+            {
+                foreach ( $winnerOrbs as $winnerOrb )
+                {
+                    if ( $winnerOrb->can_be_stolen_by($this->loser) )
+                    {
+                        $winnerOrb->failed_robbery($this->loser);
+
                         // Evitamos que el tiempo se duplique
                         // en caso de que tenga dos orbes
                         break;
-					}
-				}
-			}
+                    }
+                }
+            }
 	
 			// Verificamos si el perdedor tiene orbes
 			// y si éstos pueden ser robados por el ganador
