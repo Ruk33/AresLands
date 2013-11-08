@@ -15,7 +15,7 @@
 		</div>
 	@endif
 
-	@if ( $character->id == $clan->leader_id || $character->has_permission(Clan::PERMISSION_ACCEPT_PETITION) || $character->has_permission(Clan::PERMISSION_DECLINE_PETITION) )
+	@if ( $character->id == $clan->leader_id || $clan->has_permission($character, Clan::PERMISSION_ACCEPT_PETITION) || $clan->has_permission($character, Clan::PERMISSION_DECLINE_PETITION) )
 		@if ( isset($petitions) )
 		<div class="dark-box">
 			<h5>Peticiones de inclusión</h5>
@@ -32,7 +32,7 @@
 						@foreach ( $petitions as $petition )
 							<tr>
 								<td>{{ $petition->character->name }}</td>
-								@if ( $character->has_permission(Clan::PERMISSION_ACCEPT_PETITION) )
+								@if ( $clan->has_permission($character, Clan::PERMISSION_ACCEPT_PETITION) )
 								<td>
 									<div data-toggle="tooltip" data-original-title="Acepta la petición para que este jugador ingrese al grupo">
 										<a href="{{ URL::to('authenticated/clanAcceptPetition/' . $petition->id) }}" class="btn btn-primary">Aceptar</a>
@@ -40,7 +40,7 @@
 								</td>
 								@endif
 								
-								@if ( $character->has_permission(Clan::PERMISSION_DECLINE_PETITION) )
+								@if ( $clan->has_permission($character, Clan::PERMISSION_DECLINE_PETITION) )
 								<td>
 									<div data-toggle="tooltip" data-original-title="Rechaza la petición de ingreso de este jugador">
 										<a href="{{ URL::to('authenticated/clanRejectPetition/' . $petition->id) }}" class="btn btn-danger">Rechazar</a>
@@ -103,7 +103,7 @@
 	@foreach ( $clanSkills as $skill )
 		<li style="vertical-align: top;">
 			<img src="{{ URL::base() }}/img/icons/skills/{{ $skill->skill_id }}.png" alt="" skill-tooltip skill-id="{{ $skill->skill_id }}" skill-level="{{ $skill->level }}" skill-show-next-level="true" width="64px" height="64px">
-			@if ( $clan->points_to_change > 0 && ($character->id == $clan->leader_id || $character->has_permission(Clan::PERMISSION_LEARN_SPELL)) )
+			@if ( $clan->points_to_change > 0 && ($character->id == $clan->leader_id || $clan->has_permission($character, Clan::PERMISSION_LEARN_SPELL)) )
 				<?php $nextLevel = Skill::where('level', '=', $skill->level + 1)->where('id', '=', $skill->skill_id)->first(); ?>
 				@if ( $nextLevel && $nextLevel->can_be_learned_by_clan($clan) )
 					<p><a href="{{ URL::to('authenticated/learnClanSkill/' . $skill->skill_id . '/' . ($skill->level + 1)) }}">subir de nivel</a></p>
@@ -114,7 +114,7 @@
 	@foreach ( $skills as $skill )
 		<li style="vertical-align: top;">
 			<img class="grayEffect" src="{{ URL::base() }}/img/icons/skills/{{ $skill->id }}.png" alt="" skill-tooltip skill-id="{{ $skill->id }}" skill-level="{{ $skill->level }}" width="64px" height="64px">
-			@if ( $clan->points_to_change > 0 && ($character->id == $clan->leader_id || $character->has_permission(Clan::PERMISSION_LEARN_SPELL)) )
+			@if ( $clan->points_to_change > 0 && ($character->id == $clan->leader_id || $clan->has_permission($character, Clan::PERMISSION_LEARN_SPELL)) )
 				@if ( $skill->can_be_learned_by_clan($clan) )
 					<p><a href="{{ URL::to('authenticated/learnClanSkill/' . $skill->id) }}">aprender</a></p>
 				@endif
@@ -124,7 +124,7 @@
 	</ul>
 
 	<h2 style="margin-top: 50px;">Mensaje</h2>
-	@if ( $character->id == $clan->leader_id || $character->has_permission(Clan::PERMISSION_EDIT_MESSAGE) )
+	@if ( $character->id == $clan->leader_id || $clan->has_permission($character, Clan::PERMISSION_EDIT_MESSAGE) )
 		<p id="message" name="message" contenteditable="true" alt="" data-toggle="tooltip" data-placement="top" data-original-title="Haz clic para editar">{{{ $clan->message }}}</p>
 	@else
 		<p id="message" name="message">{{{ $clan->message }}}</p>
@@ -194,7 +194,7 @@
 					</li>
 					@endif
 					
-					@if ( $character->id != $member->id && $member->id != $clan->leader_id && ($character->id == $clan->leader_id || $character->has_permission(Clan::PERMISSION_KICK_MEMBER)) )
+					@if ( $character->id != $member->id && $member->id != $clan->leader_id && ($character->id == $clan->leader_id || $clan->has_permission($character, Clan::PERMISSION_KICK_MEMBER)) )
 					<li class="pull-right" style="margin-top: 4px;" data-toggle="tooltip" data-original-title="Expulsar miembro del grupo">
 						<a class="close" onclick="return confirm('¿Seguro que quieres eliminar a {{ $member->name }} del grupo?');" href="{{ URL::to('authenticated/clanRemoveMember/' . $member->name) }}">&times;</a>
 					</li>
