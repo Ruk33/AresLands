@@ -1865,26 +1865,31 @@ class Authenticated_Controller extends Base_Controller
 				}
 				else
 				{
-					// Objetos que no se cuentan
-					$invalidItems = array(
-						Config::get('game.coin_id'), 
-						Config::get('game.xp_item_id')
-					);
-					
-					$characterItems = $character->items()
-						->where_not_in('item_id', $invalidItems)
-						->where('location', '=', 'inventory')
-						->get();
-					$characterItemAmount = 0;
-					
-					foreach ( $characterItems as $characterItem )
+					if ( $item->class == 'consumible' )
 					{
-						$characterItemAmount += $characterItem->count;
-					}
-					
-					if ( $characterItemAmount + $amount > 75 )
-					{
-						return Redirect::to('authenticated/index')->with('error', 'Tienes la mochila muy llena. Recuerda que el límite es 75.');
+						// Objetos que no se cuentan
+						$invalidItems = array(
+							Config::get('game.coin_id'), 
+							Config::get('game.xp_item_id')
+						);
+
+						$characterItems = $character->items()
+							->join('items as item', 'item.id', '=', 'character_items.item_id')
+							->where_not_in('item_id', $invalidItems)
+							->where('location', '=', 'inventory')
+							->where('class', '=', 'consumible')
+							->get();
+						$characterItemAmount = 0;
+
+						foreach ( $characterItems as $characterItem )
+						{
+							$characterItemAmount += $characterItem->count;
+						}
+
+						if ( $characterItemAmount + $amount > 75 )
+						{
+							return Redirect::to('authenticated/index')->with('error', 'Tienes la mochila muy llena. Recuerda que el límite es 75.');
+						}
 					}
 					
 					/*

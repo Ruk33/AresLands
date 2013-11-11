@@ -180,6 +180,8 @@ class Character extends Base_Model
 		
 		if ( $consumable->skill != '0-0' )
 		{
+			$skills = $consumable->get_skills();
+			
 			$nonClanSkills = $this->get_non_clan_skills()->select(array('amount'))->get();
 			$activeSkills = 0;
 			foreach ( $nonClanSkills as $nonClanSkill )
@@ -189,10 +191,14 @@ class Character extends Base_Model
 
 			if ( $activeSkills + $amount > $this->level / 2 )
 			{
-				return false;
-			}
-			
-			$skills = $consumable->get_skills();
+				foreach ( $skills as $skill )
+				{
+					if ( $skill->type != 'heal' )
+					{
+						return false;
+					}
+				}
+			}			
 			
 			foreach ( $skills as $skill )
 			{
