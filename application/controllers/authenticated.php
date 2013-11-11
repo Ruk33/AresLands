@@ -1865,7 +1865,16 @@ class Authenticated_Controller extends Base_Controller
 				}
 				else
 				{
-					$characterItems = $character->items()->where_not_in('item_id', array(Config::get('game.coin_id'), Config::get('game.xp_item_id')))->get();
+					// Objetos que no se cuentan
+					$invalidItems = array(
+						Config::get('game.coin_id'), 
+						Config::get('game.xp_item_id')
+					);
+					
+					$characterItems = $character->items()
+						->where_not_in('item_id', $invalidItems)
+						->where('location', '=', 'inventory')
+						->get();
 					$characterItemAmount = 0;
 					
 					foreach ( $characterItems as $characterItem )
