@@ -27,6 +27,21 @@ class Character extends Base_Model
 	);
 	
 	/**
+	 * Obtenemos todas las habilidades
+	 * que no sean de clan de un personaje
+	 * @return Eloquent
+	 */
+	public function get_non_clan_skills()
+	{
+		return $this->skills()
+					->left_join('skills as skill', function($join) {
+						$join->on('skill.id', '=', 'character_skills.skill_id')
+							 ->on('skill.level', '=', 'character_skills.level');
+					})
+					->where('target', '<>', 'clan');
+	}
+	
+	/**
 	 * Verificamos si un personaje es admin
 	 * @return boolean
 	 */
@@ -165,6 +180,18 @@ class Character extends Base_Model
 		
 		if ( $consumable->skill != '0-0' )
 		{
+			$nonClanSkills = $this->get_non_clan_skills()->select(array('amount'))->get();
+			$activeSkills = 0;
+			foreach ( $nonClanSkills as $nonClanSkill )
+			{
+				$activeSkills += $nonClanSkill->amount;
+			}
+
+			if ( $activeSkills + $amount > $this->level / 2 )
+			{
+				return false;
+			}
+			
 			$skills = $consumable->get_skills();
 			
 			foreach ( $skills as $skill )
@@ -207,21 +234,14 @@ class Character extends Base_Model
 			return 'El objeto no existe. Por favor, repórtalo a la administración.';
 		}
 		
-		$character = $consumable->character()->select(array('id', 'level'))->first();
-		
-		if ( ! $character )
-		{
-			return 'El dueño de ese consumible no existe.';
-		}
-		
-		if ( $item->level > $character->level )
+		if ( $item->level > $this->level )
 		{
 			return 'No tienes suficiente nivel para usar ese consumible.';
 		}
 		
 		if ( ! $this->use_consumable($item, $amount) )
 		{
-			return 'Ese objeto no es de tipo consumible.';
+			return 'Ese objeto no es de tipo consumible o ya alcanzaste el límite de habilidades activas.';
 		}
 		
 		$consumable->count -= $amount;

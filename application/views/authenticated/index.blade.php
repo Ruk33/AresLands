@@ -26,7 +26,6 @@
 <div ng-controller="Skill">
 	@if ( Session::has('error') )
 		<div class="alert alert-error">
-			{{ var_dump(Session::get('error')) }}
 			{{ Session::get('error') }}
 		</div>
 	@endif

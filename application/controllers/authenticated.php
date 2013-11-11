@@ -1865,6 +1865,19 @@ class Authenticated_Controller extends Base_Controller
 				}
 				else
 				{
+					$characterItems = $character->items()->where_not_in('item_id', array(Config::get('game.coin_id'), Config::get('game.xp_item_id')))->get();
+					$characterItemAmount = 0;
+					
+					foreach ( $characterItems as $characterItem )
+					{
+						$characterItemAmount += $characterItem->count;
+					}
+					
+					if ( $characterItemAmount + $amount > 75 )
+					{
+						return Redirect::to('authenticated/index')->with('error', 'Tienes la mochila muy llena. Recuerda que el límite es 75.');
+					}
+					
 					/*
 					 *	Verificamos si el objeto
 					 *	a comprar se puede acumular
@@ -1906,7 +1919,7 @@ class Authenticated_Controller extends Base_Controller
 							/*
 							 *	No hay espacio en el inventario
 							 */
-							return Redirect::to('authenticated/index');
+							return Redirect::to('authenticated/index')->with('error', 'No tienes espacio en el inventario.');
 						}
 					}
 				}
