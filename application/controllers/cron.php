@@ -19,6 +19,6 @@ class Cron_Controller extends Base_Controller
 	// 693d4e562555554c4cf9c588b064bdf7 = //..\d-(dailyQuests)||..fkj
 	public function get_693d4e562555554c4cf9c588b064bdf7()
 	{
-		Command::run(array('dailyQuest'));
+		Command::run(array('dailyquest'));
 	}
 }

@@ -1,6 +1,6 @@
 <?php
 
-class DailyQuest_Task
+class Dailyquest_Task
 {
 	public function run($arguments)
 	{
