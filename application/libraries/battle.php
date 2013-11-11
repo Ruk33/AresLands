@@ -16,46 +16,30 @@
 class Battle
 {
 	/**
-	 *	Informacion del luchador uno
-	 * 
-	 * 	@var Array
+	 * Unidad que ataca
+	 * @var Eloquent
 	 */
-	private $fighter_one = array();
+	private $_attackerUnit;
 	
 	/**
-	 *	Informacion del luchador dos
-	 * 
-	 * 	@var Array
+	 * Unidad que es atacada
+	 * @var Eloquent
 	 */
-	private $fighter_two = array();
-	
-	/**
-	 * 	Entidad que a la que le toca atacar
-	 * 
-	 * 	@var Character/Npc
-	 */
-	private $attacker = null;
-	
-	/**
-	 *	Entidad a la que le toca defender
-	 * 
-	 * 	@var Character/Npc
-	 */
-	private $defender = null;
+	private $_attackedUnit;
 	
 	/**
 	 *	Ganador de la batalla
 	 * 
-	 * 	@var Character/Npc
+	 * 	@var Eloquent
 	 */
-	private $winner = null;
+	private $_winner;
 	
 	/**
 	 *	Perdedor de la batalla
 	 * 
-	 * 	@var Character/Npc
+	 * 	@var Eloquent
 	 */
-	private $loser = null;
+	private $_loser;
 	
 	/**
 	 *	Mensajes de batalla
@@ -205,7 +189,7 @@ class Battle
 	{
 		// Le damos 2 puntos a la barra de actividad
 		// del atacante
-		ActivityBar::add($this->fighter_one['character'], 2);
+		ActivityBar::add($this->_attacker, 2);
 		
 		if ( $this->winner instanceof Character )
 		{
@@ -264,23 +248,24 @@ class Battle
 
 	private function check_for_orbs()
 	{
-		if ( $this->fighter_one['is_player'] && $this->fighter_two['is_player'] )
+		if ( $this->_attacker instanceof Character && $this->_attacked instanceof Character )
 		{
-            if ( $this->fighter_one['character'] == $this->winner )
+			$attackedOrbs = $this->_attacked->orbs;
+			
+            if ( $this->_attacker == $this->winner )
             {
                 // Verificamos si el perdedor tiene orbes
                 // y si éstos pueden ser robados por el ganador
-                if ( $this->loser->has_orb() && $this->winner->orbs()->count() < 2 )
+                if ( count($attackedOrbs) > 0 && $this->winner->orbs()->count() < 2 )
                 {
-                    $loserOrbs = $this->loser->orbs;
                     $stolenOrb = null;
 
-                    foreach ( $loserOrbs as $loserOrb )
+                    foreach ( $attackedOrbs as $attackedOrb )
                     {
-                        if ( $loserOrb->can_be_stolen_by($this->winner) )
-                        {
-                            $loserOrb->give_to($this->winner);
-                            $stolenOrb = $loserOrb;
+                        if ( $attackedOrb->can_be_stolen_by($this->winner) )
+                        {							
+                            $attackedOrb->give_to($this->winner);
+                            $stolenOrb = $attackedOrb;
 
                             break;
                         }
@@ -295,103 +280,179 @@ class Battle
                     }
                 }
             }
+			else
+			{
+				foreach ( $attackedOrbs as $attackedOrb )
+				{
+					if ( $attackedOrb->can_be_stolen_by($this->_attacker) )
+					{
+						$attackedOrb->failed_robbery($this->_attacker);
+						
+						// Solo 1 proteccion
+						break;
+					}
+				}
+			}
 		}
 	}
 	
 	private function check_for_protection()
 	{
-        if ( $this->fighter_one['is_player'] && $this->fighter_two['is_player'] )
+        if ( $this->_attacker instanceof Character && $this->_attacked instanceof Character )
         {
-            if ( $this->fighter_one['character']->level > $this->fighter_two['character']->level )
+            if ( $this->_attacker->level > $this->_attacked->level )
             {
-                AttackProtection::add($this->fighter_one['character'], $this->fighter_two['character'], Config::get('game.protection_time_on_lower_level_pvp'));
+                AttackProtection::add($this->_attacker, $this->_attacked, Config::get('game.protection_time_on_lower_level_pvp'));
             }
         }
 	}
 	
 	private function send_notification_message()
 	{		
-		if ( $this->fighter_two['character'] instanceof Character )
+		if ( $this->_attacked instanceof Character )
 		{
-			Message::attack_report($this->fighter_one['character'], $this->fighter_two['character'], $this->log->message, $this->winner);
-			Message::defense_report($this->fighter_two['character'], $this->fighter_one['character'], $this->log->message, $this->winner);
+			Message::attack_report($this->_attacker, $this->_attacked, $this->log->message, $this->winner);
+			Message::defense_report($this->_attacked, $this->_attacker, $this->log->message, $this->winner);
 		}
 	}
-	
-	private function init_battle()
+		
+	/**
+	 * 
+	 * @param Eloquent $unit
+	 * @return array
+	 */
+	private static function get_unit_info(Eloquent $unit)
 	{
+		$info = array();
+		
+		$info['name'] = $unit->name;
+		$info['is_player'] = $unit instanceof Character;
+		$info['stats'] = $unit->get_stats();
+		$info['is_warrior'] = $info['stats']['stat_strength'] > $info['stats']['stat_magic'];
+		$info['current_life'] = ( $info['is_player'] ) ? $unit->current_life : $unit->life;
+		
+		if ( $info['is_warrior'] )
+		{
+			$info['cd'] = 1000 / ($info['stats']['stat_dexterity'] + 1);
+		}
+		else
+		{
+			$info['cd'] = 1000 / ($info['stats']['stat_magic_skill'] + 1);
+		}
+		
+		$info['current_cd'] = $info['cd'];
+		
+		// Daños
+		// --------------------------------
+		//    VER ESTA PARTE, ¡RE-HACER!
+		// --------------------------------
+		$info['min_damage'] = ( $info['is_warrior'] ) ? $info['stats']['stat_strength'] : $info['stats']['stat_magic'];
+		$info['max_damage'] = $info['min_damage'];
+		
+		$info['min_damage'] *= 0.25;
+		$info['max_damage'] *= 0.75;
+		
+		// Defensas
+		// --------------------------------
+		//    VER ESTA PARTE, ¡RE-HACER!
+		// --------------------------------
+		$info['min_defense'] = ( $info['is_warrior'] ) ? $info['stats']['stat_resistance'] : $info['stats']['stat_magic_resistance'];
+		$info['max_defense'] = $info['min_defense'];
+		
+		$info['min_defense'] *= 0.75;
+		$info['max_defense'] *= 1.25;
+		
+		if ( $info['min_defense'] > $info['max_defense'] )
+		{
+			$info['max_defense'] = $info['min_defense'];
+		}
+		
+		// Log
+		$info['initial_life'] = $info['current_life'];
+		$info['damage_done'] = 0;
+		
+		return $info;
+	}
+	
+	private function to_battle()
+	{
+		$attackerStats = self::get_unit_info($this->_attacker);
+		$attackedStats = self::get_unit_info($this->_attacked);
+		
+		$attacker;
+		$defender;
+		
 		$damage = 0;
 		$defense = 0;
 		$realDamage = 0;
 		
-		// Mientras tengan vida
-		while ( $this->fighter_one['current_life'] > 0 && $this->fighter_two['current_life'] > 0 )
+		while ( $attackerStats['current_life'] > 0 && $attackedStats['current_life'] > 0 )
 		{
 			// Golpea el que menos CD tenga
-			if ( $this->fighter_one['current_cd'] <= $this->fighter_two['current_cd'] )
+			if ( $attackerStats['current_cd'] <= $attackedStats['current_cd'] )
 			{
-				$this->attacker = &$this->fighter_one;
-				$this->defender = &$this->fighter_two;
+				$attacker = &$attackerStats;
+				$defender = &$attackedStats;
 			}
 			else
 			{
-				$this->attacker = &$this->fighter_two;
-				$this->defender = &$this->fighter_one;
+				$attacker = &$attackedStats;
+				$defender = &$attackerStats;
 			}
-	
+			
 			// Actualizamos CD
-			$this->attacker['current_cd'] += $this->attacker['cd'];
+			$attacker['current_cd'] += $attacker['cd'];
 			
 			// Calculamos el daño
-			$this->attacker['average_damage'] = mt_rand($this->attacker['min_damage'], $this->attacker['max_damage']);
+			$attacker['average_damage'] = mt_rand($attacker['min_damage'], $attacker['max_damage']);
 
 			// 35% de crítico físico
-			if ( $this->attacker['is_warrior'] && mt_rand(0, 100) <= 35 )
+			if ( $attacker['is_warrior'] && mt_rand(0, 100) <= 35 )
 			{
-				$damage = $this->attacker['average_damage'] * 1.50;
-				self::on_excellent_attack_warrior($this->attacker, $this->defender, $damage);
+				$damage = $attacker['average_damage'] * 1.50;
+				//self::on_excellent_attack_warrior($attacker, $defender, $damage);
 			}
 			// 25% de crítico mágico
-			elseif ( ! $this->attacker['is_warrior'] && mt_rand(0, 100) <= 25 )
+			elseif ( ! $attacker['is_warrior'] && mt_rand(0, 100) <= 25 )
 			{
-				$damage = $this->attacker['average_damage'] * 2.50;
-				self::on_excellent_attack_mage($this->attacker, $this->defender, $damage);
+				$damage = $attacker['average_damage'] * 2.50;
+				//self::on_excellent_attack_mage($attacker, $defender, $damage);
 			}
 			// 10% de golpe fallido
 			elseif ( mt_rand(0, 100) <= 10 )
 			{
-				$damage = $this->attacker['average_damage'] * 0.75;
-				self::on_poor_attack($this->attacker, $this->defender, $damage);
+				$damage = $attacker['average_damage'] * 0.75;
+				//self::on_poor_attack($attacker, $defender, $damage);
 			}
 			else
 			{
-				$damage = $this->attacker['average_damage'];
-				self::on_normal_attack($this->attacker, $this->defender, $damage);
+				$damage = $attacker['average_damage'];
+				//self::on_normal_attack($attacker, $defender, $damage);
 			}
 			
 			// Calculamos la defensa
-			$this->defender['average_defense'] = mt_rand($this->defender['min_defense'], $this->defender['max_defense']);
+			$defender['average_defense'] = mt_rand($defender['min_defense'], $defender['max_defense']);
 			
 			// 30% de defensa exitosa
 			if ( mt_rand(0, 100) <= 30 )
 			{
-				$defense = $this->defender['average_defense'] * 1.75;
-				self::on_excellent_defense($this->attacker, $this->defender, $defense);
+				$defense = $defender['average_defense'] * 1.75;
+				//self::on_excellent_defense($attacker, $defender, $defense);
 			}
 			// 10% de defensa fallida
 			elseif ( mt_rand(0, 100) <= 10 )
 			{
-				$defense = $this->defender['average_defense'] * 0.75;
-				self::on_poor_defense($this->attacker, $this->defender, $defense);
+				$defense = $defender['average_defense'] * 0.75;
+				//self::on_poor_defense($attacker, $defender, $defense);
 			}
 			else
 			{
-				$defense = $this->defender['average_defense'];
-				self::on_normal_defense($this->attacker, $this->defender, $defense);
+				$defense = $defender['average_defense'];
+				//self::on_normal_defense($attacker, $defender, $defense);
 			}
 			
 			// Calculamos el daño verdadero
-			$realDamage = min($damage - $defense * 0.4, $this->defender['current_life']);
+			$realDamage = min($damage - $defense * 0.4, $defender['current_life']);
 
 			// Evitamos que un daño negativo
 			// cure al oponente
@@ -401,39 +462,39 @@ class Battle
 			}
 			
 			// HIT!
-			self::before_hit($this->attacker, $this->defender, $realDamage);
+			//self::before_hit($attacker, $defender, $realDamage);
 			
-			$this->defender['current_life'] -= $realDamage;
-			$this->attacker['damage_done'] += $realDamage;
+			$defender['current_life'] -= $realDamage;
+			$attacker['damage_done'] += $realDamage;
 			
-			self::after_hit($this->attacker, $this->defender, $realDamage);
+			//self::after_hit($attacker, $defender, $realDamage);
 			
 			$this->add_message_to_log(
 				sprintf(
 					self::get_random_message(), 
-					$this->attacker['character']->name, 
-					$this->defender['character']->name
+					$attacker['name'], 
+					$defender['name']
 				) . ' (daño: ' . number_format($realDamage, 2) . ', defendido: ' . number_format($damage - $realDamage, 2) . ')'
 			);
 		}
-
+		
 		// Verificamos si no fue un empate
-		if ( $this->fighter_one['current_life'] <= 0 && $this->fighter_two['current_life'] <= 0 )
+		if ( $attackerStats['current_life'] <= 0 && $attackedStats['current_life'] <= 0 )
 		{
 			$this->winner = null;
 			$this->loser = null;
 		}
 		else
 		{
-			if ( $this->fighter_one['current_life'] > 0 )
+			if ( $attackerStats['current_life'] > 0 )
 			{
-				$this->winner = &$this->fighter_one['character'];
-				$this->loser = &$this->fighter_two['character'];
+				$this->winner = $this->_attacker;
+				$this->loser = $this->_attacked;
 			}
 			else
 			{
-				$this->winner = &$this->fighter_two['character'];
-				$this->loser = &$this->fighter_one['character'];
+				$this->winner = $this->_attacked;
+				$this->loser = $this->_attacker;
 			}
 		}
 		
@@ -445,146 +506,52 @@ class Battle
 		
 		// Agregamos al registro la vida inicial de ambos
 		$this->add_blank_space();
-		$this->add_message_to_log('Vida inicial de ' . $this->fighter_one['character']->name . ': ' . $this->fighter_one['initial_life'], true);
-		$this->add_message_to_log('Vida inicial de ' . $this->fighter_two['character']->name . ': ' . $this->fighter_two['initial_life'], true);
+		$this->add_message_to_log('Vida inicial de ' . $attackerStats['name'] . ': ' . $attackerStats['initial_life'], true);
+		$this->add_message_to_log('Vida inicial de ' . $attackedStats['name'] . ': ' . $attackedStats['initial_life'], true);
 		
 		// Agregamos al registro el daño realizado por ambos
 		$this->add_blank_space();
-		$this->add_message_to_log('Daño realizado por ' . $this->fighter_one['character']->name . ': ' . number_format($this->fighter_one['damage_done'], 2), true);
-		$this->add_message_to_log('Daño realizado por ' . $this->fighter_two['character']->name . ': ' . number_format($this->fighter_two['damage_done'], 2), true);
+		$this->add_message_to_log('Daño realizado por ' . $attackerStats['name'] . ': ' . number_format($attackerStats['damage_done'], 2), true);
+		$this->add_message_to_log('Daño realizado por ' . $attackedStats['name'] . ': ' . number_format($attackedStats['damage_done'], 2), true);
 		
 		// Actualizamos las vidas
-		$this->fighter_one['character']->current_life = $this->fighter_one['current_life'];
-		$this->fighter_one['character']->save();
+		$this->_attacker->current_life = $attackerStats['current_life'];
+		$this->_attacker->save();
 		
-		if ( $this->fighter_two['is_player'] )
+		if ( $attackedStats['is_player'] )
 		{
-			$this->fighter_two['character']->current_life = $this->fighter_two['current_life'];
-			$this->fighter_two['character']->save();
+			$this->_attacked->current_life = $attackedStats['current_life'];
+			$this->_attacked->save();
 		}
 		
 		// Disparamos el evento de batalla
-		if ( $this->fighter_two['is_player'] )
+		if ( $attackedStats['is_player'] )
 		{
-			Event::fire('battle', array($this->fighter_one['character'], $this->fighter_two['character']));
+			Event::fire('battle', array($this->_attacker, $this->_attacked));
 		}
 		else
 		{
-			Event::fire('pveBattle', array($this->fighter_one['character'], $this->fighter_two['character'], $this->winner));
+			Event::fire('pveBattle', array($this->_attacker, $this->_attacked, $this->winner));
 		}
 	}
 	
 	/**
-	 *	Obtenemos algunos datos (como atributos)
-	 * 	y los guardamos
 	 * 
-	 *	@param Character/Npc $fighter
+	 * @param Eloquent $attacker
+	 * @param Eloquent $attacked
 	 */
-	private function set_variables(&$fighter)
-	{
-		if ( ! isset($fighter['character']) )
-		{
-			return;
-		}
-		
-		if ( ! ($fighter['character'] instanceof Character || $fighter['character'] instanceof Npc) )
-		{
-			return;
-		}
-		
-		$fighter['is_player'] = $fighter['character'] instanceof Character;
-		$fighter['stats'] = $fighter['character']->get_stats();
-		$fighter['is_warrior'] = $fighter['stats']['stat_strength'] > $fighter['stats']['stat_magic'];
-		
-		if ( $fighter['is_player'] )
-		{
-			$fighter['current_life'] = $fighter['character']->current_life;
-		}
-		else
-		{
-			$fighter['current_life'] = $fighter['character']->life;
-		}
-		
-		if ( $fighter['is_warrior'] )
-		{
-			if ( $fighter['stats']['stat_dexterity'] > 0 )
-			{
-				$fighter['cd'] = 1000 / $fighter['stats']['stat_dexterity'];
-			}
-			else
-			{
-				$fighter['cd'] = 1000;
-			}
-		}
-		else
-		{
-			if ( $fighter['stats']['stat_magic_skill'] > 0 )
-			{
-				$fighter['cd'] = 1000 / $fighter['stats']['stat_magic_skill'];
-			}
-			else
-			{
-				$fighter['cd'] = 1000;
-			}
-		}
-		
-		$fighter['current_cd'] = $fighter['cd'];
-		
-		
-		// Daños
-		// --------------------------------
-		//    VER ESTA PARTE, ¡RE-HACER!
-		// --------------------------------
-		$fighter['min_damage'] = ( $fighter['is_warrior'] ) ? $fighter['stats']['stat_strength'] : $fighter['stats']['stat_magic'];
-		$fighter['max_damage'] = $fighter['min_damage'];
-		
-		$fighter['min_damage'] *= 0.25;
-		$fighter['max_damage'] *= 0.75;
-		
-		// Defensas
-		// --------------------------------
-		//    VER ESTA PARTE, ¡RE-HACER!
-		// --------------------------------
-		$fighter['min_defense'] = ( $fighter['is_warrior'] ) ? $fighter['stats']['stat_resistance'] : $fighter['stats']['stat_magic_resistance'];
-		$fighter['max_defense'] = $fighter['min_defense'];
-		
-		$fighter['min_defense'] *= 0.75;
-		$fighter['max_defense'] *= 1.25;
-		
-		if ( $fighter['min_defense'] > $fighter['max_defense'] )
-		{
-			$fighter['max_defense'] = $fighter['min_defense'];
-		}
-		
-		// Log
-		$fighter['initial_life'] = $fighter['current_life'];
-		$fighter['damage_done'] = 0;
-	}
-	
-	/**
-	 *	@param Character $fighter_one 		Atacante
-	 *	@param Character/Npc $fighter_two 	Objetivo
-	 */
-	public function __construct(Character $fighter_one, $fighter_two)
+	public function __construct(Eloquent $attacker, Eloquent $attacked)
 	{		
-		if ( ! ($fighter_two instanceof Character || $fighter_two instanceof Npc) )
-		{
-			return;
-		}
-		
 		$this->log = new BattleLog();
 		
-		$this->fighter_one['character'] = $fighter_one;
-		$this->fighter_two['character'] = $fighter_two;
+		$this->_attacker = $attacker;
+		$this->_attacked = $attacked;
 		
-		self::set_variables($this->fighter_one);
-		self::set_variables($this->fighter_two);
-		
-		self::init_battle();
+		$this->to_battle();
 		
 		$this->log->message = '<ul class="unstyled">' . $this->log->message . '</ul>';
 		$this->log->save();
 		
-		$fighter_one->after_battle();
+		$attacker->after_battle();
 	}
 }

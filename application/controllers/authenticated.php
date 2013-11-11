@@ -1354,7 +1354,7 @@ class Authenticated_Controller extends Base_Controller
 		$characterName = Input::get('name');
 
 		if ( $characterName )
-		{			
+		{
 			// Verificamos que el personaje exista
 			if ( Character::where_name($characterName)->take(1)->count() == 0 )
 			{
@@ -1521,12 +1521,20 @@ class Authenticated_Controller extends Base_Controller
 			 *	Obtenemos los orbes
 			 */
 			$orbs = $characterFinded->orbs()->select(array('id', 'name', 'description'))->get();
+			
+			$skills = array();
+			
+			if ( $character->is_admin() )
+			{
+				$skills = $characterFinded->skills;
+			}
 
 			$this->layout->title = $characterFinded->name;
 			$this->layout->content = View::make('authenticated.character')
 			->with('character', Character::get_character_of_logged_user(array('id', 'zone_id', 'clan_id')))
 			->with('items', $itemsToView)
 			->with('orbs', $orbs)
+			->with('skills', $skills)
 			->with('characterToSee', $characterFinded);
 		}
 		else
