@@ -12,7 +12,7 @@ class Admin_Controller extends Base_Controller
 	}
     
 	public function get_index()
-	{
+	{		
 		$this->layout->title = 'Admin';
 		$this->layout->content = View::make('admin.index');
 	}
