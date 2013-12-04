@@ -34,7 +34,7 @@
 			<script src="{{ URL::base() }}/js/directives.js"></script>
 		@else
 			<script src="{{ URL::base() }}/js/vendor-1.0.0.min.js"></script>
-			<script src="{{ URL::base() }}/js/app-0.0.3.min.js"></script>
+			<script src="{{ URL::base() }}/js/app-0.0.4.min.js"></script>
 		@endif
 	</head>
 	<?php flush(); ?>

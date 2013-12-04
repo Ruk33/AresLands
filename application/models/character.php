@@ -229,7 +229,7 @@ class Character extends Base_Model
 				$activeSkills += $nonClanSkill->amount;
 			}
 
-			if ( $activeSkills + $amount > 500 )
+			if ( $activeSkills + $amount > Config::get('game.max_potions') )
 			{
 				foreach ( $skills as $skill )
 				{

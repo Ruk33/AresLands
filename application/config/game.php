@@ -5,6 +5,12 @@ return array(
 	'login_url' => '//ironfist.com.ar/login',
 
 	/*
+	 *	Cantidad maxima
+	 *	de pociones activas
+	 */
+	'max_potions' => 50,
+
+	/*
 	 *	Cantidad de slots de inventario
 	 */
 	'inventory_slot_amount' => 6,
