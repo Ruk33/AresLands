@@ -2,74 +2,97 @@
 
 angular.module('areslands.controllers', []).
 
-controller('CharacterStatsController', ['$scope', '$http', '$timeout', function($scope, $http, $timeout) {
-	$scope.remainingPoints = 0;
-	$scope.stats = {
-		'stat_strength': 0,
-		'stat_dexterity': 0,
-		'stat_resistance': 0,
-		'stat_magic': 0,
-		'stat_magic_skill': 0,
-		'stat_magic_resistance': 0
-	};
+controller('CharacterController', ['$scope', '$http', '$timeout', 'CharacterOfLoggedUser', 'DividedCoin', 'BASE_PATH', function($scope, $http, $timeout, CharacterOfLoggedUser, DividedCoin, BASE_PATH)
+{
+	$scope.character = {};
+	$scope.statsPrices = {};
+	$scope.pointsToChange = 1;
 
-	var lifeBar = $('#lifeBar');
+	CharacterOfLoggedUser.get(function(character)
+	{
+		$scope.character = character;
+	});
 
-	var updateLifeBar = function(currentLife) {
-		var life = 100 * currentLife / $scope.maxLife;
-		lifeBar.attr('style', 'width: ' + life + '%;');
-	};
-
-	var regenerationPerSecond = function() {
-		var currentLife, maxLife, statLife;
-
-		if ( $scope.currentLife && $scope.maxLife )
+	$scope.$watch('character.stat_strength', function(value)
+	{
+		var price = $scope.character.level * value;
+		DividedCoin.get({amount: price}, function(coins)
 		{
-			currentLife = Number($scope.currentLife);
-			maxLife = Number($scope.maxLife);
-			
-			if ( currentLife < maxLife )
-			{
-				currentLife += (0.05 + 0.01);
-				$scope.currentLife = currentLife.toFixed(2);
+			$scope.statsPrices.strength = 'Precio: ' + coins.text;
+		});
+	});
 
-				updateLifeBar($scope.currentLife);
-			}
-			else
-			{
-				$scope.currentLife = maxLife;
+	$scope.$watch('character.stat_dexterity', function(value)
+	{
+		var price = $scope.character.level * value;
+		DividedCoin.get({amount: price}, function(coins)
+		{
+			$scope.statsPrices.dexterity = 'Precio: ' + coins.text;
+		});
+	});
 
-				updateLifeBar($scope.currentLife);
+	$scope.$watch('character.stat_resistance', function(value)
+	{
+		var price = $scope.character.level * value;
+		DividedCoin.get({amount: price}, function(coins)
+		{
+			$scope.statsPrices.resistance = 'Precio: ' + coins.text;
+		});
+	});
 
-				return;
-			}
-		}
-		
-		$timeout(regenerationPerSecond, 1000);
-	};
+	$scope.$watch('character.stat_magic', function(value)
+	{
+		var price = $scope.character.level * value;
+		DividedCoin.get({amount: price}, function(coins)
+		{
+			$scope.statsPrices.magic = 'Precio: ' + coins.text;
+		});
+	});
 
-	regenerationPerSecond();
+	$scope.$watch('character.stat_magic_skill', function(value)
+	{
+		var price = $scope.character.level * value;
+		DividedCoin.get({amount: price}, function(coins)
+		{
+			$scope.statsPrices.magic_skill = 'Precio: ' + coins.text;
+		});
+	});
+
+	$scope.$watch('character.stat_magic_resistance', function(value)
+	{
+		var price = $scope.character.level * value;
+		DividedCoin.get({amount: price}, function(coins)
+		{
+			$scope.statsPrices.magic_resistance = 'Precio: ' + coins.text;
+		});
+	});
 
 	$scope.addStat = function(stat) {
-		$scope.pointsToChange = parseInt($scope.pointsToChange);
-		$scope.stats[stat] = parseInt($scope.stats[stat]);
+		// Verificamos que el atributo exista
+		if ( ! $scope.character[stat] )
+		{
+			return;
+		}
 
-		$scope.remainingPoints -= $scope.pointsToChange;
-		$scope.stats[stat] += $scope.pointsToChange;
+		$scope.character[stat] = Number($scope.character[stat]);
+		$scope.pointsToChange = Number($scope.pointsToChange);
+
+		$scope.character[stat] += $scope.pointsToChange;
+		$scope.character.points_to_change -= $scope.pointsToChange;
 
 		$http({
 			method: "POST",
-			url: $scope.basePath + 'authenticated/addStat',
-			data: {stat_name: stat, stat_amount: $scope.pointsToChange},
+			url: BASE_PATH + 'authenticated/addStat',
+			data: {'stat_name': stat, 'stat_amount': $scope.pointsToChange},
 	   }).success(function(data) {
 			if ( ! data )
 			{
-				$scope.remainingPoints += $scope.pointsToChange;
-				$scope.stats[stat] -= $scope.pointsToChange;
+				$scope.character.points_to_change += $scope.pointsToChange;
+				$scope.character[stat] -= $scope.pointsToChange;
 			}
 		}).error(function() {
-			$scope.remainingPoints += $scope.pointsToChange;
-			$scope.stats[stat] -= $scope.pointsToChange;
+			$scope.character.points_to_change += $scope.pointsToChange;
+			$scope.character[stat] -= $scope.pointsToChange;
 		});
 	};
 }])

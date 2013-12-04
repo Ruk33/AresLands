@@ -56,4 +56,9 @@ abstract class Base_Model extends Eloquent
 		
 		return parent::get_attribute($attribute);
 	}
+
+	public function to_json()
+	{
+		return json_encode($this);
+	}
 }

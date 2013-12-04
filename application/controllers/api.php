@@ -2,6 +2,8 @@
 
 interface Api_Interface
 {
+	public function get_dividedCoin($amount);
+	public function get_characterOfLoggedUser();
 	public function get_character($name, $tooltip);
 	public function get_item($id, $price, $tooltip);
 	public function get_clan($id);
@@ -19,6 +21,23 @@ class Api_Controller extends Base_Controller implements Api_Interface
 {
 	public $restful = true;
 	
+	public function get_dividedCoin($amount)
+	{
+		return Response::json(Item::get_divided_coins($amount));
+	}
+
+	public function get_characterOfLoggedUser()
+	{
+		$character = Character::get_character_of_logged_user();
+
+		if ( ! $character )
+		{
+			return Response::json(null);
+		}
+
+		return Response::json($character->attributes);
+	}
+
 	public function get_character($name, $tooltip = false)
 	{
 		$selectableFields = array(

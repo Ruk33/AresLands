@@ -1,8 +1,8 @@
 <?php
 
 return array(
-	'registration_url' => '//ironfist.com.ar/home/register',
-	'login_url' => '//ironfist.com.ar/home/login',
+	'registration_url' => '//ironfist.com.ar/register',
+	'login_url' => '//ironfist.com.ar/login',
 
 	/*
 	 *	Cantidad de slots de inventario

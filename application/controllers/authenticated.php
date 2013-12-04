@@ -293,6 +293,14 @@ class Authenticated_Controller extends Base_Controller
 		$stat = Input::json()->stat_name;
 		$amount = Input::json()->stat_amount;
 
+		$coins = $character->get_coins();
+
+		// Verificamos que tenga suficientes monedas
+		if ( ! $coins || $coins->count < $character->get_stat_price($stat) * $amount )
+		{
+			return false;
+		}
+
 		if ( $character->points_to_change >= $amount )
 		{
 			switch ( $stat ) 
@@ -325,11 +333,15 @@ class Authenticated_Controller extends Base_Controller
 					return false;
 			}
 
+			$coins->count -= $character->get_stat_price($stat) * $amount;
+			$coins->save();
+
 			$character->points_to_change -= $amount;
 			$character->save();
 			
 			return true;
 		}
+
 		return false;
 	}
 

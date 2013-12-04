@@ -2,6 +2,55 @@
 
 angular.module('areslands.directives', []).
 
+directive('lifeBar', [
+	'$timeout', 
+	function($timeout)
+	{
+		return function(scope, element, attrs)
+		{
+			var $element = $(element);
+
+			var updateLifeBar = function(current, max)
+			{
+				var life = 100 * current / max;
+				$element.attr('style', 'width: ' + life + '%;');
+			};
+
+			var regenerationPerSecond = function()
+			{
+				var currentLife = Number(attrs.lifeBar.current_life);
+				var maxLife = Number(attrs.lifeBar.max_life);
+				
+				if ( currentLife < maxLife )
+				{
+					currentLife += 0.06;
+					attrs.lifeBar.current_life = currentLife.toFixed(2);
+					
+					updateLifeBar(currentLife, maxLife);
+				}
+				else
+				{
+					attrs.lifeBar.current_life = maxLife;
+					updateLifeBar(currentLife, maxLife);
+
+					return;
+				}
+				
+				$timeout(regenerationPerSecond, 1000);
+			};
+
+			scope.$watch(attrs.lifeBar, function(value)
+			{
+				if ( value.current_life && value.max_life )
+				{
+					attrs.lifeBar = value;
+					regenerationPerSecond();
+				}
+			});
+		}
+	}
+]).
+
 directive('dynamicTooltip', function() {
 	return function(scope, element, attrs) {
 		var content;

@@ -1,57 +1,64 @@
-<div style="position: absolute; right: 15px;">Hora del servidor: <span id='serverTime'>00:00:00</span></div>
-
-<div style="margin-left: -15px;">
-@if ( count($npcs) > 0 )
-	@if ( ! $character->is_traveling )
-	<div class="bar">
-		<ul class="inline">
-		@foreach ( $npcs as $npc )
-			<li data-toggle="tooltip" data-placement="bottom" data-original-title="<div style='color: #FFC200;'>Mercader {{ $npc->name }}</div>{{ $npc->tooltip_dialog }}">
-				<a href="{{ URL::to('authenticated/npc/' . $npc->id . '/' . $npc->name) }}">
-					<img src="{{ URL::base() }}/img/icons/npcs/{{ $npc->id }}.png" alt="" width="72px" height="82px">
-				</a>
-			</li>
-		@endforeach
-
-		@foreach ( $blockedNpcs as $blockedNpc )
-			<li data-toggle="tooltip" data-placement="bottom" data-original-title="<strong>Bloqueado</strong><br>Debes explorar un poco mas para que este mercader se habilite.">
-				<img class="grayEffect" src="{{ URL::base() }}/img/icons/npcs/{{ $blockedNpc->id }}.png" alt="" width="72px" height="82px">
-			</li>
-		@endforeach
-		</ul>
+<div ng-controller="CharacterController" style="margin-left: -15px;">
+	<div style="position: absolute; right: 15px;">
+		Hora del servidor: <span id='serverTime'>00:00:00</span>
 	</div>
-	@endif
-@endif
 
-<div ng-controller="Skill">
-	@if ( Session::has('error') )
-		<div class="alert alert-error">
-			{{ Session::get('error') }}
-		</div>
-	@endif
-	
-	<!-- BUFFS -->
-	@if ( count($skills) > 0 )
-		<h2>Magias activas</h2>
-		<ul class="unstyled inline">
-			@foreach ( $skills as $skill )
-				<li class="text-center clan-member-link" style="vertical-align: top;">
-					<img src="{{ URL::base() }}/img/icons/skills/{{ $skill->skill_id }}.png" alt="" width="32px" height="32px" skill-tooltip skill-id="{{ $skill->skill_id }}" skill-level="{{ $skill->level }}">
-
-					<div>
-					@if ( $skill->end_time != 0 )
-					<small><span class='timer' data-endtime='{{ $skill->end_time - time() }}'></span></small>
-					@else
-						∞
-					@endif
-					</div>
-
-					<div><small>Cantidad: {{ $skill->amount }}</small></div>
+	@if ( count($npcs) > 0 )
+		@if ( ! $character->is_traveling )
+		<div class="bar">
+			<ul class="inline">
+			@foreach ( $npcs as $npc )
+				<li data-toggle="tooltip" data-placement="bottom" data-original-title="<div style='color: #FFC200;'>Mercader {{ $npc->name }}</div>{{ $npc->tooltip_dialog }}">
+					<a href="{{ URL::to('authenticated/npc/' . $npc->id . '/' . $npc->name) }}">
+						<img src="{{ URL::base() }}/img/icons/npcs/{{ $npc->id }}.png" alt="" width="72px" height="82px">
+					</a>
 				</li>
 			@endforeach
-		</ul>
+
+			@foreach ( $blockedNpcs as $blockedNpc )
+				<li data-toggle="tooltip" data-placement="bottom" data-original-title="<strong>Bloqueado</strong><br>Debes explorar un poco mas para que este mercader se habilite.">
+					<img class="grayEffect" src="{{ URL::base() }}/img/icons/npcs/{{ $blockedNpc->id }}.png" alt="" width="72px" height="82px">
+				</li>
+			@endforeach
+			</ul>
+		</div>
+		@endif
 	@endif
-	<!-- END BUFFS -->
+
+	<div ng-controller="Skill">
+		@if ( Session::has('error') )
+			<div class="alert alert-error">
+				{{ Session::get('error') }}
+			</div>
+		@endif
+		
+		<!-- BUFFS -->
+		@if ( count($skills) > 0 )
+			<h2>Magias activas</h2>
+			<ul class="unstyled inline">
+				@foreach ( $skills as $skill )
+					<li class="text-center clan-member-link" style="vertical-align: top;">
+						<img src="{{ URL::base() }}/img/icons/skills/{{ $skill->skill_id }}.png" alt="" width="32px" height="32px" skill-tooltip skill-id="{{ $skill->skill_id }}" skill-level="{{ $skill->level }}">
+
+						<div>
+							@if ( $skill->end_time != 0 )
+								<small>
+									<span class='timer' data-endtime='{{ $skill->end_time - time() }}'></span>
+								</small>
+							@else
+								∞
+							@endif
+						</div>
+
+						<div>
+							<small>Cantidad: {{ $skill->amount }}</small>
+						</div>
+					</li>
+				@endforeach
+			</ul>
+		@endif
+		<!-- END BUFFS -->
+	</div>
 	
 	<?php
 	
@@ -165,7 +172,7 @@
 	</div>
 
 	<!-- ESTADÍSTICAS -->
-	<div class="span6" ng-controller="CharacterStatsController" ng-init="remainingPoints='{{ $character->points_to_change }}'">
+	<div class="span6" ng-init="remainingPoints='{{ $character->points_to_change }}'">
 		<h2>Estadísticas</h2>
 		<ul class="unstyled text-center" style="width: 340px;">
 			<li data-toggle="tooltip" data-placement="top" data-original-title="<b>Barra de actividad:</b> Completa la barra de actividad realizando acciones (explorar, batallar, viajar, etc.) para obtener las <b>recompensas</b>.">
@@ -176,16 +183,16 @@
 					@endif
 				</div>
 			</li>
-
+			
 			<li>
-				<span style="font-size: 11px;" ng-init="currentLife='{{ $character->current_life }}'; maxLife='{{ $character->max_life }}'">
+				<span style="font-size: 11px;">
 					<b>SALUD:</b> 
 					<span data-toggle="tooltip" data-placement="top" data-original-title="Salud actual / Salud máxima">
-						<span ng-bind="currentLife || '?'">?</span>/<span ng-bind="maxLife || '?'">?</span>
+						<span ng-bind="character.current_life || '?'">?</span>/<span ng-bind="character.max_life || '?'">?</span>
 					</span>
 				</span>
 				<div class="progress" style="height: 5px;">
-					<div class="bar bar-success" id="lifeBar"></div>
+					<div class="bar bar-success" id="lifeBar" life-bar="character"></div>
 				</div>
 			</li>
 			
@@ -193,31 +200,35 @@
 				<span style="font-size: 11px;">
 					<b>EXPERIENCIA:</b> 
 					<span data-toggle="tooltip" data-placement="top" data-original-title="Experiencia actual / Experiencia para subir de nivel">
-						{{ $character->xp }}/{{ $character->xp_next_level }}
+						<span ng-bind="character.xp || '?'">?</span>/<span ng-bind="character.xp_next_level || '?'">?</span>
 					</span>
 				</span>
 				<div class="progress" style="height: 5px;">
-					<div class="bar bar-success" id="experienceBar" style="width: {{ 100 * $character->xp / $character->xp_next_level }}%"></div>
+					<div class="bar bar-success" id="experienceBar" style="width: [[ 100 * character.xp / character.xp_next_level ]]%"></div>
 				</div>
 			</li>
 			
-			<li style="margin-bottom: 10px;" ng-show="remainingPoints>0">
+			<li style="margin-bottom: 10px;" ng-show="character.points_to_change > 0">
 				<div class="clan-member-link text-center" style="width: 300px; border: 1px solid #2E2E2E;">
-					<p><b>Puntos restantes para cambiar:</b> <span ng-bind="remainingPoints || '?'">?</span></p>
-					<p style="margin: 0;">Puntos a cambiar: <select class="input select" ng-model="pointsToChange" ng-init="pointsToChange=1;" ng-options="n for n in [] | range:1:remainingPoints"></select></p>
+					<p><b>Puntos restantes para cambiar:</b> <span ng-bind="character.points_to_change || '?'">?</span></p>
+					<p style="margin: 0;">
+						Puntos a cambiar: 
+						<select class="input select" ng-model="pointsToChange" ng-options="n for n in [] | range:1:character.points_to_change">
+						</select>
+					</p>
 				</div>
 			</li>
 			
 			<?php $physicalDamage = $character->stat_strength + $character->stat_strength_extra; ?>
-			<li style="margin-bottom: 10px;" ng-init="stats['stat_strength']='{{ $character->stat_strength }}'" data-toggle="tooltip" data-placement="top" data-original-title="<p><b>Fuerza:</b> Aumenta el poder de los ataques físicos.</p><p>Si posees mas Fuerza que Magia, tu personaje golpeará únicamente con ataques físicos.</p><p class='positive'>Poder de ataque físico: {{ $physicalDamage * 0.25 }}-{{ $physicalDamage * 0.75 }}</p>">
+			<li style="margin-bottom: 10px;">
 				<span class="ui-button button" style="cursor: default; width: 250px;">
-					<a ng-click="addStat('stat_strength')" class="button-icon" ng-show="remainingPoints>0" style="cursor: pointer;">+</a>
-					<i class="button-icon hearth" ng-show="remainingPoints<=0"></i>
-					<span class="button-content" style="width: 200px;">
+					<a ng-click="addStat('stat_strength')" class="button-icon" ng-show="character.points_to_change > 0" style="cursor: pointer;" dynamic-tooltip="statsPrices.strength">+</a>
+					<i class="button-icon hearth" ng-show="character.points_to_change <= 0"></i>
+					<span class="button-content" style="width: 200px;" data-toggle="tooltip" data-placement="top" data-original-title="<p><b>Fuerza:</b> Aumenta el poder de los ataques físicos.</p><p>Si posees mas Fuerza que Magia, tu personaje golpeará únicamente con ataques físicos.</p><p class='positive'>Poder de ataque físico: {{ $physicalDamage * 0.25 }}-{{ $physicalDamage * 0.75 }}</p>">
 						<b class="pull-left">Fuerza física:</b>
 
 						<div class="pull-right">
-							<span ng-bind="stats['stat_strength'] || '?'">?</span>
+							<span ng-bind="character.stat_strength || '?'">?</span>
 							
 							@if ( $character->stat_strength_extra != 0 )
 								@if ( $character->stat_strength_extra > 0 )
@@ -230,15 +241,15 @@
 					</span>
 				</span>
 			</li>
-			<li style="margin-bottom: 10px;" ng-init="stats['stat_dexterity']='{{ $character->stat_dexterity }}'" data-toggle="tooltip" data-placement="top" data-original-title="<p><b>Destreza:</b> Aumenta tu velocidad de golpeo en las batallas, pudiendo lograr así múltiples ataques consecutivos si tienes mucha mas velocidad que tu adversario.</p><p>Tu tiempo de golpeo se reduce por cada punto de destreza (cuanto menos tiempo de golpeo mejor).</p><p class='positive'>Tiempo de golpeo (menor es mejor): {{ number_format(1000 / ($character->stat_dexterity + $character->stat_dexterity_extra + 1), 2) }}</p>">
+			<li style="margin-bottom: 10px;">
 				<span class="ui-button button" style="cursor: default; width: 250px;">
-					<a ng-click="addStat('stat_dexterity')" class="button-icon" ng-show="remainingPoints>0" style="cursor: pointer;">+</a>
-					<i class="button-icon boot" ng-show="remainingPoints<=0"></i>
-					<span class="button-content" style="width: 200px;">
+					<a ng-click="addStat('stat_dexterity')" class="button-icon" ng-show="character.points_to_change > 0" style="cursor: pointer;" dynamic-tooltip="statsPrices.dexterity">+</a>
+					<i class="button-icon boot" ng-show="character.points_to_change <= 0"></i>
+					<span class="button-content" style="width: 200px;" data-toggle="tooltip" data-placement="top" data-original-title="<p><b>Destreza:</b> Aumenta tu velocidad de golpeo en las batallas, pudiendo lograr así múltiples ataques consecutivos si tienes mucha mas velocidad que tu adversario.</p><p>Tu tiempo de golpeo se reduce por cada punto de destreza (cuanto menos tiempo de golpeo mejor).</p><p class='positive'>Tiempo de golpeo (menor es mejor): {{ number_format(1000 / ($character->stat_dexterity + $character->stat_dexterity_extra + 1), 2) }}</p>">
 						<b class="pull-left">Destreza física:</b>
 
 						<div class="pull-right">
-							<span ng-bind="stats['stat_dexterity'] || '?'">?</span>
+							<span ng-bind="character.stat_dexterity || '?'">?</span>
 
 							@if ( $character->stat_dexterity_extra != 0 )
 								@if ( $character->stat_dexterity_extra > 0 )
@@ -251,15 +262,15 @@
 					</span>
 				</span>
 			</li>
-			<li style="margin-bottom: 10px;" ng-init="stats['stat_resistance']='{{ $character->stat_resistance }}'" data-toggle="tooltip" data-placement="top" data-original-title="<p><b>Resistencia física:</b> Aumenta tu defensa contra ataques físicos.</p>">
+			<li style="margin-bottom: 10px;">
 				<span class="ui-button button" style="cursor: default; width: 250px;">
-					<a ng-click="addStat('stat_resistance')" class="button-icon" ng-show="remainingPoints>0" style="cursor: pointer;">+</a>
-					<i class="button-icon boot" ng-show="remainingPoints<=0"></i>
-					<span class="button-content" style="width: 200px;">
+					<a ng-click="addStat('stat_resistance')" class="button-icon" ng-show="character.points_to_change > 0" style="cursor: pointer;" dynamic-tooltip="statsPrices.resistance">+</a>
+					<i class="button-icon boot" ng-show="character.points_to_change <= 0"></i>
+					<span class="button-content" style="width: 200px;" data-toggle="tooltip" data-placement="top" data-original-title="<p><b>Resistencia física:</b> Aumenta tu defensa contra ataques físicos.</p>">
 						<b class="pull-left">Resistencia:</b>
 
 						<div class="pull-right">
-							<span ng-bind="stats['stat_resistance'] || '?'">?</span>
+							<span ng-bind="character.stat_resistance || '?'">?</span>
 
 							@if ( $character->stat_resistance_extra != 0 )
 								@if ( $character->stat_resistance_extra > 0 )
@@ -273,15 +284,15 @@
 				</span>
 			</li>
 			<?php $magicDamage = $character->stat_magic + $character->stat_magic_extra; ?>
-			<li style="margin-bottom: 10px;" ng-init="stats['stat_magic']='{{ $character->stat_magic }}'" data-toggle="tooltip" data-placement="top" data-original-title="<p><b>Magia:</b> Aumenta el poder de los ataques mágicos.</p><p>Si posees mas Magia que Fuerza, tu personaje golpeará únicamente con ataques mágicos.</p><p class='positive'>Poder de ataque mágico: {{ $magicDamage * 0.25 }}-{{ $magicDamage * 0.75 }}</p>">
+			<li style="margin-bottom: 10px;">
 				<span class="ui-button button" style="cursor: default; width: 250px;">
-					<a ng-click="addStat('stat_magic')" class="button-icon" ng-show="remainingPoints>0" style="cursor: pointer;">+</a>
-					<i class="button-icon fire" ng-show="remainingPoints<=0"></i>
-					<span class="button-content" style="width: 200px;">
+					<a ng-click="addStat('stat_magic')" class="button-icon" ng-show="character.points_to_change > 0" style="cursor: pointer;" dynamic-tooltip="statsPrices.magic">+</a>
+					<i class="button-icon fire" ng-show="character.points_to_change <= 0"></i>
+					<span class="button-content" style="width: 200px;" data-toggle="tooltip" data-placement="top" data-original-title="<p><b>Magia:</b> Aumenta el poder de los ataques mágicos.</p><p>Si posees mas Magia que Fuerza, tu personaje golpeará únicamente con ataques mágicos.</p><p class='positive'>Poder de ataque mágico: {{ $magicDamage * 0.25 }}-{{ $magicDamage * 0.75 }}</p>">
 						<b class="pull-left">Poder mágico:</b>
 
 						<div class="pull-right">
-							<span ng-bind="stats['stat_magic'] || '?'">?</span>
+							<span ng-bind="character.stat_magic || '?'">?</span>
 
 							@if ( $character->stat_magic_extra != 0 )
 								@if ( $character->stat_magic_extra > 0 )
@@ -294,15 +305,15 @@
 					</span>
 				</span>
 			</li>
-			<li style="margin-bottom: 10px;" ng-init="stats['stat_magic_skill']='{{ $character->stat_magic_skill }}'" data-toggle="tooltip" data-placement="top" data-original-title="<p><b>Habilidad mágica:</b> Aumenta tu velocidad al lanzar magias, pudiendo lograr así, múltiples ataques consecutivos.</p>">
+			<li style="margin-bottom: 10px;">
 				<span class="ui-button button" style="cursor: default; width: 250px;">
-					<a ng-click="addStat('stat_magic_skill')" class="button-icon" ng-show="remainingPoints>0" style="cursor: pointer;">+</a>
-					<i class="button-icon axe" ng-show="remainingPoints<=0"></i>
-					<span class="button-content" style="width: 200px;">
+					<a ng-click="addStat('stat_magic_skill')" class="button-icon" ng-show="character.points_to_change > 0" style="cursor: pointer;" dynamic-tooltip="statsPrices.magic_skill">+</a>
+					<i class="button-icon axe" ng-show="character.points_to_change <= 0"></i>
+					<span class="button-content" style="width: 200px;" data-toggle="tooltip" data-placement="top" data-original-title="<p><b>Habilidad mágica:</b> Aumenta tu velocidad al lanzar magias, pudiendo lograr así, múltiples ataques consecutivos.</p>">
 						<b class="pull-left">Habilidad mágica:</b>
 
 						<div class="pull-right">
-							<span ng-bind="stats['stat_magic_skill'] || '?'">?</span>
+							<span ng-bind="character.stat_magic_skill || '?'">?</span>
 
 							@if ( $character->stat_magic_skill_extra != 0 )
 								@if ( $character->stat_magic_skill_extra > 0 )
@@ -315,15 +326,15 @@
 					</span>
 				</span>
 			</li>
-			<li style="margin-bottom: 10px;" ng-init="stats['stat_magic_resistance']='{{ $character->stat_magic_resistance }}'" data-toggle="tooltip" data-placement="top" data-original-title="<p><b>Contraconjuro:</b> Aumenta la resistencia contra ataques mágicos.</p>">
+			<li style="margin-bottom: 10px;">
 				<span class="ui-button button" style="cursor: default; width: 250px;">
-					<a ng-click="addStat('stat_magic_resistance')" class="button-icon" ng-show="remainingPoints>0" style="cursor: pointer;">+</a>
-					<i class="button-icon thunder" ng-show="remainingPoints<=0"></i>
-					<span class="button-content" style="width: 200px;">
+					<a ng-click="addStat('stat_magic_resistance')" class="button-icon" ng-show="character.points_to_change > 0" style="cursor: pointer;" dynamic-tooltip="statsPrices.magic_resistance">+</a>
+					<i class="button-icon thunder" ng-show="character.points_to_change <= 0"></i>
+					<span class="button-content" style="width: 200px;" data-toggle="tooltip" data-placement="top" data-original-title="<p><b>Contraconjuro:</b> Aumenta la resistencia contra ataques mágicos.</p>">
 						<b class="pull-left">Contraconjuro:</b>
 
 						<div class="pull-right">
-							<span ng-bind="stats['stat_magic_resistance'] || '?'">?</span>
+							<span ng-bind="character.stat_magic_resistance || '?'">?</span>
 
 							@if ( $character->stat_magic_resistance_extra != 0 )
 								@if ( $character->stat_magic_resistance_extra > 0 )

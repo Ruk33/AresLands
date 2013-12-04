@@ -25,6 +25,46 @@ class Character extends Base_Model
 		'gender_required' => 'El género es requerido',
 		'gender_match' => 'El género es incorrecto',
 	);
+
+	/**
+	 * Obtener el precio de un atributo
+	 *
+	 * @param string $stat
+	 * @return integer/Exception
+	 */
+	public function get_stat_price($stat)
+	{
+		switch ( $stat )
+		{
+			case 'stat_strength':
+				return $this->stat_strength * $this->level;
+				break;
+
+			case 'stat_dexterity':
+				return $this->stat_dexterity * $this->level;
+				break;
+
+			case 'stat_resistance':
+				return $this->stat_resistance * $this->level;
+				break;
+
+			case 'stat_magic':
+				return $this->stat_magic * $this->level;
+				break;
+
+			case 'stat_magic_skill':
+				return $this->stat_magic_skill * $this->level;
+				break;
+
+			case 'stat_magic_resistance':
+				return $this->stat_magic_resistance * $this->level;
+				break;
+
+			default:
+				throw new Exception("El atributo {$stat} no es válido.");
+				break;
+		}
+	}
 	
 	/**
 	 * Obtenemos todas las habilidades
@@ -189,7 +229,7 @@ class Character extends Base_Model
 				$activeSkills += $nonClanSkill->amount;
 			}
 
-			if ( $activeSkills + $amount > $this->level / 2 )
+			if ( $activeSkills + $amount > 500 )
 			{
 				foreach ( $skills as $skill )
 				{

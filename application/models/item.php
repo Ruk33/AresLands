@@ -14,13 +14,20 @@ class Item extends Base_Model
 	 *  @param <integer> $coins Cantidad de monedas
 	 *	@return <Array> Monedas dividas en oro, plata y cobre
 	 */
-	public static function get_divided_coins($coins)
+	public static function get_divided_coins($amount)
 	{
-		return array(
-			'gold' => substr($coins, 0, -4) ? substr($coins, 0, -4) : 0,
-			'silver' => substr($coins, -4, -2) ? substr($coins, -4, -2) : 0,
-			'copper' => substr($coins, -2) ? substr($coins, -2) : 0,
-		);
+		$coins = array();
+
+		$coins['gold'] = substr($amount, 0, -4) ? substr($amount, 0, -4) : 0;
+		$coins['silver'] = substr($amount, -4, -2) ? substr($amount, -4, -2) : 0;
+		$coins['copper'] = substr($amount, -2) ? substr($amount, -2) : 0;
+		$coins['text'] = "<ul class='inline' style='margin: 0;'>
+							<li><i class='coin coin-gold pull-left'></i> {$coins['gold']}</li>
+							<li><i class='coin coin-silver pull-left'></i> {$coins['silver']}</li>
+							<li><i class='coin coin-copper pull-left'></i> {$coins['copper']}</li>
+						</ul>";
+
+		return $coins;
 	}
 	
 	/**

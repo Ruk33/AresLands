@@ -20,8 +20,10 @@
 		@if ( Request::env() == 'local' )
 			<script src="{{ URL::base() }}/js/vendor/jquery-1.9.1.min.js"></script>
 			<script src="{{ URL::base() }}/js/vendor/bootstrap.js"></script>
-			<script src="{{ URL::base() }}/js/vendor/angular.min.js"></script>
+			<script src="{{ URL::base() }}/js/vendor/angular.js"></script>
 			<script src="{{ URL::base() }}/js/vendor/angular-resource.min.js"></script>
+			<script src="{{ URL::base() }}/js/vendor/angular-route.min.js"></script>
+			<script src="{{ URL::base() }}/js/vendor/angular-sanitize.min.js"></script>
 			
 			<script src="{{ URL::base() }}/js/app.js"></script>
 			
@@ -195,7 +197,7 @@
 								<li><a href="{{ URL::to('authenticated/characters') }}" class="menu menu-characters"></a></li>
 								<li><a href="{{ URL::to('authenticated/ranking') }}" class="menu menu-ranking"></a></li>
 								<li><a href="{{ URL::to('authenticated/orbs') }}" class="menu menu-orbs"></a></li>
-								<li><a href="http://ironfist.com.ar/forums/index" class="menu menu-forum" target="_blank"></a></li>
+								<li><a href="http://ironfist.com.ar/forums" class="menu menu-forum" target="_blank"></a></li>
 								<li><a href="{{ URL::to('authenticated/logout') }}" class="menu menu-logout"></a></li>
 							@else
 								<li><a href="{{ URL::to('home/index') }}" class="menu menu-start"></a></li>
