@@ -132,7 +132,7 @@ class Clan extends Base_Model
 			$memberSkill->end_time = 1;
 			$memberSkill->save();
 			
-			$skill->periodic($member);
+			$skill->periodic($memberSkill);
 		}
 	}
 
