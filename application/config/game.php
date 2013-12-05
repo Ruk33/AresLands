@@ -24,12 +24,12 @@ return array(
 	 *	Formula:
 	 *	cantidad de stat * nivel del personaje * multiplicador
 	 */
-	'strength_price_multiplier' => 0.3,
-	'dexterity_price_multiplier' => 0.6,
-	'resistance_price_multiplier' => 0.4,
-	'magic_price_multiplier' => 0.5,
-	'magic_skill_price_multiplier' => 0.7,
-	'magic_resistance_price_multiplier' => 0.5,
+	'strength_price_multiplier' => 0.1,
+	'dexterity_price_multiplier' => 0.3,
+	'resistance_price_multiplier' => 0.1,
+	'magic_price_multiplier' => 0.2,
+	'magic_skill_price_multiplier' => 0.4,
+	'magic_resistance_price_multiplier' => 0.2,
 
 	/*
 	 *	Cantidad de slots de inventario

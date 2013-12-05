@@ -2,7 +2,7 @@
 
 angular.module('areslands.controllers', []).
 
-controller('CharacterController', ['$scope', '$http', '$timeout', 'CharacterOfLoggedUser', 'DividedCoin', 'BASE_PATH', function($scope, $http, $timeout, CharacterOfLoggedUser, DividedCoin, BASE_PATH)
+controller('CharacterController', ['$scope', '$http', '$timeout', 'CharacterOfLoggedUser', 'DividedCoin', 'StatPrice', 'BASE_PATH', function($scope, $http, $timeout, CharacterOfLoggedUser, DividedCoin, StatPrice, BASE_PATH)
 {
 	$scope.character = {};
 	$scope.statsPrices = {};
@@ -15,55 +15,68 @@ controller('CharacterController', ['$scope', '$http', '$timeout', 'CharacterOfLo
 
 	$scope.$watch('character.stat_strength', function(value)
 	{
-		var price = $scope.character.level * value;
-		DividedCoin.get({amount: price}, function(coins)
+		StatPrice.get({stat: 'stat_strength'}, function(price)
 		{
-			$scope.statsPrices.strength = 'Precio: ' + coins.text;
+			console.log(price.price);
+			DividedCoin.get({amount: price.price}, function(coins)
+			{
+				$scope.statsPrices.strength = 'Precio: ' + coins.text;
+			});
 		});
 	});
 
 	$scope.$watch('character.stat_dexterity', function(value)
 	{
-		var price = $scope.character.level * value;
-		DividedCoin.get({amount: price}, function(coins)
+		StatPrice.get({stat: 'stat_dexterity'}, function(price)
 		{
-			$scope.statsPrices.dexterity = 'Precio: ' + coins.text;
+			DividedCoin.get({amount: price.price}, function(coins)
+			{
+				$scope.statsPrices.dexterity = 'Precio: ' + coins.text;
+			});
 		});
 	});
 
 	$scope.$watch('character.stat_resistance', function(value)
 	{
-		var price = $scope.character.level * value;
-		DividedCoin.get({amount: price}, function(coins)
+		StatPrice.get({stat: 'stat_resistance'}, function(price)
 		{
-			$scope.statsPrices.resistance = 'Precio: ' + coins.text;
+			DividedCoin.get({amount: price.price}, function(coins)
+			{
+				$scope.statsPrices.resistance = 'Precio: ' + coins.text;
+			});
 		});
 	});
 
 	$scope.$watch('character.stat_magic', function(value)
 	{
-		var price = $scope.character.level * value;
-		DividedCoin.get({amount: price}, function(coins)
+		StatPrice.get({stat: 'stat_magic'}, function(price)
 		{
-			$scope.statsPrices.magic = 'Precio: ' + coins.text;
+			DividedCoin.get({amount: price.price}, function(coins)
+			{
+				$scope.statsPrices.magic = 'Precio: ' + coins.text;
+			});
 		});
 	});
 
 	$scope.$watch('character.stat_magic_skill', function(value)
 	{
-		var price = $scope.character.level * value;
-		DividedCoin.get({amount: price}, function(coins)
+		StatPrice.get({stat: 'stat_magic_skill'}, function(price)
 		{
-			$scope.statsPrices.magic_skill = 'Precio: ' + coins.text;
+			DividedCoin.get({amount: price.price}, function(coins)
+			{
+				$scope.statsPrices.magic_skill = 'Precio: ' + coins.text;
+			});
 		});
 	});
 
 	$scope.$watch('character.stat_magic_resistance', function(value)
 	{
-		var price = $scope.character.level * value;
-		DividedCoin.get({amount: price}, function(coins)
+		StatPrice.get({stat: 'stat_magic_resistance'}, function(price)
 		{
-			$scope.statsPrices.magic_resistance = 'Precio: ' + coins.text;
+			DividedCoin.get({amount: price.price}, function(coins)
+			{
+				$scope.statsPrices.magic_resistance = 'Precio: ' + coins.text;
+			});
 		});
 	});
 

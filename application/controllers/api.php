@@ -2,6 +2,7 @@
 
 interface Api_Interface
 {
+	public function get_statPrice($stat);
 	public function get_dividedCoin($amount);
 	public function get_characterOfLoggedUser();
 	public function get_character($name, $tooltip);
@@ -20,6 +21,25 @@ interface Api_Interface
 class Api_Controller extends Base_Controller implements Api_Interface
 {
 	public $restful = true;
+
+	public function get_statPrice($stat)
+	{
+		$character = Character::get_character_of_logged_user(array(
+			'id', 
+			'level', 
+			'stat_strength',
+			'stat_dexterity',
+			'stat_resistance',
+			'stat_magic',
+			'stat_magic_skill',
+			'stat_magic_resistance'
+		));
+
+		if ( $character )
+		{
+			return Response::json(array('price' => $character->get_stat_price($stat)));
+		}
+	}
 	
 	public function get_dividedCoin($amount)
 	{

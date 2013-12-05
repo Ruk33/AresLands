@@ -2,6 +2,11 @@
 
 angular.module('areslands.services', ['configuration', 'ngResource']).
 
+factory('StatPrice', ['$resource', 'BASE_PATH', function($resource, BASE_PATH)
+{
+	return $resource(BASE_PATH + 'api/statPrice/:stat');
+}]).
+
 factory('DividedCoin', ['$resource', 'BASE_PATH', function($resource, BASE_PATH)
 {
 	return $resource(BASE_PATH + 'api/dividedCoin/:amount');
