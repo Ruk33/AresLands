@@ -149,7 +149,7 @@ class Clan extends Base_Model
 
 	public function give_clan_skill_to_member(Character $member, Skill $skill)
 	{
-		if ( $member->skills()->where('skill_id', '=', $skill->id)->take(1)->count() == 0 )
+		if ( $member->skills()->where('skill_id', '=', $skill->id)->where('level', '=', $skill->level)->take(1)->count() == 0 )
 		{
 			$skill->cast($this->lider()->select(array('id', 'clan_id'))->first(), $member, 1);
 		}
@@ -169,7 +169,7 @@ class Clan extends Base_Model
 	public function update_members_skill(Skill $skill)
 	{
 		$members = $this->members()->select(array('id', 'clan_id'))->get();
-		$prevSkill = Skill::where('id', '=', $skill->id)->where('level', '=', $skill->level - 1)->first();
+		$prevSkill = Skill::where('id', '=', $skill->id)->first();
 
 		foreach ( $members as $member )
 		{

@@ -16,6 +16,22 @@ class Admin_Controller extends Base_Controller
 		$this->layout->title = 'Admin';
 		$this->layout->content = View::make('admin.index');
 	}
+
+	public function get_fixAllCharactersClanSkills()
+	{
+		$clans = Clan::all();
+
+		foreach ( $clans as $clan )
+		{
+			$members = $clan->members()->select(array('id', 'clan_id'))->get();
+
+			foreach ( $members as $member )
+			{
+				$clan->remove_clan_skills_from_member($member);
+				$clan->give_clan_skills_to_member($member);
+			}
+		}
+	}
 	
 	public function get_removeCharacterSkill($characterSkill = 0)
 	{
