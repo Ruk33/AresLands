@@ -228,7 +228,7 @@
 						<b class="pull-left">Fuerza física:</b>
 
 						<div class="pull-right">
-							<span ng-bind="character.stat_strength || '?'">?</span>
+							<span ng-bind="character.stat_strength">?</span>
 							
 							@if ( $character->stat_strength_extra != 0 )
 								@if ( $character->stat_strength_extra > 0 )
@@ -249,7 +249,7 @@
 						<b class="pull-left">Destreza física:</b>
 
 						<div class="pull-right">
-							<span ng-bind="character.stat_dexterity || '?'">?</span>
+							<span ng-bind="character.stat_dexterity">?</span>
 
 							@if ( $character->stat_dexterity_extra != 0 )
 								@if ( $character->stat_dexterity_extra > 0 )
@@ -270,7 +270,7 @@
 						<b class="pull-left">Resistencia:</b>
 
 						<div class="pull-right">
-							<span ng-bind="character.stat_resistance || '?'">?</span>
+							<span ng-bind="character.stat_resistance">?</span>
 
 							@if ( $character->stat_resistance_extra != 0 )
 								@if ( $character->stat_resistance_extra > 0 )
@@ -292,7 +292,7 @@
 						<b class="pull-left">Poder mágico:</b>
 
 						<div class="pull-right">
-							<span ng-bind="character.stat_magic || '?'">?</span>
+							<span ng-bind="character.stat_magic">?</span>
 
 							@if ( $character->stat_magic_extra != 0 )
 								@if ( $character->stat_magic_extra > 0 )
@@ -313,7 +313,7 @@
 						<b class="pull-left">Habilidad mágica:</b>
 
 						<div class="pull-right">
-							<span ng-bind="character.stat_magic_skill || '?'">?</span>
+							<span ng-bind="character.stat_magic_skill">?</span>
 
 							@if ( $character->stat_magic_skill_extra != 0 )
 								@if ( $character->stat_magic_skill_extra > 0 )
@@ -334,7 +334,7 @@
 						<b class="pull-left">Contraconjuro:</b>
 
 						<div class="pull-right">
-							<span ng-bind="character.stat_magic_resistance || '?'">?</span>
+							<span ng-bind="character.stat_magic_resistance">?</span>
 
 							@if ( $character->stat_magic_resistance_extra != 0 )
 								@if ( $character->stat_magic_resistance_extra > 0 )

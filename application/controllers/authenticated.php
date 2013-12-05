@@ -1898,9 +1898,9 @@ class Authenticated_Controller extends Base_Controller
 							$characterItemAmount += $characterItem->count;
 						}
 
-						if ( $characterItemAmount + $amount > 75 )
+						if ( $characterItemAmount + $amount > Config::get('game.bag_size') )
 						{
-							return Redirect::to('authenticated/index')->with('error', 'Tienes la mochila muy llena. Recuerda que el límite es 75.');
+							return Redirect::to('authenticated/index')->with('error', 'Tienes la mochila muy llena. Recuerda que el límite es ' . Config::get('game.bag_size') . '.');
 						}
 					}
 					

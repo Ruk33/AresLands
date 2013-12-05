@@ -11,6 +11,27 @@ return array(
 	'max_potions' => 50,
 
 	/*
+	 *	Cantidad de pociones
+	 *	que se pueden llevar
+	 *	en el inventario
+	 */
+	'bag_size' => 100,
+
+	/*
+	 *	Multiplicadores
+	 *	de los stats
+	 *	
+	 *	Formula:
+	 *	cantidad de stat * nivel del personaje * multiplicador
+	 */
+	'strength_price_multiplier' => 0.3,
+	'dexterity_price_multiplier' => 0.6,
+	'resistance_price_multiplier' => 0.4,
+	'magic_price_multiplier' => 0.5,
+	'magic_skill_price_multiplier' => 0.7,
+	'magic_resistance_price_multiplier' => 0.5,
+
+	/*
 	 *	Cantidad de slots de inventario
 	 */
 	'inventory_slot_amount' => 6,

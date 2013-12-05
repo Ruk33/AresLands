@@ -37,27 +37,27 @@ class Character extends Base_Model
 		switch ( $stat )
 		{
 			case 'stat_strength':
-				return $this->stat_strength * $this->level;
+				return $this->stat_strength * $this->level * Config::get('game.strength_price_multiplier');
 				break;
 
 			case 'stat_dexterity':
-				return $this->stat_dexterity * $this->level;
+				return $this->stat_dexterity * $this->level * Config::get('game.dexterity_price_multiplier');
 				break;
 
 			case 'stat_resistance':
-				return $this->stat_resistance * $this->level;
+				return $this->stat_resistance * $this->level * Config::get('game.resistance_price_multiplier');
 				break;
 
 			case 'stat_magic':
-				return $this->stat_magic * $this->level;
+				return $this->stat_magic * $this->level * Config::get('game.magic_price_multiplier');
 				break;
 
 			case 'stat_magic_skill':
-				return $this->stat_magic_skill * $this->level;
+				return $this->stat_magic_skill * $this->level * Config::get('game.magic_skill_price_multiplier');
 				break;
 
 			case 'stat_magic_resistance':
-				return $this->stat_magic_resistance * $this->level;
+				return $this->stat_magic_resistance * $this->level * Config::get('game.magic_resistance_price_multiplier');
 				break;
 
 			default:

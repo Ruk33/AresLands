@@ -69,7 +69,7 @@ controller('CharacterController', ['$scope', '$http', '$timeout', 'CharacterOfLo
 
 	$scope.addStat = function(stat) {
 		// Verificamos que el atributo exista
-		if ( ! $scope.character[stat] )
+		if ( $scope.character[stat] == null )
 		{
 			return;
 		}
