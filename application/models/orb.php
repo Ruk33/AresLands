@@ -7,6 +7,31 @@ class Orb extends Base_Model
 	public static $table = 'orbs';
 	public static $key = 'id';
 
+	public function get_tooltip()
+	{
+		$orb = $this;
+
+		$coins = Item::get_divided_coins($orb->coins);
+		$coins = $coins['text'];
+
+		$tooltip = "<h6>$orb->name</h6>";
+		$tooltip .= "<p class='text-left'>$orb->description</p>";
+
+		$tooltip .= "<ul class='unstyled'>";
+		$tooltip .= "<li class='positive'><b>Recompensas que otorga este orbe:</b></li>";
+		$tooltip .= "<li><strong>Monedas:</strong>$coins</li>";
+		$tooltip .= "<li><strong>Puntos:</strong>$orb->points</li>";
+		$tooltip .= "</ul>";
+
+		$tooltip .= "<ul class='unstyled'>";
+		$tooltip .= "<li class='negative'><b>Requerimientos:</b></li>";
+		$tooltip .= "<li><strong>Nivel mínimo:</strong> $orb->min_level</li>";
+		$tooltip .= "<li><b>Nivel máximo:</b> $orb->max_level</li>";
+		$tooltip .= "</ul>";
+
+		return $tooltip;
+	}
+
 	public function owner()
 	{
 		return $this->belongs_to('Character', 'owner_character');

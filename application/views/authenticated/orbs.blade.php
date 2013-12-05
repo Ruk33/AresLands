@@ -15,11 +15,7 @@
 			<li style="vertical-align: top; width: 230px; margin-bottom: 25px;">
 				<h2>{{ $orb->name }}</h2>
 				
-				@if ( $character->level > $orb->max_level || $character->level < $orb->min_level )
-				<img class="grayEffect" src="{{ URL::base() }}/img/icons/orbs/{{ $orb->id }}.png" width="150px" height="150px" data-toggle="tooltip" data-title="<h6>{{ $orb->name }}</h6><p class='negative'>No cumples con los requisitos</p><p class='text-left'>{{ $orb->description }}</p><ul class='unstyled'><li class='positive'><b>Recompensas que otorga este orbe:</b></li><li><strong>Monedas:</strong> {{ $orb->coins }}</li><li><strong>Puntos:</strong> {{ $orb->points }}</li></ul><ul class='unstyled'><li class='negative'><b>Requerimientos:</b></li><li><strong>Nivel mínimo:</strong> {{ $orb->min_level }}</li><li><b>Nivel máximo:</b> {{ $orb->max_level }}</li></ul>">
-				@else
-				<img src="{{ URL::base() }}/img/icons/orbs/{{ $orb->id }}.png" width="150px" height="150px" data-toggle="tooltip" data-title="<h6>{{ $orb->name }}</h6><p class='text-left'>{{ $orb->description }}</p><ul class='unstyled'><li class='positive'><b>Recompensas que otorga este orbe:</b></li><li><strong>Monedas:</strong> {{ $orb->coins }}</li><li><strong>Puntos:</strong> {{ $orb->points }}</li></ul><ul class='unstyled'><li class='negative'><b>Requerimientos:</b></li><li><strong>Nivel mínimo:</strong> {{ $orb->min_level }}</li><li><b>Nivel máximo:</b> {{ $orb->max_level }}</li></ul>">
-				@endif
+				<img src="{{ URL::base() }}/img/icons/orbs/{{ $orb->id }}.png" width="150px" height="150px" data-toggle="tooltip" data-title="{{ $orb->get_tooltip() }}">
 				
 				<p>
 					<strong>Poseedor:</strong> 
