@@ -466,7 +466,7 @@ class Character extends Base_Model
 	// Evitamos vida por debajo de 0 o mayor a max_life
 	public function set_current_life($value)
 	{		
-		if ( $value <= 0 )
+		if ( $value < 0 )
 		{
 			$value = 0;
 		}

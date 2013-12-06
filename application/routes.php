@@ -442,6 +442,13 @@ Route::filter('before', function() {
 					$character->last_regeneration_time = $time;
 				}
 			}
+			else
+			{
+				// Evitamos que si el usuario tiene una regeneracion
+				// muy antigua y luego recibe daño que sea curado
+				// completamente
+				$character->last_regeneration_time = null;
+			}
 
 			/*
 			 *	Además vamos a actualizar tiempos

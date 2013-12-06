@@ -515,6 +515,7 @@ class Battle
 		$this->add_message_to_log('Daño realizado por ' . $attackedStats['name'] . ': ' . number_format($attackedStats['damage_done'], 2), true);
 		
 		// Actualizamos las vidas
+
 		$this->_attacker->current_life = $attackerStats['current_life'];
 		$this->_attacker->save();
 		
