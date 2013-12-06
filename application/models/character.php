@@ -861,23 +861,7 @@ class Character extends Base_Model
 
 	public function give_explore_reward($reward)
 	{
-		$characterCoins = $this->get_coins();
-
-		if ( $characterCoins )
-		{
-			$characterCoins->count += $reward * Config::get('game.coins_rate');
-		}
-		else
-		{
-			$characterCoins = new CharacterItem();
-
-			$characterCoins->owner_id = $this->id;
-			$characterCoins->item_id = Config::get('game.coin_id');
-			$characterCoins->location = 'none';
-			$characterCoins->count = $reward * Config::get('game.coins_rate');
-		}
-		
-		$characterCoins->save();
+		$this->add_coins($reward * Config::get('game.coins_rate'));
 	}
 
 	public function get_link()

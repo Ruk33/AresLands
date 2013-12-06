@@ -1803,7 +1803,7 @@ class Authenticated_Controller extends Base_Controller
 
 		if ( $merchandise )
 		{
-			$character = Character::get_character_of_logged_user(array('id'));
+			$character = Character::get_character_of_logged_user(array('id', 'xp'));
 			$npc = $merchandise->npc()->select(array('id', 'zone_id', 'time_to_appear'))->first();
 
 			// Verificamos si el vendedor está desbloqueado
@@ -1885,6 +1885,22 @@ class Authenticated_Controller extends Base_Controller
 				{
 					if ( $item->class == 'consumible' )
 					{
+						$skills = $character->get_non_clan_skills()
+											->select(array('end_time', 'duration', 'amount'))
+											->get();
+						$skillsCount = 0;
+						$time = time();
+
+						foreach ( $skills as $skill )
+						{
+							// Solo se suma si no ha pasado
+							// la mitad de la duracion
+							if ( $skill->end_time - $time > $skill->duration * 60 / 2 )
+							{
+								$skillsCount += $skill->amount;
+							}
+						}
+
 						// Objetos que no se cuentan
 						$invalidItems = array(
 							Config::get('game.coin_id'), 
@@ -1892,11 +1908,12 @@ class Authenticated_Controller extends Base_Controller
 						);
 
 						$characterItems = $character->items()
-							->join('items as item', 'item.id', '=', 'character_items.item_id')
-							->where_not_in('item_id', $invalidItems)
-							->where('location', '=', 'inventory')
-							->where('class', '=', 'consumible')
-							->get();
+													->join('items as item', 'item.id', '=', 'character_items.item_id')
+													->where_not_in('item_id', $invalidItems)
+													->where('location', '=', 'inventory')
+													->where('class', '=', 'consumible')
+													->select(array('count'))
+													->get();
 						$characterItemAmount = 0;
 
 						foreach ( $characterItems as $characterItem )
@@ -1904,9 +1921,11 @@ class Authenticated_Controller extends Base_Controller
 							$characterItemAmount += $characterItem->count;
 						}
 
-						if ( $characterItemAmount + $amount > Config::get('game.bag_size') )
+						$limit = (int) ($character->xp * Config::get('game.bag_size'));
+
+						if ( $characterItemAmount + $skillsCount + $amount > $limit )
 						{
-							return Redirect::to('authenticated/index')->with('error', 'Tienes la mochila muy llena. Recuerda que el límite es ' . Config::get('game.bag_size') . '.');
+							return Redirect::to('authenticated/index')->with('error', 'Tienes la mochila muy llena. Recuerda que tu límite es ' . $limit . '.');
 						}
 					}
 					

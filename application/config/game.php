@@ -8,14 +8,17 @@ return array(
 	 *	Cantidad maxima
 	 *	de pociones activas
 	 */
-	'max_potions' => 50,
+	'max_potions' => 9999999,
 
 	/*
 	 *	Cantidad de pociones
 	 *	que se pueden llevar
 	 *	en el inventario
+	 *
+	 *	Formula
+	 *	xp del personaje * bag_size
 	 */
-	'bag_size' => 100,
+	'bag_size' => 0.25,
 
 	/*
 	 *	Multiplicadores
@@ -109,8 +112,8 @@ return array(
 	/*
 	 *	Rates
 	 */
-	'xp_rate' => 1,
+	'xp_rate' => 0.6,
 	'drop_rate' => 1,
-	'explore_reward_rate' => 1,
-	'coins_rate' => 1,
+	'explore_reward_rate' => 4,
+	'coins_rate' => 2,
 );
