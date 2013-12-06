@@ -70,7 +70,7 @@ return array(
 	 *	que el ganador
 	 *	240 = battle_rest_time
 	 */
-	'protection_time_on_lower_level_pvp' => 240 + 300,
+	'protection_time_on_lower_level_pvp' => 240 + 1800,
 
 	/*
 	 *	Cantidad de monedas (en cobre)

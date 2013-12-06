@@ -223,7 +223,7 @@
 			<li style="margin-bottom: 10px;">
 				<span class="ui-button button" style="cursor: default; width: 250px;">
 					<a ng-click="addStat('stat_strength')" class="button-icon" ng-show="character.points_to_change > 0" style="cursor: pointer;" dynamic-tooltip="statsPrices.strength">+</a>
-					<i class="button-icon hearth" ng-show="character.points_to_change <= 0"></i>
+					<i class="button-icon axe" ng-show="character.points_to_change <= 0"></i>
 					<span class="button-content" style="width: 200px;" data-toggle="tooltip" data-placement="top" data-original-title="<p><b>Fuerza:</b> Aumenta el poder de los ataques físicos.</p><p>Si posees mas Fuerza que Magia, tu personaje golpeará únicamente con ataques físicos.</p><p class='positive'>Poder de ataque físico: {{ $physicalDamage * 0.25 }}-{{ $physicalDamage * 0.75 }}</p>">
 						<b class="pull-left">Fuerza física:</b>
 
@@ -265,7 +265,7 @@
 			<li style="margin-bottom: 10px;">
 				<span class="ui-button button" style="cursor: default; width: 250px;">
 					<a ng-click="addStat('stat_resistance')" class="button-icon" ng-show="character.points_to_change > 0" style="cursor: pointer;" dynamic-tooltip="statsPrices.resistance">+</a>
-					<i class="button-icon boot" ng-show="character.points_to_change <= 0"></i>
+					<i class="button-icon hearth" ng-show="character.points_to_change <= 0"></i>
 					<span class="button-content" style="width: 200px;" data-toggle="tooltip" data-placement="top" data-original-title="<p><b>Resistencia física:</b> Aumenta tu defensa contra ataques físicos.</p>">
 						<b class="pull-left">Resistencia:</b>
 
@@ -308,7 +308,7 @@
 			<li style="margin-bottom: 10px;">
 				<span class="ui-button button" style="cursor: default; width: 250px;">
 					<a ng-click="addStat('stat_magic_skill')" class="button-icon" ng-show="character.points_to_change > 0" style="cursor: pointer;" dynamic-tooltip="statsPrices.magic_skill">+</a>
-					<i class="button-icon axe" ng-show="character.points_to_change <= 0"></i>
+					<i class="button-icon arrow" ng-show="character.points_to_change <= 0"></i>
 					<span class="button-content" style="width: 200px;" data-toggle="tooltip" data-placement="top" data-original-title="<p><b>Habilidad mágica:</b> Aumenta tu velocidad al lanzar magias, pudiendo lograr así, múltiples ataques consecutivos.</p>">
 						<b class="pull-left">Habilidad mágica:</b>
 
