@@ -240,7 +240,7 @@ class Battle
 			}
 			
 			$this->add_blank_space();
-			$this->add_message_to_log($this->winner->name . ' recibe ' . $coins . ' moneda(s) (' . $percentage . '% robado del enemigo).', true);
+			$this->add_message_to_log($this->winner->name . ' recibe (' . $percentage . '% robado del enemigo): ' . Item::get_divided_coins($coins)['text'], true);
 			
 			$this->winner->add_coins($coins);
 		}
