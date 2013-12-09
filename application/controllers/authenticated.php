@@ -2061,9 +2061,16 @@ class Authenticated_Controller extends Base_Controller
 							Session::flash('modalMessage', 'chest');
 							Session::flash('chest', $item->id);
 
-							// Ya se ha abierto el cofre, así que
-							// lo removemos
-							$characterItem->delete();
+							$characterItem->count--;
+
+							if ( $characterItem->count > 0 )
+							{
+								$characterItem->save();
+							}
+							else
+							{
+								$characterItem->delete();
+							}
 						}
 						else
 						{
