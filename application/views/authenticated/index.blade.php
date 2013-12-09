@@ -406,7 +406,9 @@
 							{{ $item->get_text_for_tooltip() }}
 
 							<div class='text-center' style='margin-top: 20px;'>
-							@if ( $item->type == 'arrow' && isset($items['lrhand']) && $items['lrhand'][0]->item->type != 'bow' )
+							@if ( $item->id == Config::get('game.chest_item_id') )
+								<a href='{{ URL::to('authenticated/manipulateItem/' . $characterItem->id) }}' class='pull-left'>Abrir</a>
+							@elseif ( $item->type == 'arrow' && isset($items['lrhand']) && $items['lrhand'][0]->item->type != 'bow' )
 								<span style='font-size: 11px;'>Debes tener equipado un arco para usar flechas</span>
 							@else
 								@if ( $item->type == 'potion' )

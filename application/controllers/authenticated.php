@@ -2046,58 +2046,85 @@ class Authenticated_Controller extends Base_Controller
 
 				if ( $characterItem )
 				{
-					/*
-					 *	Verificamos si el objeto no lo
-					 *	tiene en alguno de estos lugares
-					 */
-					if ( in_array($characterItem->location, array('chest', 'legs', 'feet', 'head', 'hands', 'lhand', 'rhand', 'lrhand')) )
+					if ( $characterItem->item_id == Config::get('game.chest_item_id') )
 					{
-						/*
-						 *	Si lo tiene, entonces intentamos guardar en inventario
-						 */
-						if ( $character->unequip_item($characterItem) )
+						$slot = $character->empty_slot();
+
+						if ( $slot )
 						{
-							Event::fire('unequipItem', array($characterItem));
+							$item = $character->get_item_from_chest()->select(array('id'))->first();
+
+							// Damos el objeto y le damos
+							// notificamos al usuario qué objeto
+							// obtuvo del tan preciado cofre :)
+							$character->add_item($item->id, 1);
+							Session::flash('modalMessage', 'chest');
+							Session::flash('chest', $item->id);
+
+							// Ya se ha abierto el cofre, así que
+							// lo removemos
+							$characterItem->delete();
 						}
 						else
 						{
-							/*
-							 *	No tiene espacio, lo notificamos
-							 */
-							Session::flash('error', 'No tenes espacio en el inventario');
+							Session::flash('error', 'No tenes espacio en el inventario.');
 						}
 					}
 					else
 					{
 						/*
-						 *	Verificamos que tenga la cantidad
+						 *	Verificamos si el objeto no lo
+						 *	tiene en alguno de estos lugares
 						 */
-						if ( $characterItem->count >= $count )
+						if ( in_array($characterItem->location, array('chest', 'legs', 'feet', 'head', 'hands', 'lhand', 'rhand', 'lrhand')) )
 						{
-							$item = $characterItem->item()->first();
-
-							switch ( $item->body_part )
+							/*
+							 *	Si lo tiene, entonces intentamos guardar en inventario
+							 */
+							if ( $character->unequip_item($characterItem) )
 							{
-								case 'lhand':
-								case 'rhand':
-								case 'lrhand':
-									$error = $character->equip_item($characterItem);
-									
-									if ( $error )
-									{
-										Session::flash('error', $error);
-									}
-									else
-									{
-										Event::fire('equipItem', array($characterItem));
-									}
-
-									break;
+								Event::fire('unequipItem', array($characterItem));
+							}
+							else
+							{
+								/*
+								 *	No tiene espacio, lo notificamos
+								 */
+								Session::flash('error', 'No tenes espacio en el inventario');
 							}
 						}
 						else
 						{
-							Session::flash('error', 'No posees esa cantidad');
+							/*
+							 *	Verificamos que tenga la cantidad
+							 */
+							if ( $characterItem->count >= $count )
+							{
+								$item = $characterItem->item()->first();
+
+								switch ( $item->body_part )
+								{
+									case 'lhand':
+									case 'rhand':
+									case 'lrhand':
+										$error = $character->equip_item($characterItem);
+										
+										if ( $error )
+										{
+											Session::flash('error', $error);
+										}
+										else
+										{
+											Event::fire('equipItem', array($characterItem));
+										}
+
+										break;
+								}
+							}
+							else
+							{
+								Session::flash('error', 'No posees esa cantidad');
+							}
 						}
 					}
 				}

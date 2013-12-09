@@ -905,6 +905,27 @@ class Character extends Base_Model
 	}
 
 	/**
+	 * Obtenemos un objeto que puede
+	 * venir del cofre
+	 * 
+	 * @return Eloquent
+	 */
+	public function get_item_from_chest()
+	{
+		// Oro y experiencia fuera
+		$invalidItems = array(
+			Config::get('game.coin_id'),
+			Config::get('game.xp_item_id')
+		);
+
+		return Item::where('level', '<=', $this->level + 5)
+				   ->where('class', '<>', 'mercenary')
+				   ->where('class', '<>', 'consumible')
+				   ->where_not_in('id', $invalidItems)
+				   ->order_by(DB::raw('RAND()'));
+	}
+
+	/**
 	 *	Agregamos un objeto al personaje.
 	 *
 	 *	@param <mixed> $item Id del objeto o instancia de Item

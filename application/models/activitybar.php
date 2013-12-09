@@ -12,6 +12,9 @@ class ActivityBar extends Base_Model
 		$this->belongs_to('Character', 'character_id');
 	}
 
+	/**
+	 * @param Character $character
+	 */ 
 	public static function get_bar_of_character(Character $character)
 	{
 		return ActivityBar::where_character_id($character->id)->first();

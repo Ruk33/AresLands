@@ -41,6 +41,12 @@ return array(
 
 	/*
 	 *	Id del objeto que hace
+	 *	de cofre
+	 */
+	'chest_item_id' => 136,
+
+	/*
+	 *	Id del objeto que hace
 	 *	de experiencia
 	 */
 	'xp_item_id' => 2,

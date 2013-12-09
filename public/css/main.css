@@ -52,6 +52,7 @@ textarea {
 
 body {
 	/*background-color: #360000;*/
+	cursor: default;
 	background-color: black;
 	color: #9B928C;
 	font-size: 15px;
@@ -165,7 +166,7 @@ body {
 #modalMessage {
 	background-image: url("/img/modal-message-background.png");
 	background-repeat: no-repeat;
-	background-color: rgb(209, 174, 147);
+	background-color: #E5BEA0;
 	color: rgb(41, 41, 41);
 	border: 1px solid rgb(211, 191, 181);
 	border-radius: 0;

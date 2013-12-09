@@ -14,10 +14,10 @@
 		
 		<link rel="stylesheet" href="{{ URL::base() }}/css/normalize.min.css">
 		<link rel="stylesheet" href="{{ URL::base() }}/css/bootstrap.min.css">
-		<!--<link rel="stylesheet" href="{{ URL::base() }}/css/main.min.css">-->
-		<link rel="stylesheet" href="{{ URL::base() }}/css/main-0.0.1.css">
 
 		@if ( Request::env() == 'local' )
+			<link rel="stylesheet" href="{{ URL::base() }}/css/main.css">
+
 			<script src="{{ URL::base() }}/js/vendor/jquery-1.9.1.min.js"></script>
 			<script src="{{ URL::base() }}/js/vendor/bootstrap.js"></script>
 			<script src="{{ URL::base() }}/js/vendor/angular.js"></script>
@@ -33,11 +33,15 @@
 			<script src="{{ URL::base() }}/js/filters.js"></script>
 			<script src="{{ URL::base() }}/js/directives.js"></script>
 		@else
+			<link rel="stylesheet" href="{{ URL::base() }}/css/main-0.0.2.min.css">
+
 			<script src="{{ URL::base() }}/js/vendor-1.0.0.min.js"></script>
-			<script src="{{ URL::base() }}/js/app-0.0.6.min.js"></script>
+			<script src="{{ URL::base() }}/js/app-0.0.7.min.js"></script>
 		@endif
 	</head>
+
 	<?php flush(); ?>
+
 	<body ng-init="basePath='{{ URL::base() }}/'">
 		<!--[if lt IE 7]>
 			<p class="chromeframe">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> or <a href="http://www.google.com/chromeframe/?redirect=true">activate Google Chrome Frame</a> to improve your experience.</p>
@@ -64,6 +68,10 @@
 								case 'loggedOfDay':
 									echo '¡Recompensa por ingreso del día!';
 									break;
+
+								case 'chest':
+									echo '¡Has recibido la recompensa del cofre!';
+									break;
 							}
 							?>
 						</span>
@@ -78,6 +86,14 @@
 
 							case 'loggedOfDay':
 								echo '<b>Logged of day</b> es la <b>recompensa</b> que se otorga todos los días a los jugadores que se atreven a ingresar, ¡bien hecho!.';
+								break;
+
+							case 'chest':
+								$itemId = (int) Session::get('chest');
+								echo '<div class="inventory-item pull-left" style="margin-left: 25px;">
+										<img src="' . URL::base() . '/img/icons/items/' . $itemId . '.png" width="80px" height="80px">
+									</div>
+									<div style="margin-left: 125px;">Has abierto el cofre y dentro del mismo, se encontraba esto. ¡Felicitaciones!</div>';
 								break;
 						}
 						?>
