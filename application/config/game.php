@@ -118,7 +118,7 @@ return array(
 	/*
 	 *	Rates
 	 */
-	'xp_rate' => 0.4,
+	'xp_rate' => 0.7,
 	'drop_rate' => 1,
 	'explore_reward_rate' => 4,
 	'coins_rate' => 3,
