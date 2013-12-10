@@ -65,7 +65,11 @@ class Message extends Base_Model
 		$message->receiver_id = $receiver->id;
 
 		$message->subject = 'Completaste tu exploración';
-		$message->content = 'Haz terminado de explorar. Obtuviste ' . number_format($experienceGained, 0) . ' de experiencia y ' . Item::get_divided_coins((int) $reward) . ' de cobre.';
+
+		$coins = Item::get_divided_coins((int) $reward);
+		$coinsText = $coins['text'];
+
+		$message->content = 'Haz terminado de explorar. Obtuviste ' . number_format($experienceGained, 0) . ' de experiencia y ' . $coinsText . ' de cobre.';
 
 		$message->unread = true;
 		$message->date = time();
