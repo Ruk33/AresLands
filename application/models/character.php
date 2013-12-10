@@ -39,27 +39,27 @@ class Character extends Base_Model
 		switch ( $stat )
 		{
 			case 'stat_strength':
-				$price = $this->stat_strength * $this->level * Config::get('game.strength_price_multiplier');
+				$price = ($this->stat_strength + $this->level) * Config::get('game.strength_price_multiplier');
 				break;
 
 			case 'stat_dexterity':
-				$price = $this->stat_dexterity * $this->level * Config::get('game.dexterity_price_multiplier');
+				$price = ($this->stat_dexterity + $this->level) * Config::get('game.dexterity_price_multiplier');
 				break;
 
 			case 'stat_resistance':
-				$price = $this->stat_resistance * $this->level * Config::get('game.resistance_price_multiplier');
+				$price = ($this->stat_resistance + $this->level) * Config::get('game.resistance_price_multiplier');
 				break;
 
 			case 'stat_magic':
-				$price = $this->stat_magic * $this->level * Config::get('game.magic_price_multiplier');
+				$price = ($this->stat_magic + $this->level) * Config::get('game.magic_price_multiplier');
 				break;
 
 			case 'stat_magic_skill':
-				$price = $this->stat_magic_skill * $this->level * Config::get('game.magic_skill_price_multiplier');
+				$price = ($this->stat_magic_skill + $this->level) * Config::get('game.magic_skill_price_multiplier');
 				break;
 
 			case 'stat_magic_resistance':
-				$price = $this->stat_magic_resistance * $this->level * Config::get('game.magic_resistance_price_multiplier');
+				$price = ($this->stat_magic_resistance + $this->level) * Config::get('game.magic_resistance_price_multiplier');
 				break;
 
 			default:

@@ -39,6 +39,10 @@ class Message extends Base_Model
 
 		foreach ( $rewards as $reward )
 		{
+			if ( $reward['name'] == 'Monedas' )
+			{
+				$reward['amount'] = Item::get_divided_coins((int) $reward['amount']);
+			}
 			$message->content .= '<li>' . $reward['amount'] . ' ' . $reward['name'] . '</li>';
 		}
 
@@ -61,7 +65,7 @@ class Message extends Base_Model
 		$message->receiver_id = $receiver->id;
 
 		$message->subject = 'Completaste tu exploración';
-		$message->content = 'Haz terminado de explorar. Obtuviste ' . number_format($experienceGained, 0) . ' de experiencia y ' . number_format($reward, 0) . ' de cobre.';
+		$message->content = 'Haz terminado de explorar. Obtuviste ' . number_format($experienceGained, 0) . ' de experiencia y ' . Item::get_divided_coins((int) $reward) . ' de cobre.';
 
 		$message->unread = true;
 		$message->date = time();

@@ -25,14 +25,14 @@ return array(
 	 *	de los stats
 	 *	
 	 *	Formula:
-	 *	cantidad de stat * nivel del personaje * multiplicador
+	 *	(cantidad de stat + nivel del personaje) * multiplicador
 	 */
-	'strength_price_multiplier' => 0.1,
-	'dexterity_price_multiplier' => 0.3,
-	'resistance_price_multiplier' => 0.1,
-	'magic_price_multiplier' => 0.2,
-	'magic_skill_price_multiplier' => 0.4,
-	'magic_resistance_price_multiplier' => 0.2,
+	'strength_price_multiplier' => 0.7,
+	'dexterity_price_multiplier' => 0.9,
+	'resistance_price_multiplier' => 0.4,
+	'magic_price_multiplier' => 0.9,
+	'magic_skill_price_multiplier' => 1.2,
+	'magic_resistance_price_multiplier' => 0.8,
 
 	/*
 	 *	Cantidad de slots de inventario
@@ -118,8 +118,8 @@ return array(
 	/*
 	 *	Rates
 	 */
-	'xp_rate' => 0.6,
+	'xp_rate' => 0.4,
 	'drop_rate' => 1,
 	'explore_reward_rate' => 4,
-	'coins_rate' => 2,
+	'coins_rate' => 3,
 );
