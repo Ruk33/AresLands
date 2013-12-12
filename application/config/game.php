@@ -35,6 +35,38 @@ return array(
 	'magic_resistance_price_multiplier' => 0.8,
 
 	/*
+	 *	Multiplicadores de stat
+	 *	según la raza
+	 */
+	'dwarf_strength_price_multiplier' => 0.5,
+	'dwarf_dexterity_price_multiplier' => 0.7,
+	'dwarf_resistance_price_multiplier' => 0.9,
+	'dwarf_magic_price_multiplier' => 3,
+	'dwarf_magic_skill_price_multiplier' => 3.4,
+	'dwarf_magic_resistance_price_multiplier' => 2,
+
+	'human_strength_price_multiplier' => 1.4,
+	'human_dexterity_price_multiplier' => 1.6,
+	'human_resistance_price_multiplier' => 1.2,
+	'human_magic_price_multiplier' => 1.6,
+	'human_magic_skill_price_multiplier' => 2,
+	'human_magic_resistance_price_multiplier' => 1.4,
+
+	'drow_strength_price_multiplier' => 2,
+	'drow_dexterity_price_multiplier' => 2.3,
+	'drow_resistance_price_multiplier' => 3.7,
+	'drow_magic_price_multiplier' => 0.4,
+	'drow_magic_skill_price_multiplier' => 0.6,
+	'drow_magic_resistance_price_multiplier' => 1.3,
+
+	'elf_strength_price_multiplier' => 1.7,
+	'elf_dexterity_price_multiplier' => 1.8,
+	'elf_resistance_price_multiplier' => 1.6,
+	'elf_magic_price_multiplier' => 1.2,
+	'elf_magic_skill_price_multiplier' => 1.3,
+	'elf_magic_resistance_price_multiplier' => 1.4,
+
+	/*
 	 *	Cantidad de slots de inventario
 	 */
 	'inventory_slot_amount' => 6,
