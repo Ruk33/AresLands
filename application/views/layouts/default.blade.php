@@ -15,29 +15,8 @@
 		<link rel="stylesheet" href="{{ URL::base() }}/css/normalize.min.css">
 		<link rel="stylesheet" href="{{ URL::base() }}/css/bootstrap.min.css">
 
-		@if ( Request::env() == 'local' )
-			<link rel="stylesheet" href="{{ URL::base() }}/css/main.css">
-
-			<script src="{{ URL::base() }}/js/vendor/jquery-1.9.1.min.js"></script>
-			<script src="{{ URL::base() }}/js/vendor/bootstrap.js"></script>
-			<script src="{{ URL::base() }}/js/vendor/angular.js"></script>
-			<script src="{{ URL::base() }}/js/vendor/angular-resource.min.js"></script>
-			<script src="{{ URL::base() }}/js/vendor/angular-route.min.js"></script>
-			<script src="{{ URL::base() }}/js/vendor/angular-sanitize.min.js"></script>
-			
-			<script src="{{ URL::base() }}/js/app.js"></script>
-			
-			<script src="{{ URL::base() }}/js/configuration.js"></script>
-			<script src="{{ URL::base() }}/js/services.js"></script>
-			<script src="{{ URL::base() }}/js/controllers.js"></script>
-			<script src="{{ URL::base() }}/js/filters.js"></script>
-			<script src="{{ URL::base() }}/js/directives.js"></script>
-		@else
-			<link rel="stylesheet" href="{{ URL::base() }}/css/main-0.0.2.min.css">
-
-			<script src="{{ URL::base() }}/js/vendor-1.0.0.min.js"></script>
-			<script src="{{ URL::base() }}/js/app-0.0.7.min.js"></script>
-		@endif
+		<link rel="stylesheet" type="text/css" href="{{ Minifier::make(array('//css/main.css')) }}">
+		<script type="text/javascript" src="{{ Minifier::make(array('//js/vendor/jquery-1.9.1.min.js', '//js/vendor/bootstrap.min.js', '//js/vendor/angular.min.js', '//js/vendor/angular-resource.min.js')) }}"></script>
 	</head>
 
 	<?php flush(); ?>
@@ -284,6 +263,7 @@
 			</div>
 		@endif
 
+		<script type="text/javascript" src="{{ Minifier::make(array('//js/app.js', '//js/configuration.js', '//js/services.js', '//js/controllers.js', '//js/filters.js', '//js/directives.js')) }}"></script>
 		<script src="{{ URL::base() }}/js/libs/jquery.countdown.min.js"></script>
 
 		<script>

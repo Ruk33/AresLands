@@ -37,4 +37,13 @@ return array(
 
 	'docs' => array('handles' => 'docs'),
 
+	'minify' => array(
+		'autoloads' => array(
+			'map' => array(
+				'Minifier' => '(:bundle)/minifier.php',
+			)
+		),
+		'handles' => 'min'
+	)
+
 );

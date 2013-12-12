@@ -1,4 +1,5 @@
-/* ========================================================================
+/*!
+ * ========================================================================
  * Bootstrap: transition.js v3.0.0
  * http://twbs.github.com/bootstrap/javascript.html#transitions
  * ========================================================================
@@ -15,7 +16,8 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- * ======================================================================== */
+ * ======================================================================== 
+ */
 
 
 +function ($) { "use strict";

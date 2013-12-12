@@ -12,24 +12,9 @@
 
 		<link rel="stylesheet" href="{{ URL::base() }}/css/normalize.min.css">
 		<link rel="stylesheet" href="{{ URL::base() }}/css/bootstrap.min.css">
-		<link rel="stylesheet" href="{{ URL::base() }}/css/main-0.0.1.css">
 
-		@if ( Request::env() == 'local' )
-			<script src="{{ URL::base() }}/js/vendor/jquery-1.9.1.min.js"></script>
-			<script src="{{ URL::base() }}/js/vendor/bootstrap.min.js"></script>
-			<script src="{{ URL::base() }}/js/vendor/angular.min.js"></script>			
-			
-			<script src="{{ URL::base() }}/js/app.js"></script>
-			
-			<script src="{{ URL::base() }}/js/configuration.js"></script>
-			<script src="{{ URL::base() }}/js/services.js"></script>
-			<script src="{{ URL::base() }}/js/controllers.js"></script>
-			<script src="{{ URL::base() }}/js/filters.js"></script>
-			<script src="{{ URL::base() }}/js/directives.js"></script>
-		@else
-			<script src="{{ URL::base() }}/js/vendor.min.js"></script>
-			<script src="{{ URL::base() }}/js/app.min.js"></script>
-		@endif
+		<link rel="stylesheet" type="text/css" href="{{ Minifier::make(array('//css/main.css')) }}">
+		<script type="text/javascript" src="{{ Minifier::make(array('//js/vendor/jquery-1.9.1.min.js', '//js/vendor/bootstrap.min.js')) }}"></script>
 	</head>
 	<body>
 		<!--[if lt IE 7]>

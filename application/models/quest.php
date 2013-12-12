@@ -137,6 +137,8 @@ class Quest extends Base_Model
 	 */
 	public function get_rewards_for_view()
 	{
+		$character = Character::get_character_of_logged_user(array('id', 'xp', 'level'));
+
 		$rewards = $this->rewards;
 		$formatedString = '';
 
@@ -145,7 +147,7 @@ class Quest extends Base_Model
 			switch ( $reward->item_id )
 			{
 				case Config::get('game.coin_id'):
-					$coins = Item::get_divided_coins($reward->amount);
+					$coins = Item::get_divided_coins((int) ($reward->amount * (max($character->level, 5) / 5) * Config::get('game.coins_rate')));
 					
 					$text = '<i class="coin coin-copper"></i>';
 					$text = '<span data-toggle="tooltip" data-original-title="Cantidad: 
@@ -196,6 +198,10 @@ class Quest extends Base_Model
 
 		foreach ( $rewards as $reward )
 		{
+			if ( $reward->item_id == Config::get('game.coin_id') )
+			{
+				$reward->amount = (int) ($reward->amount * (max($character->level, 5) / 5) * Config::get('game.coins_rate'));
+			}				
 			$character->add_item($reward->item_id, $reward->amount);
 		}
 	}
