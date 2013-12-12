@@ -92,7 +92,7 @@ return array(
 	/*
 	 *	Nivel máximo de los clanes
 	 */
-	'clan_max_level' => 10,
+	'clan_max_level' => 20,
 
 	/*
 	 *	Cantidad máxima de la barra
