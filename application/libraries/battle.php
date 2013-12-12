@@ -214,9 +214,18 @@ class Battle
 					}
 					else
 					{
-						// Si el ganador tiene mas nivel que el perdedor
-						// entonces cada nivel de diferencia lo restamos al porcentaje
-						$percentage = 0.25 - ($this->winner->level - $this->loser->level) * 0.01;
+						// Si la diferencia es de mas de 10 niveles
+						if ( $this->winner->level - $this->loser->level > 10 )
+						{
+							$percentage = 0;
+							$coins /= 2;
+						}
+						else
+						{
+							// Si el ganador tiene mas nivel que el perdedor
+							// entonces cada nivel de diferencia lo restamos al porcentaje
+							$percentage = 0.25 - ($this->winner->level - $this->loser->level) * 0.01;
+						}
 					}
 					
 					$percentage = round(abs($percentage));
