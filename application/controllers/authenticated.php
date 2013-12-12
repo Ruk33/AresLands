@@ -230,8 +230,8 @@ class Authenticated_Controller extends Base_Controller
 	public function get_orbs()
 	{
 		$character = Character::get_character_of_logged_user(array('id', 'level'));
-		$orbs = Orb::where('min_level', '<', $character->level)
-				   ->where('max_level', '>', $character->level)
+		$orbs = Orb::where('min_level', '<=', $character->level)
+				   ->where('max_level', '>=', $character->level)
 				   ->order_by('min_level', 'asc')
 				   ->get();
 
