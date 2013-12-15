@@ -596,7 +596,7 @@ class Character extends Base_Model
 
 	public function give_full_activity_bar_reward()
 	{
-		$xpAmount = $this->level / 3;
+		$xpAmount = (int) ($this->level / 3);
 		$coinsAmount = $this->level * 50 * Config::get('game.coins_rate');
 
 		$this->add_coins($coinsAmount);
