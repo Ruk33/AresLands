@@ -41,7 +41,8 @@ class Message extends Base_Model
 		{
 			if ( $reward['name'] == 'Monedas' )
 			{
-				$reward['amount'] = Item::get_divided_coins((int) $reward['amount']);
+				$coins = Item::get_divided_coins((int) $reward['amount']);
+				$reward['amount'] = $coins['text'];
 			}
 			$message->content .= '<li>' . $reward['amount'] . ' ' . $reward['name'] . '</li>';
 		}
