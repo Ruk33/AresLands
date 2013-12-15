@@ -64,8 +64,7 @@
 					</td>
 					<td>{{ $trade->amount }}</td>
 					<td>
-						<img src="{{ URL::base() }}/img/copper.gif" alt="">
-						{{ $trade->price_copper }}
+						{{ Item::get_divided_coins($trade->price_copper)['text'] }}
 					</td>
 					<td>
 						@if ( $character->id == $trade->buyer_id )
