@@ -217,8 +217,11 @@ class Authenticated_Controller extends Base_Controller
 			}
 		}
 
-		$canReclaimMvpReward = $tournament->can_reclaim_mvp_reward($character);
-		$canReclaimClanLiderReward = $tournament->can_reclaim_clan_lider_reward($character);
+		if ( $tournament )
+		{
+			$canReclaimMvpReward = $tournament->can_reclaim_mvp_reward($character);
+			$canReclaimClanLiderReward = $tournament->can_reclaim_clan_lider_reward($character);
+		}
 
 		$this->layout->title = 'Torneos';
 		$this->layout->content = View::make('authenticated.tournaments')
