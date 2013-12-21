@@ -541,4 +541,30 @@ class Tournament extends Base_Model
 			$this->give_coin_to_characters_and_exit_from_tournament();
 		}
 	}
+
+	/**
+	 * Revisamos y removemos los buffs activos de los personajes.
+	 * Esto en el caso de que haya un torneo activo y que
+	 * el mismo no acepte pociones
+	 */
+	public static function check_for_potions()
+	{
+		$tournament = self::get_active()->first();
+
+		if ( $tournament && ! $tournament->allow_potions && ! $tournament->cleaned_potions )
+		{
+			$characters = Character::where('registered_in_tournament', '=', true)->get();
+
+			foreach ( $characters as $character )
+			{
+				foreach ( $character->get_non_clan_skills()->get() as $characterSkill )
+				{
+					$character->remove_buff($characterSkill);
+				}
+			}
+
+			$tournament->cleaned_potions = true;
+			$tournament->save();
+		}
+	}
 }

@@ -406,6 +406,7 @@ Route::filter('before', function() {
 	}
 
 	Tournament::check_for_finished();
+	Tournament::check_for_potions();
 	
 	$character = null;
 

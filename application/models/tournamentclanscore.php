@@ -109,7 +109,7 @@ class TournamentClanScore extends Base_Model
 		$victories = self::get_victories($tournament, $clan);
 		$defeats = self::get_defeats($tournament, $clan);
 
-		return (int) (100 / ($victories + $defeats) * $victories);
+		return (int) (100 / ($victories + $defeats + 1) * $victories);
 	}
 
 	/**

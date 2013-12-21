@@ -1323,6 +1323,12 @@ class Character extends Base_Model
 		return $this->clan_id == 0;
 	}
 
+	public function remove_buff(CharacterSkill $characterSkill)
+	{
+		$characterSkill->end_time = 1;
+		$characterSkill->skill->periodic($characterSkill);
+	}
+
 	public function started_quests()
 	{
 		return $this->quests()->where('progress', '=', 'started');
