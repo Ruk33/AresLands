@@ -183,6 +183,7 @@ class Authenticated_Controller extends Base_Controller
 		$canRegisterClan = false;
 		$canUnRegisterClan = false;
 		$canReclaimMvpReward = false;
+		$canReclaimClanLiderReward = false;
 
 		$character = Character::get_character_of_logged_user(array('id', 'clan_id'));
 
