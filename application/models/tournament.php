@@ -391,6 +391,11 @@ class Tournament extends Base_Model
 	{
 		$clan = $character->clan()->select(array('id'))->first();
 
+		if ( ! $clan )
+		{
+			return false;
+		}
+
 		return $character->id == $clan->leader_id && $clan->id == $this->clan_winner_id && $this->clan_leader_received_reward == false;
 	}
 
