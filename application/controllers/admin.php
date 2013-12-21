@@ -17,6 +17,59 @@ class Admin_Controller extends Base_Controller
 		$this->layout->content = View::make('admin.index');
 	}
 
+	public function get_tournament($id = 0)
+	{
+		if ( $id )
+		{
+			if ( $id == 'create' )
+			{
+				$tournament = new Tournament;
+			}
+			else
+			{
+				$tournament = Tournament::find((int) $id);
+
+				if ( ! $tournament )
+				{
+					return Response::error('404');
+				}
+			}
+
+			$this->layout->title = 'Torneo';
+			$this->layout->content = View::make('admin.tournament')->with('tournament', $tournament);
+		}
+		else
+		{
+			$this->layout->title = 'Torneos';
+			$this->layout->content = View::make('admin.tournaments')->with('tournaments', Tournament::all());
+		}
+	}
+
+	public function post_tournament()
+	{
+		$id = Input::get('id');
+		$tournament = null;
+
+		if ( $id )
+		{
+			$tournament = Tournament::find((int) $id);
+		}
+		else
+		{
+			$tournament = new Tournament;
+		}
+
+		if ( ! $tournament )
+		{
+			return Response::error('404');
+		}
+
+		$tournament->fill_raw(Input::except('id', '_method'));
+		$tournament->save();
+
+		return Redirect::to('admin/tournament/' . $tournament->id);
+	}
+
 	public function get_fixAllCharactersClanSkills()
 	{
 		$clans = Clan::all();
