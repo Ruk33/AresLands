@@ -557,7 +557,9 @@ class Tournament extends Base_Model
 
 			foreach ( $characters as $character )
 			{
-				foreach ( $character->get_non_clan_skills()->get() as $characterSkill )
+				$characterSkills = $character->get_non_clan_skills()->select(array('character_skills.*'))->get();
+
+				foreach ( $characterSkills as $characterSkill )
 				{
 					$character->remove_buff($characterSkill);
 				}
