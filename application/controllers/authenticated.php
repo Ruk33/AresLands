@@ -174,7 +174,7 @@ class Authenticated_Controller extends Base_Controller
 	public function get_allTournaments()
 	{
 		$this->layout->title = 'Torneos';
-		$this->layout->content = View::make('authenticated.allTournaments')->with('tournaments', Tournament::all());
+		$this->layout->content = View::make('authenticated.alltournaments')->with('tournaments', Tournament::all());
 	}
 
 	public function get_tournaments($tournamentId = 0)
