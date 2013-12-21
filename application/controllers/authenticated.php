@@ -189,6 +189,11 @@ class Authenticated_Controller extends Base_Controller
 		if ( $tournamentId )
 		{
 			$tournament = Tournament::find((int) $tournamentId);
+
+			if ( ! $tournament )
+			{
+				return Response::error('404');
+			}
 		}
 		else
 		{
@@ -210,11 +215,6 @@ class Authenticated_Controller extends Base_Controller
 					$tournament = Tournament::get_last()->first();
 				}
 			}
-		}
-
-		if ( ! $tournament )
-		{
-			return Response::error('404');
 		}
 
 		$canReclaimMvpReward = $tournament->can_reclaim_mvp_reward($character);
