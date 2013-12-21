@@ -27,6 +27,95 @@ class Message extends Base_Model
 		return $this->belongs_to('Character', 'sender_id');
 	}
 
+	public static function tournament_disquialify(Character $character)
+	{
+		$message = new Message();
+
+		$message->sender_id = $character->id;
+		$message->receiver_id = $character->id;
+
+		$message->subject = 'Tu grupo ha sido descalificado del torneo';
+		$message->content = 'Tu grupo ha sido descalificado del torneo por tener demasiadas derrotas.';
+		$message->unread = true;
+		$message->date = time();
+		$message->type = 'received';
+
+		$message->save();
+	}
+
+	public static function tournament_mvp_reward(Character $character, $rewards)
+	{
+		$message = new Message();
+
+		$message->sender_id = $character->id;
+		$message->receiver_id = $character->id;
+
+		$message->subject = 'Recompensa por MVP en torneo';
+		
+		$message->content = '¡Felicitaciones por ser el MVP del torneo!. Se te ha recompensado con:';
+		$message->content .= '<ul>';
+
+		foreach ( $rewards as $reward )
+		{
+			if ( $reward['name'] == 'Monedas' )
+			{
+				$coins = Item::get_divided_coins((int) $reward['amount']);
+				$reward['amount'] = $coins['text'];
+			}
+			$message->content .= '<li>' . $reward['amount'] . ' ' . $reward['name'] . '</li>';
+		}
+
+		$message->content .= '</ul>';
+
+		$message->unread = true;
+		$message->date = time();
+		$message->type = 'received';
+
+		$message->is_special = true;
+
+		$message->save();
+	}
+
+	public static function tournament_clan_lider_reward(Character $character, Item $reward, $amount)
+	{
+		$message = new Message();
+
+		$message->sender_id = $character->id;
+		$message->receiver_id = $character->id;
+
+		$message->subject = 'Recompensa por ganar el torneo';
+		$message->content = '¡Felicitaciones lider!. Su grupo ha demostrado ser el mejor en este torneo, y por ello, se le ha recompensado con: ' . $amount . ' ' . $reward->name;
+
+		$message->unread = true;
+		$message->date = time();
+		$message->type = 'received';
+
+		$message->is_special = true;
+
+		$message->save();
+	}
+
+	public static function tournament_coin_reward(Character $character, $amount)
+	{
+		$message = new Message();
+
+		$message->sender_id = $character->id;
+		$message->receiver_id = $character->id;
+
+		$message->subject = 'Recompensa por tu desempeño en el torneo';
+
+		$coins = Item::get_divided_coins($amount);
+		$message->content = 'Has batallado valiente y ferozmente en el campo de batalla. Estas ' . $coins['text'] . ' monedas son para ti.';
+
+		$message->unread = true;
+		$message->date = time();
+		$message->type = 'received';
+
+		$message->is_special = true;
+
+		$message->save();
+	}
+
 	public static function activity_bar_reward(Character $character, $rewards)
 	{
 		$message = new Message();

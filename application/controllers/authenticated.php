@@ -170,6 +170,132 @@ class Authenticated_Controller extends Base_Controller
 		->with('exploringTime', $exploringTime)
 		->with('blockedNpcs', $blockedNpcs);
 	}
+
+	public function get_allTournaments()
+	{
+		$this->layout->title = 'Torneos';
+		$this->layout->content = View::make('authenticated.allTournaments')->with('tournaments', Tournament::all());
+	}
+
+	public function get_tournaments($tournamentId = 0)
+	{
+		$tournament = null;
+		$canRegisterClan = false;
+		$canUnRegisterClan = false;
+		$canReclaimMvpReward = false;
+
+		$character = Character::get_character_of_logged_user(array('id', 'clan_id'));
+
+		if ( $tournamentId )
+		{
+			$tournament = Tournament::find((int) $tournamentId);
+		}
+		else
+		{
+			if ( Tournament::is_active() )
+			{
+				$tournament = Tournament::get_active()->first();
+			}
+			else
+			{
+				if ( Tournament::is_upcoming() )
+				{
+					$tournament = Tournament::get_upcoming()->first();
+
+					$canRegisterClan = $tournament->can_register_clan($character);
+					$canUnRegisterClan = $tournament->can_unregister_clan($character);
+				}
+				else
+				{
+					$tournament = Tournament::get_last()->first();
+				}
+			}
+		}
+
+		if ( ! $tournament )
+		{
+			return Response::error('404');
+		}
+
+		$canReclaimMvpReward = $tournament->can_reclaim_mvp_reward($character);
+		$canReclaimClanLiderReward = $tournament->can_reclaim_clan_lider_reward($character);
+
+		$this->layout->title = 'Torneos';
+		$this->layout->content = View::make('authenticated.tournaments')
+									 ->with('tournament', $tournament)
+									 ->with('canRegisterClan', $canRegisterClan)
+									 ->with('canUnRegisterClan', $canUnRegisterClan)
+									 ->with('canReclaimMvpReward', $canReclaimMvpReward)
+									 ->with('canReclaimClanLiderReward', $canReclaimClanLiderReward);
+	}
+
+	public function get_registerClanInTournament($tournament)
+	{
+		$tournament = Tournament::find((int) $tournament);
+
+		if ( $tournament )
+		{
+			$character = Character::get_character_of_logged_user(array('id', 'clan_id'));
+
+			if ( $tournament->can_register_clan($character) )
+			{
+				$tournament->register_clan($character->clan);
+			}
+		}
+
+		return Redirect::to('authenticated/tournaments');
+	}
+
+	public function get_unregisterClanFromTournament($tournament)
+	{
+		$tournament = Tournament::find((int) $tournament);
+
+		if ( $tournament )
+		{
+			$character = Character::get_character_of_logged_user(array('id', 'clan_id'));
+
+			if ( $tournament->can_unregister_clan($character) )
+			{
+				$tournament->unregister_clan($character->clan);
+			}
+		}
+
+		return Redirect::to('authenticated/tournaments');
+	}
+
+	public function get_claimTournamentMvpReward($tournament)
+	{
+		$tournament = Tournament::find((int) $tournament);
+
+		if ( $tournament )
+		{
+			$character = Character::get_character_of_logged_user(array('id', 'clan_id'));
+
+			if ( $tournament->can_reclaim_mvp_reward($character) )
+			{
+				$tournament->give_mvp_reward_and_send_message();
+			}
+		}
+
+		return Redirect::to('authenticated/tournaments');
+	}
+
+	public function get_claimTournamentClanLeaderReward($tournament)
+	{
+		$tournament = Tournament::find((int) $tournament);
+
+		if ( $tournament )
+		{
+			$character = Character::get_character_of_logged_user(array('id', 'clan_id'));
+
+			if ( $tournament->can_reclaim_clan_lider_reward($character) )
+			{
+				$tournament->give_clan_leader_reward_and_send_message();
+			}
+		}
+
+		return Redirect::to('authenticated/tournaments');
+	}
 	
 	public function get_claimOrb($orbId = 0)
 	{
@@ -732,7 +858,17 @@ class Authenticated_Controller extends Base_Controller
 	public function get_leaveFromClan()
 	{
 		$character = Character::get_character_of_logged_user(array('id', 'clan_id'));
-		
+
+		if ( Tournament::is_active() && $character->clan_id )
+		{
+			$tournament = Tournament::get_active()->first();
+
+			if ( $tournament->is_clan_registered($clan) )
+			{
+				return Redirect::to('authenticated/index/')->with('error', 'No puedes salir del grupo cuando el torneo está activo.');
+			}
+		}
+
 		$character->leave_clan();		
 
 		return Redirect::to('authenticated/clan/');
@@ -755,6 +891,16 @@ class Authenticated_Controller extends Base_Controller
 			 */
 			if ( $clan->members()->count() == 1 )
 			{
+				if ( Tournament::is_active() )
+				{
+					$tournament = Tournament::get_active()->first();
+
+					if ( $tournament->is_clan_registered($clan) )
+					{
+						return Redirect::to('authenticated/index/')->with('error', 'No puedes borrar el grupo cuando el torneo está activo.');
+					}
+				}
+
 				$character->clan_id = 0;
 				$character->save();
 
@@ -798,6 +944,19 @@ class Authenticated_Controller extends Base_Controller
 					 */
 					if ( $member )
 					{
+						/*
+						 *	Verificamos que no haya torneo activo
+						 */
+						if ( Tournament::is_active() )
+						{
+							$tournament = Tournament::get_active()->first();
+
+							if ( $tournament->is_clan_registered($clan) )
+							{
+								return Redirect::to('authenticated/index/')->with('error', 'No puedes expulsar a un miembro del grupo cuando el torneo esta activo.');
+							}
+						}
+
 						/*
 						 *	Finalmente, lo sacamos del clan
 						 */
@@ -878,6 +1037,20 @@ class Authenticated_Controller extends Base_Controller
 
 					if ( $characterToAccept->clan_id == 0 )
 					{
+						/*
+						 *	Antes de aceptar, verificamos si hay
+						 *	torneo activo
+						 */
+						if ( Tournament::is_active() )
+						{
+							$tournament = Tournament::get_active()->first();
+
+							if ( $tournament->is_clan_registered($clan) )
+							{
+								return Redirect::to('authenticated/index/')->with('error', 'No puedes aceptar peticiones cuando el torneo esta activo.');
+							}
+						}
+
 						/*
 						 *	Todo bien, así que lo aceptamos
 						 *	en el clan y borramos todas sus peticiones
@@ -1213,21 +1386,7 @@ class Authenticated_Controller extends Base_Controller
 
 	public function get_character($characterName = '')
 	{
-		$characterToSee = ( $characterName ) ? Character::where('name', '=', $characterName)->select(array(
-			'id', 
-			'name', 
-			'level', 
-			'clan_id', 
-			'race', 
-			'gender', 
-			'zone_id',
-			'stat_strength',
-			'stat_dexterity',
-			'stat_resistance',
-			'stat_magic',
-			'stat_magic_skill',
-			'stat_magic_resistance',
-		))->first() : false;
+		$characterToSee = ( $characterName ) ? Character::where('name', '=', $characterName)->first() : false;
 
 		if ( $characterToSee )
 		{
@@ -1258,7 +1417,7 @@ class Authenticated_Controller extends Base_Controller
 			 */
 			$orbs = $characterToSee->orbs()->select(array('id', 'name', 'description'))->get();
 			
-			$character = Character::get_character_of_logged_user(array('id', 'name', 'zone_id', 'clan_id'));
+			$character = Character::get_character_of_logged_user(array('id', 'name', 'zone_id', 'clan_id', 'registered_in_tournament'));
 			$skills = array();
 			
 			if ( $character->is_admin() )
@@ -1381,7 +1540,6 @@ class Authenticated_Controller extends Base_Controller
 			}
 			
 			$character = Character::get_character_of_logged_user();
-			
 			$target = Character::where('name', '=', $characterName)->where('zone_id', '=', $character->zone_id)->first();
 
 			/*
@@ -1438,7 +1596,7 @@ class Authenticated_Controller extends Base_Controller
 
 	public function post_battle()
 	{
-		$character = Character::get_character_of_logged_user(array('id', 'zone_id', 'name'));
+		$character = Character::get_character_of_logged_user(array('id', 'zone_id', 'name', 'clan_id', 'registered_in_tournament'));
 		$searchMethod = Input::get('search_method');
 
 		$valuesToTake = array(
@@ -1455,6 +1613,7 @@ class Authenticated_Controller extends Base_Controller
 			'stat_magic',
 			'stat_magic_skill',
 			'stat_magic_resistance',
+			'registered_in_tournament'
 		);
 
 		$characterFinded = null;
@@ -1462,7 +1621,12 @@ class Authenticated_Controller extends Base_Controller
 		switch ( $searchMethod ) 
 		{
 			case 'name':
-				$characterFinded = Character::where('name', '=', Input::get('character_name'))->where('name', '<>', $character->name)->where('is_traveling', '=', false)->where('zone_id', '=', $character->zone_id)->select($valuesToTake)->first();
+				$characterFinded = Character::where('name', '=', Input::get('character_name'))
+											->where('registered_in_tournament', '=', $character->registered_in_tournament)
+											->where('name', '<>', $character->name)
+											->where('is_traveling', '=', false)
+											->where('zone_id', '=', $character->zone_id)
+											->select($valuesToTake);
 				break;
 
 			case 'random':
@@ -1507,12 +1671,35 @@ class Authenticated_Controller extends Base_Controller
 					$level = 1;
 				}
 
-				$characterFinded = Character::where_in('race', $race)->where('level', $operation, $level)->where('name', '<>', $character->name)->where('is_traveling', '=', false)->where('zone_id', '=', $character->zone_id)->select($valuesToTake)->order_by(DB::raw('RAND()'))->first();
+				$characterFinded = Character::where_in('race', $race)
+											->where('registered_in_tournament', '=', $character->registered_in_tournament)
+											->where('level', $operation, $level)
+											->where('name', '<>', $character->name)
+											->where('is_traveling', '=', false)
+											->where('zone_id', '=', $character->zone_id)
+											->select($valuesToTake)
+											->order_by(DB::raw('RAND()'));
 				break;
 
 			case 'group':
-				$characterFinded = Character::where('clan_id', '=', Input::get('clan'))->where('name', '<>', $character->name)->where('is_traveling', '=', false)->where('zone_id', '=', $character->zone_id)->select($valuesToTake)->order_by(DB::raw('RAND()'))->first();
+				$characterFinded = Character::where('clan_id', '=', Input::get('clan'))
+											->where('name', '<>', $character->name)
+											->where('is_traveling', '=', false)
+											->where('zone_id', '=', $character->zone_id)
+											->select($valuesToTake)
+											->order_by(DB::raw('RAND()'));
 				break;
+		}
+
+		// Evitamos que al personaje le toque alguien de su clan
+		// en caso de haber torneo activo (y que el personaje este anotado)
+		if ( Tournament::is_active() && $character->registered_in_tournament )
+		{
+			$characterFinded = $characterFinded->where('clan_id', '<>', $character->clan_id)->first();
+		}
+		else
+		{
+			$characterFinded = $characterFinded->first();
 		}
 
 		/*

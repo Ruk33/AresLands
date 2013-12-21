@@ -87,6 +87,24 @@
 
 		<div id="wrap">
 			<div class="container">
+				<!-- Torneo -->
+				@if ( Tournament::is_active() )
+					<div class="pull-left alert alert-error">
+						<?php $tournament = Tournament::get_active()->first(); ?>
+						<span>Torneo "{{ $tournament->name }}" finaliza en </span>
+						<span class='timer' data-endtime='{{ $tournament->ends_at - time() }}'></span>
+					</div>
+				@else
+					@if ( Tournament::is_upcoming() )
+						<?php $tournament = Tournament::get_upcoming()->first(); ?>
+						<div class="pull-left alert alert-error">
+							<span>El torneo "{{ $tournament->name }}" comienza en </span>
+							<span class='timer' data-endtime='{{ $tournament->starts_at - time() }}'></span>
+						</div>
+					@endif
+				@endif
+				<!-- End Torneo -->
+
 				<a href="{{ URL::base() }}"><div class="logo"></div></a>
 				<div class="row-fluid col-wrap">
 					<div class="span2 menu col" style="width: 176px; ">
@@ -192,6 +210,7 @@
 								<li><a href="{{ URL::to('authenticated/characters') }}" class="menu menu-characters"></a></li>
 								<li><a href="{{ URL::to('authenticated/ranking') }}" class="menu menu-ranking"></a></li>
 								<li><a href="{{ URL::to('authenticated/orbs') }}" class="menu menu-orbs"></a></li>
+								<li><a href="{{ URL::to('authenticated/tournaments') }}" class="menu menu-tournaments"></a></li>
 								<li><a href="http://ironfist.com.ar/forums" class="menu menu-forum" target="_blank"></a></li>
 								<li><a href="{{ URL::to('authenticated/logout') }}" class="menu menu-logout"></a></li>
 							@else

@@ -242,11 +242,49 @@ class Character extends Base_Model
 						return false;
 					}
 				}
-			}			
+			}
+
+			$tournament = Tournament::get_active()->first();
+			$healPotionCounter = 0;
+			$otherPotionCounter = 0;
+
+			if ( $tournament )
+			{
+				foreach ( $skills as $skill )
+				{
+					// Si hay un torneo activo y el mismo no acepta pociones...
+					if ( ! $tournament->allow_potions && $skill->type != 'heal' )
+					{
+						return false;
+					}
+				}
+			}
 			
 			foreach ( $skills as $skill )
 			{
+				if ( $skill->type == 'heal' )
+				{
+					$healPotionCounter++;
+				}
+				else
+				{
+					$otherPotionCounter++;
+				}
+
 				$skill->cast($this, $this, $amount);
+			}
+
+			if ( $tournament )
+			{
+				if ( $healPotionCounter )
+				{
+					$tournament->update_life_potions_counter($healPotionCounter);
+				}
+
+				if ( $otherPotionCounter )
+				{
+					$tournament->update_potions_counter($otherPotionCounter);
+				}
 			}
 		}
 		
@@ -291,7 +329,14 @@ class Character extends Base_Model
 		
 		if ( ! $this->use_consumable($item, $amount) )
 		{
-			return 'Ese objeto no es de tipo consumible o ya alcanzaste el límite de habilidades activas.';
+			if ( Tournament::is_active() )
+			{
+				return 'El torneo no acepta pociones que no sean unicamente de vida.';
+			}
+			else
+			{
+				return 'Ese objeto no es de tipo consumible o ya alcanzaste el límite de habilidades activas.';
+			}
 		}
 		
 		$consumable->count -= $amount;
@@ -926,6 +971,57 @@ class Character extends Base_Model
 	}
 
 	/**
+	 * Verificamos si un personaje puede
+	 * obtener una cierca cantidad de un objeto
+	 * @param  integer/Item  $item   Id del item o instancia de Item
+	 * @param  integer       $amount Cantidad del objeto
+	 * @return boolean
+	 */
+	public function can_take_item($item, $amount = 1)
+	{
+		if ( $amount < 0 )
+		{
+			return false;
+		}
+
+		if ( ! $item instanceof Item )
+		{
+			$item = Item::select(array('id', 'stackable'))->find((int) $item);
+			
+			if ( ! $item )
+			{
+				return false;
+			}
+		}
+
+		if ( $item->id == Config::get('game.coin_id') || $item->id == Config::get('game.xp_item_id') )
+		{
+			return true;
+		}
+
+		if ( $item->stackable )
+		{
+			$characterItem = $this->items()->where('item_id', '=', $item->id)->get();
+			
+			if ( $characterItem )
+			{
+				return true;
+			}
+			else
+			{
+				// Si tiene espacio true, si no false
+				return $this->empty_slot();
+			}
+		}
+		else
+		{
+			return $this->get_available_slots() >= $amount;
+		}
+
+		return false;
+	}
+
+	/**
 	 *	Agregamos un objeto al personaje.
 	 *
 	 *	@param <mixed> $item Id del objeto o instancia de Item
@@ -1091,7 +1187,20 @@ class Character extends Base_Model
 
 	public function can_be_attacked(Character $attacker)
 	{
-		return $this->has_protection($attacker) == false;
+		if ( Tournament::is_active() )
+		{
+			if ( $this->registered_in_tournament != $attacker->registered_in_tournament )
+			{
+				return false;
+			}
+
+			if ( $this->clan_id == $attacker->clan_id )
+			{
+				return false;
+			}
+		}
+
+		return $this->has_protection($attacker) == false && $attacker->zone_id == $this->zone_id && $attacker->id != $this->id;
 	}
 
 	public function after_battle()

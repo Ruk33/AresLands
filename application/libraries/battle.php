@@ -507,7 +507,12 @@ class Battle
 			}
 		}
 		
-		$this->give_experience();
+		// Solo se da experiencia si no hay torneo activo
+		if ( ! Tournament::is_active() )
+		{
+			$this->give_experience();
+		}
+
 		$this->give_rewards();
 		$this->check_for_orbs();
 		$this->check_for_protection();
@@ -537,7 +542,7 @@ class Battle
 		// Disparamos el evento de batalla
 		if ( $attackedStats['is_player'] )
 		{
-			Event::fire('battle', array($this->_attacker, $this->_attacked));
+			Event::fire('battle', array($this->_attacker, $this->_attacked, $this->winner));
 		}
 		else
 		{

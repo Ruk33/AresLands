@@ -308,7 +308,7 @@
 			}
 		?>
 		
-		@if ( $character->id != $characterToSee->id && $characterZone == $characterToSeeZone )
+		@if ( $characterToSee->can_be_attacked($character) )
 			<h2 style="background-image: none;">¿Te atreves a batallar?</h2>
 			@if ( $character->is_in_clan_of($characterToSee) )
 				    <p class="text-warning">
@@ -316,6 +316,11 @@
 				    	<br>
 				    	{{ $characterToSee->name }} pertenece al mismo grupo en el que estás.
 				    </p>
+			@endif
+
+			@if ( Tournament::is_active() )
+				<p class="positive">Victoria: {{ Tournament::get_victory_score($character, $characterToSee) }}</p>
+				<p class="negative">Derrota: {{ Tournament::get_defeat_score($character, $characterToSee) }}</p>
 			@endif
 			
 			{{ Form::open(URL::to('authenticated/toBattle')) }}

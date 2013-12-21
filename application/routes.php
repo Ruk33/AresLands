@@ -167,29 +167,43 @@ Event::listen('unequipItem', function(CharacterItem $characterItem)
 	}
 });
 
-Event::listen('battle', function($character_one, $character_two)
+Event::listen('battle', function($character_one, $character_two, $winner = null)
 {
-	$character = Character::get_character_of_logged_user();
+	//$character = Character::get_character_of_logged_user();
+	$character = $character_one;
+
+	if ( Tournament::is_active() )
+	{
+		if ( $winner )
+		{
+			$tournament = Tournament::get_active()->select(array('id'))->first();
+			$score = TournamentCharacterScore::get_score($tournament->id, $character_one->id)->first();
+			
+			if ( $character_one->id == $winner->id )
+			{
+				$score->register_victory_and_update_clan_score($tournament->id, $character_one, $character_two);
+			}
+			else
+			{
+				$score->register_lose_and_update_clan_score($tournament->id, $character_one, $character_two);
+			}
+
+			$tournament->update_battle_counter();
+		}
+	}
 
 	/*
-	 *	Nos aseguramos de que el personaje
-	 *	exista
+	 *	No nos olvidamos de trabajar con los
+	 *	triggers que tengan de evento 'battle'
 	 */
-	if ( $character )
-	{
-		/*
-		 *	No nos olvidamos de trabajar con los
-		 *	triggers que tengan de evento 'battle'
-		 */
-		$characterTriggers = $character->triggers()->where('event', '=', 'battle')->select(array('id', 'class_name'))->get();
-		$className = null;
+	$characterTriggers = $character->triggers()->where('event', '=', 'battle')->select(array('id', 'class_name'))->get();
+	$className = null;
 
-		foreach ($characterTriggers as $characterTrigger) {
-			$className = $characterTrigger->class_name;
-			if ( $className::onBattle($character_one, $character_two) )
-			{
-				$characterTrigger->delete();
-			}
+	foreach ($characterTriggers as $characterTrigger) {
+		$className = $characterTrigger->class_name;
+		if ( $className::onBattle($character_one, $character_two) )
+		{
+			$characterTrigger->delete();
 		}
 	}
 });
@@ -390,6 +404,8 @@ Route::filter('before', function() {
 			return Response::error('503');
 		}
 	}
+
+	Tournament::check_for_finished();
 	
 	$character = null;
 

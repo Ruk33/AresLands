@@ -59,6 +59,36 @@ body {
 	font-family: "Roboto Slab", Georgia, Verdana, Arial;
 }
 
+.tournament-table {
+	box-shadow: 0px 0px 5px #000;
+	background-color: #F0D7C1;
+	color: #886230;
+	border: 1px solid #B18760;
+}
+
+.tournament-table td {
+	border: 1px dashed #CCB497;
+	padding: 5px;
+}
+
+.tournament-table tbody tr:hover {
+	background-color: #F1E4D6;
+}
+
+.tournament-table thead tr {
+	background-color: #836142;
+	color: white;
+	text-shadow: 0 0 5px black;
+}
+
+.tournament-table a {
+	color: #FF5C00 !important;
+}
+
+.tournament-table a:hover {
+	color: #FF8C00 !important;
+}
+
 .level-very-low {
 	font-weight: bold;
 	text-shadow: none !important;
@@ -227,100 +257,105 @@ a:hover {
 }
 
 .menu {
-    background-image: url("/img/menu/menu-sprite.jpg");
+    background-image: url("/img/menu/menu-spritesheet.png");
     background-repeat: no-repeat;
-    background-position: 0 -999px;
     display: block;
 }
 
 .menu-battle {
     width: 177px;
     height: 36px;
-    background-position: 0 0;
+    background-position: -5px -5px;
 }
 
 .menu-character {
     width: 177px;
     height: 36px;
-    background-position: 0 -36px;
+    background-position: -5px -51px;
 }
 
 .menu-characters {
     width: 177px;
     height: 36px;
-    background-position: 0 -72px;
+    background-position: -5px -97px;
 }
 
 .menu-explore {
     width: 177px;
     height: 36px;
-    background-position: 0 -108px;
+    background-position: -5px -143px;
 }
 
 .menu-forum {
     width: 177px;
     height: 36px;
-    background-position: 0 -144px;
+    background-position: -5px -189px;
 }
 
 .menu-group {
     width: 177px;
     height: 36px;
-    background-position: 0 -180px;
+    background-position: -5px -235px;
 }
 
 .menu-guide {
     width: 177px;
     height: 36px;
-    background-position: 0 -216px;
+    background-position: -5px -281px;
 }
 
-.menu-start {
+.menu-inicio {
     width: 177px;
     height: 36px;
-    background-position: 0 -252px;
+    background-position: -5px -327px;
 }
 
 .menu-logout {
     width: 177px;
     height: 36px;
-    background-position: 0 -288px;
+    background-position: -192px -5px;
 }
 
 .menu-messages {
     width: 177px;
     height: 36px;
-    background-position: 0 -324px;
+    background-position: -192px -51px;
 }
 
 .menu-orbs {
     width: 177px;
     height: 36px;
-    background-position: 0 -360px;
+    background-position: -192px -97px;
 }
 
 .menu-ranking {
     width: 177px;
     height: 36px;
-    background-position: 0 -396px;
+    background-position: -192px -143px;
 }
 
 .menu-thanks {
     width: 177px;
     height: 36px;
-    background-position: 0 -432px;
+    background-position: -192px -189px;
+}
+
+.menu-tournaments {
+    width: 177px;
+    height: 36px;
+    background-position: -192px -235px;
 }
 
 .menu-trade {
     width: 177px;
     height: 36px;
-    background-position: 0 -468px;
+    background-position: -192px -281px;
 }
 
 .menu-travel {
     width: 177px;
     height: 36px;
-    background-position: 0 -504px;
+    background-position: -192px -327px;
 }
 
 .coin {
