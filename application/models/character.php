@@ -1194,7 +1194,7 @@ class Character extends Base_Model
 				return false;
 			}
 
-			if ( $this->clan_id == $attacker->clan_id )
+			if ( $this->clan_id != 0 && $this->clan_id == $attacker->clan_id )
 			{
 				return false;
 			}

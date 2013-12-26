@@ -405,6 +405,9 @@ Route::filter('before', function() {
 		}
 	}
 	
+	$time = time();
+	$isAuth = Auth::check();
+	
 	// Evitamos que estas acciones se ejecutan
 	// si solamente necesitamos algo del chat
 	if ( substr(Request::uri(), 0, 4) != 'chat' )
@@ -412,9 +415,7 @@ Route::filter('before', function() {
 		Tournament::check_for_finished();
 		Tournament::check_for_potions();
 
-		$character = null;
-
-		if ( Auth::check() )
+		if ( $isAuth )
 		{
 			/*
 			 *	Obtenemos al personaje logueado
@@ -422,7 +423,6 @@ Route::filter('before', function() {
 			$character = Character::get_character_of_logged_user(array(
 				'id',
 				'name',
-				'last_activity_time',
 				'current_life',
 				'max_life',
 				'last_regeneration_time',
@@ -434,16 +434,6 @@ Route::filter('before', function() {
 
 			if ( $character )
 			{
-				$time = time();
-
-				/*
-				 *	Actualizamos solamente si hay una diferencia de 5 minutos
-				 */
-				if ( ! $character->last_activity_time || $time - $character->last_activity_time >= 300 )
-				{
-					$character->last_activity_time = $time;
-				}
-
 				/*
 				 *	Verificamos si es necesario
 				 *	regenerar puntos de vida
@@ -485,6 +475,22 @@ Route::filter('before', function() {
 				$character->save();
 			}
 		}
+	}
+	
+	if ( Auth::check() )
+	{
+		/*
+		 * No importa si la consulta fue desde el chat,
+		 * significa que el usuario todavía esta.
+		 */
+		$character = Character::get_character_of_logged_user(array('last_activity_time'));
+		
+		if ( ! $character->last_activity_time || $time - $character->last_activity_time >= 300 )
+		{
+			$character->last_activity_time = $time;
+		}
+		
+		$character->save();
 	}
 });
 
