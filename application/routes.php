@@ -404,6 +404,13 @@ Route::filter('before', function() {
 			return Response::error('503');
 		}
 	}
+	
+	// Evitamos que estas acciones se ejecutan
+	// si solamente necesitamos algo del chat
+	if ( substr(Request::uri(), 0, 4) == 'chat' )
+	{
+		return;
+	}
 
 	Tournament::check_for_finished();
 	Tournament::check_for_potions();

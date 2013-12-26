@@ -43,10 +43,15 @@
 				<td>Nombre del torneo</td>
 				<td>{{ $tournament->name }}</td>
 			</tr>
+			
+			<tr>
+				<td>Ganador</td>
+				<td>{{ ( $tournament->clan_winner_id ) ? $tournament->winner->get_link() : 'Nadie' }}</td>
+			</tr>
 
 			<tr>
 				<td>Permite el uso de pociones</td>
-				<td>{{ ($tournament->allow_potions) ? 'Si' : 'No' }}</td>
+				<td>{{ ( $tournament->allow_potions ) ? 'Si' : 'No' }}</td>
 			</tr>
 
 			<tr>
