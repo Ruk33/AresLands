@@ -407,85 +407,83 @@ Route::filter('before', function() {
 	
 	// Evitamos que estas acciones se ejecutan
 	// si solamente necesitamos algo del chat
-	if ( substr(Request::uri(), 0, 4) == 'chat' )
+	if ( substr(Request::uri(), 0, 4) != 'chat' )
 	{
-		return;
-	}
+		Tournament::check_for_finished();
+		Tournament::check_for_potions();
 
-	Tournament::check_for_finished();
-	Tournament::check_for_potions();
-	
-	$character = null;
+		$character = null;
 
-	if ( Auth::check() )
-	{
-		/*
-		 *	Obtenemos al personaje logueado
-		 */
-		$character = Character::get_character_of_logged_user(array(
-			'id',
-			'name',
-			'last_activity_time',
-			'current_life',
-			'max_life',
-			'last_regeneration_time',
-			'xp',
-			'xp_next_level',
-			'level',
-			'points_to_change',
-		));
-
-		if ( $character )
+		if ( Auth::check() )
 		{
-			$time = time();
-
 			/*
-			 *	Actualizamos solamente si hay una diferencia de 5 minutos
+			 *	Obtenemos al personaje logueado
 			 */
-			if ( ! $character->last_activity_time || $time - $character->last_activity_time >= 300 )
-			{
-				$character->last_activity_time = $time;
-			}
+			$character = Character::get_character_of_logged_user(array(
+				'id',
+				'name',
+				'last_activity_time',
+				'current_life',
+				'max_life',
+				'last_regeneration_time',
+				'xp',
+				'xp_next_level',
+				'level',
+				'points_to_change',
+			));
 
-			/*
-			 *	Verificamos si es necesario
-			 *	regenerar puntos de vida
-			 */
-			if ( $character->current_life < $character->max_life )
+			if ( $character )
 			{
-				if ( ! $character->last_regeneration_time )
+				$time = time();
+
+				/*
+				 *	Actualizamos solamente si hay una diferencia de 5 minutos
+				 */
+				if ( ! $character->last_activity_time || $time - $character->last_activity_time >= 300 )
 				{
-					$character->last_regeneration_time = $time;
+					$character->last_activity_time = $time;
 				}
 
-				$regeneration = (0.05 + 0.01) * ($time - $character->last_regeneration_time);
-
-				if ( $regeneration > 0 )
+				/*
+				 *	Verificamos si es necesario
+				 *	regenerar puntos de vida
+				 */
+				if ( $character->current_life < $character->max_life )
 				{
-					$character->current_life += $regeneration;
-					$character->last_regeneration_time = $time;
+					if ( ! $character->last_regeneration_time )
+					{
+						$character->last_regeneration_time = $time;
+					}
+
+					$regeneration = (0.05 + 0.01) * ($time - $character->last_regeneration_time);
+
+					if ( $regeneration > 0 )
+					{
+						$character->current_life += $regeneration;
+						$character->last_regeneration_time = $time;
+					}
 				}
-			}
-			else
-			{
-				// Evitamos que si el usuario tiene una regeneracion
-				// muy antigua y luego recibe daño que sea curado
-				// completamente
-				$character->last_regeneration_time = null;
-			}
+				else
+				{
+					// Evitamos que si el usuario tiene una regeneracion
+					// muy antigua y luego recibe daño que sea curado
+					// completamente
+					$character->last_regeneration_time = null;
+				}
 
-			/*
-			 *	Además vamos a actualizar tiempos
-			 *	de sus actividades
-			 */
-			$characterActivities = $character->activities()->where('end_time', '<=', $time)->get();
+				/*
+				 *	Además vamos a actualizar tiempos
+				 *	de sus actividades
+				 */
+				$characterActivities = $character->activities()->where('end_time', '<=', $time)->get();
 
-			foreach ( $characterActivities as $characterActivity )
-			{
-				$characterActivity->update_time();
+				foreach ( $characterActivities as $characterActivity )
+				{
+					$characterActivity->update_time();
+				}
+
+				$character->save();
 			}
-			
-			$character->save();
 		}
 	}
 });
