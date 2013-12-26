@@ -483,7 +483,7 @@ Route::filter('before', function() {
 		 * No importa si la consulta fue desde el chat,
 		 * significa que el usuario todavía esta.
 		 */
-		$character = Character::get_character_of_logged_user(array('last_activity_time'));
+		$character = Character::get_character_of_logged_user(array('id', 'last_activity_time'));
 		
 		if ( ! $character->last_activity_time || $time - $character->last_activity_time >= 300 )
 		{
