@@ -599,10 +599,10 @@ class Battle
 		// Actualizamos las vidas
 		if ( $this->_pair )
 		{
-			$this->_pair->current_life = $attackedStats['damage_done'] / 2;
+			$this->_pair->current_life -= $attackedStats['damage_done'] / 2;
 			$this->_pair->save();
 			
-			$this->_attacker->current_life = $attackedStats['damage_done'] / 2;
+			$this->_attacker->current_life -= $attackedStats['damage_done'] / 2;
 			$this->_attacker->save();
 		}
 		else
