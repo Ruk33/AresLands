@@ -110,7 +110,7 @@ class TournamentCharacterScore extends Base_Model
 	 */
 	public function register_victory_against(Character $character)
 	{
-		$this->win_score += Torunament::get_victory_score($this->character, $character);
+		$this->win_score += Tournament::get_victory_score($this->character, $character);
 		$this->save();
 	}
 
