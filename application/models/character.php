@@ -27,6 +27,57 @@ class Character extends Base_Model
 	);
 
 	/**
+	 * Verificar si personaje puede atacar en pareja
+	 * @return boolean
+	 */
+	public function can_attack_in_pairs()
+	{
+		return $this->can_fight() && $this->clan_id;
+	}
+	
+	/**
+	 * Verificar si dos personajes pueden atacar como pareja
+	 * @param Character $pair
+	 * @return boolean
+	 */
+	public function can_attack_with(Character $pair)
+	{
+		return	$this->can_attack_in_pairs() && 
+				$pair->can_attack_in_pairs() && 
+				$this->clan_id == $pair->clan_id &&
+				$this->id != $pair->id &&
+				$this->zone_id == $pair->zone_id;
+	}
+	
+	/**
+	 * Obtenemos las posibles parejas
+	 * @param array $select Columnas a seleccionar
+	 * @return array
+	 */
+	public function get_pairs($select = array('*'))
+	{
+		$pairs = array();
+		
+		$select = (array) $select + array('id', 'clan_id');
+		
+		$characters = static::select($select)
+							->where('zone_id', '=', $this->zone_id)
+							->where('clan_id', '=', $this->clan_id)
+							->where('id', '<>', $this->id)
+							->get();
+		
+		foreach ( $characters as $pair )
+		{
+			if ( $this->can_attack_with($pair) )
+			{
+				$pairs[] = $pair;
+			}
+		}
+		
+		return $pairs;
+	}
+	
+	/**
 	 * Obtener el precio de un atributo
 	 *
 	 * @param string $stat
@@ -893,14 +944,14 @@ class Character extends Base_Model
 		return $user->character;
 	}
 
-	public function battle_against($target)
+	public function battle_against($target, $pair = null)
 	{
 		if ( ! $target || ! $this )
 		{
 			return;
 		}
 
-		$battle = new Battle($this, $target);
+		$battle = new Battle($this, $target, $pair);
 		return $battle;
 	}
 

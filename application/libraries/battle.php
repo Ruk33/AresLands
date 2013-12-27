@@ -28,6 +28,12 @@ class Battle
 	private $_attackedUnit;
 	
 	/**
+	 * Unidad que es pareja de $_attacker
+	 * @var Eloquent
+	 */
+	private $_pair;
+	
+	/**
 	 *	Ganador de la batalla
 	 * 
 	 * 	@var Eloquent
@@ -320,6 +326,10 @@ class Battle
 	{		
 		if ( $this->_attacked instanceof Character )
 		{
+			if ( $this->_pair )
+			{
+				Message::attack_report($this->_pair, $this->_pair, $this->log->message, $this->winner);
+			}
 			Message::attack_report($this->_attacker, $this->_attacked, $this->log->message, $this->winner);
 			Message::defense_report($this->_attacked, $this->_attacker, $this->log->message, $this->winner);
 		}
@@ -383,9 +393,67 @@ class Battle
 		return $info;
 	}
 	
+	/**
+	 * Obtenemos los stats de una pareja
+	 * @param Eloquent $unit
+	 * @param Eloquent $pair
+	 * @return array
+	 */
+	private static function get_pair_info(Eloquent $unit, Eloquent $pair)
+	{
+		$unitStats = self::get_unit_info($unit);
+		$pairStats = self::get_unit_info($pair);
+		
+		$info = array();
+		
+		$info['name'] = "El equipo de {$unit->name} y {$pair->name}";
+		$info['is_player'] = $unitStats['is_player'];
+		
+		foreach ( $unitStats['stats'] as $stat => $amount )
+		{
+			$info['stats'][$stat] = $amount + $pairStats['stats'][$stat] * 0.7;
+		}
+		
+		$info['is_warrior'] = $unitStats['is_warrior'];
+		$info['current_life'] = $unitStats['current_life'] + $pairStats['current_life'];
+		
+		$info['cd'] = $unitStats['cd'] + $pairStats['cd'];
+		$info['current_cd'] = $info['cd'];
+		
+		$info['min_damage'] = $unitStats['min_damage'] + $pairStats['min_damage'] * 0.5;
+		$info['max_damage'] = $unitStats['max_damage'] + $pairStats['max_damage'] * 0.7;
+		
+		if ( $info['min_damage'] > $info['max_damage'] )
+		{
+			$info['max_damage'] = $info['min_damage'];
+		}
+		
+		$info['min_defense'] = $unitStats['min_defense'] + $pairStats['min_defense'] * 0.5;
+		$info['max_defense'] = $unitStats['max_defense'] + $pairStats['max_defense'] * 0.7;
+		
+		if ( $info['min_defense'] > $info['max_defense'] )
+		{
+			$info['max_defense'] = $info['min_defense'];
+		}
+		
+		// Log
+		$info['initial_life'] = $info['current_life'];
+		$info['damage_done'] = 0;
+		
+		return $info;
+	}
+	
 	private function to_battle()
 	{
-		$attackerStats = self::get_unit_info($this->_attacker);
+		if ( $this->_pair )
+		{
+			$attackerStats = self::get_pair_info($this->_attacker, $this->_pair);
+		}
+		else
+		{
+			$attackerStats = self::get_unit_info($this->_attacker);
+		}
+		
 		$attackedStats = self::get_unit_info($this->_attacked);
 		
 		$attacker;
@@ -529,9 +597,19 @@ class Battle
 		$this->add_message_to_log('Daño realizado por ' . $attackedStats['name'] . ': ' . number_format($attackedStats['damage_done'], 2), true);
 		
 		// Actualizamos las vidas
-
-		$this->_attacker->current_life = $attackerStats['current_life'];
-		$this->_attacker->save();
+		if ( $this->_pair )
+		{
+			$this->_pair->current_life = $attackedStats['damage_done'] / 2;
+			$this->_pair->save();
+			
+			$this->_attacker->current_life = $attackedStats['damage_done'] / 2;
+			$this->_attacker->save();
+		}
+		else
+		{
+			$this->_attacker->current_life = $attackerStats['current_life'];
+			$this->_attacker->save();
+		}
 		
 		if ( $attackedStats['is_player'] )
 		{
@@ -555,12 +633,13 @@ class Battle
 	 * @param Eloquent $attacker
 	 * @param Eloquent $attacked
 	 */
-	public function __construct(Eloquent $attacker, Eloquent $attacked)
+	public function __construct(Eloquent $attacker, Eloquent $attacked, Eloquent $pair = null)
 	{		
 		$this->log = new BattleLog();
 		
 		$this->_attacker = $attacker;
 		$this->_attacked = $attacked;
+		$this->_pair = $pair;
 		
 		$this->to_battle();
 		

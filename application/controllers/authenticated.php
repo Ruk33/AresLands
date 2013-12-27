@@ -1428,6 +1428,15 @@ class Authenticated_Controller extends Base_Controller
 			{
 				$skills = $characterToSee->skills;
 			}
+			
+			// Posibles parejas con las que puede
+			// atacar el personaje
+			$pairs = array();
+			
+			if ( $character->can_attack_in_pairs() )
+			{
+				$pairs = $character->get_pairs();
+			}
 
 			$this->layout->title = $characterToSee->name;
 			$this->layout->content = View::make('authenticated.character')
@@ -1435,7 +1444,8 @@ class Authenticated_Controller extends Base_Controller
 			->with('items', $itemsToView)
 			->with('orbs', $orbs)
 			->with('skills', $skills)
-			->with('characterToSee', $characterToSee);
+			->with('characterToSee', $characterToSee)
+			->with('pairs', $pairs);
 		}
 		else
 		{
@@ -1581,7 +1591,38 @@ class Authenticated_Controller extends Base_Controller
 
 		if ( $character->can_fight() )
 		{
-			$battle = $character->battle_against($target);
+			$pair = ( Input::get('pair') ) ? Character::find((int) Input::get('pair')) : false;
+			if ( $pair )
+			{
+				if ( $character->can_attack_in_pairs() )
+				{
+					if ( $character->can_attack_with($pair) )
+					{
+						if ( $pair->id != $target->id )
+						{
+							$battle = $character->battle_against($target, $pair);
+						}
+						else
+						{
+							return Redirect::to('authenticated/battle');
+						}
+					}
+					else
+					{
+						Session::flash('errorMessage', 'No puedes atacar en pareja con ' . $pair->name);
+						return Redirect::to('authenticated/battle');
+					}
+				}
+				else
+				{
+					Session::flash('errorMessage', 'No puedes atacar en parejas');
+					return Redirect::to('authenticated/battle');
+				}
+			}
+			else
+			{
+				$battle = $character->battle_against($target);
+			}
 		}
 		else
 		{
@@ -1737,14 +1778,24 @@ class Authenticated_Controller extends Base_Controller
 			{
 				$skills = $characterFinded->skills;
 			}
+			
+			// Posibles parejas con las que puede
+			// atacar el personaje
+			$pairs = array();
+			
+			if ( $character->can_attack_in_pairs() )
+			{
+				$pairs = $character->get_pairs();
+			}
 
 			$this->layout->title = $characterFinded->name;
 			$this->layout->content = View::make('authenticated.character')
-			->with('character', Character::get_character_of_logged_user(array('id', 'zone_id', 'clan_id')))
+			->with('character', $character)
 			->with('items', $itemsToView)
 			->with('orbs', $orbs)
 			->with('skills', $skills)
-			->with('characterToSee', $characterFinded);
+			->with('characterToSee', $characterFinded)
+			->with('pairs', $pairs);
 		}
 		else
 		{

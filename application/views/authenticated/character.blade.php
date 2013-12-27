@@ -323,6 +323,17 @@
 				<p class="negative">Derrota: {{ Tournament::get_defeat_score($character, $characterToSee) }}</p>
 			@endif
 			
+			@foreach ( $pairs as $pair )
+				@if ( $pair->id != $characterToSee->id )
+					{{ Form::open(URL::to('authenticated/toBattle')) }}
+						{{ Form::token() }}
+						{{ Form::hidden('pair', $pair->id) }}
+						{{ Form::hidden('name', $characterToSee->name) }}
+						{{ Form::submit('Luchar con la ayuda de ' . $pair->name, array('class' => 'btn btn-link', 'style' => 'color: white; text-shadow: none;')) }}
+					{{ Form::close() }}
+				@endif
+			@endforeach
+			
 			{{ Form::open(URL::to('authenticated/toBattle')) }}
 				{{ Form::token() }}
 				{{ Form::hidden('name', $characterToSee->name) }}
