@@ -233,6 +233,7 @@ class Authenticated_Controller extends Base_Controller
 		})
 		->where('tournament_registered_clans.tournament_id', '=', $tournament->id)
 		->order_by('tournament_clan_scores.win_score', 'desc')
+		->distinct()
 		->select('tournament_registered_clans.*')
 		->get();
 
