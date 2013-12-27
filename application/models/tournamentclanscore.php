@@ -172,7 +172,7 @@ class TournamentClanScore extends Base_Model
 	 */
 	public static function member_is_victorius($tournament, Character $member, Character $defeated)
 	{
-		$score = self::get_from_tournament_clan_rival($tournament, $member->clan_id, $winner->clan_id);
+		$score = self::get_from_tournament_clan_rival($tournament, $member->clan_id, $defeated->clan_id);
 
 		$score->win_score += Tournament::get_victory_score($member, $defeated);
 		$score->save();
