@@ -185,7 +185,7 @@ class Authenticated_Controller extends Base_Controller
 		$canReclaimMvpReward = false;
 		$canReclaimClanLiderReward = false;
 
-		$character = Character::get_character_of_logged_user(array('id', 'clan_id'));
+		$character = Character::get_character_of_logged_user(array('id', 'clan_id', 'clan_permission'));
 
 		if ( $tournamentId )
 		{
@@ -239,7 +239,7 @@ class Authenticated_Controller extends Base_Controller
 
 		if ( $tournament )
 		{
-			$character = Character::get_character_of_logged_user(array('id', 'clan_id'));
+			$character = Character::get_character_of_logged_user(array('id', 'clan_id', 'clan_permission'));
 
 			if ( $tournament->can_register_clan($character) )
 			{
@@ -256,7 +256,7 @@ class Authenticated_Controller extends Base_Controller
 
 		if ( $tournament )
 		{
-			$character = Character::get_character_of_logged_user(array('id', 'clan_id'));
+			$character = Character::get_character_of_logged_user(array('id', 'clan_id', 'clan_permission'));
 
 			if ( $tournament->can_unregister_clan($character) )
 			{
@@ -1192,7 +1192,8 @@ class Authenticated_Controller extends Base_Controller
 					$member->set_permission(Clan::PERMISSION_KICK_MEMBER, isset($input['can_kick_member']), false);
 					$member->set_permission(Clan::PERMISSION_LEARN_SPELL, isset($input['can_learn_spell']), false);
 					$member->set_permission(Clan::PERMISSION_EDIT_MESSAGE, isset($input['can_edit_message']), false);
-
+					$member->set_permission(Clan::PERMISSION_REGISTER_TOURNAMENT, isset($input['can_register_tournament']), false);
+					
 					$member->save();
 				}
 			}

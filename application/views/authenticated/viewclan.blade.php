@@ -189,6 +189,11 @@
 										{{ Form::checkbox('can_edit_message', 'can_edit_message', $member->has_permission(Clan::PERMISSION_EDIT_MESSAGE), array('style' => 'margin-top: -3px;')) }}
 										Editar mensaje del grupo
 									</li>
+									
+									<li class="clan-member-link">
+										{{ Form::checkbox('can_register_tournament', 'can_register_tournament', $member->has_permission(Clan::PERMISSION_REGISTER_TOURNAMENT), array('style' => 'margin-top: -3px;')) }}
+										Registrar en torneo
+									</li>
 								</ul>
 								
 								<div class="text-center" style="margin-top: 20px;">

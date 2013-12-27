@@ -31,6 +31,11 @@ class Clan extends Base_Model
 	 * @var <integer> Permiso para editar el mensaje del clan
 	 */
 	const PERMISSION_EDIT_MESSAGE = 16;
+	
+	/**
+	 * @var integer Permiso para registrar grupo en torneo
+	 */
+	const PERMISSION_REGISTER_TOURNAMENT = 32;
 
 	protected $rules = array(
 		'name' => 'required|between:3,35|unique:clans',

@@ -226,7 +226,7 @@ class Tournament extends Base_Model
 			return false;
 		}
 
-		if ( $clan->leader_id != $character->id )
+		if ( ! $character->has_permission(Clan::PERMISSION_REGISTER_TOURNAMENT) )
 		{
 			return false;
 		}
@@ -264,7 +264,7 @@ class Tournament extends Base_Model
 			return false;
 		}
 
-		if ( $clan->leader_id != $character->id )
+		if ( ! $character->has_permission(Clan::PERMISSION_REGISTER_TOURNAMENT) )
 		{
 			return false;
 		}
