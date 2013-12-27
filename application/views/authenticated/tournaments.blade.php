@@ -148,7 +148,7 @@
 
 		<tbody>
 			<?php $n = 1; ?>
-			@foreach ( $tournament->get_registered_clans()->get() as $registeredClan )
+			@foreach ( $registeredClans as $registeredClan )
 			<tr>
 				<td>{{ $n++; }}</td>
 				<td>{{ ( $registeredClan->disqualified ) ? '<s data-toggle="tooltip" data-original-title="Descalificado">' . $registeredClan->clan->get_link() . '</s>' : $registeredClan->clan->get_link() }}</td>

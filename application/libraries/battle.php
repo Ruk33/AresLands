@@ -445,13 +445,13 @@ class Battle
 	
 	private function to_battle()
 	{
-		if ( $this->_pair )
+		if ( is_null($this->_pair) )
 		{
-			$attackerStats = self::get_pair_info($this->_attacker, $this->_pair);
+			$attackerStats = self::get_unit_info($this->_attacker);
 		}
 		else
 		{
-			$attackerStats = self::get_unit_info($this->_attacker);
+			$attackerStats = self::get_pair_info($this->_attacker, $this->_pair);
 		}
 		
 		$attackedStats = self::get_unit_info($this->_attacked);
@@ -632,6 +632,7 @@ class Battle
 	 * 
 	 * @param Eloquent $attacker
 	 * @param Eloquent $attacked
+	 * @param Eloquent $pair
 	 */
 	public function __construct(Eloquent $attacker, Eloquent $attacked, Eloquent $pair = null)
 	{		

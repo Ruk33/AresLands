@@ -177,15 +177,19 @@ Event::listen('battle', function($character_one, $character_two, $winner = null)
 		if ( $winner )
 		{
 			$tournament = Tournament::get_active()->select(array('id'))->first();
-			$score = TournamentCharacterScore::get_score($tournament->id, $character_one->id)->first();
+
+			$characterOneScore = TournamentCharacterScore::get_score($tournament->id, $character_one->id)->first();
+			$characterTwoScore = TournamentCharacterScore::get_score($tournament->id, $character_two->id)->first();
 			
 			if ( $character_one->id == $winner->id )
 			{
-				$score->register_victory_and_update_clan_score($tournament->id, $character_one, $character_two);
+				$characterOneScore->register_victory_and_update_clan_score($tournament->id, $character_two);
+				$characterTwoScore->register_lose_and_update_clan_score($tournament->id, $character_one);
 			}
 			else
 			{
-				$score->register_lose_and_update_clan_score($tournament->id, $character_one, $character_two);
+				$characterOneScore->register_lose_and_update_clan_score($tournament->id, $character_two);
+				$characterTwoScore->register_victory_and_update_clan_score($tournament->id, $character_one);
 			}
 
 			$tournament->update_battle_counter();

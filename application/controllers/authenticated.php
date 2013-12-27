@@ -224,13 +224,26 @@ class Authenticated_Controller extends Base_Controller
 			$canReclaimClanLiderReward = $tournament->can_reclaim_clan_lider_reward($character);
 		}
 
+		$registeredClans = array();
+
+		$registeredClans = TournamentRegisteredClan::left_join('tournament_clan_scores', function($join)
+		{
+			$join->on('tournament_clan_scores.clan_id', '=', 'tournament_registered_clans.clan_id');
+			$join->on('tournament_clan_scores.tournament_id', '=', 'tournament_registered_clans.tournament_id');
+		})
+		->where('tournament_registered_clans.tournament_id', '=', $tournament->id)
+		->order_by('tournament_clan_scores.win_score', 'desc')
+		->select('tournament_registered_clans.*')
+		->get();
+
 		$this->layout->title = 'Torneos';
 		$this->layout->content = View::make('authenticated.tournaments')
 									 ->with('tournament', $tournament)
 									 ->with('canRegisterClan', $canRegisterClan)
 									 ->with('canUnRegisterClan', $canUnRegisterClan)
 									 ->with('canReclaimMvpReward', $canReclaimMvpReward)
-									 ->with('canReclaimClanLiderReward', $canReclaimClanLiderReward);
+									 ->with('canReclaimClanLiderReward', $canReclaimClanLiderReward)
+									 ->with('registeredClans', $registeredClans);
 	}
 
 	public function get_registerClanInTournament($tournament)

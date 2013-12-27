@@ -120,7 +120,7 @@ class TournamentCharacterScore extends Base_Model
 	 */
 	public function register_lose_against(Character $character)
 	{
-		$this->defeat_score += Torunament::get_defeat_score($this->character, $character);
+		$this->defeat_score += Tournament::get_defeat_score($this->character, $character);
 		$this->save();
 	}
 
