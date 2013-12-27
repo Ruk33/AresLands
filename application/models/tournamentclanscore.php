@@ -75,7 +75,7 @@ class TournamentClanScore extends Base_Model
 			$victories += $score->win_score;
 		}
 
-		return $victories;
+		return number_format($victories, 2);
 	}
 
 	/**
@@ -94,7 +94,7 @@ class TournamentClanScore extends Base_Model
 			$defeats += $score->defeat_score;
 		}
 
-		return $defeats;
+		return number_format($defeats, 2);
 	}
 
 	/**
