@@ -232,9 +232,10 @@ class Authenticated_Controller extends Base_Controller
 			$join->on('tournament_clan_scores.tournament_id', '=', 'tournament_registered_clans.tournament_id');
 		})
 		->where('tournament_registered_clans.tournament_id', '=', $tournament->id)
-		->order_by('tournament_clan_scores.win_score', 'desc')
+		->group_by('tournament_registered_clans.id')
+		->order_by('total_win_score', 'desc')
 		->distinct()
-		->select('tournament_registered_clans.*')
+		->select(array('tournament_registered_clans.*', DB::raw('sum(tournament_clan_scores.win_score) as total_win_score')))
 		->get();
 
 		$this->layout->title = 'Torneos';
