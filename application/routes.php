@@ -174,25 +174,28 @@ Event::listen('battle', function($character_one, $character_two, $winner = null)
 
 	if ( Tournament::is_active() )
 	{
-		if ( $winner )
+		if ( $winner && $character_one )
 		{
 			$tournament = Tournament::get_active()->select(array('id'))->first();
 
 			$characterOneScore = TournamentCharacterScore::get_score($tournament->id, $character_one->id)->first();
 			$characterTwoScore = TournamentCharacterScore::get_score($tournament->id, $character_two->id)->first();
 			
-			if ( $character_one->id == $winner->id )
+			if ( $characterOneScore && $characterTwoScore )
 			{
-				$characterOneScore->register_victory_and_update_clan_score($tournament->id, $character_two);
-				$characterTwoScore->register_lose_and_update_clan_score($tournament->id, $character_one);
-			}
-			else
-			{
-				$characterOneScore->register_lose_and_update_clan_score($tournament->id, $character_two);
-				$characterTwoScore->register_victory_and_update_clan_score($tournament->id, $character_one);
-			}
+				if ( $character_one->id == $winner->id )
+				{
+					$characterOneScore->register_victory_and_update_clan_score($tournament->id, $character_two);
+					$characterTwoScore->register_lose_and_update_clan_score($tournament->id, $character_one);
+				}
+				else
+				{
+					$characterOneScore->register_lose_and_update_clan_score($tournament->id, $character_two);
+					$characterTwoScore->register_victory_and_update_clan_score($tournament->id, $character_one);
+				}
 
-			$tournament->update_battle_counter();
+				$tournament->update_battle_counter();
+			}
 		}
 	}
 
