@@ -158,7 +158,7 @@ class TournamentClanScore extends Base_Model
 		$victories = self::get_victories($tournament, $member->clan_id);
 		$defeats = self::get_defeats($tournament, $member->clan_id);
 
-		if ( $defeats > 25 )
+		if ( false && $defeats > 25 )
 		{
 			TournamentRegisteredClan::disqualify(Tournament::find((int) $tournament), $member->clan);
 		}
