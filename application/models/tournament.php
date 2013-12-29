@@ -534,11 +534,11 @@ class Tournament extends Base_Model
 		foreach ( $tournaments as $tournament )
 		{
 			$tournament->active = 0;
-			$tournament->clan_winner = $this->get_clan_winner()->id;
-			$tournament->mvp_id = $this->get_character_mvp()->id;
+			$tournament->clan_winner = $tournament->get_clan_winner()->id;
+			$tournament->mvp_id = $tournament->get_character_mvp()->id;
 			$tournament->save();
 
-			$this->give_coin_to_characters_and_exit_from_tournament();
+			$tournament->give_coin_to_characters_and_exit_from_tournament();
 		}
 	}
 
