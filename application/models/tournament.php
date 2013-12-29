@@ -534,7 +534,7 @@ class Tournament extends Base_Model
 		foreach ( $tournaments as $tournament )
 		{
 			$tournament->active = 0;
-			$tournament->clan_winner = $tournament->get_clan_winner()->id;
+			$tournament->clan_winner_id = $tournament->get_clan_winner()->id;
 			$tournament->mvp_id = $tournament->get_character_mvp()->id;
 			$tournament->save();
 
