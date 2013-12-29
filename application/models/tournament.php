@@ -340,7 +340,7 @@ class Tournament extends Base_Model
 		foreach ( $registeredClans as $registeredClan )
 		{
 			$tmpClan = $registeredClan->clan;
-			$tmpScore = TournamentClanScore::get_victory_percentage($this->id, $clan->id);
+			$tmpScore = TournamentClanScore::get_victory_percentage($this->id, $tmpClan->id);
 
 			if ( $clanWinnerScore < $tmpScore )
 			{
