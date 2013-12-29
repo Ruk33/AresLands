@@ -367,7 +367,7 @@ class Tournament extends Base_Model
 		$members = $clanWinner->members;
 		$mvp = $members[mt_rand(0, count($members) - 1)];
 
-		return $mpv;
+		return $mvp;
 	}
 
 	/**
