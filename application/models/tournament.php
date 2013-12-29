@@ -505,7 +505,7 @@ class Tournament extends Base_Model
 
 		foreach ( $clans as $clan )
 		{
-			$members = $clan->members;
+			$members = $clan->members()->get();
 
 			foreach ( $members as $member )
 			{
