@@ -419,6 +419,7 @@ Route::filter('before', function() {
 	// si solamente necesitamos algo del chat
 	if ( substr(Request::uri(), 0, 4) != 'chat' )
 	{
+		Tournament::check_for_started();
 		Tournament::check_for_finished();
 		Tournament::check_for_potions();
 

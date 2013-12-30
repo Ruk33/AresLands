@@ -543,6 +543,27 @@ class Tournament extends Base_Model
 	}
 
 	/**
+	 * Iniciamos todos los torneos que tengan que ser
+	 * iniciados
+	 */
+	public static function check_for_started()
+	{
+		$tournaments = self::where('active', '=', 0)
+						   ->where('starts_at', '<', time())
+						   ->where('ends_at', '>', time())
+						   ->get();
+
+		foreach ( $tournaments as $tournament )
+		{
+			// Si, podemos hacerlo con una simple query
+			// pero como no deberia haber muchos no
+			// hay problema
+			$tournament->active = 1;
+			$tournament->save()
+		}
+	}
+
+	/**
 	 * Revisamos y removemos los buffs activos de los personajes.
 	 * Esto en el caso de que haya un torneo activo y que
 	 * el mismo no acepte pociones
