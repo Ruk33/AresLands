@@ -339,6 +339,8 @@
 				{{ Form::hidden('name', $characterToSee->name) }}
 				{{ Form::submit('Luchar contra ' . $characterToSee->name, array('class' => 'btn btn-link', 'style' => 'color: white; text-shadow: none;')) }}
 			{{ Form::close() }}
+		@else
+			<div class="negative" style="margin-top: 25px; font-size: 16px;">No puedes atacar a {{ $characterToSee->name }} (aún)...</div>
 		@endif
 		</div>
 	</div>
