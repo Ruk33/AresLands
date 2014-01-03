@@ -160,7 +160,7 @@ class Battle
 			
 			if ( $this->loser instanceof Npc )
 			{
-				$winnerExperience = $this->loser->xp * Config::get('game.xp_rate');
+				$winnerExperience = (int) ($this->loser->xp + max($this->winner->level, 5) / 5 * Config::get('game.xp_rate'));
 				
 				// Actualizamos db
 				$this->winner->xp += $winnerExperience;

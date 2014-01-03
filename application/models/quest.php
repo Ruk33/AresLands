@@ -147,7 +147,7 @@ class Quest extends Base_Model
 			switch ( $reward->item_id )
 			{
 				case Config::get('game.coin_id'):
-					$coins = Item::get_divided_coins((int) ($reward->amount * (max($character->level, 5) / 5) * Config::get('game.coins_rate')));
+					$coins = Item::get_divided_coins((int) ($reward->amount * (max($character->level, 5) / 5) * Config::get('game.quest_coins_rate')));
 					
 					$text = '<i class="coin coin-copper"></i>';
 					$text = '<span data-toggle="tooltip" data-original-title="Cantidad: 
@@ -160,7 +160,7 @@ class Quest extends Base_Model
 				
 				case Config::get('game.xp_item_id'):
 					$text = '<img src="' . URL::base() . '/img/xp.png" width="22px" height="18px" />';
-					$text = '<span data-toggle="tooltip" data-original-title="Cantidad: ' . $reward->amount . '">' . $text . '</span>';
+					$text = '<span data-toggle="tooltip" data-original-title="Cantidad: ' . (int) ($reward->amount * Config::get('game.quest_xp_rate')) . '">' . $text . '</span>';
 					break;
 
 				default:
@@ -198,10 +198,17 @@ class Quest extends Base_Model
 
 		foreach ( $rewards as $reward )
 		{
-			if ( $reward->item_id == Config::get('game.coin_id') )
+			switch ( $reward->item_id )
 			{
-				$reward->amount = (int) ($reward->amount * (max($character->level, 5) / 5) * Config::get('game.coins_rate'));
-			}				
+				case Config::get('game.coin_id'):
+					$reward->amount = (int) ($reward->amount * (max($character->level, 5) / 5) * Config::get('game.quest_coins_rate'));
+					break;
+				
+				case Config::get('game.xp_item_id'):
+					$reward->amount = (int) ($reward->amount * Config::get('game.quest_xp_rate'));
+					break;
+			}
+			
 			$character->add_item($reward->item_id, $reward->amount);
 		}
 	}
