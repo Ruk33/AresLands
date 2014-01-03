@@ -144,7 +144,9 @@ class Tournament extends Base_Model
 	{
 		if ( Tournament::is_active() )
 		{
-			if ( TournamentRegisteredClan::is_disqualified(Tournament::get_active()->first(), $loser->clan) )
+			$loserClan = $loser->clan;
+			
+			if ( ! $loserClan || TournamentRegisteredClan::is_disqualified(Tournament::get_active()->first(), $loserClan) )
 			{
 				return 0;
 			}
