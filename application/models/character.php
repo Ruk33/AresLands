@@ -1253,7 +1253,7 @@ class Character extends Base_Model
 
 		return $this->has_protection($attacker) == false && $attacker->zone_id == $this->zone_id && $attacker->id != $this->id;
 	}
-
+	
 	public function after_battle()
 	{
 		$characterActivity = new CharacterActivity();
@@ -1263,6 +1263,49 @@ class Character extends Base_Model
 		$characterActivity->end_time = time() + Config::get('game.battle_rest_time');
 
 		$characterActivity->save();
+	}
+	
+	/**
+	 * Si la batalla fue contra otro personaje
+	 * entonces DEBEMOS compartir el cd despues
+	 * de la batalla para evitar ataques consecutivos
+	 */
+	public function after_pvp_battle()
+	{
+		$characters = static::get_sharing_ip($this->ip)->select(array('id'))->get();
+		
+		foreach ( $characters as $character )
+		{
+			$character->after_battle();
+		}
+	}
+	
+	/**
+	 * Devolvemos query para obtener todos los
+	 * personajes que compartan ip
+	 * @param string $ip
+	 * @return Eloquent
+	 */
+	public static function get_sharing_ip($ip)
+	{
+		return static::where('ip', '=', $ip);
+	}
+	
+	/**
+	 * Actualizamos todos los personajes
+	 * que tengan el ip == $ip con $newIp
+	 * @param string $ip
+	 * @param string $newIp
+	 */
+	public static function update_ip($ip, $newIp)
+	{
+		$characters = static::get_sharing_ip($ip)->select(array('id', 'ip'))->get();
+		
+		foreach ( $characters as $character )
+		{
+			$character->ip = $newIp;
+			$character->save();
+		}
 	}
 
 	/**

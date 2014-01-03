@@ -647,6 +647,13 @@ class Battle
 		$this->log->message = '<ul class="unstyled">' . $this->log->message . '</ul>';
 		$this->log->save();
 		
-		$attacker->after_battle();
+		if ( $attacked instanceof Character )
+		{
+			$attacker->after_pvp_battle();
+		}
+		else
+		{
+			$attacker->after_battle();
+		}
 	}
 }

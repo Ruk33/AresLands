@@ -440,6 +440,7 @@ Route::filter('before', function() {
 				'xp_next_level',
 				'level',
 				'points_to_change',
+				'ip',
 			));
 
 			if ( $character )
@@ -481,7 +482,21 @@ Route::filter('before', function() {
 				{
 					$characterActivity->update_time();
 				}
-
+				
+				$ip = Request::ip();
+				
+				if ( ! $character->ip )
+				{
+					$character->ip = $ip;
+				}
+				else
+				{
+					if ( $character->ip != $ip )
+					{
+						Character::update_ip($character->ip, $ip);
+					}
+				}
+				
 				$character->save();
 			}
 		}
