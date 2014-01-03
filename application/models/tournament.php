@@ -559,7 +559,7 @@ class Tournament extends Base_Model
 			// pero como no deberia haber muchos no
 			// hay problema
 			$tournament->active = 1;
-			$tournament->save()
+			$tournament->save();
 		}
 	}
 

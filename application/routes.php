@@ -414,10 +414,12 @@ Route::filter('before', function() {
 	
 	$time = time();
 	$isAuth = Auth::check();
-	
+	$requestUri = Request::uri();
+		
 	// Evitamos que estas acciones se ejecutan
 	// si solamente necesitamos algo del chat
-	if ( substr(Request::uri(), 0, 4) != 'chat' )
+	// o api
+	if ( substr($requestUri, 0, 4) != 'chat' && substr($requestUri, 0, 3) != 'api' )
 	{
 		Tournament::check_for_started();
 		Tournament::check_for_finished();

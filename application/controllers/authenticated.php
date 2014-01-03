@@ -2253,6 +2253,7 @@ class Authenticated_Controller extends Base_Controller
 			}
 		}
 
+		Session::flash('buyed', "Compraste {$amount} {$item->name}, ¡gracias!.");
 		return Redirect::back();
 	}
 	

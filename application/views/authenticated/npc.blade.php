@@ -9,6 +9,12 @@
 
 <div class="clearfix"></div>
 
+@if ( Session::has('buyed') )
+	<div class="alert alert-success">
+		{{ Session::get('buyed') }}
+	</div>
+@endif
+
 @if ( count($repeatableQuests) == 0 && count($rewardQuests) == 0 && count($startedQuests) == 0 && count($quests) == 0 && count($merchandises) == 0 )
 	<h4 class="text-center" style="margin-top: 100px;">Por el momento, no tengo nada para ti. Vuelve en otra ocación.</h4>
 @else
