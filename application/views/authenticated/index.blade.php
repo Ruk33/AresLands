@@ -200,7 +200,7 @@
 				<span style="font-size: 11px;">
 					<b>EXPERIENCIA:</b> 
 					<span data-toggle="tooltip" data-placement="top" data-original-title="Experiencia actual / Experiencia para subir de nivel">
-						<span ng-bind="character.xp || '?'">?</span>/<span ng-bind="character.xp_next_level || '?'">?</span>
+						<span ng-bind="character.xp || '0'">?</span>/<span ng-bind="character.xp_next_level || '0'">0</span>
 					</span>
 				</span>
 				<div class="progress" style="height: 5px;">
