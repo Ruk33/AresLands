@@ -232,8 +232,8 @@ class Character extends Base_Model
 		if ( $value >= $this->xp_next_level )
 		{
 			$this->level++;
-			$this->xp = 0;
-			$this->xp_next_level = (int) ($this->xp_next_level / 2 + 5 * $this->level);
+			$value = 0;
+			$this->xp_next_level = (int) (5 * $this->level);
 
 			/*
 			 *	Verificamos que siga cumpliendo
