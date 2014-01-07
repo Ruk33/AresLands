@@ -25,14 +25,14 @@ return array(
 	 *	de los stats
 	 *	
 	 *	Formula:
-	 *	(cantidad de stat + nivel del personaje) * multiplicador
+	 *	cantidad de stat * multiplicador
 	 */
-	'strength_price_multiplier' => 0.7,
-	'dexterity_price_multiplier' => 0.9,
-	'resistance_price_multiplier' => 0.4,
-	'magic_price_multiplier' => 0.9,
-	'magic_skill_price_multiplier' => 1.2,
-	'magic_resistance_price_multiplier' => 0.8,
+	'strength_price_multiplier' => 0.3,
+	'dexterity_price_multiplier' => 0.5,
+	'resistance_price_multiplier' => 0.2,
+	'magic_price_multiplier' => 0.5,
+	'magic_skill_price_multiplier' => 0.7,
+	'magic_resistance_price_multiplier' => 0.2,
 
 	/*
 	 *	Multiplicadores de stat
@@ -100,7 +100,7 @@ return array(
 	 *	llegan a este valor, la barra
 	 *	está completa)
 	 */
-	'activity_bar_max' => 35,
+	'activity_bar_max' => 50,
 
 	/*
 	 *	Protección (en segundos) para un personaje
@@ -133,7 +133,7 @@ return array(
 	 *	Puntos que se otorgan
 	 *	al pasar de nivel
 	 */
-	'points_per_level' => 7,
+	'points_per_level' => 5,
 
 	/*
 	 *	Mínima cantidad (en minutos)
@@ -150,10 +150,10 @@ return array(
 	/*
 	 *	Rates
 	 */
-	'xp_rate' => 2,
-	'quest_xp_rate' => 3,
+	'xp_rate' => 1,
+	'quest_xp_rate' => 2,
 	'drop_rate' => 1,
-	'explore_reward_rate' => 4,
+	'explore_reward_rate' => 3,
 	'coins_rate' => 2,
-	'quest_coins_rate' => 4,
+	'quest_coins_rate' => 3,
 );

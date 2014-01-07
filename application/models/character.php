@@ -25,6 +25,21 @@ class Character extends Base_Model
 		'gender_required' => 'El género es requerido',
 		'gender_match' => 'El género es incorrecto',
 	);
+	
+	/**
+	 * Averiguamos si la cuenta del usuario logueado
+	 * es VIP
+	 * @return boolean
+	 */
+	public function is_vip()
+	{
+		if ( Auth::guest() )
+		{
+			return false;
+		}
+		
+		return Auth::user()->vip_until > time();
+	}
 
 	/**
 	 * Verificar si personaje puede atacar en pareja
@@ -90,27 +105,27 @@ class Character extends Base_Model
 		switch ( $stat )
 		{
 			case 'stat_strength':
-				$price = ($this->stat_strength + $this->level) * Config::get("game.{$this->race}_strength_price_multiplier") * Config::get('game.strength_price_multiplier');
+				$price = $this->stat_strength * Config::get("game.{$this->race}_strength_price_multiplier") * Config::get('game.strength_price_multiplier');
 				break;
 
 			case 'stat_dexterity':
-				$price = ($this->stat_dexterity + $this->level) * Config::get("game.{$this->race}_dexterity_price_multiplier") * Config::get('game.dexterity_price_multiplier');
+				$price = $this->stat_dexterity * Config::get("game.{$this->race}_dexterity_price_multiplier") * Config::get('game.dexterity_price_multiplier');
 				break;
 
 			case 'stat_resistance':
-				$price = ($this->stat_resistance + $this->level) * Config::get("game.{$this->race}_resistance_price_multiplier") * Config::get('game.resistance_price_multiplier');
+				$price = $this->stat_resistance * Config::get("game.{$this->race}_resistance_price_multiplier") * Config::get('game.resistance_price_multiplier');
 				break;
 
 			case 'stat_magic':
-				$price = ($this->stat_magic + $this->level) * Config::get("game.{$this->race}_magic_price_multiplier") * Config::get('game.magic_price_multiplier');
+				$price = $this->stat_magic * Config::get("game.{$this->race}_magic_price_multiplier") * Config::get('game.magic_price_multiplier');
 				break;
 
 			case 'stat_magic_skill':
-				$price = ($this->stat_magic_skill + $this->level) * Config::get("game.{$this->race}_magic_skill_price_multiplier") * Config::get('game.magic_skill_price_multiplier');
+				$price = $this->stat_magic_skill * Config::get("game.{$this->race}_magic_skill_price_multiplier") * Config::get('game.magic_skill_price_multiplier');
 				break;
 
 			case 'stat_magic_resistance':
-				$price = ($this->stat_magic_resistance + $this->level) * Config::get("game.{$this->race}_magic_resistance_price_multiplier") * Config::get('game.magic_resistance_price_multiplier');
+				$price = $this->stat_magic_resistance * Config::get("game.{$this->race}_magic_resistance_price_multiplier") * Config::get('game.magic_resistance_price_multiplier');
 				break;
 
 			default:
@@ -217,7 +232,8 @@ class Character extends Base_Model
 		if ( $value >= $this->xp_next_level )
 		{
 			$this->level++;
-			$this->xp_next_level = $this->xp_next_level + 10 * $this->level;
+			$this->xp = 0;
+			$this->xp_next_level = (int) ($this->xp_next_level / 2 + 5 * $this->level);
 
 			/*
 			 *	Verificamos que siga cumpliendo
@@ -233,7 +249,7 @@ class Character extends Base_Model
 					// Si no cumple con los requerimientos...
 					if ( $this->level < $orb->min_level || $this->level > $orb->max_level )
 					{
-						$orb->give_to_random();
+						$orb->reset();
 					}
 				}
 			}
@@ -936,11 +952,9 @@ class Character extends Base_Model
 
 		if ( count($select) > 0 )
 		{
-			//return Character::select($select)->where('user_id', '=', Auth::user()->id)->first();
 			return $user->character()->select($select)->first();
 		}
-
-		//return Character::where('user_id', '=', Auth::user()->id)->first();
+		
 		return $user->character;
 	}
 

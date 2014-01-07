@@ -41,6 +41,18 @@ class Orb extends Base_Model
 	{
 		return $this->belongs_to('Character', 'last_attacker');
 	}
+	
+	/**
+	 * Reinicia los valores del orbe a null
+	 */
+	public function reset()
+	{
+		$this->owner_character = null;
+		$this->last_attacker = null;
+		$this->last_attack_time = null;
+
+		$this->save();
+	}
 
 	/**
 	 *	Verificamos si el orbe puede ser robado por el personaje
