@@ -9,7 +9,7 @@
 			<ul class="inline">
 			@foreach ( $npcs as $npc )
 				<li data-toggle="tooltip" data-placement="bottom" data-original-title="<div style='color: #FFC200;'>Mercader {{ $npc->name }}</div>{{ $npc->tooltip_dialog }}">
-					<a href="{{ URL::to('authenticated/npc/' . $npc->id . '/' . $npc->name) }}">
+					<a href="{{ URL::to('authenticated/npc/' . $npc->id . '/' . Str::slug($npc->name)) }}">
 						<img src="{{ URL::base() }}/img/icons/npcs/{{ $npc->id }}.png" alt="" width="72px" height="82px">
 					</a>
 				</li>
