@@ -2061,7 +2061,7 @@ class Authenticated_Controller extends Base_Controller
 
 		if ( $merchandise )
 		{
-			$character = Character::get_character_of_logged_user(array('id', 'xp'));
+			$character = Character::get_character_of_logged_user(array('id', 'xp', 'xp_next_level'));
 			$npc = $merchandise->npc()->select(array('id', 'zone_id', 'time_to_appear'))->first();
 
 			// Verificamos si el vendedor está desbloqueado
@@ -2179,7 +2179,7 @@ class Authenticated_Controller extends Base_Controller
 							$characterItemAmount += $characterItem->count;
 						}
 
-						$limit = (int) ($character->xp * Config::get('game.bag_size'));
+						$limit = (int) (($character->xp_next_level + $character->xp) * Config::get('game.bag_size'));
 
 						if ( $characterItemAmount + $skillsCount + $amount > $limit )
 						{
