@@ -233,7 +233,7 @@
 		<div id="footer">
 			<div class="text-center">
 				<div>
-					<img src="{{ URL::base() }}/img/ironfist-logo.png" width="212px" height="259px">
+					<a href="//ironfist.com.ar" target="_blank"><img src="{{ URL::base() }}/img/ironfist-logo.png" width="212px" height="259px"></a>
 					<p style="color: white; font-size: 11px;">
 						Todas las marcas aquí mencionadas son propiedad de sus respectivos dueños. 
 						<br>
