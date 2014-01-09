@@ -21,4 +21,10 @@ class Cron_Controller extends Base_Controller
 	{
 		Command::run(array('dailyquest'));
 	}
+	
+	// feccb3222eaf486394d45fcc4d9b18b5 = //-@lm(ranking).;2\\
+	public function get_feccb3222eaf486394d45fcc4d9b18b5()
+	{
+		Command::run(array('ranking'));
+	}
 }

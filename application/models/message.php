@@ -26,6 +26,23 @@ class Message extends Base_Model
 	{
 		return $this->belongs_to('Character', 'sender_id');
 	}
+	
+	public static function group_tournament(Character $character, $rankPosition, $reward)
+	{
+		$message = new Message();
+
+		$message->sender_id = $character->id;
+		$message->receiver_id = $character->id;
+
+		$message->subject = 'Felicidades por la posición de tu grupo en el ranking';
+		$message->content = 'Felicitaciones, tu grupo se ha hecho con el puesto número ' . $rankPosition . ' en el ranking. Se te ha recompensado con ' . $reward . '.';
+		$message->unread = true;
+		$message->date = time();
+		$message->type = 'received';
+		$message->is_special = true;
+
+		$message->save();
+	}
 
 	public static function tournament_disquialify(Character $character)
 	{

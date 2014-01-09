@@ -845,6 +845,16 @@ class Authenticated_Controller extends Base_Controller
 			 *	Creamos el clan
 			 */
 			$clan->save();
+			
+			/*
+			 *	Agregamos el clan al ranking
+			 */
+			$clanRanking = new ClanOrbPoint();
+			
+			$clanRanking->clan_id = $clan->id;
+			$clanRanking->points = 0;
+			
+			$clanRanking->save();
 
 			/*
 			 *	Agregamos al personaje
@@ -922,6 +932,13 @@ class Authenticated_Controller extends Base_Controller
 
 				$character->clan_id = 0;
 				$character->save();
+				
+				$clanRanking = ClanOrbPoint::where('clan_id', '=', $clan->id)->first();
+				
+				if ( $clanRanking )
+				{
+					$clanRanking->delete();
+				}
 
 				$clan->delete();
 			}
