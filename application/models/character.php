@@ -232,8 +232,13 @@ class Character extends Base_Model
 		if ( $value >= $this->xp_next_level )
 		{
 			$this->level++;
-			$value = 0;
 			$this->xp_next_level = (int) (5 * $this->level);
+			
+			$value = $value - $this->xp_next_level;
+			if ( $value < 0 )
+			{
+				$value = 0;
+			}
 
 			/*
 			 *	Verificamos que siga cumpliendo
@@ -255,10 +260,11 @@ class Character extends Base_Model
 			}
 
 			/* 
-			 *	Aumentamos la vida
+			 *	Aumentamos la vida y restauramos
 			 */
 			$this->max_life = $this->max_life + $this->level * 40;
-
+			$this->current_life = $this->max_life;
+			
 			$this->points_to_change += Config::get('game.points_per_level');
 		}
 		
