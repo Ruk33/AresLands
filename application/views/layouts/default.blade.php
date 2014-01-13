@@ -303,7 +303,7 @@
 
 				$this.countdown({
 					until: date,
-					layout: '{hnn}:{mnn}:{snn}',
+					layout: '{hnn}:{mnn}:{snn} y {dn} día(s)',
 					expiryText: '<a href="" onclick="location.reload();">Actualizar</a>'
 				});
 			});
