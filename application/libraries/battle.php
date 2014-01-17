@@ -1,6 +1,6 @@
 <?php
 
-use Libraries\Damage;
+use \Libraries\Damage;
 
 /**
  * 	Esta clase contiene la lógica de las batallas, incluyendo:
