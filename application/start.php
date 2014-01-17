@@ -97,29 +97,6 @@ Autoloader::map(array(
 	'Quest_AcabaConElMal' => path('app').'libraries/quest_acabaconelmal.php',
 	'Quest_VenceAUnaReina' => path('app').'libraries/quest_venceaunareina.php',
 	'Quest_DestruyeASusLideres' => path('app').'libraries/quest_destruyeasuslideres.php',
-	
-	/*
-	'Quest_Starting' => path('app').'libraries/quest_starting.php',
-	'Quest_HieloYRoca' => path('app').'libraries/quest_hieloyroca.php',
-	'Quest_NuevosProblemas' => path('app').'libraries/quest_nuevosproblemas.php',
-	'Quest_RecuperarLoPerdido' => path('app').'libraries/quest_recuperarloperdido.php',
-	'Quest_ApaciguarALosMuertos' => path('app').'libraries/quest_apaciguaralosmuertos.php',
-	'Quest_ElLlantoDeUnPadre' => path('app').'libraries/quest_elllantodeunpadre.php',
-	'Quest_MonedaPorMoneda' => path('app').'libraries/quest_monedapormoneda.php',
-	'Quest_MejorArmamento' => path('app').'libraries/quest_mejorarmamento.php',
-	'Quest_GranError' => path('app').'libraries/quest_granerror.php',
-	'Quest_AyudaAlMago' => path('app') . 'libraries/quest_ayudaalmago.php',
-	'Quest_MagiaSuprema' => path('app') . 'libraries/quest_magiasuprema.php',
-	'Quest_NegociosTurbios' => path('app') . 'libraries/quest_negociosturbios.php',
-	'Quest_Traicion' => path('app') . 'libraries/quest_traicion.php',
-	'Quest_Urgente' => path('app') . 'libraries/quest_urgente.php',
-	'Quest_MuchoTrabajo' => path('app') . 'libraries/quest_muchotrabajo.php',
-	'Quest_PrimerMisionFallida' => path('app') . 'libraries/quest_primermisionfallida.php',
-	'Quest_SegundaMisionFallida' => path('app') . 'libraries/quest_segundamisionfallida.php',
-	'Quest_PocionesYPociones' => path('app') . 'libraries/quest_pocionesypociones.php',
-	'Quest_LaVenganzaDelAlquimista' => path('app') . 'libraries/quest_lavenganzadelalquimista.php',
-	'Quest_AsegurarZona' => path('app') . 'libraries/quest_asegurarzona.php',
-	*/
 ));
 
 /*
@@ -136,6 +113,7 @@ Autoloader::map(array(
 Autoloader::directories(array(
 	path('app').'models',
 	path('app').'libraries',
+	path('app'),
 ));
 
 /*

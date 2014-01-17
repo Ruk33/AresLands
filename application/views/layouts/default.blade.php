@@ -211,6 +211,7 @@
 								<li><a href="{{ URL::to('authenticated/ranking') }}" class="menu menu-ranking"></a></li>
 								<li><a href="{{ URL::to('authenticated/orbs') }}" class="menu menu-orbs"></a></li>
 								<li><a href="{{ URL::to('authenticated/tournaments') }}" class="menu menu-tournaments"></a></li>
+								
 								<li><a href="http://ironfist.com.ar/forums" class="menu menu-forum" target="_blank"></a></li>
 								<li><a href="{{ URL::to('authenticated/logout') }}" class="menu menu-logout"></a></li>
 							@else

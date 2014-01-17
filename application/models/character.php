@@ -27,6 +27,20 @@ class Character extends Base_Model
 	);
 	
 	/**
+	 * @param mixed $skill Puede ser el id del skill o instancia de Skill
+	 * @return boolean
+	 */
+	public function has_skill($skill)
+	{
+		if ( $skill instanceof Skill )
+		{
+			$skill = $skill->id;
+		}
+		
+		return $this->skills()->where('skill_id', '=', (int) $skill)->take(1)->count() > 0;
+	}
+	
+	/**
 	 * Averiguamos si la cuenta del usuario logueado
 	 * es VIP
 	 * @return boolean
@@ -230,14 +244,23 @@ class Character extends Base_Model
 	public function set_xp($value)
 	{
 		if ( $value >= $this->xp_next_level )
-		{
-			$this->level++;
-			$this->xp_next_level = (int) (5 * $this->level);
-			
-			$value = $value - $this->xp_next_level;
-			if ( $value < 0 )
+		{			
+			while ( true )
 			{
-				$value = 0;
+				$this->level++;
+				$this->xp_next_level = (int) (5 * $this->level);
+				$value -= $this->xp_next_level;
+				
+				if ( $value < $this->xp_next_level )
+				{
+					break;
+				}
+				
+				if ( $value <= 0 )
+				{
+					$value = 0;
+					break;
+				}
 			}
 
 			/*

@@ -271,91 +271,97 @@ a:hover {
 .menu-character {
     width: 177px;
     height: 36px;
-    background-position: -5px -51px;
+    background-position: -192px -5px;
 }
 
 .menu-characters {
     width: 177px;
     height: 36px;
-    background-position: -5px -97px;
+    background-position: -5px -51px;
 }
 
 .menu-explore {
     width: 177px;
     height: 36px;
-    background-position: -5px -143px;
+    background-position: -192px -51px;
 }
 
 .menu-forum {
     width: 177px;
     height: 36px;
-    background-position: -5px -189px;
+    background-position: -5px -97px;
 }
 
 .menu-group {
     width: 177px;
     height: 36px;
-    background-position: -5px -235px;
+    background-position: -192px -97px;
 }
 
 .menu-guide {
     width: 177px;
     height: 36px;
-    background-position: -5px -281px;
+    background-position: -5px -143px;
 }
 
 .menu-inicio {
     width: 177px;
     height: 36px;
-    background-position: -5px -327px;
+    background-position: -192px -143px;
 }
 
 .menu-logout {
     width: 177px;
     height: 36px;
-    background-position: -192px -5px;
+    background-position: -5px -189px;
 }
 
 .menu-messages {
     width: 177px;
     height: 36px;
-    background-position: -192px -51px;
+    background-position: -192px -189px;
 }
 
 .menu-orbs {
     width: 177px;
     height: 36px;
-    background-position: -192px -97px;
+    background-position: -5px -235px;
 }
 
 .menu-ranking {
     width: 177px;
     height: 36px;
-    background-position: -192px -143px;
+    background-position: -192px -235px;
+}
+
+.menu-secret-shop {
+    width: 177px;
+    height: 36px;
+    background-position: -5px -281px;
 }
 
 .menu-thanks {
     width: 177px;
     height: 36px;
-    background-position: -192px -189px;
+    background-position: -192px -281px;
 }
 
 .menu-tournaments {
     width: 177px;
     height: 36px;
-    background-position: -192px -235px;
+    background-position: -5px -327px;
 }
 
 .menu-trade {
     width: 177px;
     height: 36px;
-    background-position: -192px -281px;
+    background-position: -192px -327px;
 }
 
 .menu-travel {
     width: 177px;
     height: 36px;
-    background-position: -192px -327px;
+    background-position: -379px -5px;
 }
 
 .coin {

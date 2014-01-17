@@ -70,7 +70,7 @@ class Authenticated_Controller extends Base_Controller
 	}
     
 	public function get_index()
-	{
+	{		
 		$character = Character::get_character_of_logged_user(array(
 			'id',
 			'name',
@@ -169,6 +169,38 @@ class Authenticated_Controller extends Base_Controller
 		->with('npcs', $npcs)
 		->with('exploringTime', $exploringTime)
 		->with('blockedNpcs', $blockedNpcs);
+	}
+	
+	public function get_secretShop()
+	{
+		$this->layout->title = 'Mercado secreto';
+		$this->layout->content = View::make('authenticated.secretshop');
+	}
+	
+	public function get_buyedFromSecretShop()
+	{
+		$data = unserialize(Session::get('data'));
+		
+		if ( ! $data || ! isset($data['ok']) || ! $data['ok'] )
+		{
+			return Laravel\Redirect::to('/');
+		}
+		
+		return var_dump($data);
+	}
+	
+	public function get_buyFromSecretShop($id = 1)
+	{
+		// todo check if the vip object exists
+		$data = array(
+			'id' => (int) $id,
+			'amount' => 30,
+			'success_redirect' => URL::to('authenticated/buyedFromSecretShop')
+		);
+		
+		$data = Session::flash('data', serialize($data));
+		
+		return Laravel\Redirect::to('//ironfist.com/consumeIronCoins');
 	}
 
 	public function get_allTournaments()
