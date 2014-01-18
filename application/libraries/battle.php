@@ -21,13 +21,13 @@ class Battle
 	 * Unidad que ataca
 	 * @var Eloquent
 	 */
-	private $_attackerUnit;
+	private $_attacker;
 	
 	/**
 	 * Unidad que es atacada
 	 * @var Eloquent
 	 */
-	private $_attackedUnit;
+	private $_attacked;
 	
 	/**
 	 * Unidad que es pareja de $_attacker
@@ -409,13 +409,13 @@ class Battle
 	{
 		$start = microtime(true);
 		
-		if ( is_null($this->_pair) )
+		if ( $this->_pair )
 		{
-			$attackerStats = self::get_unit_info($this->_attacker);
+			$attackerStats = self::get_pair_info($this->_attacker, $this->_pair);
 		}
 		else
 		{
-			$attackerStats = self::get_pair_info($this->_attacker, $this->_pair);
+			$attackerStats = self::get_unit_info($this->_attacker);
 		}
 		
 		$attackerStats = new Character($attackerStats);
@@ -433,13 +433,13 @@ class Battle
 			// Golpea el que menos CD tenga
 			if ( $attackerStats->current_cd <= $attackedStats->current_cd )
 			{
-				$attacker = $attackerStats;
-				$defender = $attackedStats;
+				$attacker = &$attackerStats;
+				$defender = &$attackedStats;
 			}
 			else
 			{
-				$attacker = $attackedStats;
-				$defender = $attackerStats;
+				$attacker = &$attackedStats;
+				$defender = &$attackerStats;
 			}
 			
 			// Actualizamos CD
@@ -514,17 +514,12 @@ class Battle
 		{
 			$this->_pair->current_life -= $damageDone / 2;
 			$this->_pair->save();
-			
-			$this->_attacker->current_life -= $damageDone / 2;
-			$this->_attacker->save();
-		}
-		else
-		{
-			$this->_attacker->current_life = $attackerStats->current_life;
-			$this->_attacker->save();
 		}
 		
-		if ( $attackedStats->is_player )
+		$this->_attacker->current_life = $attackerStats->current_life;
+		$this->_attacker->save();
+		
+		if ( $this->_attacked instanceof Character )
 		{
 			$this->_attacked->current_life = $attackedStats->current_life;
 			$this->_attacked->save();
@@ -549,8 +544,8 @@ class Battle
 	 * @param Eloquent $attacked
 	 * @param Eloquent $pair
 	 */
-	public function __construct(Eloquent $attacker, Eloquent $attacked, Eloquent $pair = null)
-	{		
+	public function __construct(Character $attacker, Eloquent $attacked, Character $pair = null)
+	{
 		$this->log = new BattleLog();
 		
 		$this->_attacker = $attacker;

@@ -10,7 +10,7 @@ class Damage
 	protected $originalAmount;
 	protected $type;
 	
-	public function __construct($source, $target, $amount, $originalAmount, $type = null)
+	public function __construct($source, &$target, $amount, $originalAmount, $type = null)
 	{
 		$this->source = $source;
 		$this->target = $target;
@@ -105,7 +105,7 @@ class Damage
 	}
 	
 	public function execute()
-	{		
+	{
 		$this->target->current_life -= $this->amount;
 	}
 }
