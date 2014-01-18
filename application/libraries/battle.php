@@ -418,25 +418,10 @@ class Battle
 			$attackerStats = self::get_pair_info($this->_attacker, $this->_pair);
 		}
 		
-		if ( $attackerStats['is_player'] )
-		{
-			$attackerStats = new Character($attackerStats);
-		}
-		else
-		{
-			$attackerStats = new Npc($attackerStats);
-		}
+		$attackerStats = new Character($attackerStats);
 		
 		$attackedStats = self::get_unit_info($this->_attacked);
-		
-		if ( $attackedStats['is_player'] )
-		{
-			$attackedStats = new Character($attackedStats);
-		}
-		else
-		{
-			$attackedStats = new Npc($attackedStats);
-		}
+		$attackedStats = ( $attackedStats['is_player'] ) ? new Character($attackedStats) : new Npc($attackedStats);
 		
 		$attacker;
 		$defender;
@@ -448,13 +433,13 @@ class Battle
 			// Golpea el que menos CD tenga
 			if ( $attackerStats->current_cd <= $attackedStats->current_cd )
 			{
-				$attacker = &$attackerStats;
-				$defender = &$attackedStats;
+				$attacker = $attackerStats;
+				$defender = $attackedStats;
 			}
 			else
 			{
-				$attacker = &$attackedStats;
-				$defender = &$attackerStats;
+				$attacker = $attackedStats;
+				$defender = $attackerStats;
 			}
 			
 			// Actualizamos CD

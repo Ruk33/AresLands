@@ -20,7 +20,7 @@ class Damage
 	}
 	
 	public static function getNormalHit($source, $target)
-	{		
+	{
 		$sourceStats = $source->get_attribute('stats');
 		$sourceIsWarrior = $sourceStats['stat_strength'] > $sourceStats['stat_magic'];
 		$sourceMainAttribute = ( $sourceStats['stat_strength'] ) ? $sourceStats['stat_strength'] : $sourceStats['stat_magic'];
@@ -105,12 +105,7 @@ class Damage
 	}
 	
 	public function execute()
-	{
-		if ( $this->target instanceof \Character )
-		{
-			$triggers = $this->target->triggers()->get();
-		}
-		
+	{		
 		$this->target->current_life -= $this->amount;
 	}
 }
