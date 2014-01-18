@@ -1,7 +1,5 @@
 <?php
 
-use \Libraries\Damage;
-
 /**
  * 	Esta clase contiene la lógica de las batallas, incluyendo:
  * 
@@ -21,13 +19,13 @@ class Battle
 	 * Unidad que ataca
 	 * @var Eloquent
 	 */
-	private $_attacker;
+	private $_attackerUnit;
 	
 	/**
 	 * Unidad que es atacada
 	 * @var Eloquent
 	 */
-	private $_attacked;
+	private $_attackedUnit;
 	
 	/**
 	 * Unidad que es pareja de $_attacker
@@ -88,7 +86,7 @@ class Battle
 	 */
 	public function get_winner()
 	{
-		return $this->_winner;
+		return $this->winner;
 	}
 	
 	/**
@@ -98,7 +96,7 @@ class Battle
 	 */
 	public function get_loser()
 	{
-		return $this->_loser;
+		return $this->loser;
 	}
 	
 	private static function on_excellent_attack_warrior($attacker, $defender, &$damage){}
@@ -156,40 +154,40 @@ class Battle
 		$winnerExperience = 0;
 		$loserExperience = 0;
 		
-		if ( $this->_winner instanceof Character )
+		if ( $this->winner instanceof Character )
 		{
 			$this->add_blank_space();
 			
-			if ( $this->_loser instanceof Npc )
+			if ( $this->loser instanceof Npc )
 			{
-				$winnerExperience = (int) ($this->_loser->xp + max($this->_winner->level, 5) / 5 * Config::get('game.xp_rate'));
+				$winnerExperience = (int) ($this->loser->xp + max($this->winner->level, 5) / 5 * Config::get('game.xp_rate'));
 				
 				// Actualizamos db
-				$this->_winner->xp += $winnerExperience;
-				$this->_winner->points_to_change += $winnerExperience;
+				$this->winner->xp += $winnerExperience;
+				$this->winner->points_to_change += $winnerExperience;
 			}
 			else
 			{
 				// Experiencia del ganador
-				if ( $this->_winner->level <= $this->_loser->level )
+				if ( $this->winner->level <= $this->loser->level )
 				{
-					$winnerExperience = (3 + ($this->_loser->level - $this->_winner->level)) * Config::get('game.xp_rate');
+					$winnerExperience = (3 + ($this->loser->level - $this->winner->level)) * Config::get('game.xp_rate');
 				}
 				
 				// Experiencia del perdedor
 				$loserExperience = 1 * Config::get('game.xp_rate');
 				
 				// Actualizamos en db
-				$this->_winner->xp += $winnerExperience;
-				$this->_winner->points_to_change += $winnerExperience;
+				$this->winner->xp += $winnerExperience;
+				$this->winner->points_to_change += $winnerExperience;
 				
-				$this->_loser->xp += $loserExperience;
-				$this->_loser->points_to_change += $loserExperience;
+				$this->loser->xp += $loserExperience;
+				$this->loser->points_to_change += $loserExperience;
 				
-				$this->add_message_to_log($this->_loser->name . ' recibe ' . $loserExperience . ' punto(s) de experiencia.', true);
+				$this->add_message_to_log($this->loser->name . ' recibe ' . $loserExperience . ' punto(s) de experiencia.', true);
 			}
 			
-			$this->add_message_to_log($this->_winner->name . ' recibe ' . $winnerExperience . ' punto(s) de experiencia.', true);
+			$this->add_message_to_log($this->winner->name . ' recibe ' . $winnerExperience . ' punto(s) de experiencia.', true);
 		}
 	}
 	
@@ -199,31 +197,31 @@ class Battle
 		// del atacante
 		ActivityBar::add($this->_attacker, 2);
 		
-		if ( $this->_winner instanceof Character )
+		if ( $this->winner instanceof Character )
 		{
-			$coins = (50 * $this->_loser->level) * Config::get('game.coins_rate');
+			$coins = (50 * $this->loser->level) * Config::get('game.coins_rate');
 			$percentage = 0;
 			
-			if ( $this->_loser instanceof Character )
+			if ( $this->loser instanceof Character )
 			{
 				// Puntos de PVP
-				$this->_winner->pvp_points += 1;
+				$this->winner->pvp_points += 1;
 				
 				// Monedas
-				$loserCoins = $this->_loser->get_coins();
+				$loserCoins = $this->loser->get_coins();
 				
 				if ( $loserCoins && $loserCoins->count > 0 )
 				{
-					if ( $this->_loser->level > $this->_winner->level )
+					if ( $this->loser->level > $this->winner->level )
 					{
 						// Si el perdedor tiene mas nivel que el ganador
 						// entonces cada nivel de diferencia lo sumamos al porcentaje
-						$percentage = 0.25 + ($this->_loser->level - $this->_winner->level) * 0.01;
+						$percentage = 0.25 + ($this->loser->level - $this->winner->level) * 0.01;
 					}
 					else
 					{
 						// Si la diferencia es de mas de 10 niveles
-						if ( $this->_winner->level - $this->_loser->level > 10 )
+						if ( $this->winner->level - $this->loser->level > 10 )
 						{
 							$percentage = 0;
 							$coins /= 2;
@@ -232,7 +230,7 @@ class Battle
 						{
 							// Si el ganador tiene mas nivel que el perdedor
 							// entonces cada nivel de diferencia lo restamos al porcentaje
-							$percentage = 0.25 - ($this->_winner->level - $this->_loser->level) * 0.01;
+							$percentage = 0.25 - ($this->winner->level - $this->loser->level) * 0.01;
 						}
 					}
 					
@@ -257,9 +255,9 @@ class Battle
 			}
 			
 			$this->add_blank_space();
-			$this->add_message_to_log($this->_winner->name . ' recibe (' . $percentage . '% robado del enemigo): ' . Item::get_divided_coins($coins)['text'], true);
+			$this->add_message_to_log($this->winner->name . ' recibe (' . $percentage . '% robado del enemigo): ' . Item::get_divided_coins($coins)['text'], true);
 			
-			$this->_winner->add_coins($coins);
+			$this->winner->add_coins($coins);
 		}
 	}
 
@@ -269,19 +267,19 @@ class Battle
 		{
 			$attackedOrbs = $this->_attacked->orbs;
 			
-            if ( $this->_attacker == $this->_winner )
+            if ( $this->_attacker == $this->winner )
             {
                 // Verificamos si el perdedor tiene orbes
                 // y si éstos pueden ser robados por el ganador
-                if ( count($attackedOrbs) > 0 && $this->_winner->orbs()->count() < 2 )
+                if ( count($attackedOrbs) > 0 && $this->winner->orbs()->count() < 2 )
                 {
                     $stolenOrb = null;
 
                     foreach ( $attackedOrbs as $attackedOrb )
                     {
-                        if ( $attackedOrb->can_be_stolen_by($this->_winner) )
+                        if ( $attackedOrb->can_be_stolen_by($this->winner) )
                         {							
-                            $attackedOrb->give_to($this->_winner);
+                            $attackedOrb->give_to($this->winner);
                             $stolenOrb = $attackedOrb;
 
                             break;
@@ -293,7 +291,7 @@ class Battle
                     if ( $stolenOrb )
                     {
                         $this->add_blank_space();
-                        $this->add_message_to_log('<p>¡' . $this->_winner->name . ' ha robado ' . $stolenOrb->name . ' de ' . $this->_loser->name . '!</p>', true);
+                        $this->add_message_to_log('<p>¡' . $this->winner->name . ' ha robado ' . $stolenOrb->name . ' de ' . $this->loser->name . '!</p>', true);
                     }
                 }
             }
@@ -330,10 +328,10 @@ class Battle
 		{
 			if ( $this->_pair )
 			{
-				Message::attack_report($this->_pair, $this->_pair, $this->log->message, $this->_winner);
+				Message::attack_report($this->_pair, $this->_pair, $this->log->message, $this->winner);
 			}
-			Message::attack_report($this->_attacker, $this->_attacked, $this->log->message, $this->_winner);
-			Message::defense_report($this->_attacked, $this->_attacker, $this->log->message, $this->_winner);
+			Message::attack_report($this->_attacker, $this->_attacked, $this->log->message, $this->winner);
+			Message::defense_report($this->_attacked, $this->_attacker, $this->log->message, $this->winner);
 		}
 	}
 		
@@ -350,8 +348,7 @@ class Battle
 		$info['is_player'] = $unit instanceof Character;
 		$info['stats'] = $unit->get_stats();
 		$info['is_warrior'] = $info['stats']['stat_strength'] > $info['stats']['stat_magic'];
-		$info['max_life'] = ( $info['is_player'] ) ? $unit->current_life : $unit->life;
-		$info['current_life'] = $info['max_life'];
+		$info['current_life'] = ( $info['is_player'] ) ? $unit->current_life : $unit->life;
 		
 		if ( $info['is_warrior'] )
 		{
@@ -363,6 +360,31 @@ class Battle
 		}
 		
 		$info['current_cd'] = $info['cd'];
+		
+		// Daños
+		// --------------------------------
+		//    VER ESTA PARTE, ¡RE-HACER!
+		// --------------------------------
+		$info['min_damage'] = ( $info['is_warrior'] ) ? $info['stats']['stat_strength'] : $info['stats']['stat_magic'];
+		$info['max_damage'] = $info['min_damage'];
+		
+		$info['min_damage'] *= 0.25;
+		$info['max_damage'] *= 0.75;
+		
+		// Defensas
+		// --------------------------------
+		//    VER ESTA PARTE, ¡RE-HACER!
+		// --------------------------------
+		$info['min_defense'] = ( $info['is_warrior'] ) ? $info['stats']['stat_resistance'] : $info['stats']['stat_magic_resistance'];
+		$info['max_defense'] = $info['min_defense'];
+		
+		$info['min_defense'] *= 0.75;
+		$info['max_defense'] *= 1.25;
+		
+		if ( $info['min_defense'] > $info['max_defense'] )
+		{
+			$info['max_defense'] = $info['min_defense'];
+		}
 		
 		// Log
 		$info['initial_life'] = $info['current_life'];
@@ -398,6 +420,22 @@ class Battle
 		$info['cd'] = $unitStats['cd'] + $pairStats['cd'];
 		$info['current_cd'] = $info['cd'];
 		
+		$info['min_damage'] = $unitStats['min_damage'] + $pairStats['min_damage'] * 0.5;
+		$info['max_damage'] = $unitStats['max_damage'] + $pairStats['max_damage'] * 0.7;
+		
+		if ( $info['min_damage'] > $info['max_damage'] )
+		{
+			$info['max_damage'] = $info['min_damage'];
+		}
+		
+		$info['min_defense'] = $unitStats['min_defense'] + $pairStats['min_defense'] * 0.5;
+		$info['max_defense'] = $unitStats['max_defense'] + $pairStats['max_defense'] * 0.7;
+		
+		if ( $info['min_defense'] > $info['max_defense'] )
+		{
+			$info['max_defense'] = $info['min_defense'];
+		}
+		
 		// Log
 		$info['initial_life'] = $info['current_life'];
 		$info['damage_done'] = 0;
@@ -407,31 +445,28 @@ class Battle
 	
 	private function to_battle()
 	{
-		$start = microtime(true);
-		
-		if ( $this->_pair )
-		{
-			$attackerStats = self::get_pair_info($this->_attacker, $this->_pair);
-		}
-		else
+		if ( is_null($this->_pair) )
 		{
 			$attackerStats = self::get_unit_info($this->_attacker);
 		}
-		
-		$attackerStats = new Character($attackerStats);
+		else
+		{
+			$attackerStats = self::get_pair_info($this->_attacker, $this->_pair);
+		}
 		
 		$attackedStats = self::get_unit_info($this->_attacked);
-		$attackedStats = ( $attackedStats['is_player'] ) ? new Character($attackedStats) : new Npc($attackedStats);
 		
 		$attacker;
 		$defender;
 		
-		$damage = null;
+		$damage = 0;
+		$defense = 0;
+		$realDamage = 0;
 		
-		while ( $attackerStats->current_life > 0 && $attackedStats->current_life > 0 )
+		while ( $attackerStats['current_life'] > 0 && $attackedStats['current_life'] > 0 )
 		{
 			// Golpea el que menos CD tenga
-			if ( $attackerStats->current_cd <= $attackedStats->current_cd )
+			if ( $attackerStats['current_cd'] <= $attackedStats['current_cd'] )
 			{
 				$attacker = &$attackerStats;
 				$defender = &$attackedStats;
@@ -443,43 +478,100 @@ class Battle
 			}
 			
 			// Actualizamos CD
-			$attacker->current_cd += $attacker->cd;
+			$attacker['current_cd'] += $attacker['cd'];
 			
-			$damage = Damage::getNormalHit($attacker, $defender);
+			// Calculamos el daño
+			$attacker['average_damage'] = mt_rand($attacker['min_damage'], $attacker['max_damage']);
+
+			// 35% de crítico físico
+			if ( $attacker['is_warrior'] && mt_rand(0, 100) <= 35 )
+			{
+				$damage = $attacker['average_damage'] * 1.50;
+				//self::on_excellent_attack_warrior($attacker, $defender, $damage);
+			}
+			// 25% de crítico mágico
+			elseif ( ! $attacker['is_warrior'] && mt_rand(0, 100) <= 25 )
+			{
+				$damage = $attacker['average_damage'] * 2.50;
+				//self::on_excellent_attack_mage($attacker, $defender, $damage);
+			}
+			// 10% de golpe fallido
+			elseif ( mt_rand(0, 100) <= 10 )
+			{
+				$damage = $attacker['average_damage'] * 0.75;
+				//self::on_poor_attack($attacker, $defender, $damage);
+			}
+			else
+			{
+				$damage = $attacker['average_damage'];
+				//self::on_normal_attack($attacker, $defender, $damage);
+			}
 			
-			$damage->execute();
-			$attacker->damage_done += $damage->getAmount();
+			// Calculamos la defensa
+			$defender['average_defense'] = mt_rand($defender['min_defense'], $defender['max_defense']);
+			
+			// 30% de defensa exitosa
+			if ( mt_rand(0, 100) <= 30 )
+			{
+				$defense = $defender['average_defense'] * 1.75;
+				//self::on_excellent_defense($attacker, $defender, $defense);
+			}
+			// 10% de defensa fallida
+			elseif ( mt_rand(0, 100) <= 10 )
+			{
+				$defense = $defender['average_defense'] * 0.75;
+				//self::on_poor_defense($attacker, $defender, $defense);
+			}
+			else
+			{
+				$defense = $defender['average_defense'];
+				//self::on_normal_defense($attacker, $defender, $defense);
+			}
+			
+			// Calculamos el daño verdadero
+			$realDamage = min($damage - $defense * 0.4, $defender['current_life']);
+
+			// Evitamos que un daño negativo
+			// cure al oponente
+			if ( $realDamage < 0 )
+			{
+				$realDamage = 0;
+			}
+			
+			// HIT!
+			//self::before_hit($attacker, $defender, $realDamage);
+			
+			$defender['current_life'] -= $realDamage;
+			$attacker['damage_done'] += $realDamage;
 			
 			//self::after_hit($attacker, $defender, $realDamage);
 			
 			$this->add_message_to_log(
 				sprintf(
 					self::get_random_message(), 
-					$attacker->name, 
-					$defender->name
-				) . ' (daño: ' . number_format($damage->getAmount(), 2) . ', defendido: ' . number_format($damage->getOriginalAmount() - $damage->getAmount(), 2) . ')'
+					$attacker['name'], 
+					$defender['name']
+				) . ' (daño: ' . number_format($realDamage, 2) . ', defendido: ' . number_format($damage - $realDamage, 2) . ')'
 			);
-			
-			unset($damage);
 		}
 		
 		// Verificamos si no fue un empate
-		if ( $attackerStats->current_life <= 0 && $attackedStats->current_life <= 0 )
+		if ( $attackerStats['current_life'] <= 0 && $attackedStats['current_life'] <= 0 )
 		{
-			$this->_winner = null;
-			$this->_loser = null;
+			$this->winner = null;
+			$this->loser = null;
 		}
 		else
 		{
-			if ( $attackerStats->current_life > 0 )
+			if ( $attackerStats['current_life'] > 0 )
 			{
-				$this->_winner = $this->_attacker;
-				$this->_loser = $this->_attacked;
+				$this->winner = $this->_attacker;
+				$this->loser = $this->_attacked;
 			}
 			else
 			{
-				$this->_winner = $this->_attacked;
-				$this->_loser = $this->_attacker;
+				$this->winner = $this->_attacked;
+				$this->loser = $this->_attacker;
 			}
 		}
 		
@@ -496,46 +588,44 @@ class Battle
 		
 		// Agregamos al registro la vida inicial de ambos
 		$this->add_blank_space();
-		$this->add_message_to_log('Vida inicial de ' . $attackerStats->name . ': ' . $attackerStats->initial_life, true);
-		$this->add_message_to_log('Vida inicial de ' . $attackedStats->name . ': ' . $attackedStats->initial_life, true);
+		$this->add_message_to_log('Vida inicial de ' . $attackerStats['name'] . ': ' . $attackerStats['initial_life'], true);
+		$this->add_message_to_log('Vida inicial de ' . $attackedStats['name'] . ': ' . $attackedStats['initial_life'], true);
 		
 		// Agregamos al registro el daño realizado por ambos
 		$this->add_blank_space();
-		$this->add_message_to_log('Daño realizado por ' . $attackerStats->name . ': ' . number_format($attackerStats->damage_done, 2), true);
-		$this->add_message_to_log('Daño realizado por ' . $attackedStats->name . ': ' . number_format($attackedStats->damage_done, 2), true);
-		
-		$damageDone = $attackedStats->damage_done;
-		
-		unset($attackerStats->cd, $attackerStats->current_cd, $attackerStats->is_player, $attackerStats->is_warrior, $attackerStats->stats, $attackerStats->initial_life, $attackerStats->damage_done);
-		unset($attackedStats->cd, $attackedStats->current_cd, $attackedStats->is_player, $attackedStats->is_warrior, $attackedStats->stats, $attackedStats->initial_life, $attackedStats->damage_done);
+		$this->add_message_to_log('Daño realizado por ' . $attackerStats['name'] . ': ' . number_format($attackerStats['damage_done'], 2), true);
+		$this->add_message_to_log('Daño realizado por ' . $attackedStats['name'] . ': ' . number_format($attackedStats['damage_done'], 2), true);
 		
 		// Actualizamos las vidas
 		if ( $this->_pair )
 		{
-			$this->_pair->current_life -= $damageDone / 2;
+			$this->_pair->current_life -= $attackedStats['damage_done'] / 2;
 			$this->_pair->save();
+			
+			$this->_attacker->current_life -= $attackedStats['damage_done'] / 2;
+			$this->_attacker->save();
+		}
+		else
+		{
+			$this->_attacker->current_life = $attackerStats['current_life'];
+			$this->_attacker->save();
 		}
 		
-		$this->_attacker->current_life = $attackerStats->current_life;
-		$this->_attacker->save();
-		
-		if ( $this->_attacked instanceof Character )
+		if ( $attackedStats['is_player'] )
 		{
-			$this->_attacked->current_life = $attackedStats->current_life;
+			$this->_attacked->current_life = $attackedStats['current_life'];
 			$this->_attacked->save();
 		}
 		
 		// Disparamos el evento de batalla
-		if ( $attackedStats instanceof Character )
+		if ( $attackedStats['is_player'] )
 		{
-			Event::fire('battle', array($this->_attacker, $this->_attacked, $this->_winner));
+			Event::fire('battle', array($this->_attacker, $this->_attacked, $this->winner));
 		}
 		else
 		{
-			Event::fire('pveBattle', array($this->_attacker, $this->_attacked, $this->_winner));
+			Event::fire('pveBattle', array($this->_attacker, $this->_attacked, $this->winner));
 		}
-		
-		\Log::write('Battle execution time', microtime(true) - $start);
 	}
 	
 	/**
@@ -544,8 +634,8 @@ class Battle
 	 * @param Eloquent $attacked
 	 * @param Eloquent $pair
 	 */
-	public function __construct(Character $attacker, Eloquent $attacked, Character $pair = null)
-	{
+	public function __construct(Eloquent $attacker, Eloquent $attacked, Eloquent $pair = null)
+	{		
 		$this->log = new BattleLog();
 		
 		$this->_attacker = $attacker;
