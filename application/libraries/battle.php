@@ -19,13 +19,13 @@ class Battle
 	 * Unidad que ataca
 	 * @var Eloquent
 	 */
-	private $_attackerUnit;
+	private $_attacker;
 	
 	/**
 	 * Unidad que es atacada
 	 * @var Eloquent
 	 */
-	private $_attackedUnit;
+	private $_attacked;
 	
 	/**
 	 * Unidad que es pareja de $_attacker
@@ -38,14 +38,14 @@ class Battle
 	 * 
 	 * 	@var Eloquent
 	 */
-	private $_winner;
+	private $winner;
 	
 	/**
 	 *	Perdedor de la batalla
 	 * 
 	 * 	@var Eloquent
 	 */
-	private $_loser;
+	private $loser;
 	
 	/**
 	 *	Mensajes de batalla
@@ -271,7 +271,7 @@ class Battle
             {
                 // Verificamos si el perdedor tiene orbes
                 // y si éstos pueden ser robados por el ganador
-                if ( count($attackedOrbs) > 0 && $this->winner->orbs()->count() < 2 )
+                if ( count($attackedOrbs) > 0 && ! $this->winner->has_orb() )
                 {
                     $stolenOrb = null;
 
@@ -445,19 +445,8 @@ class Battle
 	
 	private function to_battle()
 	{
-		if ( is_null($this->_pair) )
-		{
-			$attackerStats = self::get_unit_info($this->_attacker);
-		}
-		else
-		{
-			$attackerStats = self::get_pair_info($this->_attacker, $this->_pair);
-		}
-		
+		$attackerStats = ( $this->_pair ) ? self::get_pair_info($this->_attacker, $this->_pair) : self::get_unit_info($this->_attacker);
 		$attackedStats = self::get_unit_info($this->_attacked);
-		
-		$attacker;
-		$defender;
 		
 		$damage = 0;
 		$defense = 0;
@@ -634,8 +623,8 @@ class Battle
 	 * @param Eloquent $attacked
 	 * @param Eloquent $pair
 	 */
-	public function __construct(Eloquent $attacker, Eloquent $attacked, Eloquent $pair = null)
-	{		
+	public function __construct(Character $attacker, Eloquent $attacked, Character $pair = null)
+	{
 		$this->log = new BattleLog();
 		
 		$this->_attacker = $attacker;

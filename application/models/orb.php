@@ -71,7 +71,7 @@ class Orb extends Base_Model
 			/*
 			 *	Cantidad de orbes
 			 */
-			( $character->orbs()->count() < 2 );
+			( ! $character->has_orb() );
 	}
 
 	public function give_to(Character $character)
@@ -96,7 +96,7 @@ class Orb extends Base_Model
 
 		foreach ( $characters as $character )
 		{
-			if ( $character->orbs()->count() < 2 )
+			if ( ! $character->has_orb() )
 			{
 				$this->give_to($character);
 				break;

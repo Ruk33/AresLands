@@ -137,9 +137,9 @@ class Authenticated_Controller extends Base_Controller
 		$activities = $character->activities()->select(array('end_time', 'name', 'data'))->get();
 
 		/*
-		 *	Obtenemos los orbes
+		 *	Obtenemos el orbe del personaje
 		 */
-		$orbs = $character->orbs()->select(array('id', 'name', 'description'))->get();
+		$orb = $character->orbs()->select(array('id', 'name', 'description'))->first();
 
 		$zone = $character->zone()->select(array('id', 'name', 'description'))->first();
 
@@ -151,12 +151,6 @@ class Authenticated_Controller extends Base_Controller
 		$npcs = Npc::get_npcs_from_zone($zone);
 
 		$exploringTime = $character->exploring_times()->where('zone_id', '=', $zone->id)->first();
-		$blockedNpcs = Npc::select('id')
-		->where('zone_id', '=', $zone->id)
-		->where('type', '=', 'npc')
-		->where('time_to_appear', '>', ( isset($exploringTime->time) ) ? $exploringTime->time : 0)
-		->order_by('time_to_appear', 'asc')
-		->get();
 
 		$this->layout->title = 'Inicio';
 		$this->layout->content = View::make('authenticated.index')
@@ -164,11 +158,10 @@ class Authenticated_Controller extends Base_Controller
 		->with('activities', $activities)
 		->with('items', $itemsToView)
 		->with('skills', $skills)
-		->with('orbs', $orbs)
+		->with('orb', $orb)
 		->with('zone', $zone)
 		->with('npcs', $npcs)
-		->with('exploringTime', $exploringTime)
-		->with('blockedNpcs', $blockedNpcs);
+		->with('exploringTime', $exploringTime);
 	}
 	
 	public function get_secretShop()
@@ -1484,7 +1477,7 @@ class Authenticated_Controller extends Base_Controller
 			/*
 			 *	Obtenemos los orbes
 			 */
-			$orbs = $characterToSee->orbs()->select(array('id', 'name', 'description'))->get();
+			$orb = $characterToSee->orbs()->select(array('id', 'name', 'description'))->first();
 			
 			$character = Character::get_character_of_logged_user(array('id', 'name', 'zone_id', 'clan_id', 'registered_in_tournament'));
 			$skills = array();
@@ -1507,7 +1500,7 @@ class Authenticated_Controller extends Base_Controller
 			$this->layout->content = View::make('authenticated.character')
 			->with('character', $character)
 			->with('items', $itemsToView)
-			->with('orbs', $orbs)
+			->with('orb', $orb)
 			->with('skills', $skills)
 			->with('characterToSee', $characterToSee)
 			->with('pairs', $pairs);
