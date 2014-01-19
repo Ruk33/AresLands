@@ -155,7 +155,7 @@
 				<td>{{ TournamentClanScore::get_victory_percentage($tournament->id, $registeredClan->clan->id) }}%</td>
 				<td>{{ TournamentClanScore::get_victories($tournament->id, $registeredClan->clan->id) }}</td>
 				<td>{{ TournamentClanScore::get_defeats($tournament->id, $registeredClan->clan->id) }}</td>
-				<td><a href="#">Res. grupo</a> - <a href="#">Res. individual</a></td>
+				<td style="font-size: 12px; text-transform: uppercase;" class="text-center"><a href="#">Res. grupo</a> - <a href="#">Res. individual</a></td>
 			</tr>
 			@endforeach
 		</tbody>
