@@ -334,7 +334,11 @@
 				{{ Form::submit('Luchar contra ' . $characterToSee->name, array('class' => 'btn btn-link', 'style' => 'color: white; text-shadow: none;')) }}
 			{{ Form::close() }}
 		@else
-			<div class="negative" style="margin-top: 25px; font-size: 16px;">No puedes atacar a {{ $characterToSee->name }} (aún)...</div>
+			@if ( $character->zone_id != $characterToSee->zone_id )
+				<div class="negative" style="margin-top: 25px; font-size: 16px;">¡{{ $characterToSee->name }} está en otra zona!</div>
+			@elseif ( $characterToSee->has_protection($character) )
+				<div class="negative" style="margin-top: 25px; font-size: 16px;">{{ $characterToSee->name }} está momentáneamente protegido de tus ataques. Debes esperar un poco mas para poder atacarlo.</div>
+			@endif
 		@endif
 		</div>
 	</div>
