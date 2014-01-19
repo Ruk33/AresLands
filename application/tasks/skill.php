@@ -1,5 +1,8 @@
 <?php
 
+/**
+ * @deprecated
+ */
 class Skill_Task
 {
 	public function run($arguments)

@@ -631,6 +631,18 @@ class Battle
 		$this->_attacked = $attacked;
 		$this->_pair = $pair;
 		
+		$attacker->check_skills_time();
+		
+		if ( $attacked instanceof Character )
+		{
+			$attacked->check_skills_time();
+		}
+		
+		if ( $pair )
+		{
+			$pair->check_skills_time();
+		}
+		
 		$this->to_battle();
 		
 		$this->log->message = '<ul class="unstyled">' . $this->log->message . '</ul>';

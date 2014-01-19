@@ -90,7 +90,7 @@ class CharacterSkill extends Base_Model
 		{
 			if ( $this->end_time <= time() )
 			{
-				$this->delete();
+				Skill::periodic($this);
 			}
 		}
 	}

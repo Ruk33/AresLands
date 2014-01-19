@@ -27,6 +27,18 @@ class Character extends Base_Model
 	);
 	
 	/**
+	 * Verificamos los skills del personaje
+	 * (en caso de que tengan que ser removidos)
+	 */
+	public function check_skills_time()
+	{
+		foreach ( $this->skills()->get() as $skill )
+		{
+			$skill->update_time();
+		}
+	}
+	
+	/**
 	 * @param mixed $skill Puede ser el id del skill o instancia de Skill
 	 * @return boolean
 	 */

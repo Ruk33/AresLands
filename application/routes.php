@@ -445,6 +445,8 @@ Route::filter('before', function() {
 
 			if ( $character )
 			{
+				$character->check_skills_time();
+				
 				/*
 				 *	Verificamos si es necesario
 				 *	regenerar puntos de vida
