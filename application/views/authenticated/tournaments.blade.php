@@ -118,7 +118,7 @@
 				<td>Recompensa cofres para MVP</td>
 				<td>
 					<div class="quest-reward-item" data-toggle="tooltip" data-original-title="{{ Item::find(Config::get('game.chest_item_id'))->get_text_for_tooltip() }}<p>Cantidad: 2</p>">
-						<img src="{{ URL::base() }}/img/icons/items/{{ Config::get('game.chest_item_id') }}.png" />
+						<img src="{{ URL::base() }}/img/icons/items/{{ Config::get('game.chest_item_id') }}.png" width="32px" height="32px" />
 					</div>
 				</td>
 			</tr>
