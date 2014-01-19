@@ -458,7 +458,7 @@ Route::filter('before', function() {
 						$character->last_regeneration_time = $time;
 					}
 
-					$regeneration = (0.05 + 0.01) * ($time - $character->last_regeneration_time);
+					$regeneration = 0.25 * ($time - $character->last_regeneration_time);
 
 					if ( $regeneration > 0 )
 					{

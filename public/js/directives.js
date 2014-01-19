@@ -23,7 +23,7 @@ directive('lifeBar', [
 				
 				if ( currentLife < maxLife )
 				{
-					currentLife += 0.06;
+					currentLife += 0.25;
 					attrs.lifeBar.current_life = currentLife.toFixed(2);
 					
 					updateLifeBar(currentLife, maxLife);
