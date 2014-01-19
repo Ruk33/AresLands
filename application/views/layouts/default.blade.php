@@ -89,7 +89,7 @@
 			<div class="container">
 				<!-- Torneo -->
 				@if ( Tournament::is_active() )
-					<div class="pull-left alert alert-info" style="width: 200px;">
+					<div class="pull-left alert alert-info" style="width: 200px; font-size: 12px;">
 						<?php $tournament = Tournament::get_active()->first(); ?>
 						<span>Torneo "{{ $tournament->name }}" finaliza en </span>
 						<span class='timer' data-endtime='{{ $tournament->ends_at - time() }}'></span>
@@ -97,7 +97,7 @@
 				@else
 					@if ( Tournament::is_upcoming() )
 						<?php $tournament = Tournament::get_upcoming()->first(); ?>
-						<div class="pull-left alert alert-info" style="width: 200px;">
+						<div class="pull-left alert alert-info" style="width: 200px; font-size: 12px;">
 							<span>El torneo "{{ $tournament->name }}" comienza en </span>
 							<span class='timer' data-endtime='{{ $tournament->starts_at - time() }}'></span>
 						</div>
