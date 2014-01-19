@@ -256,24 +256,10 @@ class Character extends Base_Model
 	public function set_xp($value)
 	{
 		if ( $value >= $this->xp_next_level )
-		{			
-			while ( true )
-			{
-				$this->level++;
-				$this->xp_next_level = (int) (5 * $this->level);
-				$value -= $this->xp_next_level;
-				
-				if ( $value < $this->xp_next_level )
-				{
-					break;
-				}
-				
-				if ( $value <= 0 )
-				{
-					$value = 0;
-					break;
-				}
-			}
+		{
+			$this->level++;
+			$this->xp_next_level = (int) (5 * $this->level);
+			$value = 0;
 
 			/*
 			 *	Verificamos que siga cumpliendo
