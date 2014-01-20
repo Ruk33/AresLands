@@ -27,6 +27,26 @@ class Character extends Base_Model
 	);
 	
 	/**
+	 * Verificamos si personaje esta registrado en torneo
+	 * @param Tournament $tournament
+	 * @return boolean
+	 */
+	public function is_registered_in_tournament(Tournament $tournament)
+	{
+		if ( ! $this->clan_id )
+		{
+			return false;
+		}
+		
+		if ( ! $tournament )
+		{
+			return false;
+		}
+		
+		return $tournament->is_clan_registered($this->clan);
+	}
+	
+	/**
 	 * Verificamos los skills del personaje
 	 * (en caso de que tengan que ser removidos)
 	 */

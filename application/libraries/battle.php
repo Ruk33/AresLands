@@ -154,6 +154,13 @@ class Battle
 		$winnerExperience = 0;
 		$loserExperience = 0;
 		
+		$tournament = Tournament::get_active()->first();
+		
+		if ( ! $tournament )
+		{
+			$tournament = new Tournament;
+		}
+		
 		if ( $this->winner instanceof Character )
 		{
 			$this->add_blank_space();
@@ -177,17 +184,22 @@ class Battle
 				// Experiencia del perdedor
 				$loserExperience = 1 * Config::get('game.xp_rate');
 				
-				// Actualizamos en db
-				$this->winner->xp += $winnerExperience;
-				$this->winner->points_to_change += $winnerExperience;
+				if ( ! $this->winner->is_registered_in_tournament($tournament) )
+				{
+					$this->winner->xp += $winnerExperience;
+					$this->winner->points_to_change += $winnerExperience;
+					
+					$this->add_message_to_log($this->winner->name . ' recibe ' . $winnerExperience . ' punto(s) de experiencia.', true);
+				}
 				
-				$this->loser->xp += $loserExperience;
-				$this->loser->points_to_change += $loserExperience;
-				
-				$this->add_message_to_log($this->loser->name . ' recibe ' . $loserExperience . ' punto(s) de experiencia.', true);
+				if ( ! $this->loser->is_registered_in_tournament($tournament) )
+				{
+					$this->loser->xp += $loserExperience;
+					$this->loser->points_to_change += $loserExperience;
+					
+					$this->add_message_to_log($this->loser->name . ' recibe ' . $loserExperience . ' punto(s) de experiencia.', true);
+				}
 			}
-			
-			$this->add_message_to_log($this->winner->name . ' recibe ' . $winnerExperience . ' punto(s) de experiencia.', true);
 		}
 	}
 	
@@ -564,12 +576,7 @@ class Battle
 			}
 		}
 		
-		// Solo se da experiencia si no hay torneo activo
-		if ( ! Tournament::is_active() )
-		{
-			$this->give_experience();
-		}
-
+		$this->give_experience();
 		$this->give_rewards();
 		$this->check_for_orbs();
 		$this->check_for_protection();

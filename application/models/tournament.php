@@ -151,6 +151,16 @@ class Tournament extends Base_Model
 				return 0;
 			}
 		}
+		
+		if ( $winner->level <= $loser->level )
+		{
+			return 1;
+		}
+		
+		if ( $winner->level - $loser->level < 3  )
+		{
+			return 0.3;
+		}
 
 		return 0.1;
 	}
