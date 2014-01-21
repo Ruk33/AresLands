@@ -173,11 +173,6 @@ class Battle
 		
 		$tournament = Tournament::get_active()->first();
 		
-		if ( ! $tournament )
-		{
-			$tournament = new Tournament;
-		}
-		
 		if ( $this->winner instanceof Character )
 		{
 			$this->add_blank_space();
@@ -185,6 +180,7 @@ class Battle
 			if ( $this->loser instanceof Npc )
 			{
 				$winnerExperience = (int) ($this->loser->xp + max($this->winner->level, 5) / 5 * Config::get('game.xp_rate'));
+				$this->add_message_to_log($this->winner->name . ' recibe ' . $winnerExperience . ' punto(s) de experiencia.', true);
 				
 				// Actualizamos db
 				$this->winner->xp += $winnerExperience;
@@ -201,7 +197,7 @@ class Battle
 				// Experiencia del perdedor
 				$loserExperience = 1 * Config::get('game.xp_rate');
 				
-				if ( ! $this->winner->is_registered_in_tournament($tournament) )
+				if ( ! $tournament || ! $this->winner->is_registered_in_tournament($tournament) )
 				{
 					$this->winner->xp += $winnerExperience;
 					$this->winner->points_to_change += $winnerExperience;
@@ -209,7 +205,7 @@ class Battle
 					$this->add_message_to_log($this->winner->name . ' recibe ' . $winnerExperience . ' punto(s) de experiencia.', true);
 				}
 				
-				if ( ! $this->loser->is_registered_in_tournament($tournament) )
+				if ( ! $tournament || ! $this->loser->is_registered_in_tournament($tournament) )
 				{
 					$this->loser->xp += $loserExperience;
 					$this->loser->points_to_change += $loserExperience;
