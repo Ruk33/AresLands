@@ -382,7 +382,7 @@ class Battle
 		if ( $info['is_magic'] )
 		{
 			$info['min_damage'] = max(0, $info['stats']['stat_magic'] * 0.35);
-			$info['max_damage'] = max($info['min_magic_damage'], $info['stats']['stat_magic'] * 0.85);
+			$info['max_damage'] = max($info['min_damage'], $info['stats']['stat_magic'] * 0.85);
 			
 			$info['cd'] = 1000 / ($info['stats']['stat_magic_skill'] + 1);
 		}
