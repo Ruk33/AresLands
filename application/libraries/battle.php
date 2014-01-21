@@ -473,8 +473,12 @@ class Battle
 		$attacker = null;
 		$defender = null;
 		
-		while ( $attackerStats['current_life'] > 0 && $attackedStats['current_life'] > 0 )
+		$attacks = 0;
+		
+		while ( $attacks < 100 && $attackerStats['current_life'] > 0 && $attackedStats['current_life'] > 0 )
 		{
+			$attacks++;
+			
 			if ( $pairStats && $attacker != $pairStats && mt_rand(0, 100) <= 10 )
 			{
 				$attacker = &$pairStats;
@@ -519,24 +523,15 @@ class Battle
 			$this->add_message_to_log($randomMessage . " (daño: {$realDamage})");
 		}
 		
-		// Verificamos si no fue un empate
-		if ( $attackerStats['current_life'] <= 0 && $attackedStats['current_life'] <= 0 )
+		if ( $attackerStats['current_life'] > $attackedStats['current_life'] )
 		{
-			$this->winner = null;
-			$this->loser = null;
+			$this->winner = $this->_attacker;
+			$this->loser = $this->_attacked;
 		}
 		else
 		{
-			if ( $attackerStats['current_life'] > 0 )
-			{
-				$this->winner = $this->_attacker;
-				$this->loser = $this->_attacked;
-			}
-			else
-			{
-				$this->winner = $this->_attacked;
-				$this->loser = $this->_attacker;
-			}
+			$this->winner = $this->_attacked;
+			$this->loser = $this->_attacker;
 		}
 		
 		$this->give_experience();
