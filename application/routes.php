@@ -512,12 +512,15 @@ Route::filter('before', function() {
 		 */
 		$character = Character::get_character_of_logged_user(array('id', 'last_activity_time'));
 		
-		if ( ! $character->last_activity_time || $time - $character->last_activity_time >= 300 )
+		if ( $character )
 		{
-			$character->last_activity_time = $time;
+			if ( ! $character->last_activity_time || $time - $character->last_activity_time >= 300 )
+			{
+				$character->last_activity_time = $time;
+			}
+
+			$character->save();
 		}
-		
-		$character->save();
 	}
 });
 
