@@ -406,6 +406,8 @@ class Battle
 		$info['initial_life'] = $info['current_life'];
 		$info['damage_done'] = 0;
 		
+		$info['is_magic'] = false;
+		
 		return $info;
 	}
 	
@@ -511,8 +513,27 @@ class Battle
 			}
 			else
 			{
-				$attackerStats['is_magic'] = mt_rand(-$attackerStats['stats']['stat_magic'], $attackerStats['stats']['stat_strength']) > 0;
-				$attackedStats['is_magic'] = mt_rand(-$attackedStats['stats']['stat_magic'], $attackedStats['stats']['stat_strength']) > 0;
+				if ( mt_rand(0, 100) <= 33 )
+				{
+					// No podemos hacer siempre esto
+					// porque algunos no tienen nada en destreza
+					// y/o destreza magica
+					$attackerStats['is_magic'] = mt_rand(-$attackerStats['stats']['stat_magic'], $attackerStats['stats']['stat_strength']) > 0;
+					$attackedStats['is_magic'] = mt_rand(-$attackedStats['stats']['stat_magic'], $attackedStats['stats']['stat_strength']) > 0;
+				}
+				else
+				{
+					if ( mt_rand(1, 2) == 1 )
+					{
+						$attackerStats['is_magic'] = true;
+						$attackedStats['is_magic'] = true;
+					}
+					else
+					{
+						$attackerStats['is_magic'] = false;
+						$attackedStats['is_magic'] = false;
+					}
+				}
 
 				$attackerCd = ( $attackerStats['is_magic'] ) ? $attackerStats['current_magic_cd'] : $attackerStats['current_cd'];
 				$defenderCd = ( $attackedStats['is_magic'] ) ? $attackedStats['current_magic_cd'] : $attackedStats['current_cd'];
