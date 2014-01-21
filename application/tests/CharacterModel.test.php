@@ -1,7 +1,8 @@
 <?php
 
-class CharacterModel extends PHPUnit_Framework_TestCase {
-
+class CharacterModel extends PHPUnit_Framework_TestCase
+{
+	/*
 	public $character;
 
 	public function __construct()
@@ -79,5 +80,5 @@ class CharacterModel extends PHPUnit_Framework_TestCase {
 		// comprobamos que el otro arma está equipada
 		$this->assertEquals($anotherWeapon->id, $this->character->get_equipped_weapon()->id);
 	}
-
+	*/
 }

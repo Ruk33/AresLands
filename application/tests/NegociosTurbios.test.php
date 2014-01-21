@@ -2,6 +2,7 @@
 
 class NegociosTurbiosTest extends PHPUnit_Framework_TestCase
 {
+	/*
 	const QUEST_ID = 17;
 
 	public $character;
@@ -29,4 +30,6 @@ class NegociosTurbiosTest extends PHPUnit_Framework_TestCase
 		
 		$questProgress->delete();
 	}
+	 * 
+	 */
 }

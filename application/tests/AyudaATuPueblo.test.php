@@ -2,6 +2,7 @@
 
 class AyudaATuPuebloTest extends PHPUnit_Framework_TestCase
 {
+	/*
 	public $character;
 	public $quest;
 
@@ -32,4 +33,5 @@ class AyudaATuPuebloTest extends PHPUnit_Framework_TestCase
 
 		$questProgress->delete();
 	}
+	*/
 }

@@ -2,6 +2,7 @@
 
 class QuestModelTest extends PHPUnit_Framework_TestCase
 {
+	/*
 	const QUEST_ID = 2;
 
 	public function __construct()
@@ -27,4 +28,6 @@ class QuestModelTest extends PHPUnit_Framework_TestCase
 		$this->character->quests()->delete();
 		$this->character->triggers()->delete();
 	}
+	 * 
+	 */
 }

@@ -1,6 +1,10 @@
 <?php
 
 return array(
+	'vip_multiplier_coin_rate_skill' => 28,
+	'vip_multiplier_xp_rate_skill' => 27,
+	'vip_reduction_time_skill' => 26,
+	
 	'registration_url' => '//ironfist.com.ar/register',
 	'login_url' => '//ironfist.com.ar/login',
 

@@ -2,6 +2,7 @@
 
 class ElLlantoDeUnPadreTest extends PHPUnit_Framework_TestCase
 {
+	/*
 	const QUEST_ID = 11;
 
 	public $character;
@@ -32,4 +33,6 @@ class ElLlantoDeUnPadreTest extends PHPUnit_Framework_TestCase
 
 		$this->assertEquals($questProgress, null);
 	}
+	 * 
+	 */
 }

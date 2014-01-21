@@ -88,4 +88,19 @@ class CharacterActivity extends Base_Model
 			$this->delete();
 		}
 	}
+	
+	public function save()
+	{
+		if ( $this->name != 'explore' )
+		{
+			if ( $this->character->has_skill(Config::get('game.vip_reduction_time_skill')) )
+			{
+				// Se usa time() para los tiempos asi que no
+				// deberia haber problemas				
+				$this->end_time -= ($this->end_time - time()) * 0.33;
+			}
+		}
+		
+		return parent::save();
+	}
 }

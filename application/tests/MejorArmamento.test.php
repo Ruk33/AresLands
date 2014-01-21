@@ -2,6 +2,7 @@
 
 class MejorArmamentoTest extends PHPUnit_Framework_TestCase
 {
+	/*
 	const QUEST_ID = 14;
 
 	public $character;
@@ -29,4 +30,6 @@ class MejorArmamentoTest extends PHPUnit_Framework_TestCase
 
 		$questProgress->delete();
 	}
+	 * 
+	 */
 }

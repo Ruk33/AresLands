@@ -2,6 +2,7 @@
 
 class PrimerMisionFallidaTest extends PHPUnit_Framework_TestCase
 {
+	/*
 	const QUEST_ID = 21;
 
 	public $character;
@@ -53,4 +54,6 @@ class PrimerMisionFallidaTest extends PHPUnit_Framework_TestCase
 
 		$questProgress->delete();
 	}
+	 * 
+	 */
 }

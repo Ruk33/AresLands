@@ -179,7 +179,7 @@ class Battle
 			
 			if ( $this->loser instanceof Npc )
 			{
-				$winnerExperience = (int) ($this->loser->xp + max($this->winner->level, 5) / 5 * Config::get('game.xp_rate'));
+				$winnerExperience = (int) ($this->loser->xp + max($this->winner->level, 5) / 5 * $this->winner->get_xp_rate());
 				$this->add_message_to_log($this->winner->name . ' recibe ' . $winnerExperience . ' punto(s) de experiencia.', true);
 				
 				// Actualizamos db
@@ -191,11 +191,11 @@ class Battle
 				// Experiencia del ganador
 				if ( $this->winner->level <= $this->loser->level )
 				{
-					$winnerExperience = (3 + ($this->loser->level - $this->winner->level)) * Config::get('game.xp_rate');
+					$winnerExperience = (3 + ($this->loser->level - $this->winner->level)) * $this->winner->get_xp_rate();
 				}
 				
 				// Experiencia del perdedor
-				$loserExperience = 1 * Config::get('game.xp_rate');
+				$loserExperience = 1 * $this->loser->get_xp_rate();
 				
 				if ( ! $tournament || ! $this->winner->is_registered_in_tournament($tournament) )
 				{
@@ -224,7 +224,7 @@ class Battle
 		
 		if ( $this->winner instanceof Character )
 		{
-			$coins = (50 * $this->loser->level) * Config::get('game.coins_rate');
+			$coins = (50 * $this->loser->level) * $this->winner->get_coins_rate();
 			$percentage = 0;
 			
 			if ( $this->loser instanceof Character )
@@ -377,17 +377,17 @@ class Battle
 		
 		if ( $info['is_magic'] )
 		{
-			$info['min_damage'] = max(0, $info['stats']['stat_magic'] * 0.35);
-			$info['max_damage'] = max($info['min_damage'], $info['stats']['stat_magic'] * 0.85);
+			$info['min_damage'] = max(0, $info['stats']['stat_magic'] * 1.25);
+			$info['max_damage'] = max($info['min_damage'], $info['stats']['stat_magic'] * 2.85);
 			
 			$info['cd'] = 1000 / ($info['stats']['stat_magic_skill'] + 1);
 		}
 		else
 		{
-			$info['min_damage'] = max(0, $info['stats']['stat_strength'] * 0.25);
-			$info['max_damage'] = max($info['min_damage'], $info['stats']['stat_strength'] * 0.75);
+			$info['min_damage'] = max(0, $info['stats']['stat_strength']);
+			$info['max_damage'] = max($info['min_damage'], $info['stats']['stat_strength'] * 2.60);
 			
-			$info['cd'] = 1000 / ($info['stats']['stat_dexterity'] + 1);
+			$info['cd'] = 800 / ($info['stats']['stat_dexterity'] + 1);
 		}
 		
 		$info['current_cd'] = $info['cd'];
@@ -409,33 +409,29 @@ class Battle
 	
 	private function get_damage($unit, $isMagic)
 	{
-		$averageDamage = mt_rand($unit['min_damage'], $unit['max_damage']);
+		$averageDamage = mt_rand($unit['min_damage'], $unit['max_damage']) + 1;
+		$damage = $averageDamage;
 
 		// 35% chance de crítico físico
 		if ( ! $isMagic && mt_rand(0, 100) <= 35 )
 		{
-			$damage = $averageDamage * 1.50;
+			$damage *= 1.50;
 			//self::on_excellent_attack_warrior($attacker, $defender, $damage);
 		}
 		// 25% chance de crítico mágico
 		elseif ( $isMagic && mt_rand(0, 100) <= 25 )
 		{
-			$damage = $averageDamage * 2.50;
+			$damage *= 2.50;
 			//self::on_excellent_attack_mage($attacker, $defender, $damage);
 		}
 		// 10% chance de golpe fallido
 		elseif ( mt_rand(0, 100) <= 10 )
 		{
-			$damage = $averageDamage * 0.75;
+			$damage *= 0.75;
 			//self::on_poor_attack($attacker, $defender, $damage);
 		}
-		else
-		{
-			$damage = $averageDamage;
-			//self::on_normal_attack($attacker, $defender, $damage);
-		}
 		
-		return number_format(max($damage, 0), 2);
+		return $damage;
 	}
 	
 	private function get_defense($unit, $isMagic)
@@ -448,6 +444,8 @@ class Battle
 		{
 			$averageDefense = mt_rand($unit['min_defense'], $unit['max_defense']);
 		}
+		
+		$defense = $averageDefense;
 
 		// 30% de defensa exitosa
 		if ( mt_rand(0, 100) <= 30 )
@@ -461,13 +459,8 @@ class Battle
 			$defense = $averageDefense * 0.75;
 			//self::on_poor_defense($attacker, $defender, $defense);
 		}
-		else
-		{
-			$defense = $averageDefense;
-			//self::on_normal_defense($attacker, $defender, $defense);
-		}
 		
-		return number_format(max($defense, 0), 2);
+		return $defense;
 	}
 	
 	private function to_battle()
@@ -476,8 +469,8 @@ class Battle
 		$pairStats = ( $this->_pair ) ? self::get_unit_info($this->_pair) : null;
 		$attackedStats = self::get_unit_info($this->_attacked);
 		
-		$attacker = &$attackerStats;
-		$defender = &$attackedStats;
+		$attacker = null;
+		$defender = null;
 		
 		while ( $attackerStats['current_life'] > 0 && $attackedStats['current_life'] > 0 )
 		{
@@ -506,10 +499,11 @@ class Battle
 			
 			// Calculamos el daño
 			$damage = $this->get_damage($attacker, $attacker['is_magic']);
-			$defense = $this->get_defense($defender, $attacker['is_magic']);
+			$defense = $this->get_defense($defender, $attacker['is_magic']) * 0.40;
 			
 			// Calculamos el daño verdadero
-			$realDamage = number_format(max(min($damage - $defense, $defender['current_life']), 0), 2);
+			$realDamage = min($damage - $defense, $defender['current_life']);
+			$realDamage = max(0, $realDamage);
 			
 			// HIT!
 			//self::before_hit($attacker, $defender, $realDamage);

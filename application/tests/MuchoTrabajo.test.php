@@ -2,6 +2,7 @@
 
 class MuchoTrabajoTest extends PHPUnit_Framework_TestCase
 {
+	/*
 	const QUEST_ID = 20;
 
 	public $character;
@@ -60,4 +61,6 @@ class MuchoTrabajoTest extends PHPUnit_Framework_TestCase
 
 		$this->assertEquals($questProgress, null);
 	}
+	 * 
+	 */
 }

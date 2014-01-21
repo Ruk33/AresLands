@@ -2,6 +2,7 @@
 
 class SegundaMisionFallidaTest extends PHPUnit_Framework_TestCase
 {
+	/*
 	const QUEST_ID = 22;
 
 	public $character;
@@ -44,4 +45,6 @@ class SegundaMisionFallidaTest extends PHPUnit_Framework_TestCase
 
 		$questProgress->delete();
 	}
+	 * 
+	 */
 }

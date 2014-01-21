@@ -2,6 +2,7 @@
 
 class LaVenganzaDelAlquimistaTest extends PHPUnit_Framework_TestCase
 {
+	/*
 	const QUEST_ID = 24;
 
 	public $character;
@@ -46,4 +47,6 @@ class LaVenganzaDelAlquimistaTest extends PHPUnit_Framework_TestCase
 
 		$this->assertEquals($questProgress, null);
 	}
+	 * 
+	 */
 }

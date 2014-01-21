@@ -2,6 +2,7 @@
 
 class UrgenteTest extends PHPUnit_Framework_TestCase
 {
+	/*
 	const QUEST_ID = 19;
 
 	public $character;
@@ -48,4 +49,6 @@ class UrgenteTest extends PHPUnit_Framework_TestCase
 
 		$questProgress->delete();
 	}
+	 * 
+	 */
 }

@@ -2,6 +2,7 @@
 
 class PocionesYPocionesTest extends PHPUnit_Framework_TestCase
 {
+	/*
 	const QUEST_ID = 23;
 
 	public $character;
@@ -37,4 +38,6 @@ class PocionesYPocionesTest extends PHPUnit_Framework_TestCase
 
 		$questProgress->delete();
 	}
+	 * 
+	 */
 }

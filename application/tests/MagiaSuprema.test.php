@@ -2,6 +2,7 @@
 
 class MagiaSupremaTest extends PHPUnit_Framework_TestCase
 {
+	/*
 	const QUEST_ID = 16;
 
 	public $character;
@@ -27,4 +28,6 @@ class MagiaSupremaTest extends PHPUnit_Framework_TestCase
 
 		$this->assertEquals($questProgress, null);
 	}
+	 * 
+	 */
 }

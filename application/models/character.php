@@ -27,6 +27,89 @@ class Character extends Base_Model
 	);
 	
 	/**
+	 * @return float
+	 */
+	public function get_xp_rate()
+	{
+		$rate = Config::get('game.xp_rate');
+		
+		if ( $this->has_skill(Config::get('game.vip_multiplier_xp_rate_skill')) )
+		{
+			$rate *= 1.5;
+		}
+		
+		return $rate;
+	}
+	
+	/**
+	 * @return float
+	 */
+	public function get_xp_quest_rate()
+	{
+		$rate = Config::get('game.quest_xp_rate');
+		
+		if ( $this->has_skill(Config::get('game.vip_multiplier_xp_rate_skill')) )
+		{
+			$rate *= 1.5;
+		}
+		
+		return $rate;
+	}
+	
+	/**
+	 * @return float
+	 */
+	public function get_drop_rate()
+	{
+		return Config::get('game.drop_rate');
+	}
+	
+	/**
+	 * @return float
+	 */
+	public function get_explore_reward_rate()
+	{
+		$rate = Config::get('game.explore_reward_rate');
+		
+		if ( $this->has_skill(Cofig::get('game.vip_multiplier_coin_rate_skill')) )
+		{
+			$rate *= 1.5;
+		}
+		
+		return $rate;
+	}
+	
+	/**
+	 * @return float
+	 */
+	public function get_coins_rate()
+	{
+		$rate = Config::get('game.coins_rate');
+		
+		if ( $this->has_skill(Config::get('game.vip_multiplier_coin_rate_skill')) )
+		{
+			$rate *= 1.5;
+		}
+		
+		return $rate;
+	}
+	
+	/**
+	 * @return float
+	 */
+	public function get_quest_coins_rate()
+	{
+		$rate = Config::get('game.quest_coins_rate');
+		
+		if ( $this->has_skill(Cofig::get('game.vip_multiplier_coin_rate_skill')) )
+		{
+			$rate *= 1.5;
+		}
+		
+		return $rate;
+	}
+	
+	/**
 	 * Verificamos si personaje esta registrado en torneo
 	 * @param Tournament $tournament
 	 * @return boolean
@@ -756,7 +839,7 @@ class Character extends Base_Model
 	public function give_full_activity_bar_reward()
 	{
 		$xpAmount = (int) ($this->level / 3);
-		$coinsAmount = $this->level * 50 * Config::get('game.coins_rate');
+		$coinsAmount = $this->level * 50 * $this->get_coins_rate();
 
 		$this->add_coins($coinsAmount);
 
@@ -1018,7 +1101,7 @@ class Character extends Base_Model
 
 	public function give_explore_reward($reward)
 	{
-		$this->add_coins($reward * Config::get('game.coins_rate'));
+		$this->add_coins($reward * $this->get_coins_rate());
 	}
 
 	public function get_link()
@@ -1428,7 +1511,7 @@ class Character extends Base_Model
 
 		$characterActivity->character_id = $this->id;
 		$characterActivity->name = 'explore';
-		$characterActivity->data = array( 'reward' => ($this->level * ($time/60)/2) * Config::get('game.explore_reward_rate'), 'time' => $time );
+		$characterActivity->data = array( 'reward' => ($this->level * ($time/60)/2) * $this->get_explore_reward_rate(), 'time' => $time );
 		$characterActivity->end_time = time() + $time;
 
 		$characterActivity->save();

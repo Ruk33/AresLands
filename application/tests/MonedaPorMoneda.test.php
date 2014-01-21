@@ -2,6 +2,7 @@
 
 class MonedaPorMonedaTest extends PHPUnit_Framework_TestCase
 {
+	/*
 	const QUEST_ID = 12;
 
 	public $character;
@@ -30,4 +31,6 @@ class MonedaPorMonedaTest extends PHPUnit_Framework_TestCase
 
 		$questProgress->delete();
 	}
+	 * 
+	 */
 }

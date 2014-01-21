@@ -179,20 +179,33 @@ class Authenticated_Controller extends Base_Controller
 			return Laravel\Redirect::to('/');
 		}
 		
-		return var_dump($data);
+		$vipObject = VipFactory::get($data['id']);
+		
+		$this->layout->title = 'Mercado secreto';
+		$this->layout->content = var_dump($vipObject->get_name());
 	}
 	
 	public function get_buyFromSecretShop($id = 1)
 	{
-		// todo check if the vip object exists
+		$id = (int) $id;
+		$vipObject = VipFactory::get($id);
+		
+		if ( ! $vipObject )
+		{
+			return Laravel\Redirect::to('/');
+		}
+		
 		$data = array(
-			'id' => (int) $id,
-			'amount' => 30,
+			'id' => $id,
+			'name' => $vipObject->get_name(),
+			'description' => $vipObject->get_description(),
+			'price' => $vipObject->get_price(),
 			'success_redirect' => URL::to('authenticated/buyedFromSecretShop')
 		);
 		
-		$data = Session::flash('data', serialize($data));
+		Session::flash('data', serialize($data));
 		
+		return var_dump(Laravel\Routing\Router::route('GET', 'http://ironfist.com/consumeIronCoins'));
 		return Laravel\Redirect::to('//ironfist.com/consumeIronCoins');
 	}
 

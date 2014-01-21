@@ -2,6 +2,7 @@
 
 class NuevosProblemasTest extends PHPUnit_Framework_TestCase
 {
+	/*
 	const QUEST_ID = 8;
 
 	public $character;
@@ -36,4 +37,6 @@ class NuevosProblemasTest extends PHPUnit_Framework_TestCase
 
 		$this->assertEquals($questProgress, null);
 	}
+	 * 
+	 */
 }

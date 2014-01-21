@@ -2,6 +2,7 @@
 
 class SuenoPerturbadoTest extends PHPUnit_Framework_TestCase
 {
+	/*
 	const QUEST_ID = 6;
 
 	public $character;
@@ -53,4 +54,6 @@ class SuenoPerturbadoTest extends PHPUnit_Framework_TestCase
 
 		$this->assertEquals($questProgress, null);
 	}
+	 * 
+	 */
 }

@@ -2,6 +2,7 @@
 
 class HieloYRocaTest extends PHPUnit_Framework_TestCase
 {
+	/*
 	const QUEST_ID = 7;
 
 	public $character;
@@ -32,4 +33,6 @@ class HieloYRocaTest extends PHPUnit_Framework_TestCase
 
 		$this->assertEquals($questProgress, null);
 	}
+	 * 
+	 */
 }
