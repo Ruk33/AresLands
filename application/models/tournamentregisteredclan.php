@@ -132,7 +132,14 @@ class TournamentRegisteredClan extends Base_Model
 	 */
 	public static function is_disqualified(Tournament $tournament, Clan $clan)
 	{
-		return self::get_registration($tournament, $clan)->first()->disqualified;
+		$registration = self::get_registration($tournament, $clan)->first();
+		
+		if ( ! $registration )
+		{
+			return false;
+		}
+		
+		return $registration->disqualified;
 	}
 
 	/**
