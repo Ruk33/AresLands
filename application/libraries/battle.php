@@ -242,6 +242,7 @@ class Battle
 						// Si el perdedor tiene mas nivel que el ganador
 						// entonces cada nivel de diferencia lo sumamos al porcentaje
 						$percentage = 0.25 + ($this->loser->level - $this->winner->level) * 0.01;
+						$percentage = min(0.33, $percentage);
 					}
 					else
 					{
