@@ -71,7 +71,7 @@ class Character extends Base_Model
 	{
 		$rate = Config::get('game.explore_reward_rate');
 		
-		if ( $this->has_skill(Cofig::get('game.vip_multiplier_coin_rate_skill')) )
+		if ( $this->has_skill(Config::get('game.vip_multiplier_coin_rate_skill')) )
 		{
 			$rate *= 1.5;
 		}
@@ -101,7 +101,7 @@ class Character extends Base_Model
 	{
 		$rate = Config::get('game.quest_coins_rate');
 		
-		if ( $this->has_skill(Cofig::get('game.vip_multiplier_coin_rate_skill')) )
+		if ( $this->has_skill(Config::get('game.vip_multiplier_coin_rate_skill')) )
 		{
 			$rate *= 1.5;
 		}
