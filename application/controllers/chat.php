@@ -52,7 +52,6 @@ class Chat_Controller extends Base_Controller
 		->left_join('characters', 'chat.character_id', '=', 'characters.id')
 		->where('time', '>', $time)
 		->where('channel', '=', $channel)
-		->take(5)
 		->order_by('time', 'asc')
 		->get(array('chat.message', 'chat.time', 'characters.name'));
 
