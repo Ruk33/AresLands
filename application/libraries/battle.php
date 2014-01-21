@@ -48,9 +48,8 @@ class Battle
 	private $loser;
 	
 	/**
-	 *	Mensajes de batalla
-	 * 
-	 * 	@var String
+	 *	Mensajes para daños fisicos
+	 * 	@var Array
 	 */
 	private static $messages = array(
 		'%1$s logra asestar un gran golpe a %2$s. %2$s no puede evitar soltar un pequeño alarido',
@@ -70,6 +69,17 @@ class Battle
 		'%1$s con mucha suerte, logra golpear eficazmente a %2$s',
 		'%2$s se avalanza contra %1$s, pero %1$s lo sorprende con un inesperado golpe',
 		'%1$s hace uso de su agilidad para llegar rápidamente a %2$s y propinar un gran golpe',
+	);
+	
+	/**
+	 * Mensajes para daños magicos
+	 * @var type 
+	 */
+	private static $magicMessages = array(
+		'%1$s lanza un poderoso hechizo dando en el pecho de %2$s',
+		'%2$s cae en la trampa de %1$s recibiendo daño de su magia',
+		'%1$s canaliza por un tiempo y lanza su magia contra %2$s',
+		'%2$s inesperadamente recibe un gran hechiso de %1$s',
 	);
 	
 	/**
@@ -116,9 +126,16 @@ class Battle
 	 * 
 	 * 	@return String
 	 */
-	private static function get_random_message()
+	private static function get_random_message($magical)
 	{
-		return self::$messages[mt_rand(0, count(self::$messages) - 1)];
+		if ( $magical )
+		{
+			return self::$magicMessages[mt_rand(0, count(self::$magicMessages) - 1)];
+		}
+		else
+		{
+			return self::$messages[mt_rand(0, count(self::$messages) - 1)];
+		}
 	}
 	
 	/**
@@ -359,44 +376,31 @@ class Battle
 		$info['name'] = $unit->name;
 		$info['is_player'] = $unit instanceof Character;
 		$info['stats'] = $unit->get_stats();
-		$info['is_warrior'] = $info['stats']['stat_strength'] > $info['stats']['stat_magic'];
 		$info['current_life'] = ( $info['is_player'] ) ? $unit->current_life : $unit->life;
 		
-		if ( $info['is_warrior'] )
-		{
-			$info['cd'] = 1000 / ($info['stats']['stat_dexterity'] + 1);
-		}
-		else
-		{
-			$info['cd'] = 1000 / ($info['stats']['stat_magic_skill'] + 1);
-		}
+		// CD magico
+		$info['magic_cd'] = 1000 / ($info['stats']['stat_magic_skill'] + 1);
+		$info['current_magic_cd'] = $info['magic_cd'];
 		
+		// CD fisico
+		$info['cd'] = 1000 / ($info['stats']['stat_dexterity'] + 1);
 		$info['current_cd'] = $info['cd'];
 		
-		// Daños
-		// --------------------------------
-		//    VER ESTA PARTE, ¡RE-HACER!
-		// --------------------------------
-		$info['min_damage'] = ( $info['is_warrior'] ) ? $info['stats']['stat_strength'] : $info['stats']['stat_magic'];
-		$info['max_damage'] = $info['min_damage'];
+		// Daño magico
+		$info['min_magic_damage'] = max(0, $info['stats']['stat_magic'] * 0.35);
+		$info['max_magic_damage'] = max($info['min_magic_damage'], $info['stats']['stat_magic'] * 0.85);
 		
-		$info['min_damage'] *= 0.25;
-		$info['max_damage'] *= 0.75;
+		// Daño fisico
+		$info['min_damage'] = max(0, $info['stats']['stat_strength'] * 0.25);
+		$info['max_damage'] = max($info['min_damage'], $info['stats']['stat_strength'] * 0.75);
 		
-		// Defensas
-		// --------------------------------
-		//    VER ESTA PARTE, ¡RE-HACER!
-		// --------------------------------
-		$info['min_defense'] = ( $info['is_warrior'] ) ? $info['stats']['stat_resistance'] : $info['stats']['stat_magic_resistance'];
-		$info['max_defense'] = $info['min_defense'];
+		// Defensa magica
+		$info['min_magic_defense'] = max(0, $info['stats']['stat_magic_resistance'] * 0.75);
+		$info['max_magic_defense'] = max($info['min_magic_defense'], $info['stats']['stat_magic_resistance'] * 1.25);
 		
-		$info['min_defense'] *= 0.75;
-		$info['max_defense'] *= 1.25;
-		
-		if ( $info['min_defense'] > $info['max_defense'] )
-		{
-			$info['max_defense'] = $info['min_defense'];
-		}
+		// Defensa fisica
+		$info['min_defense'] = max(0, $info['stats']['stat_resistance'] * 0.75);
+		$info['max_defense'] = max($info['min_defense'], $info['stats']['stat_resistance'] * 1.25);
 		
 		// Log
 		$info['initial_life'] = $info['current_life'];
@@ -405,139 +409,143 @@ class Battle
 		return $info;
 	}
 	
-	/**
-	 * Obtenemos los stats de una pareja
-	 * @param Eloquent $unit
-	 * @param Eloquent $pair
-	 * @return array
-	 */
-	private static function get_pair_info(Eloquent $unit, Eloquent $pair)
+	private function get_damage($unit, $isMagic)
 	{
-		$unitStats = self::get_unit_info($unit);
-		$pairStats = self::get_unit_info($pair);
-		
-		$info = array();
-		
-		$info['name'] = "El equipo de {$unit->name} y {$pair->name}";
-		$info['is_player'] = $unitStats['is_player'];
-		
-		foreach ( $unitStats['stats'] as $stat => $amount )
+		if ( $isMagic )
 		{
-			$info['stats'][$stat] = $amount + $pairStats['stats'][$stat] * 0.7;
+			$averageDamage = mt_rand($unit['min_magic_damage'], $unit['max_magic_damage']);
+		}
+		else
+		{
+			$averageDamage = mt_rand($unit['min_damage'], $unit['max_damage']);
+		}
+
+		// 35% chance de crítico físico
+		if ( ! $isMagic && mt_rand(0, 100) <= 35 )
+		{
+			$damage = $averageDamage * 1.50;
+			//self::on_excellent_attack_warrior($attacker, $defender, $damage);
+		}
+		// 25% chance de crítico mágico
+		elseif ( $isMagic && mt_rand(0, 100) <= 25 )
+		{
+			$damage = $averageDamage * 2.50;
+			//self::on_excellent_attack_mage($attacker, $defender, $damage);
+		}
+		// 10% chance de golpe fallido
+		elseif ( mt_rand(0, 100) <= 10 )
+		{
+			$damage = $averageDamage * 0.75;
+			//self::on_poor_attack($attacker, $defender, $damage);
+		}
+		else
+		{
+			$damage = $averageDamage;
+			//self::on_normal_attack($attacker, $defender, $damage);
 		}
 		
-		$info['is_warrior'] = $unitStats['is_warrior'];
-		$info['current_life'] = $unitStats['current_life'] + $pairStats['current_life'];
-		
-		$info['cd'] = $unitStats['cd'] + $pairStats['cd'];
-		$info['current_cd'] = $info['cd'];
-		
-		$info['min_damage'] = $unitStats['min_damage'] + $pairStats['min_damage'] * 0.5;
-		$info['max_damage'] = $unitStats['max_damage'] + $pairStats['max_damage'] * 0.7;
-		
-		if ( $info['min_damage'] > $info['max_damage'] )
+		return number_format(max($damage, 0), 2);
+	}
+	
+	private function get_defense($unit, $isMagic)
+	{
+		if ( $isMagic )
 		{
-			$info['max_damage'] = $info['min_damage'];
+			$averageDefense = mt_rand($unit['min_magic_defense'], $unit['max_magic_defense']);
+		}
+		else
+		{
+			$averageDefense = mt_rand($unit['min_defense'], $unit['max_defense']);
+		}
+
+		// 30% de defensa exitosa
+		if ( mt_rand(0, 100) <= 30 )
+		{
+			$defense = $averageDefense * 1.75;
+			//self::on_excellent_defense($attacker, $defender, $defense);
+		}
+		// 10% de defensa fallida
+		elseif ( mt_rand(0, 100) <= 10 )
+		{
+			$defense = $averageDefense * 0.75;
+			//self::on_poor_defense($attacker, $defender, $defense);
+		}
+		else
+		{
+			$defense = $averageDefense;
+			//self::on_normal_defense($attacker, $defender, $defense);
 		}
 		
-		$info['min_defense'] = $unitStats['min_defense'] + $pairStats['min_defense'] * 0.5;
-		$info['max_defense'] = $unitStats['max_defense'] + $pairStats['max_defense'] * 0.7;
-		
-		if ( $info['min_defense'] > $info['max_defense'] )
-		{
-			$info['max_defense'] = $info['min_defense'];
-		}
-		
-		// Log
-		$info['initial_life'] = $info['current_life'];
-		$info['damage_done'] = 0;
-		
-		return $info;
+		return number_format(max($defense, 0), 2);
 	}
 	
 	private function to_battle()
 	{
-		$attackerStats = ( $this->_pair ) ? self::get_pair_info($this->_attacker, $this->_pair) : self::get_unit_info($this->_attacker);
+		$attackerStats = self::get_unit_info($this->_attacker);
+		$pairStats = ( $this->_pair ) ? self::get_unit_info($this->_pair) : null;
 		$attackedStats = self::get_unit_info($this->_attacked);
 		
 		$damage = 0;
 		$defense = 0;
 		$realDamage = 0;
 		
+		$attacker = &$attackerStats;
+		$defender = &$attackedStats;
+		
+		$attackerCd = 0;
+		$defenderCd = 0;
+		
+		if ( $pairStats )
+		{
+			$pairStats['is_attacking'] = false;
+		}
+		
 		while ( $attackerStats['current_life'] > 0 && $attackedStats['current_life'] > 0 )
 		{
-			// Golpea el que menos CD tenga
-			if ( $attackerStats['current_cd'] <= $attackedStats['current_cd'] )
+			if ( $pairStats && $attacker != $pairStats && mt_rand(0, 100) <= 10 )
 			{
-				$attacker = &$attackerStats;
+				$pairStats['is_magic'] = mt_rand(-$pairStats['stats']['stat_magic'], $pairStats['stats']['stat_strength']) > 0;
+				
+				$attacker = &$pairStats;
 				$defender = &$attackedStats;
 			}
 			else
 			{
-				$attacker = &$attackedStats;
-				$defender = &$attackerStats;
+				$attackerStats['is_magic'] = mt_rand(-$attackerStats['stats']['stat_magic'], $attackerStats['stats']['stat_strength']) > 0;
+				$attackedStats['is_magic'] = mt_rand(-$attackedStats['stats']['stat_magic'], $attackedStats['stats']['stat_strength']) > 0;
+
+				$attackerCd = ( $attackerStats['is_magic'] ) ? $attackerStats['current_magic_cd'] : $attackerStats['current_cd'];
+				$defenderCd = ( $attackedStats['is_magic'] ) ? $attackedStats['current_magic_cd'] : $attackedStats['current_cd'];
+
+				// Golpea el que menos CD tenga
+				if ( $attackerCd <= $defenderCd )
+				{
+					$attacker = &$attackerStats;
+					$defender = &$attackedStats;
+				}
+				else
+				{
+					$attacker = &$attackedStats;
+					$defender = &$attackerStats;
+				}
+
+				// Actualizamos CD
+				if ( $attacker['is_magic'] )
+				{
+					$attacker['current_magic_cd'] += $attacker['magic_cd'];
+				}
+				else
+				{
+					$attacker['current_cd'] += $attacker['cd'];
+				}
 			}
-			
-			// Actualizamos CD
-			$attacker['current_cd'] += $attacker['cd'];
 			
 			// Calculamos el daño
-			$attacker['average_damage'] = mt_rand($attacker['min_damage'], $attacker['max_damage']);
-
-			// 35% de crítico físico
-			if ( $attacker['is_warrior'] && mt_rand(0, 100) <= 35 )
-			{
-				$damage = $attacker['average_damage'] * 1.50;
-				//self::on_excellent_attack_warrior($attacker, $defender, $damage);
-			}
-			// 25% de crítico mágico
-			elseif ( ! $attacker['is_warrior'] && mt_rand(0, 100) <= 25 )
-			{
-				$damage = $attacker['average_damage'] * 2.50;
-				//self::on_excellent_attack_mage($attacker, $defender, $damage);
-			}
-			// 10% de golpe fallido
-			elseif ( mt_rand(0, 100) <= 10 )
-			{
-				$damage = $attacker['average_damage'] * 0.75;
-				//self::on_poor_attack($attacker, $defender, $damage);
-			}
-			else
-			{
-				$damage = $attacker['average_damage'];
-				//self::on_normal_attack($attacker, $defender, $damage);
-			}
-			
-			// Calculamos la defensa
-			$defender['average_defense'] = mt_rand($defender['min_defense'], $defender['max_defense']);
-			
-			// 30% de defensa exitosa
-			if ( mt_rand(0, 100) <= 30 )
-			{
-				$defense = $defender['average_defense'] * 1.75;
-				//self::on_excellent_defense($attacker, $defender, $defense);
-			}
-			// 10% de defensa fallida
-			elseif ( mt_rand(0, 100) <= 10 )
-			{
-				$defense = $defender['average_defense'] * 0.75;
-				//self::on_poor_defense($attacker, $defender, $defense);
-			}
-			else
-			{
-				$defense = $defender['average_defense'];
-				//self::on_normal_defense($attacker, $defender, $defense);
-			}
+			$damage = $this->get_damage($attacker, $attacker['is_magic']);
+			$defense = $this->get_defense($defender, $attacker['is_magic']);
 			
 			// Calculamos el daño verdadero
-			$realDamage = min($damage - $defense * 0.4, $defender['current_life']);
-
-			// Evitamos que un daño negativo
-			// cure al oponente
-			if ( $realDamage < 0 )
-			{
-				$realDamage = 0;
-			}
+			$realDamage = number_format(max(min($damage - $defense * 0.4, $defender['current_life']), 0), 2);
 			
 			// HIT!
 			//self::before_hit($attacker, $defender, $realDamage);
@@ -547,13 +555,9 @@ class Battle
 			
 			//self::after_hit($attacker, $defender, $realDamage);
 			
-			$this->add_message_to_log(
-				sprintf(
-					self::get_random_message(), 
-					$attacker['name'], 
-					$defender['name']
-				) . ' (daño: ' . number_format($realDamage, 2) . ', defendido: ' . number_format($damage - $realDamage, 2) . ')'
-			);
+			$randomMessage = sprintf(self::get_random_message($attacker['is_magic']), $attacker['name'], $defender['name']);
+			
+			$this->add_message_to_log($randomMessage . " (daño: {$realDamage})");
 		}
 		
 		// Verificamos si no fue un empate
@@ -595,17 +599,11 @@ class Battle
 		// Actualizamos las vidas
 		if ( $this->_pair )
 		{
-			$this->_pair->current_life -= $attackedStats['damage_done'] / 2;
-			$this->_pair->save();
-			
-			$this->_attacker->current_life -= $attackedStats['damage_done'] / 2;
-			$this->_attacker->save();
+			$this->add_message_to_log('Daño realizado por ' . $pairStats['name'] . ': ' . number_format($pairStats['damage_done'], 2), true);
 		}
-		else
-		{
-			$this->_attacker->current_life = $attackerStats['current_life'];
-			$this->_attacker->save();
-		}
+		
+		$this->_attacker->current_life = $attackerStats['current_life'];
+		$this->_attacker->save();
 		
 		if ( $attackedStats['is_player'] )
 		{
