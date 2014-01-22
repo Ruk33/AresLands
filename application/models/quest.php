@@ -160,7 +160,7 @@ class Quest extends Base_Model
 				
 				case Config::get('game.xp_item_id'):
 					$text = '<img src="' . URL::base() . '/img/xp.png" width="22px" height="18px" />';
-					$text = '<span data-toggle="tooltip" data-original-title="Cantidad: ' . (int) ($reward->amount * $character->get_quest_xp_rate()) . '">' . $text . '</span>';
+					$text = '<span data-toggle="tooltip" data-original-title="Cantidad: ' . (int) ($reward->amount * $character->get_xp_quest_rate()) . '">' . $text . '</span>';
 					break;
 
 				default:
@@ -205,7 +205,7 @@ class Quest extends Base_Model
 					break;
 				
 				case Config::get('game.xp_item_id'):
-					$reward->amount = (int) ($reward->amount * $character->get_quest_xp_rate());
+					$reward->amount = (int) ($reward->amount * $character->get_xp_quest_rate());
 					break;
 			}
 			
