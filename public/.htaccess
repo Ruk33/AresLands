@@ -1,22 +1,22 @@
 # Escondemos index.php
 # y lo agregamos en caso de que falte
 
-#<IfModule mod_rewrite.c>
-# RewriteEngine on
+    <IfModule mod_rewrite.c>
+    RewriteEngine on
+     
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteCond %{REQUEST_FILENAME} !-d
+     
+    RewriteRule ^(.*)$ index.php/$1 [L]
+    </IfModule>
 
-# RewriteCond %{REQUEST_FILENAME} !-f
-# RewriteCond %{REQUEST_FILENAME} !-d
+#Options +FollowSymLinks
+#RewriteEngine on
 
-# RewriteRule ^(.*)$ /index.php/$1 [L]
-#</IfModule>
+#RewriteCond %{REQUEST_FILENAME} !-f
+#RewriteCond %{REQUEST_FILENAME} !-d
 
-Options +FollowSymLinks
-RewriteEngine on
-
-RewriteCond %{REQUEST_FILENAME} !-f
-RewriteCond %{REQUEST_FILENAME} !-d
-
-RewriteRule . index.php [L]
+#RewriteRule . index.php [L]
 
 # Apache configuration file
 # httpd.apache.org/docs/2.2/mod/quickreference.html

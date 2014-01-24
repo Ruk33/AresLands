@@ -9,6 +9,12 @@ interface IVipObject
 	public function get_name();
 	
 	/**
+	 * Se obtiene el icono del objeto vip
+	 * @return string
+	 */
+	public function get_icon();
+	
+	/**
 	 * Se obtiene la descripcion del objeto vip
 	 * @return string
 	 */

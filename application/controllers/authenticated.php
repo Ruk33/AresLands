@@ -70,7 +70,7 @@ class Authenticated_Controller extends Base_Controller
 	}
     
 	public function get_index()
-	{		
+	{
 		$character = Character::get_character_of_logged_user(array(
 			'id',
 			'name',
@@ -167,27 +167,12 @@ class Authenticated_Controller extends Base_Controller
 	public function get_secretShop()
 	{
 		$this->layout->title = 'Mercado secreto';
-		$this->layout->content = View::make('authenticated.secretshop');
+		$this->layout->content = View::make('authenticated.secretshop')->with('vipObjects', VipFactory::get_all());
 	}
 	
-	public function get_buyedFromSecretShop()
+	public function post_buyFromSecretShop()
 	{
-		$data = unserialize(Session::get('data'));
-		
-		if ( ! $data || ! isset($data['ok']) || ! $data['ok'] )
-		{
-			return Laravel\Redirect::to('/');
-		}
-		
-		$vipObject = VipFactory::get($data['id']);
-		
-		$this->layout->title = 'Mercado secreto';
-		$this->layout->content = var_dump($vipObject->get_name());
-	}
-	
-	public function get_buyFromSecretShop($id = 1)
-	{
-		$id = (int) $id;
+		$id = (int) Input::get('id');
 		$vipObject = VipFactory::get($id);
 		
 		if ( ! $vipObject )
@@ -195,18 +180,17 @@ class Authenticated_Controller extends Base_Controller
 			return Laravel\Redirect::to('/');
 		}
 		
-		$data = array(
-			'id' => $id,
-			'name' => $vipObject->get_name(),
-			'description' => $vipObject->get_description(),
-			'price' => $vipObject->get_price(),
-			'success_redirect' => URL::to('authenticated/buyedFromSecretShop')
-		);
-		
-		Session::flash('data', serialize($data));
-		
-		return var_dump(Laravel\Routing\Router::route('GET', 'http://ironfist.com/consumeIronCoins'));
-		return Laravel\Redirect::to('//ironfist.com/consumeIronCoins');
+		if ( Auth::user()->consume_coins($vipObject->get_price()) )
+		{
+			$vipObject->execute();
+			
+			$this->layout->title = '¡Compra exitosa!';
+			$this->layout->content = View::make('authenticated.buyfromsecretshop')->with('vipObject', $vipObject);
+		}
+		else
+		{
+			return Redirect::to('authenticated/secretShop')->with('error', 'No tienes suficientes monedas para comprar este objeto');
+		}
 	}
 
 	public function get_allTournaments()
