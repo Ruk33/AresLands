@@ -142,7 +142,7 @@ controller('CharacterController', ['$scope', '$http', '$timeout', 'CharacterOfLo
 		$http.get($scope.basePath + 'api/itemTooltip/' + id).success(function (data) {
 			$scope.item[id] = data + '<p>Precio: ' + $scope.price[id] + '</p>';
 		});
-	}
+	};
 
 	$scope.onMouseOver = function(id)
 	{
@@ -151,7 +151,7 @@ controller('CharacterController', ['$scope', '$http', '$timeout', 'CharacterOfLo
 			$scope.item[id] = 'Cargando...';
 			$scope.getItemTooltip(id);
 		}
-	}
+	};
 }])
 
 .controller('Skill', ['$scope', '$http', function($scope, $http) {
@@ -197,16 +197,16 @@ controller('CharacterController', ['$scope', '$http', '$timeout', 'CharacterOfLo
 	$scope.chat.show = false;
 	$scope.chat.channel = 0;
 
-	var getConnected = function() {
+	var showConnected = function() {
 		$http.get($scope.basePath + 'chat/connected/' + $scope.chat.channel).success(function (data) {
-			if ( ! $scope.chat.connected[$scope.chat.channel] ) {
-				$scope.chat.connected[$scope.chat.channel] = [];
+			var connectedCharacters = '';
+
+			for ( var i in data ) {
+				connectedCharacters += data[i].name + ', ';
 			}
 			
-			$scope.chat.connected[$scope.chat.channel] = data;
+			sendBotMessage('Personajes conectados: ' + connectedCharacters.slice(0, -2));
 		});
-
-		$timeout(getConnected, 300000);
 	};
 
 	var getMessages = function() {
@@ -230,9 +230,34 @@ controller('CharacterController', ['$scope', '$http', '$timeout', 'CharacterOfLo
 
 		$timeout(getMessages, 2000);
 	};
+	
+	var sendBotMessage = function(message) {
+		$scope.chat.messages[$scope.chat.channel].unshift({ 'name': 'AresLands BOT', 'message': message });
+	};
+	
+	var clearMessages = function() {
+		$scope.chat.messages[$scope.chat.channel] = [];
+	};
+	
+	$scope.formatMessageTime = function(time) {
+		var d = new Date(time * 1000);
+		return d.getHours() + ':' + d.getMinutes() + ':' + d.getSeconds();
+	};
 
 	$scope.sendMessage = function() {
-		$http.post($scope.basePath + 'chat/message', { 'message': $scope.chat.input, 'channel': $scope.chat.channel });
+		switch ( $scope.chat.input ) {
+			case '/online':
+				showConnected();
+				break;
+				
+			case '/clear':
+				clearMessages();
+				break;
+				
+			default:
+				$http.post($scope.basePath + 'chat/message', { 'message': $scope.chat.input, 'channel': $scope.chat.channel });
+		}
+
 		$scope.chat.input = '';
 	};
 
@@ -245,16 +270,13 @@ controller('CharacterController', ['$scope', '$http', '$timeout', 'CharacterOfLo
 			}
 
 			if ( channel > 0 ) {
-				$scope.chat.messages[channel].unshift({ 'name': 'AresLands BOT', 'message': 'Cambiaste de canal a: Clan' });
+				sendBotMessage('Cambiaste de canal a: Clan');
 			} else {
-				$scope.chat.messages[channel].unshift({ 'name': 'AresLands BOT', 'message': 'Cambiaste de canal a: General' });
+				sendBotMessage('Cambiaste de canal a: General');
 			}
-
-			getConnected();
 		}
 	};
 
-	getConnected();
 	getMessages();
 }])
 
