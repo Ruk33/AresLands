@@ -245,7 +245,23 @@ controller('CharacterController', ['$scope', '$http', '$timeout', 'CharacterOfLo
 		}
 		
 		var d = new Date(time * 1000);
-		return d.getHours() + ':' + d.getMinutes() + ':' + d.getSeconds();
+		var hours = d.getHours();
+		var minutes = d.getMinutes();
+		var seconds = d.getSeconds();
+		
+		if ( hours.length < 2 ) {
+			hours = '0' + hours;
+		}
+		
+		if ( minutos.length < 2 ) {
+			minutes = '0' + minutes;
+		}
+		
+		if ( seconds.length < 2 ) {
+			seconds = '0' + seconds;
+		}
+		
+		return hours + ':' + minutes + ':' + seconds;
 	};
 
 	$scope.sendMessage = function() {
