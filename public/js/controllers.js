@@ -240,6 +240,10 @@ controller('CharacterController', ['$scope', '$http', '$timeout', 'CharacterOfLo
 	};
 	
 	$scope.formatMessageTime = function(time) {
+		if ( ! time ) {
+			return;
+		}
+		
 		var d = new Date(time * 1000);
 		return d.getHours() + ':' + d.getMinutes() + ':' + d.getSeconds();
 	};
