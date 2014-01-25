@@ -245,19 +245,19 @@ controller('CharacterController', ['$scope', '$http', '$timeout', 'CharacterOfLo
 		}
 		
 		var d = new Date(time * 1000);
-		var hours = d.getHours();
-		var minutes = d.getMinutes();
-		var seconds = d.getSeconds();
+		var hours = new String(d.getHours());
+		var minutes = new String(d.getMinutes());
+		var seconds = new String(d.getSeconds());
 		
-		if ( hours.length < 2 ) {
+		if ( hours.length != 2 ) {
 			hours = '0' + hours;
 		}
 		
-		if ( minutos.length < 2 ) {
+		if ( minutes.length != 2 ) {
 			minutes = '0' + minutes;
 		}
 		
-		if ( seconds.length < 2 ) {
+		if ( seconds.length != 2 ) {
 			seconds = '0' + seconds;
 		}
 		
