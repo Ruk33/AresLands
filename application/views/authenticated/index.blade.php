@@ -1,8 +1,4 @@
 <div ng-controller="CharacterController" style="margin-left: -15px;">
-	<div style="position: absolute; right: 15px;">
-		Hora del servidor: <span id='serverTime'>00:00:00</span>
-	</div>
-
 	@if ( count($npcs) > 0 )
 		@if ( ! $character->is_traveling )
 		<div class="bar">

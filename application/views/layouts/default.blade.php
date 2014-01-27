@@ -25,6 +25,10 @@
 		<!--[if lt IE 7]>
 			<p class="chromeframe">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> or <a href="http://www.google.com/chromeframe/?redirect=true">activate Google Chrome Frame</a> to improve your experience.</p>
 		<![endif]-->
+		
+		<div class="pull-right" style="padding: 10px; font-size: 12px; color: white; text-transform: uppercase;">
+			Hora del servidor: <span id='serverTime'>00:00:00</span>
+		</div>
 
 		@if ( Session::has('modalMessage') )
 			<?php 
