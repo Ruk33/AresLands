@@ -254,11 +254,11 @@
 					</li>
 					
 					@if ( $character->clan_id > 0 )
-					<li ng-show="chat.show">
-						<button class="btn btn-inverse" ng-click="switchChannel(0)">Cambiar a general</button>
+					<li ng-show="chat.show" style="margin-left: 45px;">
+						<button class="btn btn-small btn-inverse" ng-click="switchChannel(0)">Cambiar a general</button>
 					</li>
 					<li ng-show="chat.show">
-						<button class="btn btn-inverse" ng-click="switchChannel({{ $character->clan_id }})">Cambiar a clan</button>
+						<button class="btn btn-small btn-inverse" ng-click="switchChannel({{ $character->clan_id }})">Cambiar a clan</button>
 					</li>
 					@endif
 				</ul>
