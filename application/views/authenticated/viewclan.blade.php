@@ -132,7 +132,7 @@
 
 	<h2 style="margin-top: 50px;">Mensaje</h2>
 	@if ( $character->id == $clan->leader_id || $clan->has_permission($character, Clan::PERMISSION_EDIT_MESSAGE) )
-		<p id="message" name="message" contenteditable="true" alt="" data-toggle="tooltip" data-placement="top" data-original-title="Haz clic para editar">{{{ $clan->message }}}</p>
+		<p id="message" name="message" contenteditable="true" alt="" data-toggle="tooltip" data-placement="top" data-original-title="Haz clic para editar" style="width: 100%; min-height: 50px;">{{{ $clan->message }}}</p>
 	@else
 		<p id="message" name="message">{{{ $clan->message }}}</p>
 	@endif

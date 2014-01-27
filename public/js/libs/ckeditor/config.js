@@ -11,12 +11,19 @@ CKEDITOR.editorConfig = function( config ) {
 	config.disableObjectResizing = true;
 
 	config.scayt_autoStartup = true;
+	
+	config.removeDialogTabs = 'image:advanced;image:Link;link:advanced;link:upload';
+    config.linkShowTargetTab = false;
+	
+	config.disableNativeSpellChecker = false;
 
-	config.removePlugins = 'elementspath,colordialog,div,find,flash,forms,iframe,pastefromword,preview,scayt,table,tabletools,templates,wsc';
+	config.removePlugins = 'liststyle,menubutton,contextmenu,elementspath,colordialog,div,find,flash,forms,iframe,pastefromword,preview,scayt,table,tabletools,templates,wsc';
 	config.toolbar = [
-		['Bold', 'Italic', 'Underline'],
+		['Font', 'FontSize'],
+		['Bold', 'Italic', 'Underline', 'Strike', '-', 'RemoveFormat'],
+		['TextColor', 'BGColor'],
 		['Link', 'Unlink'],
-		['Blockquote', 'Image'],
+		['Image'],
 		['About']
 	];
 };
