@@ -226,9 +226,11 @@ controller('CharacterController', ['$scope', '$http', '$timeout', 'CharacterOfLo
 					$scope.chat.messages[$scope.chat.channel].unshift(data[i]);
 				}
 			}
+			
+			$timeout(getMessages, 2000);
+		}).error(function() {
+			$timeout(getMessages, 2000);
 		});
-
-		$timeout(getMessages, 2000);
 	};
 	
 	var sendBotMessage = function(message) {
