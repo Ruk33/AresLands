@@ -27,6 +27,43 @@ class Character extends Base_Model
 	);
 	
 	/**
+	 * Regeneramos vida al jugador en caso de ser necesario
+	 * @param boolean $save True para guardar el row (UPDATE)
+	 */
+	public function regenerate_life($save = false)
+	{
+	   if ( $this->current_life < $this->max_life )
+	   {
+		   $time = time();
+		   
+		   if ( ! $this->last_regeneration_time )
+		   {
+			   $this->last_regeneration_time = $time;
+		   }
+
+		   $regeneration = 0.25 * ($time - $this->last_regeneration_time);
+
+		   if ( $regeneration > 0 )
+		   {
+			   $this->current_life += $regeneration;
+			   $this->last_regeneration_time = $time;
+		   }
+	   }
+	   else
+	   {
+		   // Evitamos que si el usuario tiene una regeneracion
+		   // muy antigua y luego recibe daño que sea curado
+		   // completamente
+		   $this->last_regeneration_time = null;
+	   }
+	   
+	   if ( $save )
+	   {
+		   $this->save();
+	   }
+	}
+	
+	/**
 	 * @return float
 	 */
 	public function get_xp_rate()

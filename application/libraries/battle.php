@@ -595,6 +595,7 @@ class Battle
 		if ( $attacked instanceof Character )
 		{
 			$attacked->check_skills_time();
+			$attacked->regenerate_life(true);
 		}
 		
 		if ( $pair )

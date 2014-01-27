@@ -446,33 +446,7 @@ Route::filter('before', function() {
 			if ( $character )
 			{
 				$character->check_skills_time();
-				
-				/*
-				 *	Verificamos si es necesario
-				 *	regenerar puntos de vida
-				 */
-				if ( $character->current_life < $character->max_life )
-				{
-					if ( ! $character->last_regeneration_time )
-					{
-						$character->last_regeneration_time = $time;
-					}
-
-					$regeneration = 0.25 * ($time - $character->last_regeneration_time);
-
-					if ( $regeneration > 0 )
-					{
-						$character->current_life += $regeneration;
-						$character->last_regeneration_time = $time;
-					}
-				}
-				else
-				{
-					// Evitamos que si el usuario tiene una regeneracion
-					// muy antigua y luego recibe daño que sea curado
-					// completamente
-					$character->last_regeneration_time = null;
-				}
+				$character->regenerate_life();
 
 				/*
 				 *	Además vamos a actualizar tiempos
