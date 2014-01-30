@@ -59,6 +59,86 @@ body {
 	font-family: "Roboto Slab", Georgia, Verdana, Arial;
 }
 
+#characteristicsModal {
+	background-image: url('/img/characteristics-background.png');
+	background-color: transparent;
+	background-repeat: no-repeat;
+	width: 615px;
+	height: 570px;
+	border: none;
+}
+
+#characteristicsModal > div.modal-body {
+	overflow: hidden;
+	margin: 0;
+	padding: 0;
+	min-height: 550px;
+	position: relative;
+}
+
+#characteristicsModal > div.modal-body div.tab-content {
+	width: 500px;
+	margin: 50px auto;
+}
+
+#characteristicsModal > div.modal-body div.paginator {
+	width: 500px;
+	position: absolute;
+	bottom: 5px;
+}
+
+#characteristicsModal > div.modal-body div.caption {
+	border: 1px solid #737779;
+	background-color: rgb(23, 23, 23);
+	border-radius: 5px;
+	box-shadow: 0 0 5px #000, 0 0 5px #000;
+}
+
+#characteristicsModal > div.modal-body div.introduction {
+	border: 1px solid #737779;
+	background-color: rgb(23, 23, 23);
+	border-radius: 5px;
+	box-shadow: 0 0 5px #000, 0 0 5px #000;
+}
+
+#characteristicsModal h3 {
+	color: white;
+	text-shadow: black 0 0 5px;
+	margin: 0;
+	margin-bottom: 5px;
+}
+
+#characteristicsModal > div.modal-body div.caption p {
+	color: gold;
+}
+
+#characteristicsModal > div.modal-body a, #characteristicsModal > div.modal-body input[type="submit"] {
+	color: white !important;
+	text-shadow: black 0 0 5px;
+	font-size: 18px;
+	margin: 0;
+	margin-left: 5px;
+	margin-right: 5px;
+	border: none;
+	background-color: transparent;
+	font-family: "Roboto Slab", Georgia, Verdana, Arial;
+	line-height: 0;
+	vertical-align: inherit;
+}
+
+#characteristicsModal > div.modal-body a:hover, #characteristicsModal > div.modal-body input[type="submit"]:hover {
+	text-decoration: underline;
+}
+
+#characteristicsModal > div.modal-body div.caption ul {
+	font-size: 12px;
+}
+
+#characteristicsModal > div.modal-body div.caption ul li {
+	color: #737779;
+	border-bottom: 1px dashed #222;
+}
+
 .tournament-table {
 	box-shadow: 0px 0px 5px #000;
 	background-color: #F0D7C1;
@@ -256,6 +336,30 @@ a:hover {
 	color: #FFC04F;
 }
 
+.alert-container {
+	background-image: url("/img/alert-background.jpg");
+	background-repeat: no-repeat;
+	position: relative;
+	width: 319px;
+	height: 114px;
+	padding: 10px;
+	padding-bottom: 0;
+	box-shadow: #000 0 0 5px, #000 0 0 5px;
+	text-shadow: #000 0 0 5px;
+}
+
+.alert-container form, .clan-member-link form {
+	margin: 0;
+	padding: 0;
+}
+
+.alert-container form input[type="submit"], .clan-member-link form input[type="submit"] {
+	margin: 0;
+	padding: 0;
+	color: white;
+	text-shadow: none;
+}
+
 .menu {
     background-image: url("/img/menu/menu-spritesheet.png");
     background-repeat: no-repeat;
@@ -340,28 +444,34 @@ a:hover {
     background-position: -5px -281px;
 }
 
-.menu-thanks {
+.menu-talents {
     width: 177px;
     height: 36px;
     background-position: -192px -281px;
 }
 
-.menu-tournaments {
+.menu-thanks {
     width: 177px;
     height: 36px;
     background-position: -5px -327px;
 }
 
-.menu-trade {
+.menu-tournaments {
     width: 177px;
     height: 36px;
     background-position: -192px -327px;
 }
 
-.menu-travel {
+.menu-trade {
     width: 177px;
     height: 36px;
     background-position: -379px -5px;
+}
+
+.menu-travel {
+    width: 177px;
+    height: 36px;
+    background-position: -379px -51px;
 }
 
 .coin {

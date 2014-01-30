@@ -415,7 +415,7 @@ Route::filter('before', function() {
 	$time = time();
 	$isAuth = Auth::check();
 	$requestUri = Request::uri();
-		
+	
 	// Evitamos que estas acciones se ejecutan
 	// si solamente necesitamos algo del chat
 	// o api
@@ -441,6 +441,9 @@ Route::filter('before', function() {
 				'level',
 				'points_to_change',
 				'ip',
+				'characteristics',
+				'regeneration_per_second',
+				'regeneration_per_second_extra'
 			));
 
 			if ( $character )

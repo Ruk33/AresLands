@@ -47,7 +47,8 @@ class Authenticated_Controller extends Base_Controller
 			'race',
 			'clan_id',
 			'is_exploring',
-			'is_traveling'
+			'is_traveling',
+			'characteristics'
 		));
 
 		if ( Auth::check() && $character )
@@ -162,6 +163,87 @@ class Authenticated_Controller extends Base_Controller
 		->with('zone', $zone)
 		->with('npcs', $npcs)
 		->with('exploringTime', $exploringTime);
+	}
+	
+	public function post_learnTalent()
+	{
+		$skillId = Input::get('id', false);
+		$redirection = Redirect::to('authenticated/talents');
+		
+		if ( ! $skillId )
+		{
+			return $redirection;
+		}
+		
+		$character = Character::get_character_of_logged_user(array('id', 'characteristics', 'race'));
+		$skill = Skill::find((int) $skillId);
+		
+		if ( $skill )
+		{
+			if ( $character->can_learn_talent($skill) )
+			{
+				if ( $character->learn_talent($skill) )
+				{
+					return $redirection->with('message', 'Aprendiste el talento ' . $skill->name);
+				}
+			}
+		}
+		
+		return $redirection;
+	}
+	
+	public function get_talents()
+	{
+		$character = Character::get_character_of_logged_user(array('id', 'characteristics', 'race', 'talent_points'));
+		
+		$talents = array();
+		
+		$talents['racial'] = Skill::where_in('id', Config::get('game.racial_skills')[$character->race])->get();
+		$talents['characteristics'] = array();
+		
+		foreach ( $character->characteristics as $characteristic )
+		{
+			$talents['characteristics'][$characteristic->get_name()] = Skill::where_in('id', $characteristic->get_skills())->get();
+		}
+		
+		$this->layout->title = 'Talentos';
+		$this->layout->content = View::make('authenticated.talents')
+									 ->with('talents', $talents)
+									 ->with('character', $character);
+	}
+	
+	public function post_setCharacteristics()
+	{
+		$character = Character::get_character_of_logged_user(array('id', 'characteristics'));
+		$redirection = Redirect::to('authenticated');
+		
+		// Evitamos que el personaje re-asigne sus caracteristicas
+		if ( $character->characteristics )
+		{
+			return $redirection;
+		}
+		
+		$allCharacteristics = Characteristic::get_all();
+		
+		foreach ( $allCharacteristics as $i => $characteristics )
+		{
+			$characteristicsNames = array();
+			
+			foreach ( $characteristics as $characteristic )
+			{
+				$characteristicsNames[] = $characteristic->get_name();
+			}
+			
+			if ( ! in_array(Input::get("{$i}"), $characteristicsNames) )
+			{
+				return $redirection;
+			}
+		}
+		
+		$character->characteristics = strtolower(implode(',', Input::except(array('_method', 'csrf_token'))));
+		$character->save();
+		
+		return $redirection;
 	}
 	
 	public function get_secretShop()
@@ -1492,6 +1574,28 @@ class Authenticated_Controller extends Base_Controller
 			{
 				$pairs = $character->get_pairs();
 			}
+			
+			if ( $characterToSee->has_characteristic(Characteristic::SHY) )
+			{
+				switch ( mt_rand(1, 4) )
+				{
+					case 1:
+						$characterToSee->race = 'dwarf';
+						break;
+					
+					case 2:
+						$characterToSee->race = 'elf';
+						break;
+					
+					case 3:
+						$characterToSee->race = 'drow';
+						break;
+					
+					case 4:
+						$characterToSee->race = 'human';
+						break;
+				}
+			}
 
 			$this->layout->title = $characterToSee->name;
 			$this->layout->content = View::make('authenticated.character')
@@ -1500,6 +1604,7 @@ class Authenticated_Controller extends Base_Controller
 			->with('orb', $orb)
 			->with('skills', $skills)
 			->with('characterToSee', $characterToSee)
+			->with('hideStats', $characterToSee->has_characteristic(Characteristic::RESERVED))
 			->with('pairs', $pairs);
 		}
 		else

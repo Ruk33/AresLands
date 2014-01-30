@@ -179,7 +179,7 @@ class Battle
 			
 			if ( $this->loser instanceof Npc )
 			{
-				$winnerExperience = (int) ($this->loser->xp + max($this->winner->level, 5) / 5 * $this->winner->get_xp_rate());
+				$winnerExperience = (int) ($this->loser->xp + max($this->loser->level, 5) / 5 * $this->winner->get_xp_rate());
 				$this->add_message_to_log($this->winner->name . ' recibe ' . $winnerExperience . ' punto(s) de experiencia.', true);
 				
 				// Actualizamos db
@@ -375,6 +375,13 @@ class Battle
 		$info['stats'] = $unit->get_stats();
 		$info['current_life'] = ( $info['is_player'] ) ? $unit->current_life : $unit->life;
 		$info['is_magic'] = $info['stats']['stat_magic'] > $info['stats']['stat_strength'];
+		$info['evasion'] = 0;
+		$info['critical'] = 0;
+		$info['reflect_magic_damage'] = 0;
+		$info['reflect_physical_damage'] = 0;
+		$info['cheat_death'] = 0;
+		$info['cheated_death'] = false;
+		$info['added_life'] = 0;
 		
 		if ( $info['is_magic'] )
 		{
@@ -391,8 +398,6 @@ class Battle
 			$info['cd'] = 800 / ($info['stats']['stat_dexterity'] + 1);
 		}
 		
-		$info['current_cd'] = $info['cd'];
-		
 		// Defensa magica
 		$info['min_magic_defense'] = max(0, $info['stats']['stat_magic_resistance'] * 0.75);
 		$info['max_magic_defense'] = max($info['min_magic_defense'], $info['stats']['stat_magic_resistance'] * 1.25);
@@ -400,6 +405,43 @@ class Battle
 		// Defensa fisica
 		$info['min_defense'] = max(0, $info['stats']['stat_resistance'] * 0.75);
 		$info['max_defense'] = max($info['min_defense'], $info['stats']['stat_resistance'] * 1.25);
+		
+		if ( $info['is_player'] )
+		{
+			$extraDamage = ( $info['is_magic'] ) ? $unit->magic_damage + $unit->magic_damage_extra : $unit->physical_damage + $unit->physical_damage_extra;
+			
+			$info['min_damage'] += $extraDamage;
+			$info['max_damage'] += $extraDamage;
+			
+			$extraMagicDefense = $unit->magic_defense + $unit->magic_defense_extra;
+			$info['min_magic_defense'] += $extraMagicDefense;
+			$info['max_magic_defense'] += $extraMagicDefense;
+			
+			$extraPhysicalDefense = $unit->physical_defense + $unit->physical_defense_extra;
+			$info['min_defense'] += $extraPhysicalDefense;
+			$info['max_defense'] += $extraPhysicalDefense;
+			
+			$info['evasion'] = min(50, $unit->evasion + $unit->evasion_extra);
+			$info['critical'] = min(50, $unit->critical_chance + $unit->critical_chance_extra);
+			
+			$info['reflect_magic_damage'] = $unit->reflect_magic_damage + $unit->reflect_magic_damage_extra;
+			$info['reflect_physical_damage'] = $unit->reflect_physical_damage + $unit->reflect_physical_damage_extra;
+			
+			if ( $unit->has_skill(Config::get('game.cheat_death_skill')) )
+			{
+				$info['cheat_death'] = 5;
+			}
+			
+			if ( $unit->max_life == $unit->current_life )
+			{
+				$info['current_life'] += $unit->max_life_extra;
+				$info['added_life'] = $unit->max_life_extra;
+			}
+			
+			$info['cd'] -= $unit->attack_speed + $unit->attack_speed_extra;
+		}
+		
+		$info['current_cd'] = $info['cd'];
 		
 		// Log
 		$info['initial_life'] = $info['current_life'];
@@ -502,8 +544,20 @@ class Battle
 				$attacker['current_cd'] += $attacker['cd'];
 			}
 			
+			if ( mt_rand(0, 100) <= $defender['evasion'] )
+			{
+				$this->add_message_to_log("¡{$defender['name']} esquiva el ataque de {$attacker['name']}!");
+				continue;
+			}
+			
 			// Calculamos el daño
 			$damage = $this->get_damage($attacker, $attacker['is_magic']);
+			
+			if ( mt_rand(0, 100) <= $attacker['critical'] )
+			{
+				$damage *= 2;
+			}
+			
 			$defense = $this->get_defense($defender, $attacker['is_magic']) * 0.40;
 			
 			// Calculamos el daño verdadero
@@ -513,6 +567,21 @@ class Battle
 			// HIT!
 			//self::before_hit($attacker, $defender, $realDamage);
 			
+			if ( $defender['current_life'] - $realDamage <= 0 )
+			{
+				if ( $defender['cheat_death'] > 0 )
+				{
+					$defender['current_life'] = 1;
+					
+					$defender['cheat_death']--;
+					$this->add_message_to_log("¡{$defender['name']} burla a la muerte!");
+					
+					$defender['cheated_death'] = true;
+					
+					continue;
+				}
+			}
+			
 			$defender['current_life'] -= $realDamage;
 			$attacker['damage_done'] += $realDamage;
 			
@@ -521,6 +590,16 @@ class Battle
 			$randomMessage = sprintf(self::get_random_message($attacker['is_magic']), $attacker['name'], $defender['name']);
 			
 			$this->add_message_to_log($randomMessage . " (daño: {$realDamage})");
+			
+			if ( $defender['current_life'] > 0 )
+			{
+				$reflectedDamage = 1;
+				
+				$attacker['current_life'] -= $reflectedDamage;
+				$defender['damage_done'] += $reflectedDamage;
+				
+				$this->add_message_to_log("{$defender['name']} refleja {$reflectedDamage} de daño hacia {$attacker['name']}");
+			}
 		}
 		
 		if ( $attackerStats['current_life'] > $attackedStats['current_life'] )
@@ -556,13 +635,35 @@ class Battle
 			$this->add_message_to_log('Daño realizado por ' . $pairStats['name'] . ': ' . number_format($pairStats['damage_done'], 2), true);
 		}
 		
-		$this->_attacker->current_life = $attackerStats['current_life'];
+		$this->_attacker->current_life = $attackerStats['current_life'] - $attackerStats['added_life'];
 		$this->_attacker->save();
+		
+		if ( $attackerStats['cheated_death'] )
+		{
+			// Removemos Burlar a la muerte (puesto que ya ha sido utilizado)
+			$cheatDeathSkill = $this->_attacker->skills()->where('skill_id', '=', Config::get('game.cheat_death_skill'))->first();
+			
+			if ( $cheatDeathSkill )
+			{
+				$this->_attacker->remove_buff($cheatDeathSkill);
+			}
+		}
 		
 		if ( $attackedStats['is_player'] )
 		{
-			$this->_attacked->current_life = $attackedStats['current_life'];
+			$this->_attacked->current_life = $attackedStats['current_life'] - $attackedStats['added_life'];
 			$this->_attacked->save();
+			
+			if ( $attackedStats['cheated_death'] )
+			{
+				// Removemos Burlar a la muerte (puesto que ya ha sido utilizado)
+				$cheatDeathSkill = $this->_attacked->skills()->where('skill_id', '=', Config::get('game.cheat_death_skill'))->first();
+
+				if ( $cheatDeathSkill )
+				{
+					$this->_attacked->remove_buff($cheatDeathSkill);
+				}
+			}
 		}
 		
 		// Disparamos el evento de batalla

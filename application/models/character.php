@@ -27,6 +27,128 @@ class Character extends Base_Model
 	);
 	
 	/**
+	 * Verificamos si un personaje puede seguir aprendiendo talentos
+	 * @return boolean
+	 */
+	public function can_learn_more_talents()
+	{
+		return $this->talents()->count() < Config::get('game.max_talents');
+	}
+	
+	/**
+	 * Verificamos si personaje puede aprender talento
+	 * @param Skill $skill
+	 * @return boolean
+	 */
+	public function can_learn_talent(Skill $skill)
+	{
+		if ( $this->talent_points <= 0 )
+		{
+			return false;
+		}
+		
+		if ( ! $this->can_learn_more_talents() )
+		{
+			return false;
+		}
+		
+		if ( $this->has_talent($skill) )
+		{
+			return false;
+		}
+		
+		if ( in_array($skill->id, Config::get('game.racial_skills')[$this->race]) )
+		{
+			return true;
+		}
+		
+		$characteristics = $this->characteristics;
+		
+		foreach ( $characteristics as $characteristic )
+		{
+			if ( in_array($skill->id, $characteristic->get_skills()) )
+			{
+				return true;
+			}
+		}
+		
+		return false;
+	}
+	
+	/**
+	 * Aprendemos talento a personaje
+	 * @param Skill $skill
+	 * @return boolean
+	 */
+	public function learn_talent(Skill $skill)
+	{
+		$characterTalent = new CharacterTalent();
+		
+		$characterTalent->character_id = $this->id;
+		$characterTalent->skill_id = $skill->id;
+		$characterTalent->save();
+		
+		$this->talent_points--;
+		$this->save();
+				
+		return true;
+	}
+	
+	public function talents()
+	{
+		return $this->has_many('CharacterTalent', 'character_id');
+	}
+	
+	/**
+	 * Verifica si personaje tiene talento aprendido
+	 * @param Skill $skill
+	 * @return boolean
+	 */
+	public function has_talent(Skill $skill)
+	{
+		return $this->talents()->where('skill_id', '=', $skill->id)->take(1)->count() > 0;
+	}
+	
+	/**
+	 * @return array
+	 */
+	public function get_characteristics()
+	{
+		if ( ! $this->get_attribute('characteristics') )
+		{
+			return null;
+		}
+		
+		$characteristics = explode(',', $this->get_attribute('characteristics'));
+		
+		$characteristicsArray = array();
+		
+		foreach ( $characteristics as $characteristic )
+		{
+			$characteristicsArray[] = Characteristic::get($characteristic);
+		}
+		
+		return $characteristicsArray;
+	}
+	
+	/**
+	 * Verificamos si personaje tiene cierta caracteristica
+	 * @param integer $characteristic Caracteristica a revisar (usar constante de Characteristic)
+	 * @return boolean
+	 */
+	public function has_characteristic($characteristic)
+	{
+		$characterCharacteristics = $this->characteristics;
+		
+		if ( ! $characterCharacteristics )
+		{
+			return false;
+		}
+		
+		return in_array($characteristic, $characterCharacteristics);
+	}
+	
+	/**
 	 * Regeneramos vida al jugador en caso de ser necesario
 	 * @param boolean $save True para guardar el row (UPDATE)
 	 */
@@ -41,7 +163,7 @@ class Character extends Base_Model
 			   $this->last_regeneration_time = $time;
 		   }
 
-		   $regeneration = 0.25 * ($time - $this->last_regeneration_time);
+		   $regeneration = ($this->regeneration_per_second + $this->regeneration_per_second_extra) * ($time - $this->last_regeneration_time);
 
 		   if ( $regeneration > 0 )
 		   {
@@ -388,6 +510,170 @@ class Character extends Base_Model
 				$this->stat_magic_resistance_extra += $stats['stat_magic_resistance'];
 			else
 				$this->stat_magic_resistance_extra -= $stats['stat_magic_resistance'];
+		}
+		
+		if ( isset($stats['regeneration_per_second']) )
+		{
+			if ( $add )
+			{
+				$this->regeneration_per_second_extra += $stats['regeneration_per_second'];
+			}
+			else
+			{
+				$this->regeneration_per_second_extra -= $stats['regeneration_per_second'];
+			}
+		}
+		
+		if ( isset($stats['evasion']) )
+		{
+			if ( $add )
+				$this->evasion_extra += $stats['evasion'];
+			else
+				$this->evasion_extra -= $stats['evasion'];
+		}
+		
+		if ( isset($stats['critical_chance']) )
+		{
+			if ( $add )
+				$this->critical_chance_extra += $stats['critical_chance'];
+			else
+				$this->critical_chance_extra -= $stats['critical_chance'];
+		}
+		
+		if ( isset($stats['attack_speed']) )
+		{
+			if ( $add )
+				$this->attack_speed_extra += $stats['attack_speed'];
+			else
+				$this->attack_speed_extra -= $stats['attack_speed'];
+		}
+		
+		if ( isset($stats['magic_defense']) )
+		{
+			if ( $add )
+				$this->magic_defense_extra += $stats['magic_defense'];
+			else
+				$this->magic_defense_extra -= $stats['magic_defense'];
+		}
+		
+		if ( isset($stats['physical_defense']) )
+		{
+			if ( $add )
+				$this->physical_defense_extra += $stats['physical_defense'];
+			else
+				$this->physical_defense_extra -= $stats['physical_defense'];
+		}
+		
+		if ( isset($stats['magic_damage']) )
+		{
+			if ( $add )
+				$this->magic_damage_extra += $stats['magic_damage'];
+			else
+				$this->magic_damage_extra -= $stats['magic_damage'];
+		}
+		
+		if ( isset($stats['physical_damage']) )
+		{
+			if ( $add )
+				$this->physical_damage_extra += $stats['physical_damage'];
+			else
+				$this->physical_damage_extra -= $stats['physical_damage'];
+		}
+		
+		if ( isset($stats['reflect_magic_damage']) )
+		{
+			if ( $add )
+				$this->reflect_magic_damage_extra += $stats['reflect_magic_damage'];
+			else
+				$this->reflect_magic_damage_extra -= $stats['reflect_magic_damage'];
+		}
+		
+		if ( isset($stats['reflect_physical_damage']) )
+		{
+			if ( $add )
+				$this->reflect_physical_damage_extra += $stats['reflect_physical_damage'];
+			else
+				$this->reflect_physical_damage_extra -= $stats['reflect_physical_damage'];
+		}
+		
+		if ( isset($stats['travel_time']) )
+		{
+			if ( $add )
+				$this->travel_time_extra += $stats['travel_time'];
+			else
+				$this->travel_time_extra -= $stats['travel_time'];
+		}
+		
+		if ( isset($stats['battle_rest_time']) )
+		{
+			if ( $add )
+				$this->battle_rest_time_extra += $stats['battle_rest_time'];
+			else
+				$this->battle_rest_time_extra -= $stats['battle_rest_time'];
+		}
+		
+		if ( isset($stats['skill_cd_time']) )
+		{
+			if ( $add )
+				$this->skill_cd_time_extra += $stats['skill_cd_time'];
+			else
+				$this->skill_cd_time_extra -= $stats['skill_cd_time'];
+		}
+		
+		if ( isset($stats['luck']) )
+		{
+			if ( $add )
+				$this->luck_extra += $stats['luck'];
+			else
+				$this->luck_extra -= $stats['luck'];
+		}
+		
+		if ( isset($stats['xp_rate']) )
+		{
+			if ( $add )
+				$this->xp_rate_extra += $stats['xp_rate'];
+			else
+				$this->xp_rate_extra -= $stats['xp_rate'];
+		}
+		
+		if ( isset($stats['quest_xp_rate']) )
+		{
+			if ( $add )
+				$this->quest_xp_rate_extra += $stats['quest_xp_rate'];
+			else
+				$this->quest_xp_rate_extra -= $stats['quest_xp_rate'];
+		}
+		
+		if ( isset($stats['drop_rate']) )
+		{
+			if ( $add )
+				$this->drop_rate_extra += $stats['drop_rate'];
+			else
+				$this->drop_rate_extra -= $stats['drop_rate'];
+		}
+		
+		if ( isset($stats['explore_reward_rate']) )
+		{
+			if ( $add )
+				$this->explore_reward_rate_extra += $stats['explore_reward_rate'];
+			else
+				$this->explore_reward_rate_extra -= $stats['explore_reward_rate'];
+		}
+		
+		if ( isset($stats['coin_rate']) )
+		{
+			if ( $add )
+				$this->coin_rate_extra += $stats['coin_rate'];
+			else
+				$this->coin_rate_extra -= $stats['coin_rate'];
+		}
+		
+		if ( isset($stats['quest_coin_rate']) )
+		{
+			if ( $add )
+				$this->quest_coin_rate_extra += $stats['quest_coin_rate'];
+			else
+				$this->quest_coin_rate_extra -= $stats['quest_coin_rate'];
 		}
 		
 		$this->save();

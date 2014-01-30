@@ -93,11 +93,44 @@ class CharacterActivity extends Base_Model
 	{
 		if ( $this->name != 'explore' )
 		{
-			if ( $this->character->has_skill(Config::get('game.vip_reduction_time_skill')) )
+			$character = $this->character()->select(array(
+				'id', 
+				'travel_time', 
+				'travel_time_extra',
+				'battle_rest_time',
+				'battle_rest_time_extra'
+			));
+			
+			if ( $character->has_skill(Config::get('game.overload_skill')) )
 			{
-				// Se usa time() para los tiempos asi que no
-				// deberia haber problemas				
-				$this->end_time -= ($this->end_time - time()) * 0.33;
+				$this->end_time = 1;
+				
+				$overloadSkill = $character->skills()->where('skill_id', '=', Config::get('game.overload_skill'))->first();
+				
+				if ( $overloadSkill )
+				{
+					$character->remove_buff($overloadSkill);
+				}
+			}
+			else
+			{
+				if ( $character->has_skill(Config::get('game.vip_reduction_time_skill')) )
+				{
+					// Se usa time() para los tiempos asi que no
+					// deberia haber problemas				
+					$this->end_time -= ($this->end_time - time()) * 0.33;
+				}
+
+				switch ( $this->name )
+				{
+					case 'travel':
+						$this->end_time -= $character->travel_time + $character->travel_time_extra;
+						break;
+
+					case 'battlerest':
+						$this->end_time -= $character->battle_rest_time + $character->battle_rest_time;
+						break;
+				}
 			}
 		}
 		

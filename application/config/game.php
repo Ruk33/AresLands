@@ -1,6 +1,18 @@
 <?php
 
 return array(
+	'cheat_death_skill' => 65,
+	'overload_skill' =>	54,
+	
+	'max_talents' => 8,
+	
+	'racial_skills' => array(
+		'dwarf' => array(42,46,47),
+		'elf' => array(43,48,49),
+		'drow' => array(44,50,51),
+		'human' => array(45,52,53)
+	),
+	
 	'vip_multiplier_coin_rate_skill' => 28,
 	'vip_multiplier_xp_rate_skill' => 27,
 	'vip_reduction_time_skill' => 26,
@@ -154,8 +166,8 @@ return array(
 	/*
 	 *	Rates
 	 */
-	'xp_rate' => 1,
-	'quest_xp_rate' => 2,
+	'xp_rate' => 0.8,
+	'quest_xp_rate' => 1.3,
 	'drop_rate' => 1,
 	'explore_reward_rate' => 3,
 	'coins_rate' => 2,

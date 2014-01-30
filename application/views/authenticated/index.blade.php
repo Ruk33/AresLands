@@ -1,7 +1,8 @@
 <div ng-controller="CharacterController" style="margin-left: -15px;">
 	@if ( count($npcs) > 0 )
 		@if ( ! $character->is_traveling )
-		<div class="bar">
+		<div class="bar" style="margin-left: 20px; margin-bottom: 60px;">
+			<h2>Mercaderes</h2>
 			<ul class="inline">
 			@foreach ( $npcs as $npc )
 				<li data-toggle="tooltip" data-placement="bottom" data-original-title="<div style='color: #FFC200;'>Mercader {{ $npc->name }}</div>{{ $npc->tooltip_dialog }}">
@@ -15,7 +16,7 @@
 		@endif
 	@endif
 
-	<div ng-controller="Skill">
+	<div ng-controller="Skill" style="margin-left: 20px;">
 		@if ( Session::has('error') )
 			<div class="alert alert-error">
 				{{ Session::get('error') }}
@@ -24,7 +25,7 @@
 		
 		<!-- BUFFS -->
 		@if ( count($skills) > 0 )
-			<h2>Magias activas</h2>
+			<h2>Efectos activos</h2>
 			<ul class="unstyled inline">
 				@foreach ( $skills as $skill )
 					<li class="text-center clan-member-link" style="vertical-align: top;">

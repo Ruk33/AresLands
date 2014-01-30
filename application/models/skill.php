@@ -217,6 +217,11 @@ class Skill extends Base_Model
 				break;
 		}
 		
+		if ( $target->zone_id != $caster->zone_id )
+		{
+			return false;
+		}
+		
 		// Las habilidades que no stackean solamente
 		// pueden tener 1 de cantidad
 		if ( ! (bool) $this->stackable && $amount > 1 )
@@ -230,7 +235,6 @@ class Skill extends Base_Model
 		}
 		else
 		{
-			// Usar formula de batalla!
 			$target->current_life -= $this->physical_damage * $amount;
 			$target->current_life -= $this->magical_damage * $amount;
 

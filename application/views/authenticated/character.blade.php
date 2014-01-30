@@ -49,7 +49,11 @@
 							@if ( $character->is_admin() )
 								{{ Form::number('stat_strength', $characterToSee->stat_strength, array('style' => 'width: 50px')) }}
 							@else
-								{{ mt_rand($characterToSee->stat_strength, $characterToSee->stat_strength * 1.3) }}
+								@if ( $hideStats )
+									{{ mt_rand($characterToSee->stat_strength, $characterToSee->stat_strength * 1.3) }}
+								@else
+									{{ $characterToSee->stat_strength }}
+								@endif
 							@endif
 						</span>
 					</span>
@@ -63,7 +67,11 @@
 							@if ( $character->is_admin() )
 								{{ Form::number('stat_dexterity', $characterToSee->stat_dexterity, array('style' => 'width: 50px')) }}
 							@else
-								{{ mt_rand($characterToSee->stat_dexterity, $characterToSee->stat_dexterity * 1.3) }}
+								@if ( $hideStats )
+									{{ mt_rand($characterToSee->stat_dexterity, $characterToSee->stat_dexterity * 1.3) }}
+								@else
+									{{ $characterToSee->stat_dexterity }}
+								@endif
 							@endif
 						</span>
 					</span>
@@ -77,7 +85,11 @@
 							@if ( $character->is_admin() )
 								{{ Form::number('stat_resistance', $characterToSee->stat_resistance, array('style' => 'width: 50px')) }}
 							@else
-								{{ mt_rand($characterToSee->stat_resistance, $characterToSee->stat_resistance * 1.3) }}
+								@if ( $hideStats )
+									{{ mt_rand($characterToSee->stat_resistance, $characterToSee->stat_resistance * 1.3) }}
+								@else
+									{{ $characterToSee->stat_resistance }}
+								@endif
 							@endif
 						</span>
 					</span>
@@ -91,7 +103,11 @@
 							@if ( $character->is_admin() )
 								{{ Form::number('stat_magic', $characterToSee->stat_magic, array('style' => 'width: 50px')) }}
 							@else
-								{{ mt_rand($characterToSee->stat_magic, $characterToSee->stat_magic * 1.3) }}
+								@if ( $hideStats )
+									{{ mt_rand($characterToSee->stat_magic, $characterToSee->stat_magic * 1.3) }}
+								@else
+									{{ $characterToSee->stat_magic }}
+								@endif
 							@endif
 						</span>
 					</span>
@@ -105,7 +121,11 @@
 							@if ( $character->is_admin() )
 								{{ Form::number('stat_magic_skill', $characterToSee->stat_magic_skill, array('style' => 'width: 50px')) }}
 							@else
-								{{ mt_rand($characterToSee->stat_magic_skill, $characterToSee->stat_magic_skill * 1.3) }}
+								@if ( $hideStats )
+									{{ mt_rand($characterToSee->stat_magic_skill, $characterToSee->stat_magic_skill * 1.3) }}
+								@else
+									{{ $characterToSee->stat_magic_skill }}
+								@endif
 							@endif
 						</span>
 					</span>
@@ -119,7 +139,11 @@
 							@if ( $character->is_admin() )
 								{{ Form::number('stat_magic_resistance', $characterToSee->stat_magic_resistance, array('style' => 'width: 50px')) }}
 							@else
-								{{ mt_rand($characterToSee->stat_magic_resistance, $characterToSee->stat_magic_resistance * 1.3) }}
+								@if ( $hideStats )
+									{{ mt_rand($characterToSee->stat_magic_resistance, $characterToSee->stat_magic_resistance * 1.3) }}
+								@else
+									{{ $characterToSee->stat_magic_resistance }}
+								@endif
 							@endif
 						</span>
 					</span>

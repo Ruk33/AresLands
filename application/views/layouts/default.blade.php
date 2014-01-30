@@ -88,6 +88,100 @@
 				$('#modalMessage').modal();
 			</script>
 		@endif
+		
+		@if ( isset($character) && ! $character->characteristics )
+			<div id="characteristicsModal" class="modal hide fade">
+				<div class="modal-body">
+					<ul id="characteristicsTabs">
+					</ul>
+					
+					{{ Form::open(URL::to('authenticated/setCharacteristics')) }}
+					
+					{{ Form::token() }}
+					
+					<div class="tab-content">
+						<div class="tab-pane active" id="-1">
+							<div class="introduction span6" style="padding: 10px; margin-left: 10px; margin-top: 50px;">
+								<h3 class="text-center">¡Bienvenido/a a AresLands!</h3>
+								<p>Bienvenido aventurero/a, veo en tus ojos que te esperan grandes aventuras, feroces enemigos y leales amigos. Pero cuéntame ¿tienes algún talento?, ¿estás listo para sobrevivir en AresLands?. Ya lo veremos... ya lo veremos...</p>
+								<p>Hay muchas clases de personas y criaturas que pasan por aquí... diferentes razas... diferentes idiomas... pero dime ¿cómo eres tu?</p>
+								<div class="alert alert-info">
+									<strong>Nota</strong>
+									<p>Dependiendo de tus siguientes elecciones, se te desbloquearán algunas opciones y otras se te bloquearán. Lee atentamente para saber qué toca a cada característica.</p>
+								</div>
+							</div>
+							
+							<div class="paginator">
+								<div class="text-center">
+									<a href="#0" data-toggle="tab">Cuéntame</a>
+								</div>
+							</div>
+						</div>
+						
+						<?php $allCharacteristics = Characteristic::get_all(); ?>
+						@foreach ( $allCharacteristics as $i => $characteristics )
+						<div class="tab-pane" id="{{ $i }}">
+							<h3 class="text-center">¿Cómo es tu personaje? ({{ $i+1 }}/{{ count($allCharacteristics) }})</h3>
+							<ul class="thumbnails">
+								@foreach ( $characteristics as $characteristic )
+								<li>
+									<div class="thumbnail span6">
+										<div class="caption">
+											<div class="pull-left" style="margin-top: 45px; margin-left: 15px;">
+												{{ Form::radio($i, $characteristic->get_name()) }}
+											</div>
+											<div style="margin-left: 50px;">
+												<h3>{{ $characteristic->get_name() }}</h3>
+												<p>{{ $characteristic->get_description() }}</p>
+												<ul class="unstyled">
+													@foreach ( $characteristic->get_bonusses() as $bonus )
+													<li>{{ $bonus }}</li>
+													@endforeach
+												</ul>
+											</div>
+										</div>
+									</div>
+								</li>
+								@endforeach
+							</ul>
+							
+							<div class="paginator">
+								<div class="text-center">
+									@if ( isset($allCharacteristics[$i-1]) )
+									<a href="#{{ $i-1 }}" data-toggle="tab">Atrás</a>
+									@endif
+									
+									@if ( isset($allCharacteristics[$i+1]) )
+									<a href="#{{ $i+1 }}" data-toggle="tab">Siguiente</a>
+									@else
+									{{ Form::submit('Guardar', array('onclick' => 'return confirm("¿Seguro que quieres guardar estas caracteristicas para tu personaje?");')) }}
+									@endif
+								</div>
+							</div>
+						</div>
+						@endforeach
+					</div>
+					
+					{{ Form::close() }}
+					
+					<script>
+						$('#characteristicsTabs').tab('show');
+					</script>
+				</div>
+				<!--
+				<div class="modal-footer">
+					<a href="#" class="btn" data-dismiss="modal" aria-hidden="true">Guardar!</a>
+				</div>
+				-->
+			</div>
+		
+			<script>
+				$('#characteristicsModal').modal({
+					keyboard: false,
+					backdrop: 'static'
+				});
+			</script>
+		@endif
 
 		<div id="wrap">
 			<div class="container">
@@ -208,7 +302,11 @@
 								@if ( $character->can_explore() )
 								<li><a href="{{ URL::to('authenticated/explore') }}" class="menu menu-explore"></a></li>
 								@endif
-	
+								
+								@if ( $character->characteristics )
+								<li><a href="{{ URL::to('authenticated/talents') }}" class="menu menu-talents"></a></li>
+								@endif
+								
 								<li><a href="{{ URL::to('authenticated/clan') }}" class="menu menu-group"></a></li>
 								<li><a href="{{ URL::to('authenticated/trade') }}" class="menu menu-trade"></a></li>
 								<li><a href="{{ URL::to('authenticated/characters') }}" class="menu menu-characters"></a></li>
