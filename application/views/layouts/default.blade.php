@@ -190,14 +190,14 @@
 					<div class="pull-left alert alert-info" style="width: 200px; font-size: 12px;">
 						<?php $tournament = Tournament::get_active()->first(); ?>
 						<span>Torneo "{{ $tournament->name }}" finaliza en </span>
-						<span class='timer' data-endtime='{{ $tournament->ends_at - time() }}'></span>
+						<span class='timer' data-layout="{hnn}:{mnn}:{snn} y {dn} día(s)" data-endtime='{{ $tournament->ends_at - time() }}'></span>
 					</div>
 				@else
 					@if ( Tournament::is_upcoming() )
 						<?php $tournament = Tournament::get_upcoming()->first(); ?>
 						<div class="pull-left alert alert-info" style="width: 200px; font-size: 12px;">
 							<span>El torneo "{{ $tournament->name }}" comienza en </span>
-							<span class='timer' data-endtime='{{ $tournament->starts_at - time() }}'></span>
+							<span class='timer' data-layout="{hnn}:{mnn}:{snn} y {dn} día(s)" data-endtime='{{ $tournament->starts_at - time() }}'></span>
 						</div>
 					@endif
 				@endif
@@ -399,11 +399,17 @@
 				var $this = $(this);
 				var time = $this.data('endtime');
 				var date = new Date();
+				var layout = '{hnn}:{mnn}:{snn}';
+				
 				date.setSeconds(date.getSeconds() + time);
+				
+				if ( $this.data('layout') ) {
+					layout = $this.data('layout');
+				}
 
 				$this.countdown({
 					until: date,
-					layout: '{hnn}:{mnn}:{snn} y {dn} día(s)',
+					layout: layout,
 					expiryText: '<a href="" onclick="location.reload();">Actualizar</a>'
 				});
 			});

@@ -71,7 +71,7 @@ class Authenticated_Controller extends Base_Controller
 	}
     
 	public function get_index()
-	{
+	{		
 		$character = Character::get_character_of_logged_user(array(
 			'id',
 			'name',
@@ -98,7 +98,7 @@ class Authenticated_Controller extends Base_Controller
 			'xp',
 			'xp_next_level'
 		));
-
+		
 		/*
 		 *	Verificamos logueada del día
 		 */
@@ -163,6 +163,38 @@ class Authenticated_Controller extends Base_Controller
 		->with('zone', $zone)
 		->with('npcs', $npcs)
 		->with('exploringTime', $exploringTime);
+	}
+	
+	public function post_castTalent()
+	{
+		$character = Character::get_character_of_logged_user();
+		$talent = $character->talents()->where('skill_id', '=', Input::get('skill_id'))->first();
+		$redirection = Redirect::to('authenticated/');
+		
+		if ( $talent )
+		{
+			if ( $character->can_use_talent($talent) )
+			{
+				$target = Character::find(Input::get('id'));
+				$hasReflect = $target->has_skill(Config::get('game.reflect_skill'));
+				
+				if ( $character->use_talent($talent, $target) )
+				{
+					$skill = $talent->skill()->select(array('id', 'level', 'name', 'type'))->first();
+					
+					if ( $hasReflect && $skill->type == 'debuff' )
+					{
+						return $redirection->with('error', "¡Oh no!, {$target->name} te ha reflejado el hechizo {$skill->name}");
+					}
+					else
+					{
+						return $redirection->with('message', "Lanzaste la habilidad {$skill->name} a {$target->name}");
+					}
+				}
+			}
+		}
+		
+		return $redirection;
 	}
 	
 	public function post_learnTalent()
@@ -1558,7 +1590,7 @@ class Authenticated_Controller extends Base_Controller
 			 */
 			$orb = $characterToSee->orbs()->select(array('id', 'name', 'description'))->first();
 			
-			$character = Character::get_character_of_logged_user(array('id', 'name', 'zone_id', 'clan_id', 'registered_in_tournament'));
+			$character = Character::get_character_of_logged_user(array('id', 'name', 'level', 'zone_id', 'clan_id', 'registered_in_tournament'));
 			$skills = array();
 			
 			if ( $character->is_admin() )
@@ -1605,6 +1637,7 @@ class Authenticated_Controller extends Base_Controller
 			->with('skills', $skills)
 			->with('characterToSee', $characterToSee)
 			->with('hideStats', $characterToSee->has_characteristic(Characteristic::RESERVED))
+			->with('castableSkills', $character->get_castable_talents($characterToSee))
 			->with('pairs', $pairs);
 		}
 		else
@@ -1955,6 +1988,7 @@ class Authenticated_Controller extends Base_Controller
 			->with('orbs', $orbs)
 			->with('skills', $skills)
 			->with('characterToSee', $characterFinded)
+			->with('castableSkills', $character->get_castable_talents($characterFinded))
 			->with('pairs', $pairs);
 		}
 		else

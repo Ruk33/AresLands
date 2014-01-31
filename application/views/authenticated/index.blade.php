@@ -23,6 +23,12 @@
 			</div>
 		@endif
 		
+		@if ( Session::has('message') )
+			<div class="alert alert-success">
+				{{ Session::get('message') }}
+			</div>
+		@endif
+		
 		<!-- BUFFS -->
 		@if ( count($skills) > 0 )
 			<h2>Efectos activos</h2>

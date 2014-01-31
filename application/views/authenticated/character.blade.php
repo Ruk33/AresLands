@@ -1,4 +1,18 @@
 @if ( isset($character) && isset($characterToSee) )
+	<ul class="inline">
+		@foreach ( $castableSkills as $castableSkill )
+		<li>
+			{{ Form::open(URL::to('authenticated/castTalent')) }}
+				{{ Form::token() }}
+				{{ Form::hidden('skill_id', $castableSkill) }}
+				{{ Form::hidden('id', $characterToSee->id) }}
+				<img src="{{ URL::base() }}/img/icons/skills/{{ $castableSkill }}.png" alt="" skill-tooltip skill-id="{{ $castableSkill }}" skill-level="1">
+				{{ Form::submit('Lanzar') }}
+			{{ Form::close() }}
+		</li>
+		@endforeach
+	</ul>
+
 	<div class="text-center" style="margin-left: -15px;">
 		<h1 style="margin-bottom: -15px !important;">{{ $characterToSee->name }}</h1>
 		

@@ -27,7 +27,12 @@
 
 				<div class="text-center">
 					@if ( $character->has_talent($skill) )
-						Aprendida
+						<?php $talent = $character->talents()->where('skill_id', '=', $skill->id)->first(); ?>
+						@if ( $character->can_use_talent($talent) )
+							Aprendida
+						@else
+							<div class="timer" data-endtime="{{ $talent->usable_at - time() }}"></div>
+						@endif
 					@else
 						@if ( $character->can_learn_talent($skill) )
 							{{ Form::open(URL::to('authenticated/learnTalent')) }}
@@ -59,13 +64,20 @@
 					<strong style="color: white;">{{ $skill->name }}</strong>
 					<div style="font-size: 13px;">
 						<p><span style="color: gold;">{{ $skill->description }}</span><br>
-						Duracion: {{ $skill->duration }} minuto(s)</p>
+						@if ( $skill->duration > 0 )
+							Duracion: {{ $skill->duration }} minuto(s)</p>
+						@endif
 					</div>
 				</div>
 				
 				<div style="position: absolute; bottom: 5px; right: 10px;">
 					@if ( $character->has_talent($skill) )
-						Aprendida
+						<?php $talent = $character->talents()->where('skill_id', '=', $skill->id)->first(); ?>
+						@if ( $character->can_use_talent($talent) )
+							Aprendida
+						@else
+							<div class="timer" data-endtime="{{ $talent->usable_at - time() }}"></div>
+						@endif
 					@else
 						@if ( $character->can_learn_talent($skill) )
 							{{ Form::open(URL::to('authenticated/learnTalent')) }}

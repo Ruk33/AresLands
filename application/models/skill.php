@@ -88,44 +88,71 @@ class Skill extends Base_Model
             return;
         }
         
-        $skill = $characterSkill->skill;
+        $skill = $characterSkill->skill()->select(array(
+			'id',
+			'level',
+			'physical_damage',
+			'magical_damage',
+			'stat_strength',
+			'stat_dexterity',
+			'stat_resistance',
+			'stat_magic',
+			'stat_magic_skill',
+			'stat_magic_resistance',
+			'luck',
+			'evasion',
+			'magic_defense',
+			'physical_defense',
+			'critical_chance',
+			'attack_speed',
+			'life',
+			'regeneration_per_second',
+			'reflect_damage',
+			'reflect_magic_damage',
+			'travel_time',
+			'battle_rest',
+			'xp_rate',
+			'quest_xp_rate',
+			'drop_rate',
+			'explore_reward_rate',
+			'coin_rate',
+			'quest_coin_rate',
+			'skill_cd_time',
+			'chance'
+		))->first();
 
         if ( mt_rand(0, 100) <= $skill->chance )
         {
             $characterSkill->last_execution_time = $time;
-
-            $strengthBonus = $skill->stat_strength * $characterSkill->amount;
-            $extraStat['stat_strength'] += $strengthBonus;
-
-            $dexterityBonus = $skill->stat_dexterity * $characterSkill->amount;
-            $extraStat['stat_dexterity'] += $dexterityBonus;
-
-            $resistanceBonus = $skill->stat_resistance * $characterSkill->amount;
-            $extraStat['stat_resistance'] += $resistanceBonus;
-
-            $magicBonus = $skill->stat_magic * $characterSkill->amount;
-            $extraStat['stat_magic'] += $magicBonus;
-
-            $magicSkillBonus = $skill->stat_magic_skill * $characterSkill->amount;
-            $extraStat['stat_magic_skill'] += $magicSkillBonus;
-
-            $magicResistanceBonus = $skill->stat_magic_resistance * $characterSkill->amount;
-            $extraStat['stat_magic_resistance'] += $magicResistanceBonus;
-
-            $target->update_extra_stat(array(
-                'stat_strength' => $strengthBonus,
-                'stat_dexterity' => $dexterityBonus,
-                'stat_resistance' => $resistanceBonus,
-                'stat_magic' => $magicBonus,
-                'stat_magic_skill' => $magicSkillBonus,
-                'stat_magic_resistance' => $magicResistanceBonus
-            ), true);
+			
+			$skillAtributes = $skill->to_array();
+			$amount = $characterSkill->amount;
+			$bonus = array();
+			
+			foreach ( $skillAtributes as $key => $value )
+			{
+				if ( in_array($key, array('life', 'id', 'level', 'chance')) )
+				{
+					continue;
+				}
+				
+				$bonus[$key] = $value * $amount;
+				
+				if ( ! isset($extraStat[$key]) )
+				{
+					$extraStat[$key] = 0;
+				}
+				
+				$extraStat[$key] += $bonus[$key];
+			}
+			
+            $target->update_extra_stat($bonus, true);
 
             // Usar formula de batalla!
-            $target->current_life -= $skill->physical_damage * $characterSkill->amount;
-            $target->current_life -= $skill->magical_damage * $characterSkill->amount;
+            //$target->current_life -= $skill->physical_damage * $characterSkill->amount;
+            //$target->current_life -= $skill->magical_damage * $characterSkill->amount;
 
-            $target->current_life += $skill->life * $characterSkill->amount;
+            $target->current_life += $skill->life * $amount;
 
             $data['extra_stat'] = $extraStat;
             $characterSkill->data = $data;
@@ -135,20 +162,8 @@ class Skill extends Base_Model
         }
     }
 	
-	/**
-	 * Lanzamos habilidad
-	 * @param Character $caster
-	 * @param Character $target
-	 * @param int $amount
-	 * @return boolean
-	 */
-	public function cast(Character $caster, Character $target, $amount = 1)
+	public function can_be_casted(Character $caster, Character $target)
 	{
-		if ( ! $caster || ! $target )
-		{
-			return false;
-		}
-		
 		if ( $caster->level < $this->min_level_required )
 		{
 			return false;
@@ -163,8 +178,16 @@ class Skill extends Base_Model
 			case 'one':
 				break;
 			
+			case 'notself':
+				if ( $caster->id == $target->id )
+				{
+					return false;
+				}
+				
+				break;
+			
 			case 'self':
-				if ( $caster != $target )
+				if ( $caster->id != $target->id )
 				{
 					return false;
 				}
@@ -172,9 +195,12 @@ class Skill extends Base_Model
 				break;
 			
 			case 'clan':
-				// El objetivo debe estar en el mismo clan
-				// que el caster
-				if ( $caster->clan_id != $target->clan_id )
+				if ( ! $caster->clan_id )
+				{
+					return false;
+				}
+				
+				if (  $caster->clan_id != $target->clan_id )
 				{
 					return false;
 				}
@@ -222,6 +248,28 @@ class Skill extends Base_Model
 			return false;
 		}
 		
+		if ( $caster->has_skill(Config::get('game.silence_skill')) )
+		{
+			return false;
+		}
+		
+		return true;
+	}
+	
+	/**
+	 * Lanzamos habilidad
+	 * @param Character $caster
+	 * @param Character $target
+	 * @param int $amount
+	 * @return boolean
+	 */
+	public function cast(Character $caster, Character $target, $amount = 1)
+	{		
+		if ( ! $this->can_be_casted($caster, $target) )
+		{
+			return false;
+		}
+		
 		// Las habilidades que no stackean solamente
 		// pueden tener 1 de cantidad
 		if ( ! (bool) $this->stackable && $amount > 1 )
@@ -231,15 +279,21 @@ class Skill extends Base_Model
 		
 		if ( $this->duration != -1 )
 		{
-			CharacterSkill::register($target, $this, $amount);
+			if ( $target->has_skill(Config::get('game.reflect_skill')) && $this->type == 'debuff' )
+			{
+				CharacterSkill::register($this, $target, $amount);
+				
+				$reflectSkill = $target->skills()->where('skill_id', '=', Config::get('game.reflect_skill'))->first();
+				$target->remove_buff($reflectSkill);
+			}
+			else
+			{
+				CharacterSkill::register($target, $this, $amount);
+			}
 		}
 		else
 		{
-			$target->current_life -= $this->physical_damage * $amount;
-			$target->current_life -= $this->magical_damage * $amount;
-
-			$target->current_life += $this->life * $amount;
-			
+			$target->current_life += $this->life * $amount;	
 			$target->save();
 		}
 		

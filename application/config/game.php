@@ -3,6 +3,8 @@
 return array(
 	'cheat_death_skill' => 65,
 	'overload_skill' =>	54,
+	'silence_skill' => 72,
+	'reflect_skill' => 73,
 	
 	'max_talents' => 8,
 	

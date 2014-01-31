@@ -27,6 +27,64 @@ class Character extends Base_Model
 	);
 	
 	/**
+	 * Verificamos si personaje puede usar talento
+	 * @param CharacterTalent $talent
+	 * @return boolean
+	 */
+	public function can_use_talent(CharacterTalent $talent)
+	{
+		return $talent->usable_at < time();
+	}
+	
+	/**
+	 * Usamos talento de personaje
+	 * @param CharacterTalent $talent
+	 * @param Character $target
+	 * @return boolean
+	 */
+	public function use_talent(CharacterTalent $talent, Character $target)
+	{
+		$skill = $talent->skill;
+		
+		if ( $skill->cast($this, $target) )
+		{
+			$talent->usable_at = time() + $skill->cd - ($this->skill_cd_time + $this->skill_cd_time_extra);
+			$talent->save();
+			
+			return true;
+		}
+		
+		return false;
+	}
+	
+	/**
+	 * Obtenemos todos los talentos (skill ids) que 
+	 * pueden ser lanzados a un objetivo
+	 * @param Character $target
+	 * @return array
+	 */
+	public function get_castable_talents(Character $target)
+	{
+		$castableSkills = array();
+		$talents = $this->talents;
+		
+		foreach ( $talents as $talent )
+		{
+			if ( $this->can_use_talent($talent) )
+			{
+				$skill = Skill::find($talent->skill_id);
+			
+				if ( $skill && $skill->can_be_casted($this, $target) )
+				{
+					$castableSkills[] = $skill->id;
+				}
+			}
+		}
+		
+		return $castableSkills;
+	}
+	
+	/**
 	 * Verificamos si un personaje puede seguir aprendiendo talentos
 	 * @return boolean
 	 */

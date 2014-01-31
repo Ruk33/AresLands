@@ -93,13 +93,13 @@ class CharacterActivity extends Base_Model
 	{
 		if ( $this->name != 'explore' )
 		{
-			$character = $this->character()->select(array(
+			$character = Character::select(array(
 				'id', 
 				'travel_time', 
 				'travel_time_extra',
 				'battle_rest_time',
 				'battle_rest_time_extra'
-			));
+			))->where('id', '=', $this->character_id)->first();
 			
 			if ( $character->has_skill(Config::get('game.overload_skill')) )
 			{
