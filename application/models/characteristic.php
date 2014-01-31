@@ -25,7 +25,7 @@ abstract class Characteristic
 	 */
 	public static function get($characteristic)
 	{
-		switch (strtolower($characteristic) )
+		switch ( strtolower($characteristic) )
 		{
 			case self::ADVENTUROUS:
 				return new CharacteristicAdventurous();

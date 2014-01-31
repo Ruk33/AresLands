@@ -5,7 +5,10 @@
 	<p>Para lanzar una habilidad a un personaje (o a ti mismo), simplemente buscalo por el <a href="{{ URL::to('authenticated/ranking') }}" target="_blank">ranking</a> y te aparecerán las habilidades que puedas conjurar.</p>
 </div>
 
-<strong>Tus puntos de talentos:</strong> {{ $character->talent_points }}
+<div style="margin-bottom: 50px;">
+	<h2>Tus puntos</h2>
+	<strong>Tus puntos de talentos:</strong> {{ $character->talent_points }}
+</div>
 
 <div style="margin-bottom: 50px;">
 	<h2>Raciales</h2>

@@ -23,7 +23,7 @@ directive('lifeBar', [
 				
 				if ( currentLife < maxLife )
 				{
-					currentLife += 0.25;
+					currentLife += Number(attrs.regeneration);
 					attrs.lifeBar.current_life = currentLife.toFixed(2);
 					
 					updateLifeBar(currentLife, maxLife);
@@ -47,7 +47,7 @@ directive('lifeBar', [
 					regenerationPerSecond();
 				}
 			});
-		}
+		};
 	}
 ]).
 

@@ -86,15 +86,15 @@ class Api_Controller extends Base_Controller implements Api_Interface
 			return Response::json(null);
 		}
 
-		/*
-		 *	Nada de stats reales, solo aproximados BOAJAJA >:3
-		 */
-		$character->stat_strength = mt_rand($character->stat_strength, $character->stat_strength * 1.3);
-		$character->stat_dexterity = mt_rand($character->stat_dexterity, $character->stat_dexterity * 1.3);
-		$character->stat_resistance = mt_rand($character->stat_resistance, $character->stat_resistance * 1.3);
-		$character->stat_magic = mt_rand($character->stat_magic, $character->stat_magic * 1.3);
-		$character->stat_magic_skill = mt_rand($character->stat_magic_skill, $character->stat_magic_skill * 1.3);
-		$character->stat_magic_resistance = mt_rand($character->stat_magic_resistance, $character->stat_magic_resistance * 1.3);
+		if ( $character->has_caracteristic(Characteristic::RESERVED) )
+		{
+			$character->stat_strength = mt_rand($character->stat_strength, $character->stat_strength * 1.3);
+			$character->stat_dexterity = mt_rand($character->stat_dexterity, $character->stat_dexterity * 1.3);
+			$character->stat_resistance = mt_rand($character->stat_resistance, $character->stat_resistance * 1.3);
+			$character->stat_magic = mt_rand($character->stat_magic, $character->stat_magic * 1.3);
+			$character->stat_magic_skill = mt_rand($character->stat_magic_skill, $character->stat_magic_skill * 1.3);
+			$character->stat_magic_resistance = mt_rand($character->stat_magic_resistance, $character->stat_magic_resistance * 1.3);
+		}
 		
 		if ( $tooltip )
 		{

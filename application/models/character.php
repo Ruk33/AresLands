@@ -27,6 +27,240 @@ class Character extends Base_Model
 	);
 	
 	/**
+	 * Lanzamos una habilidad de trampa aleatoria a personaje
+	 * @param Character $target
+	 * @param boolean $removeTrapSkill ¿Remover la skill de trampa (del caster) en caso de haberla?
+	 * @return boolean
+	 */
+	public function cast_random_trap_to(Character $target, $removeTrapSkill = false)
+	{
+		if ( $this->clan_id > 0 && $this->clan_id == $target->clan_id )
+		{
+			return false;
+		}
+		
+		$trapSkillsIds = Config::get('game.trap_skills');
+		$trapSkill = Skill::find($trapSkillsIds[mt_rand(0, count($trapSkillsIds) - 1)]);
+		
+		if ( $trapSkill )
+		{
+			$trapSkill->cast($this, $target);
+		}
+		
+		if ( $removeTrapSkill )
+		{
+			$trapSkill = $this->skills()->where('skill_id', '=', Config::get('game.trap_skill'))->first();
+
+			if ( $trapSkill )
+			{
+				$this->remove_buff($trapSkill);
+			}
+		}
+		
+		return true;
+	}
+	
+	/**
+	 * Recargamos talento de personaje
+	 * @param CharacterTalent $talent
+	 */
+	public function refresh_talent(CharacterTalent $talent)
+	{
+		$talent->usable_at = 0;
+		$talent->save();
+	}
+	
+	/**
+	 * Obtenemos query para talento aleatorio de personaje
+	 * @return Eloquent
+	 */
+	public function get_random_talent()
+	{
+		return $this->talents()->order_by(DB::raw('RAND()'));
+	}
+	
+	/**
+	 * Verificamos si personaje es invisible
+	 * @return boolean
+	 */
+	public function is_invisible()
+	{
+		return $this->invisible_until > time();
+	}
+	
+	/**
+	 * Sacamos invisibilidad a personaje
+	 */
+	public function remove_invisibility()
+	{
+		if ( $this->is_invisible() )
+		{
+			$invisibilitySkill = $this->skills()
+									  ->where('skill_id', '=', Config::get('game.invisibility_skill'))
+									  ->first();
+
+			if ( $invisibilitySkill )
+			{
+				$this->remove_buff($invisibilitySkill);
+			}
+		}
+	}
+	
+	/**
+	 * Verificamos si personaje puede sacarle la invisibilidad a otro
+	 * @param Character $target
+	 * @return boolean
+	 */
+	public function can_remove_invisibility_of(Character $target)
+	{
+		if ( ! $target->is_invisible() )
+		{
+			return false;
+		}
+		
+		if ( ! $this->has_skill(Config::get('game.reveal_invisibility_skill')) )
+		{
+			return false;
+		}
+		
+		return true;
+	}
+	
+	public function set_invisible_until($value)
+	{
+		if ( ! $this->invisible_until )
+		{
+			$value += time();
+		}
+		
+		return parent::set_invisible_until($value);
+	}
+	
+	/**
+	 * Obtenemos posible(s) contrincante(s) para un personaje
+	 * @param array $races Razas posibles
+	 * @return Eloquent
+	 */
+	public function get_opponent($races = array('dwarf', 'elf', 'drow', 'human'))
+	{
+		$eloquent = self::where('zone_id', '=', $this->zone_id)
+						->where_in('race', $races)
+						->where('is_traveling', '=', false)
+						->where('name', '<>', $this->name)
+						->where('registered_in_tournament', '=', $this->registered_in_tournament);
+		
+		// Si estamos en torneo, evitamos que toquen de nuestro clan
+		if ( Tournament::is_active() && $this->registered_in_tournament )
+		{
+			$eloquent = $eloquent->where('clan_id', '<>', $this->clan_id);
+		}
+		
+		// Si no tiene para revelar, entonces no puede ver invisibles
+		if ( ! $this->has_skill(Config::get('game.reveal_invisibility_skill')) )
+		{
+			$eloquent = $eloquent->where('invisible_until', '<', time());
+		}
+		
+		return $eloquent;
+	}
+	
+	public function get_name()
+	{
+		$character = Character::get_character_of_logged_user(array('id'));
+		
+		if ( $character->id != $this->id )
+		{
+			$characterHasConfusion = $character->has_skill(Config::get('game.confusion_skill'));
+
+			if ( $characterHasConfusion )
+			{
+				return '????';
+			}
+		}
+		
+		return parent::get_name();
+	}
+	
+	/**
+	 * 
+	 * @return string
+	 */
+	public function get_race()
+	{
+		$character = Character::get_character_of_logged_user(array('id'));
+		
+		if ( $character->id != $this->id )
+		{
+			if ( $this->has_characteristic(Characteristic::SHY) )
+			{
+				switch ( mt_rand(1, 4) )
+				{
+					case 1:
+						return 'dwarf';
+						
+					case 2:
+						return 'elf';
+						
+					case 3:
+						return 'drow';
+						
+					case 4:
+						return 'human';
+				}
+			}
+		}
+		
+		return parent::get_race();
+	}
+	
+	/**
+	 * Obtenemos debuffs (ids de CharacterSkill) de personaje
+	 * @return array
+	 */
+	public function get_debuffs()
+	{
+		$debuffs = array();
+		$characterSkills = $this->skills()->select(array('id', 'skill_id', 'level', 'character_id'))->get();
+		
+		foreach ( $characterSkills as $characterSkill )
+		{
+			$skill = $characterSkill->skill()->select(array('id', 'level', 'type'))->first();
+			
+			if ( $skill->type == 'debuff' )
+			{
+				$debuffs[] = $characterSkill->id;
+			}
+		}
+		
+		return $debuffs;
+	}
+	
+	/**
+	 * Removemos una cantidad de debuffs a personaje
+	 * @param integer $amount
+	 */
+	public function remove_debuffs($amount)
+	{
+		$debuffs = $this->get_debuffs();
+			
+		if ( count($debuffs) > 0 )
+		{
+			for ( $i = 0; $i < $amount; $i++ )
+			{
+				if ( isset($debuffs[$i]) )
+				{
+					$debuff = CharacterSkill::find($debuffs[$i]);
+
+					if ( $debuff )
+					{
+						$this->remove_buff($debuff);
+					}
+				}
+			}
+		}
+	}
+	
+	/**
 	 * Verificamos si personaje puede usar talento
 	 * @param CharacterTalent $talent
 	 * @return boolean
@@ -122,8 +356,9 @@ class Character extends Base_Model
 		
 		$characteristics = $this->characteristics;
 		
-		foreach ( $characteristics as $characteristic )
+		foreach ( $characteristics as $characteristicName )
 		{
+			$characteristic = Characteristic::get($characteristicName);
 			if ( in_array($skill->id, $characteristic->get_skills()) )
 			{
 				return true;
@@ -178,15 +413,16 @@ class Character extends Base_Model
 		}
 		
 		$characteristics = explode(',', $this->get_attribute('characteristics'));
+		return $characteristics;
 		
-		$characteristicsArray = array();
+		/*$characteristicsArray = array();
 		
 		foreach ( $characteristics as $characteristic )
 		{
 			$characteristicsArray[] = Characteristic::get($characteristic);
 		}
 		
-		return $characteristicsArray;
+		return $characteristicsArray;*/
 	}
 	
 	/**
@@ -1741,11 +1977,26 @@ class Character extends Base_Model
 
 	public function can_explore()
 	{
+		if ( $this->has_skill(Config::get('game.stun_skill')) )
+		{
+			return false;
+		}
+		
 		return $this->is_traveling == false && $this->is_exploring == false;
 	}
 
 	public function can_fight()
 	{
+		if ( $this->has_skill(Config::get('game.stun_skill')) )
+		{
+			return false;
+		}
+		
+		if ( $this->has_skill(Config::get('game.confusion_skill')) )
+		{
+			return false;
+		}
+		
 		return $this->is_traveling == false && $this->activities()->take(1)->count() == 0;
 	}
 
@@ -1917,6 +2168,16 @@ class Character extends Base_Model
 		if ( $this->is_traveling )
 		{
 			return 'Ya estás viajando, no puedes volver a hacerlo.';
+		}
+		
+		if ( $this->has_skill(Config::get('game.root_skill')) )
+		{
+			return 'Estas bajo un efecto el cual no te permite viajar.';
+		}
+		
+		if ( $this->has_skill(Config::get('game.stun_skill')) )
+		{
+			return 'Estas bajo un efecto el cual no te permite viajar.';
 		}
 
 		/*

@@ -593,12 +593,15 @@ class Battle
 			
 			if ( $defender['current_life'] > 0 )
 			{
-				$reflectedDamage = 1;
+				$reflectedDamage = ( $attacker['is_magic'] ) ? $defender['reflect_magic_damage'] : $defender['reflect_physical_damage'];
 				
-				$attacker['current_life'] -= $reflectedDamage;
-				$defender['damage_done'] += $reflectedDamage;
-				
-				$this->add_message_to_log("{$defender['name']} refleja {$reflectedDamage} de daño hacia {$attacker['name']}");
+				if ( $reflectedDamage > 0 )
+				{
+					$attacker['current_life'] -= $reflectedDamage;
+					$defender['damage_done'] += $reflectedDamage;
+
+					$this->add_message_to_log("{$defender['name']} refleja {$reflectedDamage} de daño hacia {$attacker['name']}");
+				}
 			}
 		}
 		

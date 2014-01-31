@@ -91,16 +91,33 @@ class CharacterActivity extends Base_Model
 	
 	public function save()
 	{
+		$character = Character::select(array(
+			'id', 
+			'travel_time', 
+			'travel_time_extra',
+			'battle_rest_time',
+			'battle_rest_time_extra',
+			'luck'
+		))->where('id', '=', $this->character_id)->first();
+		
+		// Verificamos si el personaje es afortunado y recarga uno de sus talentos
+		if ( $character->has_skill(Config::get('game.ready_for_new_adventure_skill')) )
+		{
+			if ( mt_rand(0, 100) <= $character->luck )
+			{
+				$randomTalent = $character->get_random_talent()
+										  ->where('usable_at', '>', time())
+										  ->first();
+				
+				if ( $randomTalent )
+				{
+					$character->refresh_talent($randomTalent);
+				}
+			}
+		}
+		
 		if ( $this->name != 'explore' )
 		{
-			$character = Character::select(array(
-				'id', 
-				'travel_time', 
-				'travel_time_extra',
-				'battle_rest_time',
-				'battle_rest_time_extra'
-			))->where('id', '=', $this->character_id)->first();
-			
 			if ( $character->has_skill(Config::get('game.overload_skill')) )
 			{
 				$this->end_time = 1;

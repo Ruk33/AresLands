@@ -96,7 +96,9 @@ class Authenticated_Controller extends Base_Controller
 			'last_logged',
 			'level',
 			'xp',
-			'xp_next_level'
+			'xp_next_level',
+			'regeneration_per_second',
+			'regeneration_per_second_extra'
 		));
 		
 		/*
@@ -233,8 +235,9 @@ class Authenticated_Controller extends Base_Controller
 		$talents['racial'] = Skill::where_in('id', Config::get('game.racial_skills')[$character->race])->get();
 		$talents['characteristics'] = array();
 		
-		foreach ( $character->characteristics as $characteristic )
+		foreach ( $character->characteristics as $characteristicName )
 		{
+			$characteristic = Characteristic::get($characteristicName);
 			$talents['characteristics'][$characteristic->get_name()] = Skill::where_in('id', $characteristic->get_skills())->get();
 		}
 		
@@ -636,14 +639,14 @@ class Authenticated_Controller extends Base_Controller
 	{
 		//switch ( $type ) {
 			//case 'xp':
-				$characters_xp = Character::order_by('level', 'desc')->order_by('xp', 'desc')->select(array('id', 'name', 'gender', 'race', 'xp', 'level'))->get();
+				$characters_xp = Character::order_by('level', 'desc')->order_by('xp', 'desc')->select(array('id', 'name', 'gender', 'race', 'xp', 'level', 'characteristics'))->get();
 				//$characters_xp = DB::table('characters')->order_by('xp', 'desc')->select(array('id', 'name', 'gender', 'race', 'pvp_points'))->skip($from)->take(50)->get();
 				//return json_encode($characters);
 
 				//break;
 
 			//case 'pvp_points':
-				$characters_pvp = Character::order_by('pvp_points', 'desc')->select(array('id', 'name', 'gender', 'race', 'pvp_points'))->get();
+				$characters_pvp = Character::order_by('pvp_points', 'desc')->select(array('id', 'name', 'gender', 'race', 'pvp_points', 'characteristics'))->get();
 				//$characters_pvp = DB::table('characters')->order_by('pvp_points', 'desc')->select(array('id', 'name', 'gender', 'race', 'pvp_points'))->skip($from)->take(50)->get();
 				//return json_encode($characters);
 
@@ -1606,28 +1609,6 @@ class Authenticated_Controller extends Base_Controller
 			{
 				$pairs = $character->get_pairs();
 			}
-			
-			if ( $characterToSee->has_characteristic(Characteristic::SHY) )
-			{
-				switch ( mt_rand(1, 4) )
-				{
-					case 1:
-						$characterToSee->race = 'dwarf';
-						break;
-					
-					case 2:
-						$characterToSee->race = 'elf';
-						break;
-					
-					case 3:
-						$characterToSee->race = 'drow';
-						break;
-					
-					case 4:
-						$characterToSee->race = 'human';
-						break;
-				}
-			}
 
 			$this->layout->title = $characterToSee->name;
 			$this->layout->content = View::make('authenticated.character')
@@ -1835,58 +1816,15 @@ class Authenticated_Controller extends Base_Controller
 	public function post_battle()
 	{
 		$character = Character::get_character_of_logged_user(array('id', 'zone_id', 'name', 'clan_id', 'registered_in_tournament'));
-		$searchMethod = Input::get('search_method');
-
-		$valuesToTake = array(
-			'id', 
-			'name', 
-			'level', 
-			'clan_id', 
-			'race', 
-			'gender', 
-			'zone_id',
-			'stat_strength',
-			'stat_dexterity',
-			'stat_resistance',
-			'stat_magic',
-			'stat_magic_skill',
-			'stat_magic_resistance',
-			'registered_in_tournament'
-		);
-
 		$characterFinded = null;
 
-		switch ( $searchMethod ) 
+		switch ( Input::get('search_method') ) 
 		{
 			case 'name':
-				$characterFinded = Character::where('name', '=', Input::get('character_name'))
-											->where('registered_in_tournament', '=', $character->registered_in_tournament)
-											->where('name', '<>', $character->name)
-											->where('is_traveling', '=', false)
-											->where('zone_id', '=', $character->zone_id)
-											->select($valuesToTake);
+				$characterFinded = $character->get_opponent()->where('name', '=', Input::get('character_name'));
 				break;
 
 			case 'random':
-				$race = array();
-
-				switch ( Input::get('race') )
-				{
-					case 'dwarf':
-					case 'human':
-					case 'drow':
-					case 'elf':
-						$race[] = Input::get('race');
-						break;
-
-					default:
-						$race[] = 'dwarf';
-						$race[] = 'human';
-						$race[] = 'drow';
-						$race[] = 'elf';
-						break;
-				}
-
 				switch ( Input::get('operation') )
 				{
 					case 'greaterThan':
@@ -1901,50 +1839,63 @@ class Authenticated_Controller extends Base_Controller
 						$operation = '=';
 						break;
 				}
-
-				$level = (int) Input::get('level');
-
-				if ( ! $level || $level <= 0 )
+				
+				if ( Input::get('race') != 'any' )
 				{
-					$level = 1;
+					$characterFinded = $character->get_opponent(array(Input::get('race')));
 				}
-
-				$characterFinded = Character::where_in('race', $race)
-											->where('registered_in_tournament', '=', $character->registered_in_tournament)
-											->where('level', $operation, $level)
-											->where('name', '<>', $character->name)
-											->where('is_traveling', '=', false)
-											->where('zone_id', '=', $character->zone_id)
-											->select($valuesToTake)
-											->order_by(DB::raw('RAND()'));
+				else
+				{
+					$characterFinded = $character->get_opponent();
+				}
+				
+				$characterFinded = $characterFinded->where('level', $operation, (int) Input::get('level'))
+												   ->order_by(DB::raw('RAND()'));
+				
 				break;
 
 			case 'group':
-				$characterFinded = Character::where('clan_id', '=', Input::get('clan'))
-											->where('name', '<>', $character->name)
-											->where('is_traveling', '=', false)
-											->where('zone_id', '=', $character->zone_id)
-											->select($valuesToTake)
-											->order_by(DB::raw('RAND()'));
+				$characterFinded = $character->get_opponent()
+											 ->where('clan_id', '=', (int) Input::get('clan'))
+											 ->order_by(DB::raw('RAND()'));
+				
 				break;
 		}
 
-		// Evitamos que al personaje le toque alguien de su clan
-		// en caso de haber torneo activo (y que el personaje este anotado)
-		if ( Tournament::is_active() && $character->registered_in_tournament )
-		{
-			$characterFinded = $characterFinded->where('clan_id', '<>', $character->clan_id)->first();
-		}
-		else
-		{
-			$characterFinded = $characterFinded->first();
-		}
+		$characterFinded = $characterFinded->select(array(
+			'id', 
+			'name', 
+			'level', 
+			'clan_id', 
+			'race', 
+			'gender', 
+			'zone_id',
+			'stat_strength',
+			'stat_dexterity',
+			'stat_resistance',
+			'stat_magic',
+			'stat_magic_skill',
+			'stat_magic_resistance',
+			'registered_in_tournament',
+			'characteristics',
+			'invisible_until'
+		))->first();
 
 		/*
 		 *	Verificamos si encontramos personaje
 		 */
 		if ( $characterFinded )
 		{
+			if ( $characterFinded->has_skill(Config::get('game.trap_skill')) )
+			{
+				$characterFinded->cast_random_trap_to($character, true);
+			}
+			
+			if ( $character->can_remove_invisibility_of($characterFinded) )
+			{
+				$characterFinded->remove_invisibility();
+			}
+			
 			/*
 			 *	Obtenemos los objetos del personaje
 			 */
@@ -1983,13 +1934,14 @@ class Authenticated_Controller extends Base_Controller
 
 			$this->layout->title = $characterFinded->name;
 			$this->layout->content = View::make('authenticated.character')
-			->with('character', $character)
-			->with('items', $itemsToView)
-			->with('orbs', $orbs)
-			->with('skills', $skills)
-			->with('characterToSee', $characterFinded)
-			->with('castableSkills', $character->get_castable_talents($characterFinded))
-			->with('pairs', $pairs);
+										 ->with('character', $character)
+										 ->with('items', $itemsToView)
+										 ->with('orbs', $orbs)
+										 ->with('skills', $skills)
+										 ->with('characterToSee', $characterFinded)
+										 ->with('hideStats', $characterFinded->has_characteristic(Characteristic::RESERVED))
+										 ->with('castableSkills', $character->get_castable_talents($characterFinded))
+										 ->with('pairs', $pairs);
 		}
 		else
 		{

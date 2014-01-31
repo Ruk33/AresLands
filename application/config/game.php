@@ -5,6 +5,29 @@ return array(
 	'overload_skill' =>	54,
 	'silence_skill' => 72,
 	'reflect_skill' => 73,
+	'stone_skill' => 68,
+	'stun_skill' => 74,
+	'root_skill' => 50,
+	'clean_skill' => 52,
+	'cure_skill' => 49,
+	'anti_magic_skill' => 48,
+	'confusion_skill' => 51,
+	'invisibility_skill' => 58,
+	'reveal_invisibility_skill' => 59,
+	'mastery_skill' => 66,
+	'ready_for_new_adventure_skill' => 70,
+	'ongoing_skill' => 71,
+	'trap_skill' => 64,
+	'concede_skill' => 55,
+	'concede_member_skill' => 75,
+	
+	'trap_skills' => array(
+		47, // grito
+		50, // root
+		51, // confusion
+		56, // pereza
+		72, // silencio
+	),
 	
 	'max_talents' => 8,
 	

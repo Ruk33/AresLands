@@ -82,6 +82,12 @@ class Skill extends Base_Model
         
         if ( $characterSkill->end_time != 0 && $time >= $characterSkill->end_time )
         {
+			if ( $characterSkill->skill_id == Config::get('game.invisibility_skill') )
+			{
+				$target->invisible_until = 0;
+				$target->save();
+			}
+			
             $target->update_extra_stat($extraStat, false);
             $characterSkill->delete();
 
@@ -194,6 +200,14 @@ class Skill extends Base_Model
 				
 				break;
 			
+			case 'allClan':
+				if ( $caster->id != $target->id )
+				{
+					return false;
+				}
+				
+				break;
+				
 			case 'clan':
 				if ( ! $caster->clan_id )
 				{
@@ -253,7 +267,22 @@ class Skill extends Base_Model
 			return false;
 		}
 		
+		if ( $this->type == 'debuff' && $target->has_skill(Config::get('game.anti_magic_skill')) )
+		{
+			return false;
+		}
+		
 		return true;
+	}
+	
+	/**
+	 * Obtenemos query para habilidad aleatoria
+	 * @return Eloquent
+	 */
+	public static function get_random()
+	{
+		return self::where('can_be_random', '=', true)
+				   ->order_by(DB::raw('RAND()'));
 	}
 	
 	/**
@@ -277,27 +306,125 @@ class Skill extends Base_Model
 			$amount = 1;
 		}
 		
+		if ( $this->id == Config::get('game.clean_skill') )
+		{
+			$target->remove_debuffs(2);
+			return true;
+		}
+		
+		if ( $this->id == Config::get('game.cure_skill') )
+		{
+			$target->remove_debuffs(1);
+			return true;
+		}
+		
+		if ( $this->id == Config::get('game.mastery_skill') )
+		{
+			$skill = self::get_random()->first();
+			
+			if ( $skill )
+			{
+				return $skill->cast($caster, $target);
+			}
+		}
+		
+		if ( $this->id == Config::get('game.ongoing_skill') )
+		{
+			if ( $caster->clan_id > 0 )
+			{
+				$members = $caster->clan->members;
+				$time = time();
+				
+				foreach ( $members as $member )
+				{
+					$randomTalent = $member->get_random_talent()
+										   ->where('usable_at', '>', $time)
+										   ->first();
+					
+					if ( $randomTalent )
+					{
+						$member->refresh_talent($randomTalent);
+					}
+				}
+			}
+			
+			return true;
+		}
+		
+		if ( $this->id == Config::get('game.invisibility_skill') )
+		{
+			// La duracion de las habilidades esta en minutos
+			// por lo que tenemos que pasarlos a segundos
+			$target->invisible_until += $this->duration * 60;
+			$target->save();
+		}
+		
+		if ( $target->has_skill(Config::get('game.reflect_skill')) && $this->type == 'debuff' )
+		{			
+			$target = &$caster;
+		}
+		
+		if ( $this->target == 'allClan' )
+		{
+			$skill = $this;
+			
+			if ( $skill->id == Config::get('game.concede_skill') )
+			{
+				$skill = Skill::find(Config::get('game.concede_member_skill'));
+			}
+			
+			// Evitamos recursion infinita
+			$skill->target = 'one';
+			
+			$members = $caster->clan->members;
+			
+			foreach ( $members as $member )
+			{
+				if ( $member->id != $caster->id )
+				{
+					$skill->cast($caster, $member);
+				}
+			}
+		}
+		
 		if ( $this->duration != -1 )
 		{
-			if ( $target->has_skill(Config::get('game.reflect_skill')) && $this->type == 'debuff' )
-			{
-				CharacterSkill::register($this, $target, $amount);
-				
-				$reflectSkill = $target->skills()->where('skill_id', '=', Config::get('game.reflect_skill'))->first();
-				$target->remove_buff($reflectSkill);
-			}
-			else
-			{
-				CharacterSkill::register($target, $this, $amount);
-			}
+			CharacterSkill::register($target, $this, $amount);
 		}
 		else
 		{
-			$target->current_life += $this->life * $amount;	
+			// Usar formula de batalla
+			$target->current_life -= $this->direct_magic_damage * $amount;
+			$target->current_life -= $this->direct_physical_damage * $amount;
+			
+			$target->current_life += $this->life * $amount;
+			
+			if ( $this->id == Config::get('game.stone_skill') )
+			{
+				if ( mt_rand(0, 100) <= $this->chance )
+				{
+					Skill::cast_stun_on($target);
+				}
+			}
+			
 			$target->save();
 		}
 		
 		return true;
+	}
+	
+	/**
+	 * Lanzamos stun sobre un personaje
+	 * @param Character $target
+	 */
+	public static function cast_stun_on(Character $target)
+	{
+		$skill = Skill::where_id(Config::get('game.stun_skill'))->where_level(1)->first();
+		
+		if ( $skill )
+		{
+			$skill->cast($target, $target);
+		}
 	}
 	
 	/**

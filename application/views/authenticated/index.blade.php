@@ -183,7 +183,7 @@
 					</span>
 				</span>
 				<div class="progress" style="height: 5px;">
-					<div class="bar bar-success" id="lifeBar" life-bar="character"></div>
+					<div class="bar bar-success" id="lifeBar" life-bar="character" regeneration="{{ $character->regeneration_per_second + $character->regeneration_per_second_extra }}"></div>
 				</div>
 			</li>
 			
