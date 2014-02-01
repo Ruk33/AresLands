@@ -249,7 +249,7 @@ class Authenticated_Controller extends Base_Controller
 	
 	public function post_setCharacteristics()
 	{
-		$character = Character::get_character_of_logged_user(array('id', 'characteristics'));
+		$character = Character::get_character_of_logged_user(array('id', 'characteristics', 'race'));
 		$redirection = Redirect::to('authenticated');
 		
 		// Evitamos que el personaje re-asigne sus caracteristicas
@@ -275,7 +275,69 @@ class Authenticated_Controller extends Base_Controller
 			}
 		}
 		
+		// Esto deberia estar hecho en CharacterCreation <.<
+		switch ( $character->race )
+		{
+			case 'dwarf':
+				$character->regeneration_per_second = 0.25;
+				$character->evasion = -2;
+				$character->critical_chance = 3;
+				$character->attack_speed = -10;
+				$character->magic_defense = 3;
+				$character->physical_defense = 5;
+				$character->magic_damage = -10;
+				$character->physical_damage = 15;
+				$character->luck = 5;
+				
+				break;
+			
+			case 'elf':
+				$character->regeneration_per_second = 0.14;
+				$character->evasion = 2;
+				$character->critical_chance = 5;
+				$character->attack_speed = 8;
+				$character->magic_defense = 2;
+				$character->physical_defense = 2;
+				$character->magic_damage = 5;
+				$character->physical_damage = 10;
+				$character->luck = 5;
+				
+				break;
+			
+			case 'drow':
+				$character->regeneration_per_second = 0.12;
+				$character->evasion = -1;
+				$character->critical_chance = 6;
+				$character->attack_speed = 2;
+				$character->magic_defense = 5;
+				$character->physical_defense = 1;
+				$character->magic_damage = 15;
+				$character->physical_damage = -5;
+				$character->luck = 5;
+				
+				break;
+			
+			case 'human':
+				$character->regeneration_per_second = 0.19;
+				$character->evasion = 1;
+				$character->critical_chance = 2;
+				$character->attack_speed = 3;
+				$character->magic_defense = 1;
+				$character->physical_defense = 3;
+				$character->magic_damage = 1;
+				$character->physical_damage = 6;
+				$character->luck = 5;
+				
+				break;
+		}
+		
 		$character->characteristics = strtolower(implode(',', Input::except(array('_method', 'csrf_token'))));
+		
+		if ( $character->has_characteristic(Characteristic::CLUMSY) )
+		{
+			$character->luck += 6;
+		}
+		
 		$character->save();
 		
 		return $redirection;

@@ -980,6 +980,11 @@ class Character extends Base_Model
 			$this->level++;
 			$this->xp_next_level = (int) (5 * $this->level);
 			$value = 0;
+			
+			if ( $this->level % 5 == 0 && $this->can_learn_more_talents() )
+			{
+				$this->talent_points++;
+			}
 
 			/*
 			 *	Verificamos que siga cumpliendo

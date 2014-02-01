@@ -16,19 +16,7 @@
 		@endif
 	@endif
 
-	<div ng-controller="Skill" style="margin-left: 20px;">
-		@if ( Session::has('error') )
-			<div class="alert alert-error">
-				{{ Session::get('error') }}
-			</div>
-		@endif
-		
-		@if ( Session::has('message') )
-			<div class="alert alert-success">
-				{{ Session::get('message') }}
-			</div>
-		@endif
-		
+	<div ng-controller="Skill" style="margin-left: 20px;">		
 		<!-- BUFFS -->
 		@if ( count($skills) > 0 )
 			<h2>Efectos activos</h2>
@@ -55,6 +43,20 @@
 			</ul>
 		@endif
 		<!-- END BUFFS -->
+	</div>
+	
+	<div class="text-center" style="width: 700px; margin: 0 auto;">
+		@if ( Session::has('error') )
+			<div class="alert alert-error">
+				{{ Session::get('error') }}
+			</div>
+		@endif
+		
+		@if ( Session::has('message') )
+			<div class="alert alert-success">
+				{{ Session::get('message') }}
+			</div>
+		@endif
 	</div>
 	
 	<?php
