@@ -280,9 +280,9 @@ class Authenticated_Controller extends Base_Controller
 		{
 			case 'dwarf':
 				$character->regeneration_per_second = 0.25;
-				$character->evasion = -2;
+				$character->evasion = -1;
 				$character->critical_chance = 3;
-				$character->attack_speed = -10;
+				$character->attack_speed = -2;
 				$character->magic_defense = 3;
 				$character->physical_defense = 5;
 				$character->magic_damage = -10;
@@ -295,7 +295,7 @@ class Authenticated_Controller extends Base_Controller
 				$character->regeneration_per_second = 0.14;
 				$character->evasion = 2;
 				$character->critical_chance = 5;
-				$character->attack_speed = 8;
+				$character->attack_speed = 3;
 				$character->magic_defense = 2;
 				$character->physical_defense = 2;
 				$character->magic_damage = 5;
@@ -321,7 +321,7 @@ class Authenticated_Controller extends Base_Controller
 				$character->regeneration_per_second = 0.19;
 				$character->evasion = 1;
 				$character->critical_chance = 2;
-				$character->attack_speed = 3;
+				$character->attack_speed = 1;
 				$character->magic_defense = 1;
 				$character->physical_defense = 3;
 				$character->magic_damage = 1;
