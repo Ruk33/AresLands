@@ -114,7 +114,7 @@
 			@endif
 
 			<!-- ORBES -->
-			<div class="box box-box-32-violet" style="position: absolute; left: 230px; top: 230px;">
+			<div class="box box-box-64-violet" style="position: absolute; left: 230px; top: 230px;">
 				@if ( isset($orb) )
 					<img src="{{ URL::base() }}/img/icons/orbs/{{ $orb->id }}.png" data-toggle="tooltip" data-title="<div style='width: 200px;'><strong>{{ $orb->name }}</strong><p>{{ $orb->description }}</p></div>">
 				@endif
@@ -125,8 +125,10 @@
 			<div style="position: absolute; left: 230px; top: 65px;">
 				@if ( isset($items['mercenary']) )
 					<?php $mercenary = $items['mercenary'][0]->item; ?>
+					<div class="box box-box-64-blue">
 					<img src="{{ URL::base() }}/img/icons/items/{{ $mercenary->id }}.png" alt="" width="64px" height="64px" data-toggle="tooltip" data-placement="top" data-original-title="
 					{{ $mercenary->get_text_for_tooltip() }}">
+					</div>
 				@endif
 			</div>
 			<!-- END AYUDANTE -->
@@ -249,18 +251,26 @@
 						<span ng-bind="character.current_life || '?'">?</span>/<span ng-bind="character.max_life || '?'">?</span>
 					</span>
 				</span>
-				<div class="progress" style="height: 5px;">
-					<div class="bar bar-success" id="lifeBar" life-bar="character" regeneration="{{ $character->regeneration_per_second + $character->regeneration_per_second_extra }}"></div>
+				<div style="position: relative;">
+					<div class="bar-empty-fill">
+						<div id="lifeBar" life-bar="character" regeneration="{{ $character->regeneration_per_second + $character->regeneration_per_second_extra }}"></div>
+					</div>
+					<div class="bar-border">
+					</div>
 				</div>
 			</li>
 			
 			<li data-toggle="tooltip" data-placement="top" data-original-title="<b>Barra de actividad:</b> Completa la barra de actividad realizando acciones (explorar, batallar, viajar, etc.) para obtener las <b>recompensas</b>.">
 				<span style="font-size: 11px;">BARRA DE ACTIVIDAD</span>
-				<div class="progress" style="height: 5px;">
-					@if ( $character->activity_bar )
-					<div id="activityBar" class="bar bar-success" style="width: {{ 100 * $character->activity_bar->filled_amount / Config::get('game.activity_bar_max') }}%"></div>
-					@endif
+				@if ( $character->activity_bar )
+				<div style="position: relative;">
+					<div class="bar-empty-fill">
+						<div id="activityBar" style="width: {{ 100 * $character->activity_bar->filled_amount / Config::get('game.activity_bar_max') }}%"></div>
+					</div>
+					<div class="bar-border">
+					</div>
 				</div>
+				@endif
 			</li>
 			
 			<li style="margin-bottom: 30px;">
@@ -270,8 +280,12 @@
 						<span ng-bind="character.xp || '0'">?</span>/<span ng-bind="character.xp_next_level || '0'">0</span>
 					</span>
 				</span>
-				<div class="progress" style="height: 5px;">
-					<div class="bar bar-success" id="experienceBar" style="width: [[ 100 * character.xp / character.xp_next_level ]]%"></div>
+				<div style="position: relative;">
+					<div class="bar-empty-fill">
+						<div id="experienceBar" style="width: [[ 100 * character.xp / character.xp_next_level ]]%"></div>
+					</div>
+					<div class="bar-border">
+					</div>
 				</div>
 			</li>
 			

@@ -411,17 +411,17 @@ body {
 }
 
 #activityBar {
-	background-image: none;
+	height: 7px;
 	background-color: orange;
 }
 
 #lifeBar {
-	background-image: none;
+	height: 7px;
 	background-color: rgb(141, 250, 41);
 }
 
 #experienceBar {
-	background-image: none;
+	height: 7px;
 	background-color: #695F59;
 }
 
@@ -966,6 +966,23 @@ h4 {
 	color: white;
 }
 
+.bar-border {
+	background-image: url("/img/bar-border.png") !important;
+	background-repeat: no-repeat;
+	width: 352px !important;
+	height: 22px !important;
+	position: absolute;
+	top: -8px;
+	left: -5px;
+	z-index: 9999999;
+}
+
+.bar-empty-fill {
+	height: 7px;
+	width: 100%;
+	background-color: #090909;
+}
+
 .bar {
 	height: 82px;
 	/*text-align: right;*/
@@ -1110,12 +1127,10 @@ h4 {
 }
 
 #footer {
-	background-image: url('/img/footer.jpg');
-	background-repeat: no-repeat;
-	background-position: top center;
-	/*width: 1152px;*/
-	height: 313px;
-	margin: 0 auto;
+	text-transform: uppercase;
+	font-family: verdana;
+	color: #4b443e;
+	font-size: 10px;
 }
 
 /* ==========================================================================

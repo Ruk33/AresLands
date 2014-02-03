@@ -206,15 +206,34 @@
 				@if ( isset($character) && isset($npcs) && count($npcs) > 0 )
 					@if ( ! $character->is_traveling )
 					<div class="pull-right">
-						<ul class="inline" style="margin: 0; padding: 0;">
-						@foreach ( $npcs as $npc )
-							<li data-toggle="tooltip" data-placement="bottom" data-original-title="<div style='color: #FFC200;'>Mercader {{ $npc->name }}</div>{{ $npc->tooltip_dialog }}">
-								<a href="{{ URL::to('authenticated/npc/' . $npc->id . '/' . Str::slug($npc->name)) }}">
-									<img src="{{ URL::base() }}/img/icons/npcs/{{ $npc->id }}.png" alt="" width="72px" height="82px">
-								</a>
-							</li>
-						@endforeach
-						</ul>
+						<div id="npcs" class="carousel slide" style="margin: 0; padding: 0;">
+							<ul class="inline" style="margin: 0; padding: 0;">
+								<li style="width: 64px;"><a class="carousel-control left" href="#npcs" data-slide="prev">&lsaquo;</a></li>
+								<li style="width: 440px">
+									<div class="carousel-inner">
+										<ul class="active item inline">
+										<?php $i = 0; $itemCount = 1; ?>
+										@foreach ( $npcs as $npc )
+											<?php $i++; ?>
+
+											@if ( $i > 5 )
+												<?php $i = 0; $itemCount++; ?>
+												</ul>
+												<ul class="item inline">
+											@endif
+
+											<li data-toggle="tooltip" data-placement="bottom" data-original-title="<div style='color: #FFC200;'>Mercader {{ $npc->name }}</div>{{ $npc->tooltip_dialog }}">
+												<a href="{{ URL::to('authenticated/npc/' . $npc->id . '/' . Str::slug($npc->name)) }}">
+													<img src="{{ URL::base() }}/img/icons/npcs/{{ $npc->id }}.png" alt="" width="72px" height="82px">
+												</a>
+											</li>
+										@endforeach
+										</ul>
+									</div>
+								</li>
+								<li style="width: 64px;"><a class="carousel-control right" href="#npcs" data-slide="next">&rsaquo;</a></li>
+							</ul>
+						</div>
 					</div>
 					@endif
 				@endif
@@ -349,23 +368,29 @@
 						</div> <!-- /content -->
 					</div>
 				</div>
-			</div> <!-- /container -->
-			<div id="push"></div>
-		</div> <!-- /wrap -->
-		<div id="footer">
-			<div class="text-center">
-				<div>
-					<a href="//ironfist.com.ar" target="_blank"><img src="{{ URL::base() }}/img/ironfist-logo.png" width="212px" height="259px"></a>
-					<p style="color: white; font-size: 11px;">
-						Todas las marcas aquí mencionadas son propiedad de sus respectivos dueños. 
-						<br>
-						©2013 IronFist. Todos los derechos reservados.
-						<br>
-						AresLands es una realidad gracias a <b>Vicente Buendia</b> y a su proyecto open <a href="http://sourceforge.net/projects/tierras/" target="_blank" rel="nofollow">Tierras de Leyenda</a> y a <a href="{{ URL::to('home/thanks') }}">todos los que contribuyeron con nosotros</a>.
-					</p>
+				
+				<div id="footer" style="margin-top: 50px; padding-left: 50px;">
+					<div class="pull-left">
+						<a href="//ironfist.com.ar" target="_blank">
+							<img src="{{ URL::base() }}/img/ironfist-logo.png" width="106px" height="129.5px">
+						</a>
+					</div>
+					<div style="padding-top: 50px; margin-left: 130px;">
+						<p>
+							Todas las marcas aquí mencionadas son propiedad de sus respectivos dueños. 
+							<br>
+							©2014 IronFist. Todos los derechos reservados.
+							<a href="//ironfist.com.ar/privacy" target="_blank">Política de privacidad</a>
+							-
+							<a href="//ironfist.com.ar/terms" target="_blank">Condiciones generales de uso</a>
+							<br>
+							AresLands es una realidad gracias a <b>Vicente Buendia</b> y a su proyecto open <a href="http://sourceforge.net/projects/tierras/" target="_blank" rel="nofollow">Tierras de Leyenda</a> y a <a href="{{ URL::to('home/thanks') }}">todos los que contribuyeron con nosotros</a>.
+						</p>
+					</div>
 				</div>
 			</div>
-		</div>
+			</div> <!-- /container -->
+		</div> <!-- /wrap -->
 
 		@if ( Auth::check() && isset($character) )
 			<div style="position: fixed; border: 2px solid #E99337; border-bottom: 0; border-top-left-radius: 5px; border-top-right-radius: 5px; z-index: 999; bottom: 0; right: 10px; padding: 5px; width: auto; height: auto; background-color: #181818;" ng-controller="Chat">
