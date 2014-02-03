@@ -59,6 +59,13 @@ class Authenticated_Controller extends Base_Controller
 		   $startedQuests = $character->started_quests()->get();
            $startedQuests = array_merge($startedQuests, $character->reward_quests()->get());
 
+		   /*
+			*	Obtenemos todos los npcs
+			*	(no mounstros) de la zona
+			*	en la que está el usuario
+			*/
+		   $npcs = Npc::get_npcs_from_zone($character->zone);
+		   
             /*
 			 *	Debemos pasar las monedas directamente
 			 *	al layout, puesto que es ahí donde
@@ -67,6 +74,7 @@ class Authenticated_Controller extends Base_Controller
 			$this->layout->with('coins', $character->get_divided_coins());
 			$this->layout->with('character', $character);
 			$this->layout->with('startedQuests', $startedQuests);
+			$this->layout->with('npcs', $npcs);
 		}
 	}
     
@@ -146,13 +154,6 @@ class Authenticated_Controller extends Base_Controller
 
 		$zone = $character->zone()->select(array('id', 'name', 'description'))->first();
 
-		/*
-		 *	Obtenemos todos los npcs
-		 *	(no mounstros) de la zona
-		 *	en la que está el usuario
-		 */
-		$npcs = Npc::get_npcs_from_zone($zone);
-
 		$exploringTime = $character->exploring_times()->where('zone_id', '=', $zone->id)->first();
 
 		$this->layout->title = 'Inicio';
@@ -163,7 +164,6 @@ class Authenticated_Controller extends Base_Controller
 		->with('skills', $skills)
 		->with('orb', $orb)
 		->with('zone', $zone)
-		->with('npcs', $npcs)
 		->with('exploringTime', $exploringTime);
 	}
 	

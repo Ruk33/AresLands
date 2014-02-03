@@ -59,6 +59,135 @@ body {
 	font-family: "Roboto Slab", Georgia, Verdana, Arial;
 }
 
+.buff-container {
+	width: 685px;
+	margin-bottom: 25px;
+	background-image: url("/img/buff-background.png");
+	background-repeat: no-repeat;
+	padding: 15px;
+	background-color: #131111;
+	border-radius: 5px;
+	text-shadow: black 0 0 5px, black 0 0 5px;
+	box-shadow: black 0 0 5px;
+	position: relative;
+}
+
+.box {
+    background-image: url("/img/icons/box-spritesheet.png");
+    background-repeat: no-repeat;
+    display: block;
+	position: relative;
+	text-align: center;
+}
+
+.box-box-16-blue {
+    width: 16px;
+    height: 16px;
+    background-position: 0 0;
+}
+
+.box-box-16-gold {
+    width: 16px;
+    height: 16px;
+    background-position: -16px 0;
+}
+
+.box-box-16-gray {
+    width: 16px;
+    height: 16px;
+    background-position: -32px 0;
+}
+
+.box-box-16-green {
+    width: 16px;
+    height: 16px;
+    background-position: -48px 0;
+}
+
+.box-box-16-pink {
+    width: 16px;
+    height: 16px;
+    background-position: -64px 0;
+}
+
+.box-box-16-violet {
+    width: 16px;
+    height: 16px;
+    background-position: -80px 0;
+}
+
+.box-box-32-blue {
+    width: 32px;
+    height: 32px;
+    background-position: -96px 0;
+}
+
+.box-box-32-gold {
+    width: 32px;
+    height: 32px;
+    background-position: -128px 0;
+}
+
+.box-box-32-gray {
+    width: 32px;
+    height: 32px;
+    background-position: -160px 0;
+}
+
+.box-box-32-green {
+    width: 32px;
+    height: 32px;
+    background-position: -192px 0;
+}
+
+.box-box-32-pink {
+    width: 32px;
+    height: 32px;
+    background-position: -224px 0;
+}
+
+.box-box-32-violet {
+    width: 32px;
+    height: 32px;
+    background-position: -256px 0;
+}
+
+.box-box-64-blue {
+    width: 64px;
+    height: 64px;
+    background-position: -288px 0;
+}
+
+.box-box-64-gold {
+    width: 64px;
+    height: 64px;
+    background-position: -352px 0;
+}
+
+.box-box-64-gray {
+    width: 64px;
+    height: 64px;
+    background-position: -416px 0;
+}
+
+.box-box-64-green {
+    width: 64px;
+    height: 64px;
+    background-position: -480px 0;
+}
+
+.box-box-64-pink {
+    width: 64px;
+    height: 64px;
+    background-position: -544px 0;
+}
+
+.box-box-64-violet {
+    width: 64px;
+    height: 64px;
+    background-position: -608px 0;
+}
+
 #characteristicsModal {
 	background-image: url('/img/characteristics-background.png');
 	background-color: transparent;
@@ -333,6 +462,33 @@ a:hover {
 
 .ui-input-button:hover {
 	color: #FFC04F;
+}
+
+.alert-top {
+	background-image: url("/img/alert-background.jpg");
+	background-repeat: no-repeat;
+	height: 65px;
+}
+
+.alert-content {
+	width: 315px;
+	margin: -65px auto;
+	padding-top: 10px;
+	padding-bottom: 40px;
+}
+
+.alert-bot {
+	height: 25px;
+	background-image: url("/img/alert-background.jpg");
+	background-repeat: no-repeat;
+	background-position: 0px -99px;
+}
+
+.alert-center {
+	background-image: url("/img/alert-center-background.jpg");
+	background-repeat: repeat-y;
+	position: relative;
+	width: 339px;
 }
 
 .alert-container {
@@ -703,7 +859,7 @@ html, body {
 
 body {
 	/*background-image: url('/img/background3.jpg');*/
-	background-image: url('/img/background7.jpg');
+	background-image: url('/img/background8.jpg');
 	background-repeat: no-repeat;
 	background-position: top center;
 }
@@ -774,6 +930,7 @@ h4 {
 .container {
 	/*margin-bottom: 20px;*/
 	background-repeat: no-repeat;
+	position: relative;
 }
 
 .orb-content {
@@ -796,7 +953,7 @@ h4 {
 	background-repeat: no-repeat;
 	width: 320px;
 	height: 74px;
-	margin: 0 auto;
+	display: block;
 }
 
 .mini-player-display {
@@ -900,8 +1057,8 @@ h4 {
 
 .inventory-item-amount {
 	position: absolute;
-	border: 1px solid rgb(71, 71, 71);
-	background-color: rgb(41, 41, 41);
+	border: 1px solid rgb(50, 50, 50);
+	background-color: rgba(35, 35, 35, 0.75);
 	width: 16px;
 	height: 16px;
 	font-size: 10px;

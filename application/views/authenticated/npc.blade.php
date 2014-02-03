@@ -142,15 +142,15 @@
 				{{ Form::open('authenticated/buyMerchandise', 'POST') }}
 					{{ Form::token() }}
 					{{ Form::hidden('merchandise_id', $merchandise->id) }}
-
-					<div class="inventory-item">
+					
+					<div class="box box-box-64-gray">
 						<img src="{{ URL::base() }}/img/icons/items/{{ $merchandise->item_id }}.png" width="80px" height="80px">
 					</div>
 
 					<div>
 					@if ( $merchandise->stackable )
                         <div data-toggle="tooltip" data-original-title="Podes comprar {{ number_format($characterCoinsCount / $merchandise->price_copper, 0, ',', '.') }}">
-                        {{ Form::number('amount', 0, array('max' => number_format($characterCoinsCount / $merchandise->price_copper, 0, '', ''), 'style' => 'width: 55px;')) }}
+                        {{ Form::number('amount', 0, array('max' => number_format($characterCoinsCount / $merchandise->price_copper, 0, '', ''), 'style' => 'width: 50px;')) }}
                         </div>
 					@endif
 					</div>

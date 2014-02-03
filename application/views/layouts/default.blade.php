@@ -25,10 +25,6 @@
 		<!--[if lt IE 7]>
 			<p class="chromeframe">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> or <a href="http://www.google.com/chromeframe/?redirect=true">activate Google Chrome Frame</a> to improve your experience.</p>
 		<![endif]-->
-		
-		<div class="pull-right" style="padding: 10px; font-size: 12px; color: white; text-transform: uppercase;">
-			Hora del servidor: <span id='serverTime'>00:00:00</span>
-		</div>
 
 		@if ( Session::has('modalMessage') )
 			<?php 
@@ -202,8 +198,31 @@
 					@endif
 				@endif
 				<!-- End Torneo -->
+				
+				<div style="position: absolute; right: 10px; top: -70px; padding: 10px; font-size: 12px; color: white; text-transform: uppercase;">
+					Hora del servidor: <span id='serverTime'>00:00:00</span>
+				</div>
+				
+				@if ( isset($character) && isset($npcs) && count($npcs) > 0 )
+					@if ( ! $character->is_traveling )
+					<div class="pull-right">
+						<ul class="inline" style="margin: 0; padding: 0;">
+						@foreach ( $npcs as $npc )
+							<li data-toggle="tooltip" data-placement="bottom" data-original-title="<div style='color: #FFC200;'>Mercader {{ $npc->name }}</div>{{ $npc->tooltip_dialog }}">
+								<a href="{{ URL::to('authenticated/npc/' . $npc->id . '/' . Str::slug($npc->name)) }}">
+									<img src="{{ URL::base() }}/img/icons/npcs/{{ $npc->id }}.png" alt="" width="72px" height="82px">
+								</a>
+							</li>
+						@endforeach
+						</ul>
+					</div>
+					@endif
+				@endif
 
-				<a href="{{ URL::base() }}"><div class="logo"></div></a>
+				<div class="pull-left">
+					<a href="{{ URL::base() }}"><div class="logo"></div></a>
+				</div>
+				
 				<div class="row-fluid col-wrap">
 					<div class="span2 menu col" style="width: 176px; ">
 						@if ( Request::route()->controller == 'authenticated' )
