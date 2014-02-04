@@ -7,7 +7,11 @@
 				<ul class="unstyled inline">
 					@foreach ( $skills as $skill )
 						<li>
+							@if ( $skill->type == 'debuf' )
+							<div class="box box-box-32-pink">
+							@else
 							<div class="box box-box-32-gray">
+							@endif
 								<img src="{{ URL::base() }}/img/icons/skills/{{ $skill->skill_id }}.png" alt="" width="32px" height="32px" skill-tooltip skill-id="{{ $skill->skill_id }}" skill-level="{{ $skill->level }}">
 							</div>
 						</li>
@@ -138,7 +142,7 @@
 			<!-- END PERSONAJE -->
 		</div>
 		
-		<div class="span6" style="margin-top: -100px;">
+		<div class="span6" style="margin-top: -20px;">
 			<!-- INVENTARIO -->
 			<script>
 				function confirmItemDestroy()

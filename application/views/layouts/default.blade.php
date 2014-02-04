@@ -208,7 +208,6 @@
 					<div class="pull-right">
 						<div id="npcs" class="carousel slide" style="margin: 0; padding: 0;">
 							<ul class="inline" style="margin: 0; padding: 0;">
-								<li style="width: 64px;"><a class="carousel-control left" href="#npcs" data-slide="prev">&lsaquo;</a></li>
 								<li style="width: 440px">
 									<div class="carousel-inner">
 										<ul class="active item inline">
@@ -231,7 +230,11 @@
 										</ul>
 									</div>
 								</li>
-								<li style="width: 64px;"><a class="carousel-control right" href="#npcs" data-slide="next">&rsaquo;</a></li>
+								@if ( $itemCount > 1 )
+								<li style="width: 40px;">
+									<a class="carousel-control right" href="#npcs" data-slide="next">&rsaquo;</a>
+								</li>
+								@endif
 							</ul>
 						</div>
 					</div>
@@ -243,7 +246,7 @@
 				</div>
 				
 				<div class="row-fluid col-wrap">
-					<div class="span2 menu col" style="width: 176px; ">
+					<div class="span2 col menu-column" style="width: 176px;">
 						@if ( Request::route()->controller == 'authenticated' )
 							<div class="mini-player-display">
 								<div class="icon-race-30 icon-race-30-{{ $character->race }}_{{ $character->gender }} pull-left"></div>
@@ -314,14 +317,19 @@
 								</ul>
 							</div>
 						@endif
-						<ul class="unstyled menu">
+						<ul class="unstyled menu" width="150px;">
 							@if ( Auth::check() && isset($character) )
-								<li><a href="{{ URL::to('authenticated/index') }}" class="menu menu-character"></a></li>
-								<li style="position: relative;">
-									<a href="{{ URL::to('authenticated/messages') }}" class="menu menu-messages">
+								<li>
+									<i class="icon icon-arrow-right icon-white"></i>
+									<a href="{{ URL::to('authenticated/index') }}">Tu personaje</a>
+								</li>
+								<li>
+									<i class="icon icon-inbox icon-white"></i>
+									<a href="{{ URL::to('authenticated/messages') }}">
+										Mensajes
 										@if ( $character->get_unread_messages_count() > 0 )
-										<div style="position: absolute; top: 7px; right: 10px; color: white" data-toggle="tooltip" data-placement="top" data-original-title="Mensaje(s) sin leer">
-											<span class="badge badge-warning">
+										<div class="pull-right" data-toggle="tooltip" data-placement="top" data-original-title="Mensaje(s) sin leer">
+											<span class="badge badge-important" style="font-family: arial;">
 												{{ $character->get_unread_messages_count() }}
 											</span>
 										</div>
@@ -330,39 +338,79 @@
 								</li>
 								
 								@if ( $character->can_travel() === true )
-								<li><a href="{{ URL::to('authenticated/travel') }}" class="menu menu-travel"></a></li>
+								<li>
+									<i class="icon icon-move icon-white"></i>
+									<a href="{{ URL::to('authenticated/travel') }}">Viajar</a>
+								</li>
 								@endif
 								
 								@if ( $character->can_fight() )
-								<li><a href="{{ URL::to('authenticated/battle') }}" class="menu menu-battle"></a></li>
+								<li>
+									<i class="icon icon-exclamation-sign icon-white"></i>
+									<a href="{{ URL::to('authenticated/battle') }}">Batallar</a>
+								</li>
 								@endif
 	
 								@if ( $character->can_explore() )
-								<li><a href="{{ URL::to('authenticated/explore') }}" class="menu menu-explore"></a></li>
+								<li>
+									<i class="icon icon-eye-open icon-white"></i>
+									<a href="{{ URL::to('authenticated/explore') }}">Explorar</a>
+								</li>
 								@endif
 								
 								@if ( $character->characteristics )
-								<li><a href="{{ URL::to('authenticated/talents') }}" class="menu menu-talents"></a></li>
+								<li>
+									<i class="icon icon-gift icon-white"></i>
+									<a href="{{ URL::to('authenticated/talents') }}">Talentos</a>
+								</li>
 								@endif
 								
-								<li><a href="{{ URL::to('authenticated/clan') }}" class="menu menu-group"></a></li>
-								<li><a href="{{ URL::to('authenticated/trade') }}" class="menu menu-trade"></a></li>
-								<li><a href="{{ URL::to('authenticated/characters') }}" class="menu menu-characters"></a></li>
-								<li><a href="{{ URL::to('authenticated/ranking') }}" class="menu menu-ranking"></a></li>
-								<li><a href="{{ URL::to('authenticated/orbs') }}" class="menu menu-orbs"></a></li>
-								<li><a href="{{ URL::to('authenticated/tournaments') }}" class="menu menu-tournaments"></a></li>
+								<li>
+									<i class="icon icon-share icon-white"></i>
+									<a href="{{ URL::to('authenticated/clan') }}">Grupo</a>
+								</li>
+								<li>
+									<i class="icon icon-wrench icon-white"></i>
+									<a href="{{ URL::to('authenticated/trade') }}">Comercio</a>
+								</li>
+								<li>
+									<i class="icon icon-heart icon-white"></i>
+									<a href="{{ URL::to('authenticated/characters') }}">Personajes</a>
+								</li>
+								<li>
+									<i class="icon icon-star icon-white"></i>
+									<a href="{{ URL::to('authenticated/ranking') }}">Ranking</a>
+								</li>
+								<li>
+									<i class="icon icon-question-sign icon-white"></i>
+									<a href="{{ URL::to('authenticated/orbs') }}">Orbes</a>
+								</li>
+								<li>
+									<i class="icon icon-fire icon-white"></i>
+									<a href="{{ URL::to('authenticated/tournaments') }}">Torneos</a>
+								</li>
 								
-								<li><a href="http://ironfist.com.ar/forums" class="menu menu-forum" target="_blank"></a></li>
-								<li><a href="{{ URL::to('authenticated/logout') }}" class="menu menu-logout"></a></li>
+								<li>
+									<i class="icon icon-book icon-white"></i>
+									<a href="{{ URL::to('game/index') }}" target="_blank">Guia</a>
+								</li>
+								<li>
+									<i class="icon icon-book icon-white"></i>
+									<a href="http://ironfist.com.ar/forums" target="_blank">Foro</a>
+								</li>
+								<li>
+									<i class="icon icon-off icon-white"></i>
+									<a href="{{ URL::to('authenticated/logout') }}">Desconectarse</a>
+								</li>
 							@else
 								<li><a href="{{ URL::to('home/index') }}" class="menu menu-start"></a></li>
 								<li><a href="{{ URL::to('home/thanks') }}" class="menu menu-thanks"></a></li>
+								<li><a href="{{ URL::to('game/index') }}" target="_blank">Guia</a></li>
 							@endif
-							<li><a href="{{ URL::to('game/index') }}" class="menu menu-guide" target="_blank"></a></li>
 						</ul>
 					</div>
 
-					<div class="span10 content col" style="width: 764px; margin-left: 0;">
+					<div class="span10 content col rock-background" style="width: 764px; margin-left: 0;">
 						<div id="content">
 							{{ $content }}
 						</div> <!-- /content -->

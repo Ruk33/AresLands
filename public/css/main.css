@@ -70,6 +70,7 @@ body {
 	text-shadow: black 0 0 5px, black 0 0 5px;
 	box-shadow: black 0 0 5px;
 	position: relative;
+	border: 1px solid #4b443e;
 }
 
 .box {
@@ -78,6 +79,10 @@ body {
     display: block;
 	position: relative;
 	text-align: center;
+}
+
+.box:hover{
+	box-shadow: white 0 0 2px;
 }
 
 .box-box-16-blue {
@@ -516,9 +521,23 @@ a:hover {
 }
 
 .menu {
-    background-image: url("/img/menu/menu-spritesheet.png");
-    background-repeat: no-repeat;
-    display: block;
+    text-shadow: black 0 0 5px;
+	padding: 10px;
+}
+
+.menu li {
+	padding-bottom: 5px;
+	margin-bottom: 5px;
+	border-bottom: 1px solid #451907;
+}
+
+.menu a {
+	margin-left: 5px;
+    color: white;
+}
+
+.menu a:hover {
+    color: #fff2df;
 }
 
 .menu-battle {
@@ -909,22 +928,30 @@ h4 {
 	border: 1px dashed rgb(60, 60, 60);
 }
 
-.menu {
-	background-color: #131111;
+.menu-column {
+	background-image: url("/img/menu-background.png");
+	background-repeat: repeat-y;
 	overflow: hidden;
 }
 
 .content {
-	border-left: 1px solid rgb(37, 37, 37);
+	/*border-left: 1px solid rgb(37, 37, 37);*/
 	border-right: 1px solid rgb(37, 37, 37);
 	/*background-color: #18191a;*/
-	background-color: rgb(24, 24, 24);
+	background-color: rgb(20, 20, 20);
 }
 
 #content {
 	margin-left: 15px;
 	margin-top: 15px;
 	position: relative;
+}
+
+.rock-background {
+	/*background-image: url("/img/container-background.png");
+	background-repeat: no-repeat;*/
+	background-image: url("/img/content-background.png");
+	background-repeat: repeat-y;
 }
 
 .container {
@@ -974,7 +1001,7 @@ h4 {
 	position: absolute;
 	top: -8px;
 	left: -5px;
-	z-index: 9999999;
+	z-index: 3;
 }
 
 .bar-empty-fill {
@@ -1131,6 +1158,14 @@ h4 {
 	font-family: verdana;
 	color: #4b443e;
 	font-size: 10px;
+}
+
+#footer a {
+	color: #6d6763;
+}
+
+#footer a:hover {
+	color: #818181;
 }
 
 /* ==========================================================================
