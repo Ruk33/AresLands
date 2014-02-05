@@ -45,6 +45,10 @@ textarea {
 	padding: 0.2em 0;
 }
 
+.row {
+	margin-left: -15px;
+}
+
 
 /* ==========================================================================
    Author's custom styles
@@ -57,6 +61,10 @@ body {
 	color: #9B928C;
 	font-size: 15px;
 	font-family: "Roboto Slab", Georgia, Verdana, Arial;
+}
+
+.table-striped tbody > tr:nth-child(odd) > td, .table-striped tbody > tr:nth-child(odd) > th {
+    background-color: #10100f;
 }
 
 .buff-container {
@@ -191,6 +199,14 @@ body {
     width: 64px;
     height: 64px;
     background-position: -608px 0;
+}
+
+.remaining-points-content {
+	background-image: url("/img/remaining-points-background.png");
+	background-repeat: no-repeat;
+	text-shadow: black 0 0 5px;
+	border: 1px solid #333;
+	box-shadow: black 0 0 5px;
 }
 
 #characteristicsModal {
@@ -1146,7 +1162,7 @@ h4 {
  }
 
 .table tbody tr:hover td, .table tbody tr:hover th {
-    background-color: rgb(34, 36, 37);
+    background-color: rgb(25, 25, 25);
 }
 
 #push, #footer {

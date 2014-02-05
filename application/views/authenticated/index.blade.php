@@ -21,6 +21,31 @@
 		@endif
 		<!-- END BUFFS -->
 	</div>
+		
+	<!-- ACTIVIDADES -->
+	@if ( count($activities) > 0 )
+	<div class="buff-container">
+		<div style="text-transform: uppercase; color: #D0D2D0; font-size: 10px; margin-bottom: 11px; margin-left: 30px; color: #fff3df;">actividades</div>
+		<ul class="unstyled">
+			@foreach ( $activities as $activity )
+			<li style="padding: 5px;">
+				<img src="{{ URL::base() }}/img/icons/actions/{{ $activity->name }}.jpg" alt="{{ $zone->name }}" width="32px" height="32px" style="margin-right: 5px;">
+				<b>
+				@if ( $activity->name == 'travel' )
+					Viajando a {{ $activity->data['zone']->name }}: 
+				@elseif ( $activity->name == 'battlerest' )
+					Descanso de batalla: 
+				@elseif ( $activity->name == 'explore' )
+					Explorando: 
+				@endif
+				</b>
+				<span class="timer" data-endtime="{{ $activity->end_time - time() }}"></span>
+			</li>
+			@endforeach
+		</ul>
+	</div>
+	@endif
+	<!-- END ACTIVIDADES -->
 	
 	<div class="text-center" style="width: 700px; margin: 0 auto;">
 		@if ( Session::has('error') )
@@ -247,7 +272,7 @@
 	<!-- ESTADÍSTICAS -->
 	<div class="span6" ng-init="remainingPoints='{{ $character->points_to_change }}'">
 		<h2>Estadísticas</h2>
-		<ul class="unstyled text-center" style="width: 340px;">			
+		<ul class="unstyled text-center" style="width: 340px;">
 			<li>
 				<span style="font-size: 11px;">
 					<b>SALUD:</b> 
@@ -263,10 +288,9 @@
 					</div>
 				</div>
 			</li>
-			
+			@if ( $character->activity_bar )
 			<li data-toggle="tooltip" data-placement="top" data-original-title="<b>Barra de actividad:</b> Completa la barra de actividad realizando acciones (explorar, batallar, viajar, etc.) para obtener las <b>recompensas</b>.">
 				<span style="font-size: 11px;">BARRA DE ACTIVIDAD</span>
-				@if ( $character->activity_bar )
 				<div style="position: relative;">
 					<div class="bar-empty-fill">
 						<div id="activityBar" style="width: {{ 100 * $character->activity_bar->filled_amount / Config::get('game.activity_bar_max') }}%"></div>
@@ -274,9 +298,8 @@
 					<div class="bar-border">
 					</div>
 				</div>
-				@endif
 			</li>
-			
+			@endif
 			<li style="margin-bottom: 30px;">
 				<span style="font-size: 11px;">
 					<b>EXPERIENCIA:</b> 
@@ -294,7 +317,7 @@
 			</li>
 			
 			<li style="margin-bottom: 10px;" ng-show="character.points_to_change > 0">
-				<div class="clan-member-link text-center">
+				<div class="clan-member-link text-center remaining-points-content">
 					<p><b>Puntos restantes para cambiar:</b> <span ng-bind="character.points_to_change || '?'">?</span></p>
 					<p style="margin: 0;">
 						Puntos a cambiar: 
@@ -439,31 +462,6 @@
 	<div class="clearfix" style="margin-bottom: 35px;"></div>
 
 	<div class="span6">
-		<!-- ACTIVIDADES -->
-		@if ( count($activities) > 0 )
-		<div>
-			<h2>Actividad(es)</h2>
-			<ul class="unstyled">
-				@foreach ( $activities as $activity )
-				<li style="padding: 5px;">
-					<img src="{{ URL::base() }}/img/icons/actions/{{ $activity->name }}.jpg" alt="{{ $zone->name }}" width="32px" height="32px" style="margin-right: 5px;">
-					<b>
-					@if ( $activity->name == 'travel' )
-						Viajando a {{ $activity->data['zone']->name }}: 
-					@elseif ( $activity->name == 'battlerest' )
-						Descanso de batalla: 
-					@elseif ( $activity->name == 'explore' )
-						Explorando: 
-					@endif
-					</b>
-					<span class="timer" data-endtime="{{ $activity->end_time - time() }}"></span>
-				</li>
-				@endforeach
-			</ul>
-		</div>
-		@endif
-		<!-- END ACTIVIDADES -->
-
 		<!-- ZONA -->
 		<div>
 			<h2>Ubicación</h2>

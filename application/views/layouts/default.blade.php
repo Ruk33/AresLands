@@ -367,7 +367,7 @@
 								
 								<li>
 									<i class="icon icon-share icon-white"></i>
-									<a href="{{ URL::to('authenticated/clan') }}">Grupo</a>
+									<a href="{{ URL::to('authenticated/clan') }}">Grupos</a>
 								</li>
 								<li>
 									<i class="icon icon-wrench icon-white"></i>

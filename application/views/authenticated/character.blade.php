@@ -44,7 +44,7 @@
 			<li>
 				<span data-toggle="tooltip" data-placement="top" data-original-title="<b>Fuerza física:</b> Aumenta la potencia de tus ataques físicos.">
 					<span class="ui-button button" style="cursor: default;">
-						<i class="button-icon hearth"></i>
+						<i class="button-icon axe"></i>
 						<span class="button-content">
 							@if ( $character->is_admin() )
 								{{ Form::number('stat_strength', $characterToSee->stat_strength, array('style' => 'width: 50px')) }}
@@ -80,7 +80,7 @@
 			<li>
 				<span data-toggle="tooltip" data-placement="top" data-original-title="<b>Resistencia:</b> Aumenta tu defensa contra ataques físicos.">
 					<span class="ui-button button" style="cursor: default;">
-						<i class="button-icon boot"></i>
+						<i class="button-icon hearth"></i>
 						<span class="button-content">
 							@if ( $character->is_admin() )
 								{{ Form::number('stat_resistance', $characterToSee->stat_resistance, array('style' => 'width: 50px')) }}
@@ -116,7 +116,7 @@
 			<li>
 				<span data-toggle="tooltip" data-placement="top" data-original-title="<b>Habilidad mágica:</b> Aumenta tu velocidad de golpeo en las batallas, pudiendo lograr así múltiples ataques consecutivos.">
 					<span class="ui-button button" style="cursor: default;">
-						<i class="button-icon axe"></i>
+						<i class="button-icon arrow"></i>
 						<span class="button-content">
 							@if ( $character->is_admin() )
 								{{ Form::number('stat_magic_skill', $characterToSee->stat_magic_skill, array('style' => 'width: 50px')) }}
@@ -233,8 +233,8 @@
 		<div style="position: relative; width: 340px; margin: 0 auto;">
 			<!-- DOS MANOS -->
 			@if ( isset($items['lrhand']) && $lrhand = $items['lrhand'][0]->item )
-				<div style="position: absolute; margin-top: 150px;">
-					<div class="equipped-item">
+				<div style="position: absolute; left: 50px; top: 150px;">
+					<div class="box box-box-64-gold">
 						@if ( $character->is_admin() )
 							<a style="position: absolute; top: -2px; right: 5px;" href="{{ URL::to('admin/removeEquippedCharacterItem/' . $items['lrhand'][0]->id) }}">&times;</a>
 						@endif
@@ -245,8 +245,8 @@
 			<!-- END DOS MANOS -->
 			@else
 				<!-- MANO DERECHA -->
-				<div style="position: absolute; margin-top: 150px;">
-					<div class="equipped-item">
+				<div style="position: absolute; left: 50px; top: 150px;">
+					<div class="box box-box-64-gold">
 					@if ( isset($items['rhand']) && $rhand = $items['rhand'][0]->item )
 						@if ( $character->is_admin() )
 							<a style="position: absolute; top: -2px; right: 5px;" href="{{ URL::to('admin/removeEquippedCharacterItem/' . $items['rhand'][0]->id) }}">&times;</a>
@@ -259,8 +259,8 @@
 				<!-- END MANO DERECHA -->
 
 				<!-- MANO IZQUIERDA -->
-				<div style="position: absolute; margin-left: 250px; margin-top: 150px;">
-					<div class="equipped-item">
+				<div style="position: absolute; left: 225px; top: 150px;">
+					<div class="box box-box-64-gold">
 					@if ( isset($items['lhand']) && $lhand = $items['lhand'][0]->item )
 						@if ( $character->is_admin() )
 							<a style="position: absolute; top: -2px; right: 5px;" href="{{ URL::to('admin/removeEquippedCharacterItem/' . $items['lhand'][0]->id) }}">&times;</a>
@@ -274,7 +274,7 @@
 			@endif
 
 			<!-- ORBES -->
-			<div class="quest-reward-item" style="position: absolute; margin-left: 250px; margin-top: 250px;">
+			<div class="box box-box-64-violet" style="position: absolute; left: 225px; top: 250px;">
 				@if ( isset($orb) )
 					<img src="{{ URL::base() }}/img/icons/orbs/{{ $orb->id }}.png" data-toggle="tooltip" data-title="<div style='width: 200px;'><strong>{{ $orb->name }}</strong><p>{{ $orb->description }}</p></div>">
 				@endif
@@ -282,7 +282,7 @@
 			<!-- END ORBES -->
 
 			<!-- AYUDANTE -->
-			<div style="position: absolute; margin-left: 255px; margin-top: 65px;">
+			<div class="box box-box-64-blue" style="position: absolute; left: 225px; top: 40px">
 				@if ( isset($items['mercenary']) )
 					<?php $mercenary = $items['mercenary'][0]->item; ?>
 				

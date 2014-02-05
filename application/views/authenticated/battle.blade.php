@@ -1,19 +1,18 @@
 <h2>¡Batallar!</h2>
-
 @if ( Session::has('errorMessage') )
-	<div class="alert alert-error">
+	<div class="alert alert-error text-center">
 		{{ Session::get('errorMessage') }}
 	</div>
 @endif
 
-<p>¿Así que quieres probar suerte con algún contrincante?</p>
+<p>¿Así que quieres probar suerte con algún contrincante?, pues adelante, elige tu reto.</p>
 
-<h2 style="margin-bottom: -25px;">Personajes</h2>
+<h2 style="margin-bottom: -25px; margin-top: 50px;">Personajes</h2>
 <ul style="margin-left: -15px;">
 	<li class="span4">
 		<div class="thumbnail">
 			<div class="caption">
-				<h2>Por nombre</h2>
+				<h4>Por nombre</h4>
 				{{ Form::open() }}
 					{{ Form::token() }}
 					{{ Form::hidden('search_method', 'name') }}
@@ -21,7 +20,7 @@
 					{{ Form::label('character_name', 'Nombre') }}
 					{{ Form::text('character_name') }}
 
-					<div>
+					<div class="text-center">
 						<span class="ui-button button">
 							<i class="button-icon axe"></i>
 							<span class="button-content">
@@ -37,7 +36,7 @@
 	<li class="span4">
 		<div class="thumbnail">
 			<div class="caption">
-				<h2>Aleatoriamente</h2>
+				<h4>Aleatoriamente</h4>
 				{{ Form::open() }}
 					{{ Form::token() }}
 					{{ Form::hidden('search_method', 'random') }}
@@ -49,7 +48,7 @@
 					{{ Form::select('operation', array('exactly' => 'Exactamente', 'greaterThan' => 'Mayor que', 'lowerThan' => 'Menor que')) }}
 					{{ Form::number('level', $character->level, array('min' => '1')) }}
 
-					<div>
+					<div class="text-center">
 						<span class="ui-button button">
 							<i class="button-icon thunder"></i>
 							<span class="button-content">
@@ -65,7 +64,7 @@
 	<li class="span4">
 		<div class="thumbnail">
 			<div class="caption">
-				<h2>En grupo</h2>
+				<h4>En grupo</h4>
 				{{ Form::open() }}
 					{{ Form::token() }}
 					{{ Form::hidden('search_method', 'group') }}
@@ -73,7 +72,7 @@
 					{{ Form::label('clan', 'Grupo') }}
 					{{ Form::select('clan', Clan::lists('name', 'id')) }}
 
-					<div>
+					<div class="text-center">
 						<span class="ui-button button">
 							<i class="button-icon dagger"></i>
 							<span class="button-content">
@@ -90,10 +89,10 @@
 <div class="clearfix"></div>
 
 @if ( count($monsters) > 0 )
-<h2>Monstruos</h2>
+<h2 style="margin-top: 50px;">Monstruos</h2>
 <ul class="inline battle-monsters-content" style="margin-left: -7px;">
 	@foreach ( $monsters as $monster )
-	<li class="text-center clan-member-link" style="width: 30%; vertical-align: top; margin-bottom: 25px;" data-toggle="tooltip" data-original-title="{{ $monster->get_text_for_tooltip() }}">
+	<li class="text-center clan-member-link" style="width: 30%; vertical-align: top; margin-bottom: 15px; border: 1px solid #322924; box-shadow: black 0 0 5px;" data-toggle="tooltip" data-original-title="{{ $monster->get_text_for_tooltip() }}">
 		<img src="{{ URL::base() }}/img/icons/npcs/{{ $monster->id }}.png" alt="" width="32px" height="32px" class="monster-image">
 		
 		{{ Form::open(URL::to('authenticated/toBattleMonster')) }}

@@ -21,6 +21,15 @@ class Message extends Base_Model
 
 		'content_required' => 'El contenido del mensaje es requerido',
 	);
+	
+	/**
+	 * Obtenemos el link para leer el mensaje
+	 * @return String
+	 */
+	public function get_link()
+	{
+		return URL::to('authenticated/readMessage/' . $this->id);
+	}
 
 	public function sender()
 	{

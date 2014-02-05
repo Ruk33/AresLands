@@ -1539,15 +1539,16 @@ class Authenticated_Controller extends Base_Controller
 		->with('to', $to);
 	}
 
-	public function get_clearAllMessages($type = '')
+	public function post_clearAllMessages()
 	{
-		switch ( $type )
+		switch ( Input::get('type') )
 		{
 			case 'received':
 			case 'attack':
 			case 'defense':
 				$character = Character::get_character_of_logged_user(array('id'));
-				$character->messages()->where('type', '=', $type)->delete();
+				$character->messages()->where('type', '=', Input::get('type'))->delete();
+				
 				break;
 		}
 
@@ -1604,22 +1605,38 @@ class Authenticated_Controller extends Base_Controller
 		}
 	}
 
-	public function get_messages($messageId = 0)
+//	public function get_messages($messageId = 0)
+//	{
+//		$character = Character::get_character_of_logged_user(array('id'));
+//		
+//		/*
+//		 *	Obtenemos todos los mensajes del personaje
+//		 */
+//		$messages = array();
+//		$messages['received'] = $character->messages()->select(array('id', 'sender_id', 'subject', 'unread', 'date'))->where('type', '=', 'received')->order_by('date', 'desc')->get();
+//		//$messages['sent'] = Message::select(array('id', 'sender_id', 'subject', 'unread', 'date'))->where('sender_id', '=', $character->id)->where('type', '=', 'received')->order_by('date', 'desc')->get();
+//		$messages['attack'] = $character->messages()->select(array('id', 'sender_id', 'subject', 'unread', 'date'))->where('type', '=', 'attack')->order_by('date', 'desc')->get();
+//		$messages['defense'] = $character->messages()->select(array('id', 'sender_id', 'subject', 'unread', 'date'))->where('type', '=', 'defense')->order_by('date', 'desc')->get();
+//
+//		$this->layout->title = 'Mensajes';
+//		$this->layout->content = View::make('authenticated.messages')
+//		->with('messages', $messages);
+//	}
+	
+	public function get_messages($type = 'received')
 	{
-		$character = Character::get_character_of_logged_user(array('id'));
+		$type = strtolower($type);
 		
-		/*
-		 *	Obtenemos todos los mensajes del personaje
-		 */
-		$messages = array();
-		$messages['received'] = $character->messages()->select(array('id', 'sender_id', 'subject', 'unread', 'date'))->where('type', '=', 'received')->order_by('date', 'desc')->get();
-		//$messages['sent'] = Message::select(array('id', 'sender_id', 'subject', 'unread', 'date'))->where('sender_id', '=', $character->id)->where('type', '=', 'received')->order_by('date', 'desc')->get();
-		$messages['attack'] = $character->messages()->select(array('id', 'sender_id', 'subject', 'unread', 'date'))->where('type', '=', 'attack')->order_by('date', 'desc')->get();
-		$messages['defense'] = $character->messages()->select(array('id', 'sender_id', 'subject', 'unread', 'date'))->where('type', '=', 'defense')->order_by('date', 'desc')->get();
-
+		if ( ! in_array($type, array('received', 'attack', 'defense')) )
+		{
+			return Redirect::to('authenticated/messages');
+		}
+		
+		$character = Character::get_character_of_logged_user(array('id'));
+		$messages = $character->messages()->where('type', '=', $type)->order_by('unread', 'desc')->order_by('date', 'desc')->get();
+		
 		$this->layout->title = 'Mensajes';
-		$this->layout->content = View::make('authenticated.messages')
-		->with('messages', $messages);
+		$this->layout->content = View::make('authenticated.messages')->with('messages', $messages)->with('type', $type);
 	}
 
 	public function get_character($characterName = '')
