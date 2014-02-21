@@ -8,44 +8,155 @@ class Trade extends Base_Model
 	public static $key = 'id';
 
 	protected $rules = array(
-		//'seller_id' => 'required|exists:characters,id|different:buyer_id',
-		'buyer_id' => 'required|exists:characters,id|different:seller_id',
-		'item_id' => 'required',
 		'amount' => 'required|numeric|min:1',
-		'price_copper' => 'required|numeric',
+		'price_copper' => 'required|numeric|min:1',
 	);
 
 	protected $messages = array(
-		//'seller_id_required' => 'El vendedor es requerido',
-		//'seller_id_exists' => 'El vendedor debe exister',
-		//'seller_id_different' => 'El vendedor y el comprador no pueden ser el mismo',
-
-		'buyer_id_required' => 'El comprador es requerido',
-		'buyer_id_exists' => 'El comprador no existe',
-		'buyer_id_different' => 'El vendedor y el comprador no pueden ser el mismo',
-
-		'item_id_required' => 'El objeto es requerido',
-
 		'amount_required' => 'El monto es requerido',
 		'amount_numeric' => 'El monto es incorrecto (solo números)',
-		'amount_min' => 'El mínimo debe ser 1',
+		'amount_min' => 'La cantidad mínima debe ser 1',
 
 		'price_copper_required' => 'El precio es requerido',
 		'price_copper_numeric' => 'El precio es incorrecto (solo números)',
+		'price_copper_min' => 'El precio mínimo debe ser 1'
 	);
+	
+	/**
+	 * Filtramos trades por clase de objeto
+	 * @param string $class weapon|armor|consumible
+	 * @return Eloquent|boolean
+	 */
+	public static function filter_by_item_class($class)
+	{
+		if ( ! in_array($class, array('weapon', 'armor', 'consumible')))
+		{
+			return false;
+		}
+		
+		return static::join('trade_items', 'trade_items.id', '=', 'trade_item_id')
+					 ->join('items', 'items.id', '=', 'trade_items.item_id')
+					 ->where('items.class', '=', $class);
+	}
 
 	public function seller()
 	{
 		return $this->belongs_to('Character', 'seller_id');
 	}
 
-	public function buyer()
+	public function trade_item()
 	{
-		return $this->belongs_to('Character', 'buyer_id');
+		return $this->belongs_to('TradeItem', 'trade_item_id');
 	}
-
-	public function item()
+	
+	/**
+	 * Verificamos si el trade expiro
+	 * @return boolean
+	 */
+	public function has_expired()
 	{
-		return $this->belongs_to('Item', 'item_id');
+		return $this->until < time();
+	}
+	
+	/**
+	 * Verificamos si trade puede ser comprado por personaje
+	 * @param Character $character
+	 * @return boolean
+	 */
+	public function can_be_buyed_by(Character $character)
+	{
+		if ( $this->has_expired() )
+		{
+			return false;
+		}
+		
+		if ( $character->id == $this->seller_id )
+		{
+			return false;
+		}
+		
+		$coins = $character->get_coins();
+		
+		if ( ! $coins )
+		{
+			return false;
+		}
+		
+		if ( $coins->count < $this->price_copper )
+		{
+			return false;
+		}
+		
+		return true;
+	}
+	
+	/**
+	 * Verificamos si personaje puede cancelar comercio
+	 * @param Character $character
+	 * @return boolean
+	 */
+	public function can_be_cancelled_by(Character $character)
+	{
+		return $this->seller_id == $character->id;
+	}
+	
+	/**
+	 * Intentamos comprar trade con personaje
+	 * @param Character $character
+	 * @return boolean
+	 */
+	public function buy(Character $character)
+	{		
+		if ( ! $this->can_be_buyed_by($character) )
+		{
+			return false;
+		}
+		
+		if ( ! $character->add_item($this->trade_item->item, $this->amount) )
+		{
+			return false;
+		}
+		
+		$character->add_coins(-$this->price_copper);
+		$this->seller->add_coins($this->price_copper);
+		
+		Message::trade_buy($this, $character);
+		
+		$this->delete();
+		
+		return true;
+	}
+	
+	/**
+	 * Cancelamos el trade
+	 * @return boolean
+	 */
+	public function cancel()
+	{
+		// Verificamos que podamos devolver el objeto
+		if ( ! $this->seller->add_item($this->trade_item->item, $this->amount) )
+		{
+			return false;
+		}
+		
+		$this->delete();
+		
+		return true;
+	}
+	
+	/**
+	 * 
+	 * @return boolean
+	 */
+	public function delete()
+	{
+		$tradeItem = $this->trade_item;
+		
+		if ( $tradeItem )
+		{
+			$tradeItem->delete();
+		}
+		
+		return parent::delete();
 	}
 }

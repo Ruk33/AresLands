@@ -19,19 +19,14 @@
 
 	{{ Form::open() }}
 		{{ Form::token() }}
-	
-		<div>
-		{{ Form::label('name', 'Nombre del personaje') }}
-		{{ Form::text('name', Input::old('name'), array('class' => 'input-block-level')) }}
-		</div>
 		
 		Objeto y cantidad a comerciar
 		<ul class="inline">
 		@foreach ( $characterItems as $characterItem )
-			<li style="display: table-cell; vertical-align: top; padding: 10px;" class="text-center">
+			<li style="padding: 10px;" class="text-center clan-member-link">
 				{{ Form::radio('item', $characterItem->id, false, array('id' => $characterItem->id)) }}
 				<label for="{{ $characterItem->id }}" data-toggle="tooltip" data-placement="top" data-original-title="{{ $characterItem->item->get_text_for_tooltip() }}">
-					<div class="inventory-item">
+					<div class="box box-box-64-blue">
 						<img src="{{ URL::base() }}/img/icons/items/{{ $characterItem->item_id }}.png" alt="" width="80px" height="80px">
 					</div>
 				</label>
@@ -54,17 +49,36 @@
 			</li>
 		@endforeach
 		</ul>
-
-		<div>
-			{{ Form::label('price', 'Precio (en cobre)') }}
-			{{ Form::number('price', null, array('min' => 1, 'class' => 'input-block-level')) }}
+		
+		<div style="margin-top: 25px;">
+			{{ Form::label('time', 'Tiempo hasta que el comercio se cancele') }}
+			{{ Form::select('time', array(8 => '8 horas', 16 => '16 horas', 24 => '24 horas'), null, array('class' => 'input-block-level')) }}
+		</div>
+		
+		<div style="margin-top: 25px;">
+			{{ Form::label('copper', 'Precio') }}
+			
+			<span data-toggle="tooltip" data-original-title="Oro" style="position: relative;">
+				<i class="coin coin-gold" style="position: absolute; top: -2px; left: 5px;"></i>
+				{{ Form::number('gold', 0, array('class' => 'span8 text-right')) }}
+			</span>
+			
+			<span data-toggle="tooltip" data-original-title="Plata" style="position: relative; margin-left: 10px;">
+				<i class="coin coin-silver" style="position: absolute; top: -2px; left: 5px;"></i>
+				{{ Form::number('silver', 0, array('max' => 99, 'class' => 'span2 text-right')) }}
+			</span>
+			
+			<span data-toggle="tooltip" data-original-title="Cobre" style="position: relative; margin-left: 10px;">
+				<i class="coin coin-copper" style="position: absolute; top: -2px; left: 5px;"></i>
+				{{ Form::number('copper', 0, array('max' => 99, 'class' => 'span2 text-right')) }}
+			</span>
 		</div>
 
-		<div class="text-center">
+		<div class="text-center" style="margin-top: 25px;">
 			<span class="ui-button button">
 				<i class="button-icon arrow"></i>
 				<span class="button-content">
-					{{ Form::submit('Enviar oferta', array('class' => 'ui-button ui-input-button')) }}
+					{{ Form::submit('Crear comercio', array('class' => 'ui-button ui-input-button')) }}
 				</span>
 			</span>
 		</div>

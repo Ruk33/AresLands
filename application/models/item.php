@@ -66,11 +66,10 @@ class Item extends Base_Model
 
 	public function get_text_for_tooltip()
 	{
-		$message = "<div style='min-width: 250px; text-align: left;'>";
+		$message = "<div class='pull-left text-center' style='width: 80px;'><img src='" . URL::base() . "/img/icons/items/$this->id.png' /></div>";
 
-		//$message .= "<img src='" . URL::base() . "/img/icons/items/$this->id.png' class='pull-left' width='32px' height='32px'>";
-		
-		$message .= "<small class='pull-right' style='color: #AFAFAF;'>";
+		$message .= "<div style='margin-left: 85px; text-align: left;'>";
+		$message .= "<span class='pull-right' style='color: #AFAFAF; font-size: 10px; text-transform: uppercase;'>";
 		switch ( $this->type )
 		{
 			case 'blunt':
@@ -132,11 +131,13 @@ class Item extends Base_Model
 				$message .= 'Desconocido';
 				break;
 		}
-		$message .= '</small>';
-		
+		$message .= '</span>';
+
+		$message .= "<div style='width: 300px;'>";
 		$message .= "<strong style='color: white;'>$this->name</strong>";
 		$message .= "<p style='color: #FFC200;'>Requiere nivel $this->level</p>";
 		$message .= "<p><small><em>$this->description</em></small></p>";
+		$message .= '</div>';
 
 		$message .= "<ul class='unstyled'>";
 

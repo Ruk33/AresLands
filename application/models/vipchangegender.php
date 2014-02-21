@@ -1,20 +1,20 @@
 <?php
 
-class VipCoinMultiplier implements IVipObject
+class VipChangeGender implements IVipObject
 {
 	public function get_name()
 	{
-		return 'Multiplicador de monedas';
+		return 'Cambio de genero';
 	}
 	
 	public function get_icon()
 	{
-		return URL::base() . '/img/icons/vip/coin_multiplier.jpg';
+		return URL::base() . '/img/icons/vip/change_gender.jpg';
 	}
 	
 	public function get_description()
 	{
-		return 'Ganas un 50% mas de monedas en exploraciones, misiones y batallas.';
+		return 'Cambias el genero de tu personaje.';
 	}
 
 	public function get_price()

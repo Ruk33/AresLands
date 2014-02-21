@@ -22,7 +22,7 @@ abstract class VipFactory
 				return new VipCoinMultiplier;
 				break;
 			
-			/*case self::XP_MULTIPLIER:
+			case self::XP_MULTIPLIER:
 				return new VipXpMultiplier;
 				break;
 			
@@ -40,7 +40,7 @@ abstract class VipFactory
 			
 			case self::CHANGE_RACE:
 				return new VipChangeRace;
-				break;*/
+				break;
 		}
 		
 		return null;
@@ -54,12 +54,12 @@ abstract class VipFactory
 	{
 		$vipObjects = array();
 		
-		/*$vipObjects[self::CHANGE_GENDER] = self::get(self::CHANGE_GENDER);
+		$vipObjects[self::CHANGE_GENDER] = self::get(self::CHANGE_GENDER);
 		$vipObjects[self::CHANGE_NAME] = self::get(self::CHANGE_NAME);
-		$vipObjects[self::CHANGE_RACE] = self::get(self::CHANGE_RACE);*/
+		$vipObjects[self::CHANGE_RACE] = self::get(self::CHANGE_RACE);
 		$vipObjects[self::COIN_MULTIPLIER] = self::get(self::COIN_MULTIPLIER);
-		//$vipObjects[self::REDUCTION_TIME] = self::get(self::REDUCTION_TIME);
-		//$vipObjects[self::XP_MULTIPLIER] = self::get(self::XP_MULTIPLIER);
+		$vipObjects[self::REDUCTION_TIME] = self::get(self::REDUCTION_TIME);
+		$vipObjects[self::XP_MULTIPLIER] = self::get(self::XP_MULTIPLIER);
 		
 		return $vipObjects;
 	}

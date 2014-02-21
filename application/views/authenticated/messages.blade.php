@@ -65,20 +65,20 @@
 	@if ( count($messages) > 0 )
 	{{ Form::open(URL::to('authenticated/deleteMessage')) }}
 		{{ Form::token() }}
-		<table style="width: 100%; border-bottom: 1px solid black; box-shadow: black 0 0 5px;" class="table table-striped">
+		<table class="table table-striped brown-table">
 			<thead>
-				<tr class="text-left" style="border-bottom: 1px solid black; border-top: 1px solid black; box-shadow: black 0 0 5px; text-shadow: black 0 0 5px; background-color: #231711; color: white; text-transform: uppercase; font-size: 11px; font-family: arial; font-weight: normal;">
-					<th class="span5" style="border-right: 1px solid black; padding: 10px; background-image: url('/img/messages-background.png'); background-repeat: no-repeat;">Asunto</th>
-					<th class="span2" style="border-right: 1px solid black; padding: 10px;">Enviado por</th>
-					<th class="span3" style="border-right: 1px solid black; padding: 10px;">Fecha de envío</th>
-					<th class="span1" style="padding: 10px;" data-toggle="tooltip" data-original-title="Borra mensajes seleccionados">{{ Form::submit('Borrar', array('class' => 'btn btn-link', 'style' => 'color: orange; text-transform: uppercase; font-size: 11px; text-shadow: black 0 0 5px; font-weight: bold; padding: 0;')) }}</th>
+				<tr class="text-left">
+					<th class="span5" style="background-image: url('/img/messages-background.png'); background-repeat: no-repeat;">Asunto</th>
+					<th class="span2">Enviado por</th>
+					<th class="span3">Fecha de envío</th>
+					<th class="span1" data-toggle="tooltip" data-original-title="Borra mensajes seleccionados">{{ Form::submit('Borrar', array('class' => 'btn btn-link', 'style' => 'color: orange; text-transform: uppercase; font-size: 11px; text-shadow: black 0 0 5px; font-weight: bold; padding: 0;')) }}</th>
 				</tr>
 			</thead>
 
 			<tbody>
 				@foreach ( $messages as $message )
 				<tr>
-					<td class="span5" style="padding: 10px;">
+					<td class="span5">
 						<span data-toggle="tooltip" data-original-title="{{ Str::limit(strip_tags($message->content), 200) }}">
 							@if ( $message->unread )
 							*
@@ -86,9 +86,9 @@
 							<a href="{{ $message->get_link() }}">{{ $message->subject }}</a>
 						</span>
 					</td>
-					<td class="span2" style="padding: 10px;">{{ $message->sender->get_link() }}</td>
-					<td class="span3" style="padding: 10px;">{{ date("H:i:s d/m/Y", $message->date) }}</td>
-					<td class="span1" style="padding: 10px;"><div class="text-center" style="margin-top: -5px;">{{ Form::checkbox('messages[]', $message->id) }}</div></td>
+					<td class="span2">{{ $message->sender->get_link() }}</td>
+					<td class="span3">{{ date("H:i:s d/m/Y", $message->date) }}</td>
+					<td class="span1"><div class="text-center" style="margin-top: -5px;">{{ Form::checkbox('messages[]', $message->id) }}</div></td>
 				</tr>
 				@endforeach
 			</tbody>

@@ -86,7 +86,7 @@ class Api_Controller extends Base_Controller implements Api_Interface
 			return Response::json(null);
 		}
 
-		if ( $character->has_caracteristic(Characteristic::RESERVED) )
+		if ( $character->has_characteristic(Characteristic::RESERVED) )
 		{
 			$character->stat_strength = mt_rand($character->stat_strength, $character->stat_strength * 1.3);
 			$character->stat_dexterity = mt_rand($character->stat_dexterity, $character->stat_dexterity * 1.3);

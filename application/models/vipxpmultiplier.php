@@ -1,20 +1,20 @@
 <?php
 
-class VipCoinMultiplier implements IVipObject
+class VipXpMultiplier implements IVipObject
 {
 	public function get_name()
 	{
-		return 'Multiplicador de monedas';
+		return 'Multiplicador de experiencia';
 	}
 	
 	public function get_icon()
 	{
-		return URL::base() . '/img/icons/vip/coin_multiplier.jpg';
+		return URL::base() . '/img/icons/vip/coin_multiplier.png';
 	}
 	
 	public function get_description()
 	{
-		return 'Ganas un 50% mas de monedas en exploraciones, misiones y batallas.';
+		return 'Ganas mas experiencia en misiones, batallas y demas.';
 	}
 
 	public function get_price()

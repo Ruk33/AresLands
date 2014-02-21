@@ -1,0 +1,105 @@
+<a href="{{ URL::to('authenticated/newTrade') }}" class="ui-button button pull-right">
+	<i class="button-icon check"></i>
+	<span class="button-content">
+		Crear comercio
+	</span>
+</a>
+
+<h2>Comercios</h2>
+<p>Vamos aventurero, te sobra el oro y a otros les sobran objetos, ¡un buen negocio jamas se deja pasar!.</p>
+
+<ul class="inline text-center" style="margin-top: 40px; margin-bottom: 20px;">
+	<li>
+		<a href="{{ URL::to('authenticated/trades') }}" class="ui-button button">
+			<i class="button-icon arrow"></i>
+			<span class="button-content">
+				Todo
+			</span>
+		</a>
+	</li>
+	
+	<li>
+		<a href="{{ URL::to('authenticated/trades/weapon') }}" class="ui-button button">
+			<i class="button-icon axe"></i>
+			<span class="button-content">
+				Armas
+			</span>
+		</a>
+	</li>
+	
+	<li>
+		<a href="{{ URL::to('authenticated/trades/armor') }}" class="ui-button button">
+			<i class="button-icon boot"></i>
+			<span class="button-content">
+				Armaduras
+			</span>
+		</a>
+	</li>
+	
+	<li>
+		<a href="{{ URL::to('authenticated/trades/consumible') }}" class="ui-button button">
+			<i class="button-icon hearth"></i>
+			<span class="button-content">
+				Consumibles
+			</span>
+		</a>
+	</li>
+</ul>
+
+<div class="row">
+@if ( count($trades) > 0 )
+<table class="table table-striped brown-table">
+	<thead>
+		<tr>
+			<th style="width: 64px; text-align: center;">Objeto</th>
+			<th style="width: 64px; text-align: center;">Cantidad</th>
+			<th style="width: 200px;">Precio</th>
+			<th>Vendedor</th>
+			<th></th>
+		</tr>
+	</thead>
+	
+	<tbody>
+		@foreach ( $trades as $trade )
+		<tr>
+			<td>
+				<div class="box box-box-32-gold" style="margin: 0 auto;">
+					<img src="{{ URL::base() }}/img/icons/items/{{ $trade->trade_item->item->id }}.png" data-toggle="tooltip" data-original-title="{{ $trade->trade_item->item->get_text_for_tooltip() }}" />
+				</div>
+			</td>
+			<td style="text-align: center;">{{ $trade->amount }}</td>
+			<td>{{ Item::get_divided_coins($trade->price_copper)['text'] }}</td>
+			<td>{{ $trade->seller->get_link() }}</td>
+			<td class="text-right">
+				<ul class="inline" style="margin: 0; padding: 0;">
+					@if ( $trade->can_be_buyed_by($character) )
+					<li>
+						{{ Form::open(URL::to('authenticated/buyTrade')) }}
+							{{ Form::token() }}
+							{{ Form::hidden('id', $trade->id) }}
+							
+							{{ Form::submit('Comprar', array('class' => 'ui-button ui-input-button', 'style' => 'font-size: 14px;')) }}
+						{{ Form::close() }}
+					</li>
+					@endif
+					
+					@if ( $trade->can_be_cancelled_by($character) )
+					<li>
+						{{ Form::open(URL::to('authenticated/cancelTrade')) }}
+							{{ Form::token() }}
+							{{ Form::hidden('id', $trade->id) }}
+							
+							{{ Form::submit('Cancelar', array('class' => 'ui-button ui-input-button', 'style' => 'font-size: 14px;')) }}
+						{{ Form::close() }}
+					</li>
+					@endif
+				</ul>
+			</td>
+		</tr>
+		@endforeach
+	</tbody>
+</table>
+@else
+<h4 class="text-center" style="margin-top: 50px;">Sin comercios</h4>
+@endif
+</div>

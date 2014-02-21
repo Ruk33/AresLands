@@ -24,8 +24,8 @@
 		
 	<!-- ACTIVIDADES -->
 	@if ( count($activities) > 0 )
-	<div class="buff-container">
-		<div style="text-transform: uppercase; color: #D0D2D0; font-size: 10px; margin-bottom: 11px; margin-left: 30px; color: #fff3df;">actividades</div>
+	<div class="table-content">
+		<div style="text-transform: uppercase; color: #D0D2D0; font-size: 10px; margin-bottom: 10px; margin-top: -10px; color: #fff3df;">actividades</div>
 		<ul class="unstyled">
 			@foreach ( $activities as $activity )
 			<li style="padding: 5px;">

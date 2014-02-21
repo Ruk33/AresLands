@@ -63,6 +63,85 @@ body {
 	font-family: "Roboto Slab", Georgia, Verdana, Arial;
 }
 
+.table-content {
+    background-image: url('/img/table-background.jpg');
+    background-repeat: repeat-y;
+    background-position: center center;
+    box-shadow: black 0 0 5px, black 0 0 5px;
+    width: 705px;
+    padding: 15px;
+    margin: 0 auto !important;
+}
+
+.guide-tip {
+    color: orange;
+}
+
+.guide-h4 {
+    color: white;
+    font-size: 16px;
+}
+
+.guide-row {
+    margin-bottom: 50px;
+}
+
+.guide-p {
+    margin-right: 15px;
+    margin-left: 25px;
+}
+
+.thumbail-guide-sections {
+	
+}
+
+.thumbail-guide-sections ul li {
+    color: #bcb39c;
+    font-size: 12px;
+    text-transform: uppercase;
+    font-family: Arial;
+	border-bottom: 1px dashed #333;
+	margin-bottom: 10px;
+}
+
+form {
+	padding: 0;
+	margin: 0;
+}
+
+.brown-table {
+	width: 100%; 
+	border-bottom: 1px solid black;
+	box-shadow: black 0 0 5px;
+}
+
+.brown-table thead tr {
+	border-bottom: 1px solid black; 
+	border-top: 1px solid black; 
+	box-shadow: black 0 0 5px; 
+	text-shadow: black 0 0 5px; 
+	background-color: #231711; 
+	color: white; 
+	text-transform: uppercase; 
+	font-size: 11px; 
+	font-family: arial; 
+	font-weight: normal;
+}
+
+.brown-table thead tr th {
+	border-right: 1px solid black; 
+	padding: 10px;
+}
+
+.brown-table thead tr th:last-child {
+	border-right: none;
+}
+
+.brown-table tbody tr td {
+	padding: 10px;
+	vertical-align: middle;
+}
+
 .table-striped tbody > tr:nth-child(odd) > td, .table-striped tbody > tr:nth-child(odd) > th {
     background-color: #10100f;
 }
@@ -359,15 +438,21 @@ body {
 .popover {
 	background-color: #090909;
 	border: 1px solid #333;
-	border-top: 1px solid #5A5A5A;
+	border-top: 1px solid #444;
 	color: white;
-	box-shadow: #000 0 0 15px;
+	box-shadow: #000 0 0 5px, #000 0 0 5px;
 	max-width: none !important;
+    text-align: left;
+    border-radius: 2px;
 }
 
 .popover-title {
 	background-color: #090909;
 	border: none;
+    font-size: 12px;
+    font-family: arial;
+    padding: 10px;
+    width: 350px;
 }
 
 .popover .arrow {
@@ -379,7 +464,7 @@ body {
 }
 
 .tooltip {
-	font-size: 13px;
+	font-size: 12px;
 	margin-top: -15px;
 }
 
@@ -391,7 +476,8 @@ body {
 	max-width: 350px !important;
 	padding: 10px;
 	border: 1px solid #353837;
-	box-shadow: #000 0 0 15px;
+	box-shadow: #000 0 0 5px, #000 0 0 5px;
+    font-family: arial;
 }
 
 /* thanks to http://www.karlhorky.com/2012/06/cross-browser-image-grayscale-with-css.html */
@@ -510,6 +596,7 @@ a:hover {
 	background-repeat: repeat-y;
 	position: relative;
 	width: 339px;
+    box-shadow: black 0 0 5px, black 0 0 5px, black 0 0 5px;
 }
 
 .alert-container {

@@ -1671,6 +1671,18 @@ class Character extends Base_Model
 
 		return '';
 	}
+	
+	/**
+	 * Obtenemos los objetos del personaje que pueden ser vendidos
+	 * @return Eloquent
+	 */
+	public function tradeable_items()
+	{
+		return $this->items()->join('items', 'items.id', '=', 'character_items.item_id')
+							 ->where('items.selleable', '=', 1)
+							 ->where('location', '=', 'inventory')
+							 ->where('count', '>', 0);
+	}
 
 	/**
 	 *	¿Puede el personaje iniciar un comercio?
@@ -1881,7 +1893,7 @@ class Character extends Base_Model
 		
 		if ( $item->stackable )
 		{
-			$characterItem = $this->items()->where('item_id', '=', $item->id)->get();
+			$characterItem = $this->items()->where('item_id', '=', $item->id)->first();
 			
 			if ( $characterItem )
 			{
@@ -2169,7 +2181,6 @@ class Character extends Base_Model
 		/*
 		 *	Si ya está viajando...
 		 */
-		//if ( $this->activities()->where('name', '=', 'travel')->first() )
 		if ( $this->is_traveling )
 		{
 			return 'Ya estás viajando, no puedes volver a hacerlo.';

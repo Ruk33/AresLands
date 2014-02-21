@@ -366,16 +366,8 @@
 								@endif
 								
 								<li>
-									<i class="icon icon-share icon-white"></i>
-									<a href="{{ URL::to('authenticated/clan') }}">Grupos</a>
-								</li>
-								<li>
 									<i class="icon icon-wrench icon-white"></i>
-									<a href="{{ URL::to('authenticated/trade') }}">Comercio</a>
-								</li>
-								<li>
-									<i class="icon icon-heart icon-white"></i>
-									<a href="{{ URL::to('authenticated/characters') }}">Personajes</a>
+									<a href="{{ URL::to('authenticated/trades') }}">Comercios</a>
 								</li>
 								<li>
 									<i class="icon icon-star icon-white"></i>
@@ -389,7 +381,10 @@
 									<i class="icon icon-fire icon-white"></i>
 									<a href="{{ URL::to('authenticated/tournaments') }}">Torneos</a>
 								</li>
-								
+								<li>
+									<i class="icon icon-eye-close icon-white"></i>
+									<a href="{{ URL::to('authenticated/secretShop') }}">Mercado secreto</a>
+								</li>
 								<li>
 									<i class="icon icon-book icon-white"></i>
 									<a href="{{ URL::to('game/index') }}" target="_blank">Guia</a>
@@ -403,8 +398,7 @@
 									<a href="{{ URL::to('authenticated/logout') }}">Desconectarse</a>
 								</li>
 							@else
-								<li><a href="{{ URL::to('home/index') }}" class="menu menu-start"></a></li>
-								<li><a href="{{ URL::to('home/thanks') }}" class="menu menu-thanks"></a></li>
+								<li><a href="{{ URL::to('/') }}">Inicio</a></li>
 								<li><a href="{{ URL::to('game/index') }}" target="_blank">Guia</a></li>
 							@endif
 						</ul>

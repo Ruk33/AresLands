@@ -1,5 +1,6 @@
 <h2>Ranking</h2>
 
+<div class="row">
 <ul class="inline text-center span11" id="ranking-tabs" style="margin-top: 20px;">
 	<li>
 		<a href="#pvp" class="ui-button button">
@@ -27,14 +28,15 @@
 	</li>
 </ul>
 
-<div class="tab-content span11" style="margin-top: 20px;">
+<div class="tab-content" style="width: 100%; margin-top: 20px;">
 	<div class="tab-pane active" id="pvp">
-		<table class="table table-hover">
+		<table class="table table-striped brown-table">
 			<thead>
 				<tr>
 					<th width="20px">#</th>
 					<th width="50px">Raza</th>
 					<th>Nombre</th>
+					<th>Grupo</th>
 					<th width="150px">Puntos de PVP</th>
 				</tr>
 			</thead>
@@ -57,6 +59,13 @@
 						@endif
 						{{ $character->get_link() }}
 					</td>
+					<td>
+						@if ( $character->clan_id )
+						{{ $character->clan->get_link() }}
+						@else
+						Sin grupo
+						@endif
+					</td>
 					<td>{{ $character->pvp_points }}</td>
 				</tr>
 				@endforeach
@@ -65,12 +74,13 @@
 	</div>
 
 	<div class="tab-pane" id="xp">
-		<table class="table table-hover">
+		<table class="table table-striped brown-table">
 			<thead>
 				<tr>
 					<th width="20px">#</th>
 					<th width="50px">Raza</th>
 					<th>Nombre</th>
+					<th>Grupo</th>
 					<th width="50px">Nivel</th>
 					<th width="100px">Experiencia</th>
 				</tr>
@@ -94,6 +104,13 @@
 						@endif
 						{{ $character->get_link() }}
 					</td>
+					<td>
+						@if ( $character->clan_id )
+						{{ $character->clan->get_link() }}
+						@else
+						Sin grupo
+						@endif
+					</td>
 					<td>{{ $character->level }}</td>
 					<td>{{ $character->xp }}</td>
 				</tr>
@@ -103,7 +120,7 @@
 	</div>
 
 	<div class="tab-pane" id="clan">
-		<table class="table table-hover">
+		<table class="table table-striped brown-table">
 			<thead>
 				<tr>
 					<th width="20px">#</th>
@@ -137,7 +154,8 @@
 		</table>
 	</div>
 </div>
-
+</div>
+	
 <script type="text/javascript">
 	$('#ranking-tabs a').click(function (e) {
 		e.preventDefault();

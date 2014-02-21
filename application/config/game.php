@@ -192,9 +192,9 @@ return array(
 	 *	Rates
 	 */
 	'xp_rate' => 0.8,
-	'quest_xp_rate' => 1.3,
+	'quest_xp_rate' => 1,
 	'drop_rate' => 1,
-	'explore_reward_rate' => 3,
+	'explore_reward_rate' => 2,
 	'coins_rate' => 2,
-	'quest_coins_rate' => 3,
+	'quest_coins_rate' => 2,
 );

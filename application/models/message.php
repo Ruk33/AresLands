@@ -407,17 +407,23 @@ class Message extends Base_Model
 
 		$message->save();
 	}
-
-	public static function trade_new($sender, $receiver)
+	
+	/**
+	 * Notificamos al vendedor que alguien compro
+	 * @param Trade $trade
+	 * @param Character $buyer
+	 */
+	public static function trade_buy(Trade $trade, Character $buyer)
 	{
 		$message = new Message();
 
-		$message->sender_id = $sender->id;
-		$message->receiver_id = $receiver->id;
+		$message->sender_id = $buyer->id;
+		$message->receiver_id = $trade->seller_id;
+		
+		$message->subject = 'He aceptado tu oferta en los comercios';
+		$message->content = View::make('messages.tradebuy')->with('trade', $trade)->with('buyer', $buyer)->render();
 
-		$message->subject = 'Nuevo comercio';
-		$message->content = 'El personaje ' . $sender->name . ' ha iniciado un nuevo comercio contigo';
-
+		$message->is_special = true;
 		$message->unread = true;
 		$message->date = time();
 		$message->type = 'received';
