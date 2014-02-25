@@ -415,6 +415,14 @@ Route::filter('before', function() {
 	$time = time();
 	$isAuth = Auth::check();
 	$requestUri = Request::uri();
+
+	if ( $time < strtotime("1 March 2014") )
+	{
+		if ( ! $isAuth || Auth::user()->name != 'Ruke' )
+		{
+			return Response::view('chronometer.index');
+		}
+	}
 	
 	// Evitamos que estas acciones se ejecutan
 	// si solamente necesitamos algo del chat
@@ -481,7 +489,7 @@ Route::filter('before', function() {
 		}
 	}
 	
-	if ( Auth::check() )
+	if ( $isAuth )
 	{
 		/*
 		 * No importa si la consulta fue desde el chat,
