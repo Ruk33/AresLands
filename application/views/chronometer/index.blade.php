@@ -3,7 +3,7 @@
 <head>
 	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-	<title>AresLands - Busca un mapa, ¡nos perdimos!</title>
+	<title>AresLands - ¡Una nueva aventura esta por comenzar!, ¿estas listo?</title>
 	<meta name="viewport" content="width=device-width">
 
 	<style>
