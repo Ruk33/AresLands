@@ -416,11 +416,12 @@ Route::filter('before', function() {
 	$isAuth = Auth::check();
 	$requestUri = Request::uri();
 
-	if ( $time < strtotime("1 March 2014") )
+	$grandOpeningDate = new DateTime("23 hours 28 February", new DateTimeZone("America/Argentina/Buenos_Aires"));
+	if ( $time < $grandOpeningDate->getTimestamp() )
 	{
 		if ( ! $isAuth || Auth::user()->name != 'Ruke' )
 		{
-			return Response::view('chronometer.index');
+			return Response::view('chronometer.index', array('grandOpeningDate' => $grandOpeningDate));
 		}
 	}
 	

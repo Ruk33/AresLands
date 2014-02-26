@@ -52,14 +52,15 @@
 	<script src="{{ URL::base() }}/js/libs/jquery.countdown.min.js"></script>
 	<script>
 		$(document).ready(function() {
-			var time = {{ strtotime("1 March 2014") - time() }};
+			var time = {{ $grandOpeningDate->getTimeStamp() - time() }};
 			var date = new Date();
 
 			date.setSeconds(date.getSeconds() + time);
 
 			$('#timer').countdown({
 				until: date,
-				layout: '{dnn} dias {hnn}:{mnn}:{snn}'
+				layout: '{dnn} dias {hnn}:{mnn}:{snn}',
+				expiryText: '<a href="" onclick="location.reload();">¡Comenzar!</a>'
 			});
 		});
 	</script>
