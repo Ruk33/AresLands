@@ -9,7 +9,7 @@ class VipChangeName implements IVipObject
 	
 	public function get_icon()
 	{
-		return URL::base() . '/img/icons/vip/coin_multiplier.png';
+		return URL::base() . '/img/icons/vip/change_name.jpg';
 	}
 	
 	public function get_description()
