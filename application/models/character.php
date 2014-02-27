@@ -565,7 +565,7 @@ class Character extends Base_Model
 		
 		if ( $this->has_skill(Config::get('game.vip_multiplier_xp_rate_skill')) )
 		{
-			$rate *= 1.5;
+			$rate *= 1.2;
 		}
 		
 		return $rate;
@@ -580,7 +580,7 @@ class Character extends Base_Model
 		
 		if ( $this->has_skill(Config::get('game.vip_multiplier_xp_rate_skill')) )
 		{
-			$rate *= 1.5;
+			$rate *= 1.2;
 		}
 		
 		return $rate;
@@ -603,7 +603,7 @@ class Character extends Base_Model
 		
 		if ( $this->has_skill(Config::get('game.vip_multiplier_coin_rate_skill')) )
 		{
-			$rate *= 1.5;
+			$rate *= 1.3;
 		}
 		
 		return $rate;
@@ -618,7 +618,7 @@ class Character extends Base_Model
 		
 		if ( $this->has_skill(Config::get('game.vip_multiplier_coin_rate_skill')) )
 		{
-			$rate *= 1.5;
+			$rate *= 1.3;
 		}
 		
 		return $rate;
@@ -633,7 +633,7 @@ class Character extends Base_Model
 		
 		if ( $this->has_skill(Config::get('game.vip_multiplier_coin_rate_skill')) )
 		{
-			$rate *= 1.5;
+			$rate *= 1.3;
 		}
 		
 		return $rate;

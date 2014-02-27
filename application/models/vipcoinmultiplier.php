@@ -14,7 +14,7 @@ class VipCoinMultiplier implements IVipObject
 	
 	public function get_description()
 	{
-		return 'Ganas un 50% mas de monedas en exploraciones, misiones y batallas.';
+		return 'Aprovecha mejor los combates, exploraciones y misiones consiguiendo un 30% de oro extra.';
 	}
 
 	public function get_price()
@@ -24,6 +24,11 @@ class VipCoinMultiplier implements IVipObject
 	
 	public function execute()
 	{
-		// TODO: dar buffs al usuario logueado
+		$character = Character::get_character_of_logged_user();
+
+		if ( $character )
+		{
+			Skill::find(Config::get('game.vip_multiplier_coin_rate_skill'))->cast($character, $character);
+		}
 	}
 }

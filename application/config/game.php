@@ -38,9 +38,9 @@ return array(
 		'human' => array(45,52,53)
 	),
 	
-	'vip_multiplier_coin_rate_skill' => 28,
-	'vip_multiplier_xp_rate_skill' => 27,
-	'vip_reduction_time_skill' => 26,
+	'vip_multiplier_coin_rate_skill' => 76,
+	'vip_multiplier_xp_rate_skill' => 77,
+	'vip_reduction_time_skill' => 78,
 	
 	'registration_url' => '//ironfist.com.ar/register',
 	'login_url' => '//ironfist.com.ar/login',

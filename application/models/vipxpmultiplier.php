@@ -14,7 +14,7 @@ class VipXpMultiplier implements IVipObject
 	
 	public function get_description()
 	{
-		return 'Ganas mas experiencia en misiones, batallas y demas.';
+		return 'Aprovecha mejor los combates, exploraciones y misiones consiguiendo 20% de experiencia extra.';
 	}
 
 	public function get_price()
@@ -24,6 +24,11 @@ class VipXpMultiplier implements IVipObject
 	
 	public function execute()
 	{
-		// TODO: dar buffs al usuario logueado
+		$character = Character::get_character_of_logged_user();
+
+		if ( $character )
+		{
+			Skill::find(Config::get('game.vip_multiplier_xp_rate_skill'))->cast($character, $character);
+		}
 	}
 }

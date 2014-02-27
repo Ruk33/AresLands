@@ -135,7 +135,7 @@ class CharacterActivity extends Base_Model
 				{
 					// Se usa time() para los tiempos asi que no
 					// deberia haber problemas				
-					$this->end_time -= ($this->end_time - time()) * 0.33;
+					$this->end_time -= ($this->end_time - time()) * 0.20;
 				}
 
 				switch ( $this->name )
