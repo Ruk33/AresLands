@@ -160,6 +160,16 @@ form {
 	border: 1px solid #4b443e;
 }
 
+.pagination ul > li > a, .pagination ul > li > span {
+    background-color: #1d2329;
+    border-color: black;
+}
+
+.pagination ul > li > a:hover {
+    background-color: #1d2329;
+    border-color: black;
+}
+
 .box {
     background-image: url("/img/icons/box-spritesheet.png");
     background-repeat: no-repeat;

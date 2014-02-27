@@ -1,4 +1,13 @@
-<h2>Ranking</h2>
+<h2>Ranking
+
+@if ( $rank == 'xp' )
+	de Experiencia
+@elseif ( $rank == 'pvp' )
+	de Jugador contra Jugador
+@elseif ( $rank == 'clan' )
+	de Grupos
+@endif
+</h2>
 
 <div class="row">
 <ul class="inline text-center span11" style="margin-top: 20px;">
@@ -28,6 +37,10 @@
 	</li>
 </ul>
 
+<div class="text-center" style="margin-top: 100px;">
+	{{ $elements->links() }}
+</div>
+
 <table class="table table-striped brown-table">
 	<thead>
 		<tr>
@@ -53,7 +66,7 @@
 	</thead>
 
 	<tbody>
-		<?php $index = 0; ?>
+		<?php $index = $elements->per_page * ($elements->page - 1); ?>
 		@foreach ( $elements->results as $element )
 		<tr>
 			<td>{{ ++$index }}</td>
@@ -103,5 +116,7 @@
 	</tbody>
 </table>
 
-{{ $elements->links() }}
+<div class="text-center">
+	{{ $elements->links() }}
+</div>
 </div>

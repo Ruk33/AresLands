@@ -53,7 +53,7 @@ class CharacterCreation_Controller extends Base_Controller
 		if ($character->validate()) {
 			$character->user_id = Auth::user()->id;
 
-			switch ($character->race) {
+			switch ($character->get_attribute('race')) {
 				case 'dwarf':
 					$character->stat_strength = 28;
 					$character->stat_dexterity = 9;

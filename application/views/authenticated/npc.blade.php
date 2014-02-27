@@ -130,7 +130,7 @@
 			@if ( $merchandise->type == 'mercenary' )
 				@if ( $merchandise->zone_to_explore && $merchandise->time_to_appear && $character->exploring_times()->where('zone_id', '=', $merchandise->zone_to_explore)->where('time', '>=', $merchandise->time_to_appear)->take(1)->count() == 0 )
 					<li class="text-center" style="vertical-align: top; padding: 10px;" data-toggle="tooltip" data-original-title="Bloqueado, necesitas explorar mas para que este mercenario se te habilite">
-						<div class="inventory-item grayEffect">
+						<div class="box box-box-64-gray grayEffect">
 							<img src="{{ URL::base() }}/img/icons/items/{{ $merchandise->item_id }}.png" width="80px" height="80px">
 						</div>
 					</li>
@@ -161,7 +161,7 @@
 
 				{{ Form::close() }}
 			@else
-				<div class="inventory-item">
+				<div class="box box-box-64-gray">
 					<img src="{{ URL::base() }}/img/icons/items/{{ $merchandise->item_id }}.png" width="80px" height="80px">
 				</div>
 				<div class="btn disabled" style="font-size: 10px;" data-toggle="tooltip" data-title="No tienes suficientes monedas">Comprar</div>
