@@ -336,6 +336,13 @@
 										@endif
 									</a>
 								</li>
+
+								@if ( $character->clan_id == 0 )
+								<li>
+									<i class="icon icon-certificate icon-white"></i>
+									<a href="{{ URL::to('authenticated/createclan') }}">Crear grupo</a>
+								</li>
+								@endif
 								
 								@if ( $character->can_travel() === true )
 								<li>
