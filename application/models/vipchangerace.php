@@ -2,6 +2,8 @@
 
 class VipChangeRace implements IVipObject
 {
+	public $race;
+
 	public function get_name()
 	{
 		return 'Cambio de raza';
@@ -19,11 +21,17 @@ class VipChangeRace implements IVipObject
 
 	public function get_price()
 	{
-		return 2;
+		return 175;
 	}
 	
 	public function execute()
 	{
-		// TODO: dar buffs al usuario logueado
+		$character = Character::get_character_of_logged_user(array('id', 'race'));
+
+		if ( $character )
+		{
+			$character->race = $this->race;
+			$character->save();
+		}
 	}
 }

@@ -19,7 +19,7 @@ class VipCoinMultiplier implements IVipObject
 
 	public function get_price()
 	{
-		return 2;
+		return 40;
 	}
 	
 	public function execute()

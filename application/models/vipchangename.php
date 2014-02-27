@@ -2,6 +2,8 @@
 
 class VipChangeName implements IVipObject
 {
+	public $name;
+
 	public function get_name()
 	{
 		return 'Cambio de nombre';
@@ -19,11 +21,17 @@ class VipChangeName implements IVipObject
 
 	public function get_price()
 	{
-		return 2;
+		return 125;
 	}
 	
 	public function execute()
 	{
-		// TODO: dar buffs al usuario logueado
+		$character = Character::get_character_of_logged_user(array('id', 'name'));
+
+		if ( $character )
+		{
+			$character->name = $this->name;
+			$character->save();
+		}
 	}
 }

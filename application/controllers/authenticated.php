@@ -358,6 +358,42 @@ class Authenticated_Controller extends Base_Controller
 		{
 			return Laravel\Redirect::to('/');
 		}
+
+		$character = Character::get_character_of_logged_user(array('id', 'name', 'race'));
+
+		if ( $vipObject instanceof VipChangeName )
+		{
+			$validator = Validator::make(Input::all(), $character->get_specific_rule('name'), $character->get_messages_from_specific_rule('name'));
+
+			if ( $validator->fails() )
+			{
+				return Redirect::to('authenticated/secretShop')->with('errors', $validator->errors->all());
+			}
+			else
+			{
+				$vipObject->name = Input::get('name');
+			}
+		}
+		elseif ( $vipObject instanceof VipChangeRace )
+		{
+			if ( in_array(Input::get('race'), array('dwarf', 'human', 'elf', 'drow')) )
+			{
+				if ( $character->race != Input::get('race') )
+				{
+					$vipObject->race = Input::get('race');
+				}
+				else
+				{
+					return Redirect::to('authenticated/secretShop')->with('errors', array(
+						'Elije otra raza'
+					));
+				}
+			}
+			else
+			{
+				return Redirect::to('authenticated/secretShop');
+			}
+		}
 		
 		if ( Auth::user()->consume_coins($vipObject->get_price()) )
 		{
@@ -368,7 +404,9 @@ class Authenticated_Controller extends Base_Controller
 		}
 		else
 		{
-			return Redirect::to('authenticated/secretShop')->with('error', 'No tienes suficientes IronCoins para comprar este objeto');
+			return Redirect::to('authenticated/secretShop')->with('errors', array(
+				'No tienes suficientes IronCoins para comprar este objeto'
+			));
 		}
 	}
 
@@ -697,27 +735,33 @@ class Authenticated_Controller extends Base_Controller
 		return false;
 	}
 
-	public function get_ranking()
+	public function get_ranking($rank = 'xp')
 	{
-		$characters_xp = Character::with('clan')->order_by('level', 'desc')->order_by('xp', 'desc')->select(array('id', 'name', 'gender', 'race', 'xp', 'level', 'pvp_points', 'characteristics'))->get();
-		$characters_pvp = $characters_xp;
-		$clansPuntuation = ClanOrbPoint::order_by('points', 'desc')->get();
-		
-		usort($characters_pvp, function($a, $b)
+		switch ( $rank )
 		{
-			if ( $a->pvp_points == $b->pvp_points )
-			{
-				return 0;
-			}
-			
-			return ( $a->pvp_points < $b->pvp_points ) ? 1 : -1;
-		});
+			case 'xp':
+				$select = array('id', 'name', 'gender', 'race', 'xp', 'level', 'characteristics');
+				$elements = Character::get_characters_for_xp_ranking()->select($select)->paginate(50);
+
+				break;
+
+			case 'pvp':
+				$select = array('id', 'name', 'gender', 'race', 'pvp_points', 'characteristics');
+				$elements = Character::get_characters_for_pvp_ranking()->select($select)->paginate(50);
+
+				break;
+
+			case 'clan':
+				$elements = ClanOrbPoint::order_by('points', 'desc')->paginate(50);
+				break;
+
+			default:
+				return Redirect::to('authenticated/ranking');
+				break;
+		}
 		
 		$this->layout->title = 'Ranking';
-		$this->layout->content = View::make('authenticated.ranking')
-									 ->with('characters_pvp', $characters_pvp)
-									 ->with('characters_xp', $characters_xp)
-									 ->with('clansPuntuation', $clansPuntuation);
+		$this->layout->content = View::make('authenticated.ranking')->with('rank', $rank)->with('elements', $elements);
 	}
 
 	public function post_buyTrade()
@@ -914,6 +958,7 @@ class Authenticated_Controller extends Base_Controller
 		
 		switch ( $filter )
 		{
+			case 'self':
 			case 'weapon':
 			case 'armor':
 			case 'consumible':
@@ -927,6 +972,10 @@ class Authenticated_Controller extends Base_Controller
 		if ( $filter == 'all' )
 		{
 			$trades = Trade::all();
+		}
+		elseif ( $filter == 'self' )
+		{
+			$trades = $character->trades;
 		}
 		else
 		{

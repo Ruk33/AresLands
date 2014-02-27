@@ -26,7 +26,7 @@
 		<img src="{{ URL::base() }}/img/elfo-test.png" alt="Jugar como Elfo" data-toggle="popover" data-trigger="hover" data-placement="left" data-original-title="<b>Elfos<b>" data-content=
 		"<small>
 			<em><strong>Raza mixta</strong></em>
-			<p>Los elfos se desempeñan muy bien tanto en combates físicos como mágicos, pero tienen una ligera hacia la magia.</p>
+			<p>Los elfos son tan buenos tanto en combates físicos como mágicos, pero tienen una ligera hacia la magia.</p>
 			<p>
 				<b>Estadísticas iniciales:</b>
 				<ul>

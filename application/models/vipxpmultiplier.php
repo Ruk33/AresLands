@@ -19,7 +19,7 @@ class VipXpMultiplier implements IVipObject
 
 	public function get_price()
 	{
-		return 2;
+		return 20;
 	}
 	
 	public function execute()

@@ -25,6 +25,83 @@ class Character extends Base_Model
 		'gender_required' => 'El género es requerido',
 		'gender_match' => 'El género es incorrecto',
 	);
+
+	/**
+	 * @return Eloquent
+	 */
+	public static function get_characters_for_xp_ranking()
+	{
+		return static::with('clan')
+					 ->order_by('level', 'desc')
+					 ->order_by('xp', 'desc');
+	}
+
+	/**
+	 * @return Eloquent
+	 */
+	public static function get_characters_for_pvp_ranking()
+	{
+		return static::with('clan')
+					 ->order_by('pvp_points', 'desc');
+	}
+
+	/**
+	 * @return array
+	 */
+	public function get_rules()
+	{
+		return $this->rules;
+	}
+
+	/**
+	 * Obtenemos los mensajes de error
+	 * @return array
+	 */
+	public function get_messages()
+	{
+		return $this->messages;
+	}
+
+	/**
+	 * Obtenemos un validador especifico.
+	 * Ejemplo: $character->get_specific_rule('name');
+	 *
+	 * @param $rule
+	 * @return array
+	 */
+	public function get_specific_rule($rule)
+	{
+		if ( ! isset($this->rules[$rule]) )
+		{
+			return array();
+		}
+
+		return array(
+			$rule => $this->rules[$rule]
+		);
+	}
+
+	/**
+	 * Obtenemos los mensajes de error de un validador (regla) especifico.
+	 *
+	 * @param $rule
+	 * @return array
+	 */
+	public function get_messages_from_specific_rule($rule)
+	{
+		$ruleLen = strlen($rule);
+		$messages = array();
+
+		foreach ( $this->messages as $key => $value )
+		{
+			if ( substr($key, 0, $ruleLen) == $rule )
+			{
+				$messages[$key] = $value;
+			}
+		}
+
+		return $messages;
+	}
 	
 	/**
 	 * Lanzamos una habilidad de trampa aleatoria a personaje

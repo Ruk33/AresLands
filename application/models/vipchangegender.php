@@ -19,11 +19,17 @@ class VipChangeGender implements IVipObject
 
 	public function get_price()
 	{
-		return 2;
+		return 80;
 	}
 	
 	public function execute()
 	{
-		// TODO: dar buffs al usuario logueado
+		$character = Character::get_character_of_logged_user(array('id', 'gender'));
+
+		if ( $character )
+		{
+			$character->gender = ( $character->gender == 'male' ) ? 'female' : 'male';
+			$character->save();
+		}
 	}
 }

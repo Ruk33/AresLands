@@ -4,11 +4,15 @@
 	Si tienes buen ojo y unas monedas divinas sabras de lo que hablo...
 </p>
 
-@if ( Session::has('error') )
+@if ( Session::has('errors') )
 <div class="row">
 	<div class="alert alert-error span10 offset1">
 		<strong>Oops!</strong>
-		<p>{{ Session::get('error') }}</p>
+		<ul>
+		@foreach ( Session::get('errors') as $error )
+			<li>{{ $error }}</li>
+		@endforeach
+		</ul>
 	</div>
 </div>
 @endif
@@ -20,7 +24,7 @@
 			<div class="alert-center">
 				<div class="alert-top"></div>
 
-				<div class="alert-content" style="height: 100px;">
+				<div class="alert-content" style="height: 175px;">
 					{{ Form::open(URL::to('authenticated/buyFromSecretShop')) }}
 
 					{{ Form::token() }}
@@ -32,8 +36,26 @@
 					</div>
 					<p>{{ $vipObject->get_description() }}</p>
 
-					<div style="position: absolute; bottom: 5px; right: 10px;">
-					{{ Form::submit('Comprar', array('class' => 'ui-button ui-input-button')) }}
+					<div class="clearfix"></div>
+
+					<div style="margin-top: 10px;">
+					@if ( $vipObject instanceof VipChangeName )
+						Nombre
+						{{ Form::text('name', '', array('class' => 'span12')) }}
+					@elseif ( $vipObject instanceof VipChangeRace )
+						Raza
+						{{ Form::select('race', array('dwarf' => 'Enano', 'human' => 'Humano', 'elf' => 'Elfo', 'drow' => 'Drow'), '', array('class' => 'span12')) }}
+					@endif
+					</div>
+
+					<div class="clearfix"></div>
+
+					<div style="position: absolute; bottom: 10px; left: 10px; font-size: 11px; text-transform: uppercase;">
+						IronCoins: {{ $vipObject->get_price() }}
+					</div>
+
+					<div style="position: absolute; bottom: 10px; right: 10px;">
+						{{ Form::submit('Comprar', array('class' => 'ui-button ui-input-button', 'onclick' => 'return confirm("¿Seguro que quieres comprar ' . $vipObject->get_name() . ' por ' . $vipObject->get_price() . ' IronCoins?");')) }}
 					</div>
 
 					{{ Form::close() }}

@@ -17,6 +17,15 @@
 			</span>
 		</a>
 	</li>
+
+	<li>
+		<a href="{{ URL::to('authenticated/trades/self') }}" class="ui-button button">
+			<i class="button-icon arrow"></i>
+			<span class="button-content">
+				Mis comercios
+			</span>
+		</a>
+	</li>
 	
 	<li>
 		<a href="{{ URL::to('authenticated/trades/weapon') }}" class="ui-button button">
