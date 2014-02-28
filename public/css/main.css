@@ -160,6 +160,18 @@ form {
 	border: 1px solid #4b443e;
 }
 
+.activity-container {
+    width: 685px;
+    margin-bottom: 25px;
+    padding: 15px;
+    background-color: #131111;
+    border-radius: 5px;
+    text-shadow: black 0 0 5px, black 0 0 5px;
+    box-shadow: black 0 0 5px;
+    position: relative;
+    border: 1px solid #4b443e;
+}
+
 .pagination ul > li > a, .pagination ul > li > span {
     background-color: #1d2329;
     border-color: black;
