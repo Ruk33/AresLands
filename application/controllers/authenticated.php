@@ -457,25 +457,25 @@ class Authenticated_Controller extends Base_Controller
 			}
 		}
 
+		$registeredClans = array();
+
 		if ( $tournament )
 		{
 			$canReclaimMvpReward = $tournament->can_reclaim_mvp_reward($character);
 			$canReclaimClanLiderReward = $tournament->can_reclaim_clan_lider_reward($character);
+
+			$registeredClans = TournamentRegisteredClan::left_join('tournament_clan_scores', function($join)
+			{
+				$join->on('tournament_clan_scores.clan_id', '=', 'tournament_registered_clans.clan_id');
+				$join->on('tournament_clan_scores.tournament_id', '=', 'tournament_registered_clans.tournament_id');
+			})
+				->where('tournament_registered_clans.tournament_id', '=', $tournament->id)
+				->group_by('tournament_registered_clans.id')
+				->order_by('total_win_score', 'desc')
+				->distinct()
+				->select(array('tournament_registered_clans.*', DB::raw('sum(tournament_clan_scores.win_score) as total_win_score')))
+				->get();
 		}
-
-		$registeredClans = array();
-
-		$registeredClans = TournamentRegisteredClan::left_join('tournament_clan_scores', function($join)
-		{
-			$join->on('tournament_clan_scores.clan_id', '=', 'tournament_registered_clans.clan_id');
-			$join->on('tournament_clan_scores.tournament_id', '=', 'tournament_registered_clans.tournament_id');
-		})
-		->where('tournament_registered_clans.tournament_id', '=', $tournament->id)
-		->group_by('tournament_registered_clans.id')
-		->order_by('total_win_score', 'desc')
-		->distinct()
-		->select(array('tournament_registered_clans.*', DB::raw('sum(tournament_clan_scores.win_score) as total_win_score')))
-		->get();
 
 		$this->layout->title = 'Torneos';
 		$this->layout->content = View::make('authenticated.tournaments')
