@@ -195,6 +195,6 @@ return array(
 	'quest_xp_rate' => 1,
 	'drop_rate' => 1,
 	'explore_reward_rate' => 2,
-	'coins_rate' => 2,
+	'coins_rate' => 1,
 	'quest_coins_rate' => 2,
 );
