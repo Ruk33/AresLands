@@ -14,7 +14,7 @@ class VipXpMultiplier implements IVipObject
 	
 	public function get_description()
 	{
-		return 'Aprovecha mejor los combates, exploraciones y misiones consiguiendo 20% de experiencia extra.';
+		return 'Aprovecha mejor los combates, exploraciones y misiones consiguiendo 20% de experiencia extra durante 3 dias.';
 	}
 
 	public function get_price()

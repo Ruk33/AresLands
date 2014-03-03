@@ -14,7 +14,7 @@ class VipCoinMultiplier implements IVipObject
 	
 	public function get_description()
 	{
-		return 'Aprovecha mejor los combates, exploraciones y misiones consiguiendo un 30% de oro extra.';
+		return 'Aprovecha mejor los combates, exploraciones y misiones consiguiendo un 30% de oro extra durante 3 dias.';
 	}
 
 	public function get_price()

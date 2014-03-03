@@ -14,7 +14,7 @@ class VipReductionTime implements IVipObject
 	
 	public function get_description()
 	{
-		return 'Reduce tus tiempos de viaje y descanzos en un 20%.';
+		return 'Reduce tus tiempos de viaje y descanzos en un 20% durante 3 dias.';
 	}
 
 	public function get_price()
