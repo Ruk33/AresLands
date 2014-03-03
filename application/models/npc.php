@@ -90,7 +90,7 @@ class Npc extends Base_Model
 		return Npc::select(array('id', 'name', 'dialog', 'tooltip_dialog'))
 		->where('zone_id', '=', $zone->id)
 		->where('type', '=', 'npc')
-		->where('time_to_appear', '<=', ( isset($exploringTime->time) ) ? $exploringTime->time * 60 : 0 )
+		->where('time_to_appear', '<=', ( isset($exploringTime->time) ) ? $exploringTime->time : 0 )
 		->order_by('time_to_appear', 'asc')
 		->get();
 	}
@@ -120,7 +120,7 @@ class Npc extends Base_Model
 			return true;
 		}
 
-		return $this->time_to_appear * 60 > $exploringTime->time;
+		return $this->time_to_appear > $exploringTime->time;
 	}
 
 	/**
