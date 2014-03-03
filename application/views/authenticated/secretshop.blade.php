@@ -19,6 +19,19 @@
 
 <div class="row" style="margin-top: 50px;">
 	<ul class="inline table-content">
+		<li class="span12" style="color: white; font-size: 18px; text-shadow: black 0 0 5px, black 0 0 5px; padding: 20px;">
+			<div class="alert-center text-center" style="margin: 0 auto;">
+				<div class="alert-top"></div>
+
+				<div class="alert-content" style="height: 75px;">
+					<div style="margin-top: 20px">
+						Tus <span data-toggle="tooltip" data-original-title="Las IronCoins son monedas especiales que adquieres mediante dinero real para comprar diferentes objetos en los juegos de IronFist"><u>IronCoins</u></span>: {{ Auth::user()->coins }} (<a href="//ironfist.com.ar/profile/buyIronCoins/peso">Conseguir</a>)
+					</div>
+				</div>
+
+				<div class="alert-bot"></div>
+			</div>
+		</li>
 		@foreach ( $vipObjects as $id => $vipObject )
 		<li class="text-left" style="margin-top: 7px; margin-bottom: 7px; vertical-align: top;">
 			<div class="alert-center">
