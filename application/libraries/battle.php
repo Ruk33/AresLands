@@ -179,12 +179,16 @@ class Battle
 			
 			if ( $this->loser instanceof Npc )
 			{
-				$winnerExperience = (int) ($this->loser->xp + max($this->loser->level, 5) / 5 * $this->winner->get_xp_rate());
+				if ( $this->loser->level > $this->winner->level - 2 )
+				{
+					$winnerExperience = (int) ($this->loser->xp + max($this->loser->level, 5) / 5 * $this->winner->get_xp_rate());
+
+					// Actualizamos db
+					$this->winner->xp += $winnerExperience;
+					$this->winner->points_to_change += $winnerExperience;
+				}
+
 				$this->add_message_to_log($this->winner->name . ' recibe ' . $winnerExperience . ' punto(s) de experiencia.', true);
-				
-				// Actualizamos db
-				$this->winner->xp += $winnerExperience;
-				$this->winner->points_to_change += $winnerExperience;
 			}
 			else
 			{
@@ -226,6 +230,14 @@ class Battle
 		{
 			$coins = (50 * $this->loser->level) * $this->winner->get_coins_rate();
 			$percentage = 0;
+
+			if ( $this->loser instanceof Npc )
+			{
+				if ( $this->loser->level < $this->winner->level - 2 )
+				{
+					$coins = 0;
+				}
+			}
 			
 			if ( $this->loser instanceof Character )
 			{
