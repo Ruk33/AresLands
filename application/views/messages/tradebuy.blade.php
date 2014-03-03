@@ -1,3 +1,1 @@
-hola, este es un mensaje desde un archivo externo, con variables:
-<br>
-{{ var_dump($trade, $buyer) }}
+Parece que tienes buen ojo para los negocios. {{ $buyer->get_link() }} se a visto interesado por tu oferta de {{ $trade->trade_item->item->name }} y te a pagado {{ Item::get_divided_coins($trade->price_copper)['text'] }} monedas que exigias.
