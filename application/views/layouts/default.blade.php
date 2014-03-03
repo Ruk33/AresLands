@@ -369,6 +369,14 @@
 								<li>
 									<i class="icon icon-gift icon-white"></i>
 									<a href="{{ URL::to('authenticated/talents') }}">Talentos</a>
+
+									@if ( $character->talent_points > 0 )
+										<div class="pull-right" data-toggle="tooltip" data-placement="top" data-original-title="Puntos de talentos disponibles">
+												<span class="badge badge-important" style="font-family: arial;">
+													{{ $character->talent_points }}
+												</span>
+										</div>
+									@endif
 								</li>
 								@endif
 								
