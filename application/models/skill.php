@@ -214,7 +214,7 @@ class Skill extends Base_Model
 					return false;
 				}
 				
-				if (  $caster->clan_id != $target->clan_id )
+				if ( $caster->clan_id != $target->clan_id )
 				{
 					return false;
 				}
@@ -256,15 +256,18 @@ class Skill extends Base_Model
 				
 				break;
 		}
-		
-		if ( $target->zone_id != $caster->zone_id )
+
+		if ( $this->target != 'clan' )
 		{
-			return false;
-		}
-		
-		if ( $caster->has_skill(Config::get('game.silence_skill')) )
-		{
-			return false;
+			if ( $target->zone_id != $caster->zone_id )
+			{
+				return false;
+			}
+
+			if ( $caster->has_skill(Config::get('game.silence_skill')) )
+			{
+				return false;
+			}
 		}
 		
 		if ( $this->type == 'debuff' && $target->has_skill(Config::get('game.anti_magic_skill')) )
