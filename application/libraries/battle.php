@@ -179,7 +179,7 @@ class Battle
 			
 			if ( $this->loser instanceof Npc )
 			{
-				if ( $this->loser->level > $this->winner->level - 2 )
+				if ( $this->loser->level >= $this->winner->level - 2 )
 				{
 					$winnerExperience = (int) ($this->loser->xp + max($this->loser->level, 5) / 5 * $this->winner->get_xp_rate());
 
