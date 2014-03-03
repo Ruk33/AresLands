@@ -68,44 +68,43 @@ return array(
 	 *	Formula:
 	 *	cantidad de stat * multiplicador
 	 */
-	'strength_price_multiplier' => 0.3,
-	'dexterity_price_multiplier' => 0.5,
-	'resistance_price_multiplier' => 0.2,
-	'magic_price_multiplier' => 0.5,
-	'magic_skill_price_multiplier' => 0.7,
-	'magic_resistance_price_multiplier' => 0.2,
+	'strength_price_multiplier' => 0.5,
+	'dexterity_price_multiplier' => 0.8,
+	'resistance_price_multiplier' => 0.3,
+	'magic_price_multiplier' => 0.8,
+	'magic_skill_price_multiplier' => 0.12,
+	'magic_resistance_price_multiplier' => 0.3,
 
 	/*
 	 *	Multiplicadores de stat
 	 *	según la raza
 	 */
-	'dwarf_strength_price_multiplier' => 0.5,
-	'dwarf_dexterity_price_multiplier' => 0.7,
-	'dwarf_resistance_price_multiplier' => 0.9,
-	'dwarf_magic_price_multiplier' => 3,
-	'dwarf_magic_skill_price_multiplier' => 3.4,
-	'dwarf_magic_resistance_price_multiplier' => 2,
+	'dwarf_strength_price_multiplier' => 0.8,
+	'dwarf_dexterity_price_multiplier' => 0.12,
+	'dwarf_resistance_price_multiplier' => 0.16,
+	'dwarf_magic_price_multiplier' => 4,
+	'dwarf_magic_skill_price_multiplier' => 4.4,
+	'dwarf_magic_resistance_price_multiplier' => 3,
 
-	'human_strength_price_multiplier' => 1.4,
-	'human_dexterity_price_multiplier' => 1.6,
-	'human_resistance_price_multiplier' => 1.2,
-	'human_magic_price_multiplier' => 1.6,
-	'human_magic_skill_price_multiplier' => 2,
-	'human_magic_resistance_price_multiplier' => 1.4,
+	'human_strength_price_multiplier' => 2,
+	'human_dexterity_price_multiplier' => 2.4,
+	'human_resistance_price_multiplier' => 1.8,
+	'human_magic_price_multiplier' => 2.1,
+	'human_magic_skill_price_multiplier' => 3,
 
-	'drow_strength_price_multiplier' => 2,
-	'drow_dexterity_price_multiplier' => 2.3,
-	'drow_resistance_price_multiplier' => 3.7,
-	'drow_magic_price_multiplier' => 0.4,
-	'drow_magic_skill_price_multiplier' => 0.6,
-	'drow_magic_resistance_price_multiplier' => 1.3,
+	'drow_strength_price_multiplier' => 3,
+	'drow_dexterity_price_multiplier' => 3.3,
+	'drow_resistance_price_multiplier' => 4.4,
+	'drow_magic_price_multiplier' => 0.7,
+	'drow_magic_skill_price_multiplier' => 1,
+	'drow_magic_resistance_price_multiplier' => 1.9,
 
-	'elf_strength_price_multiplier' => 1.7,
-	'elf_dexterity_price_multiplier' => 1.8,
-	'elf_resistance_price_multiplier' => 1.6,
-	'elf_magic_price_multiplier' => 1.2,
-	'elf_magic_skill_price_multiplier' => 1.3,
-	'elf_magic_resistance_price_multiplier' => 1.4,
+	'elf_strength_price_multiplier' => 2.3,
+	'elf_dexterity_price_multiplier' => 2.5,
+	'elf_resistance_price_multiplier' => 2.3,
+	'elf_magic_price_multiplier' => 1.9,
+	'elf_magic_skill_price_multiplier' => 2.1,
+	'elf_magic_resistance_price_multiplier' => 1.9,
 
 	/*
 	 *	Cantidad de slots de inventario
