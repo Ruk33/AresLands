@@ -565,11 +565,6 @@ class Battle
 			// Calculamos el daño
 			$damage = $this->get_damage($attacker, $attacker['is_magic']);
 			
-			if ( mt_rand(0, 100) <= $attacker['critical'] )
-			{
-				$damage *= 2;
-			}
-			
 			$defense = $this->get_defense($defender, $attacker['is_magic']) * 0.40;
 			
 			// Calculamos el daño verdadero
