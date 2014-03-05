@@ -166,7 +166,24 @@ class Authenticated_Controller extends Base_Controller
 		->with('zone', $zone)
 		->with('exploringTime', $exploringTime);
 	}
-	
+
+	public function post_followCharacter()
+	{
+		$characterToFollow = Character::find(Input::get('id'));
+
+		if ( $characterToFollow )
+		{
+			$character = Character::get_character_of_logged_user();
+
+			if ( $character->can_follow($characterToFollow) )
+			{
+				$character->follow($characterToFollow);
+			}
+		}
+
+		return Redirect::to('authenticated/index');
+	}
+
 	public function post_castTalent()
 	{
 		$character = Character::get_character_of_logged_user();
@@ -1908,7 +1925,7 @@ class Authenticated_Controller extends Base_Controller
 
 	public function post_battle()
 	{
-		$character = Character::get_character_of_logged_user(array('id', 'zone_id', 'name', 'clan_id', 'registered_in_tournament'));
+		$character = Character::get_character_of_logged_user(array('id', 'zone_id', 'name', 'clan_id', 'registered_in_tournament', 'is_traveling'));
 		$characterFinded = null;
 
 		switch ( Input::get('search_method') ) 
@@ -1971,7 +1988,8 @@ class Authenticated_Controller extends Base_Controller
 			'stat_magic_resistance',
 			'registered_in_tournament',
 			'characteristics',
-			'invisible_until'
+			'invisible_until',
+			'is_traveling'
 		))->first();
 
 		/*

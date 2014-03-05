@@ -212,6 +212,46 @@ class Character extends Base_Model
 		
 		return parent::set_invisible_until($value);
 	}
+
+	/**
+	 * Verificamos si personaje puede seguir a otro
+	 *
+	 * @param Character $character
+	 * @return bool
+	 */
+	public function can_follow(Character $character)
+	{
+		if ( ! $character->is_traveling )
+		{
+			return false;
+		}
+
+		if ( $this->can_travel() !== true )
+		{
+			return false;
+		}
+
+		return true;
+	}
+
+	/**
+	 * Perseguimos a un personaje
+	 *
+	 * @param Character $character
+	 * @return bool
+	 */
+	public function follow(Character $character)
+	{
+		$travelActivity = $character->activities()->where('name', '=', 'travel')->first();
+
+		if ( $travelActivity )
+		{
+			$this->travel_to($travelActivity->data['zone']);
+			return true;
+		}
+
+		return false;
+	}
 	
 	/**
 	 * Obtenemos posible(s) contrincante(s) para un personaje
@@ -222,7 +262,6 @@ class Character extends Base_Model
 	{
 		$eloquent = self::where('zone_id', '=', $this->zone_id)
 						->where_in('race', $races)
-						->where('is_traveling', '=', false)
 						->where('name', '<>', $this->name)
 						->where('registered_in_tournament', '=', $this->registered_in_tournament);
 		
@@ -2121,7 +2160,27 @@ class Character extends Base_Model
 			}
 		}
 
-		return $this->has_protection($attacker) == false && $attacker->zone_id == $this->zone_id && $attacker->id != $this->id;
+		if ( $this->has_protection($attacker) )
+		{
+			return false;
+		}
+
+		if ( $attacker->zone_id != $this->zone_id )
+		{
+			return false;
+		}
+
+		if ( $attacker->id == $this->id )
+		{
+			return false;
+		}
+
+		if ( $this->is_traveling )
+		{
+			return false;
+		}
+
+		return true;
 	}
 	
 	public function after_battle()

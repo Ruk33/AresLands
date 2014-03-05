@@ -381,7 +381,15 @@
 		@else
 			@if ( $character->zone_id != $characterToSee->zone_id )
 				<div class="negative" style="margin-top: 25px; font-size: 16px;">¡{{ $characterToSee->name }} está en otra zona!</div>
-			@elseif ( $characterToSee->has_protection($character) )
+			@endif
+			@if ( $characterToSee->is_traveling && $character->can_follow($characterToSee) )
+				{{ Form::open(URL::to('authenticated/followCharacter')) }}
+				{{ Form::token() }}
+				{{ Form::hidden('id', $characterToSee->id) }}
+				<div>¡{{ $characterToSee->name }} se escapa!, ¿lo {{ Form::submit('persigues', array('class' => 'ui-input-button ui-button')) }}?</div>
+				{{ Form::close() }}
+			@endif
+			@if ( $characterToSee->has_protection($character) )
 				<div class="negative" style="margin-top: 25px; font-size: 16px;">{{ $characterToSee->name }} está momentáneamente protegido de tus ataques. Debes esperar un poco mas para poder atacarlo.</div>
 			@endif
 		@endif

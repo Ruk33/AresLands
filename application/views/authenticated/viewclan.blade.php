@@ -150,7 +150,7 @@
 					
 					<li class="text-left" character-tooltip="{{ $member->name }}">
 						<a href="{{ URL::to('authenticated/character/' . $member->name) }}">{{ $member->name }} ({{ $member->level }})</a>
-						@if ( $character->clan_id != 0 && $character->clan_id == $member->clan_id )
+						@if ( $character->is_in_clan_of($member) )
 						<p style="font-size: 10px; text-transform: uppercase;">Zona: {{ $member->zone->name }}</p>
 						@endif
 					</li>
