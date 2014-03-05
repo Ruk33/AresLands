@@ -21,6 +21,20 @@ class Trade extends Base_Model
 		'price_copper_numeric' => 'El precio es incorrecto (solo números)',
 		'price_copper_min' => 'El precio mínimo debe ser 1'
 	);
+
+	/**
+	 * Query para obtener los trades que son validos.
+	 * Valido = que puede ser comprado o que son del personaje que esta conectado
+	 *
+	 * @return Eloquent
+	 */
+	public static function get_valid()
+	{
+		$character = Character::get_character_of_logged_user(array('id'));
+
+		return static::where('until', '>', time())
+					 ->or_where('seller_id', '=', $character->id);
+	}
 	
 	/**
 	 * Filtramos trades por clase de objeto
@@ -34,7 +48,8 @@ class Trade extends Base_Model
 			return false;
 		}
 		
-		return static::join('trade_items', 'trade_items.id', '=', 'trade_item_id')
+		return static::get_valid()
+					 ->join('trade_items', 'trade_items.id', '=', 'trade_item_id')
 					 ->join('items', 'items.id', '=', 'trade_items.item_id')
 					 ->where('items.class', '=', $class);
 	}
@@ -99,6 +114,35 @@ class Trade extends Base_Model
 	{
 		return $this->seller_id == $character->id;
 	}
+
+	/**
+	 *
+	 * @return float|int
+	 */
+	public function get_commission_percentage()
+	{
+		$commission = 0;
+
+		switch ( $this->duration )
+		{
+			case 8:
+				// 5% comision
+				$commission = 5;
+				break;
+
+			case 16:
+				// 9% comision
+				$commission = 9;
+				break;
+
+			case 24:
+				// 14% comision
+				$commission = 14;
+				break;
+		}
+
+		return $commission;
+	}
 	
 	/**
 	 * Intentamos comprar trade con personaje
@@ -118,7 +162,7 @@ class Trade extends Base_Model
 		}
 		
 		$character->add_coins(-$this->price_copper);
-		$this->seller->add_coins($this->price_copper);
+		$this->seller->add_coins($this->price_copper * ($this->get_commission_percentage() / 100));
 		
 		Message::trade_buy($this, $character);
 		

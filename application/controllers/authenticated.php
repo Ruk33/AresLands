@@ -890,6 +890,7 @@ class Authenticated_Controller extends Base_Controller
 		$trade->amount = $amount;
 		$trade->price_copper = $price;
 		$trade->until = time() + $time * 60 * 60;
+		$trade->duration = $time;
 
 		if ( $trade->validate() )
 		{
@@ -971,7 +972,7 @@ class Authenticated_Controller extends Base_Controller
 		
 		if ( $filter == 'all' )
 		{
-			$trades = Trade::all();
+			$trades = Trade::get_valid()->get();
 		}
 		elseif ( $filter == 'self' )
 		{

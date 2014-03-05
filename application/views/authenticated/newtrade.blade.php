@@ -52,7 +52,7 @@
 		
 		<div style="margin-top: 25px;">
 			{{ Form::label('time', 'Tiempo hasta que el comercio se cancele') }}
-			{{ Form::select('time', array(8 => '8 horas', 16 => '16 horas', 24 => '24 horas'), null, array('class' => 'input-block-level')) }}
+			{{ Form::select('time', array(8 => '8 horas (5% de comisión)', 16 => '16 horas  (9% de comisión)', 24 => '24 horas  (14% de comisión)'), null, array('class' => 'input-block-level')) }}
 		</div>
 		
 		<div style="margin-top: 25px;">

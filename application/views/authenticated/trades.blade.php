@@ -69,7 +69,10 @@
 	</thead>
 	
 	<tbody>
-		@foreach ( $trades as $trade )
+		@foreach ( $trades as $key => $trade )
+		@if ( $trade->has_expired() && ! $trade->can_be_cancelled_by($character) )
+
+		@else
 		<tr>
 			<td>
 				<div class="box box-box-32-gold" style="margin: 0 auto;">
@@ -81,34 +84,48 @@
 			<td>{{ $trade->seller->get_link() }}</td>
 			<td class="text-right">
 				<ul class="inline" style="margin: 0; padding: 0;">
-					@if ( $trade->can_be_buyed_by($character) )
-					<li>
-						{{ Form::open(URL::to('authenticated/buyTrade')) }}
+					@if ( $trade->has_expired() && $trade->can_be_cancelled_by($character) )
+						<li>
+							{{ Form::open(URL::to('authenticated/cancelTrade')) }}
 							{{ Form::token() }}
 							{{ Form::hidden('id', $trade->id) }}
-							
-							{{ Form::submit('Comprar', array('class' => 'ui-button ui-input-button', 'style' => 'font-size: 14px;')) }}
-						{{ Form::close() }}
-					</li>
-					@endif
-					
-					@if ( $trade->can_be_cancelled_by($character) )
-					<li>
-						{{ Form::open(URL::to('authenticated/cancelTrade')) }}
-							{{ Form::token() }}
-							{{ Form::hidden('id', $trade->id) }}
-							
-							{{ Form::submit('Cancelar', array('class' => 'ui-button ui-input-button', 'style' => 'font-size: 14px;')) }}
-						{{ Form::close() }}
-					</li>
+
+							{{ Form::submit('Retirar', array('class' => 'ui-button ui-input-button', 'style' => 'font-size: 14px;')) }}
+							{{ Form::close() }}
+						</li>
+					@else
+						@if ( $trade->can_be_buyed_by($character) )
+						<li>
+							{{ Form::open(URL::to('authenticated/buyTrade')) }}
+								{{ Form::token() }}
+								{{ Form::hidden('id', $trade->id) }}
+
+								{{ Form::submit('Comprar', array('class' => 'ui-button ui-input-button', 'style' => 'font-size: 14px;')) }}
+							{{ Form::close() }}
+						</li>
+						@endif
+
+						@if ( $trade->can_be_cancelled_by($character) )
+						<li>
+							{{ Form::open(URL::to('authenticated/cancelTrade')) }}
+								{{ Form::token() }}
+								{{ Form::hidden('id', $trade->id) }}
+
+								{{ Form::submit('Cancelar', array('class' => 'ui-button ui-input-button', 'style' => 'font-size: 14px;')) }}
+							{{ Form::close() }}
+						</li>
+						@endif
 					@endif
 				</ul>
 			</td>
 		</tr>
+		@endif
 		@endforeach
 	</tbody>
 </table>
-@else
+@endif
+
+@if ( count($trades) == 0 )
 <h4 class="text-center" style="margin-top: 50px;">Sin comercios</h4>
 @endif
 </div>
