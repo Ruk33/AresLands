@@ -467,16 +467,16 @@ class Battle
 		$averageDamage = mt_rand($unit['min_damage'], $unit['max_damage']) + 1;
 		$damage = $averageDamage;
 
-		// 35% chance de crítico físico
-		if ( ! $isMagic && mt_rand(0, 100) <= 35 )
+		// 20% chance de crítico físico
+		if ( ! $isMagic && mt_rand(0, 100) <= 20 )
 		{
-			$damage *= 1.50;
+			$damage *= 1.35;
 			//self::on_excellent_attack_warrior($attacker, $defender, $damage);
 		}
-		// 25% chance de crítico mágico
-		elseif ( $isMagic && mt_rand(0, 100) <= 25 )
+		// 10% chance de crítico mágico
+		elseif ( $isMagic && mt_rand(0, 100) <= 10 )
 		{
-			$damage *= 2.50;
+			$damage *= 2;
 			//self::on_excellent_attack_mage($attacker, $defender, $damage);
 		}
 		// 10% chance de golpe fallido
