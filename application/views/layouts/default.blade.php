@@ -10,12 +10,9 @@
 		<meta name="description" content="Juego derivado del antiguo Tierra de Leyenda, restaurado y mejorado por IronFist. ¡Únete a este mundo épico y vive grandes aventuras!">
 		<meta name="viewport" content="width=device-width">
 
+		<link rel="stylesheet" type="text/css" href="{{ Minifier::make(array('//css/normalize.min.css', '//css/bootstrap.min.css', '//css/main.css')) }}">
 		<link href='http://fonts.googleapis.com/css?family=Roboto+Slab' rel='stylesheet' type='text/css'>
-		
-		<link rel="stylesheet" href="{{ URL::base() }}/css/normalize.min.css">
-		<link rel="stylesheet" href="{{ URL::base() }}/css/bootstrap.min.css">
 
-		<link rel="stylesheet" type="text/css" href="{{ Minifier::make(array('//css/main.css')) }}">
 		<script type="text/javascript" src="{{ Minifier::make(array('//js/vendor/jquery-1.9.1.min.js', '//js/vendor/bootstrap.min.js', '//js/vendor/angular.min.js', '//js/vendor/angular-resource.min.js')) }}"></script>
 	</head>
 
@@ -251,7 +248,7 @@
 							<div class="mini-player-display">
 								<div class="icon-race-30 icon-race-30-{{ $character->race }}_{{ $character->gender }} pull-left"></div>
 								<div class="pull-left" style="margin-left: 5px;">
-									<a href="{{ URL::to('authenticated/character/' . $character->name) }}" style="color: rgb(231, 180, 47); font-size: 12px;">
+									<a href="{{ URL::to('authenticated/character/' . $character->name) }}" style="font-size: 12px;">
 										<b>{{ $character->name }}</b>
 									</a>
 									
@@ -487,38 +484,88 @@
 		<script src="{{ URL::base() }}/js/libs/jquery.countdown.min.js"></script>
 
 		<script>
-			/*
-			 *	Iniciamos los tooltips
-			 */
-			$('[data-toggle="tooltip"]').tooltip({ html: true, container: '#wrap' });
-			$('[data-toggle="popover"]').popover({ html: true });
+			$(document).ready(function() {
+				/*
+				 *	Iniciamos los tooltips
+				 */
+				$('[data-toggle="tooltip"]').tooltip({ html: true, container: '#wrap' });
+				$('[data-toggle="popover"]').popover({ html: true });
 
-			/*
-			 *	Iniciamos los timers
-			 */
-			$('.timer').each(function() {
-				var $this = $(this);
-				var time = $this.data('endtime');
-				var date = new Date();
-				var layout = '{hnn}:{mnn}:{snn}';
-				
-				date.setSeconds(date.getSeconds() + time);
-				
-				if ( $this.data('layout') ) {
-					layout = $this.data('layout');
+				var lowerCountdown;
+				var originalTitle = document.title;
+
+				function onTick(countdown)
+				{
+					if ( ! lowerCountdown )
+					{
+						lowerCountdown = countdown;
+					}
+					else
+					{
+						// horas
+						if ( countdown[4] < lowerCountdown[4] )
+						{
+							lowerCountdown = countdown;
+						}
+						else if ( countdown[4] == lowerCountdown[4] )
+						{
+							// minutos
+							if ( countdown[5] < lowerCountdown[5] )
+							{
+								lowerCountdown = countdown;
+							}
+							else if ( countdown[5] == lowerCountdown[5] )
+							{
+								// segundos
+								if ( countdown[6] < lowerCountdown[6] )
+								{
+									lowerCountdown = countdown;
+								}
+							}
+						}
+					}
+
+					var time = [lowerCountdown[4], lowerCountdown[5], lowerCountdown[6]];
+
+					for ( var i in time )
+					{
+						if ( String(time[i]).length == 1 )
+						{
+							time[i] = '0' + time[i];
+						}
+					}
+
+					document.title = time[0] + ':' + time[1] + ':' + time[2] + ' ' + originalTitle;
 				}
 
-				$this.countdown({
-					until: date,
-					layout: layout,
-					expiryText: '<a href="" onclick="location.reload();">Actualizar</a>'
+				/*
+				 *	Iniciamos los timers
+				 */
+				$('.timer').each(function() {
+					var $this = $(this);
+					var time = $this.data('endtime');
+					var date = new Date();
+					var layout = '{hnn}:{mnn}:{snn}';
+
+					date.setSeconds(date.getSeconds() + time);
+
+					if ( $this.data('layout') ) {
+						layout = $this.data('layout');
+					}
+
+					$this.countdown({
+						until: date,
+						layout: layout,
+						expiryText: '<a href="" onclick="location.reload();">Actualizar</a>',
+						onTick: onTick
+					});
 				});
+
+	            $('#serverTime').countdown({
+	                since: (new Date({{ time() }})),
+	                layout: '{hnn}:{mnn}:{snn}'
+	            });
 			});
-            
-            $('#serverTime').countdown({
-                since: (new Date({{ time() }})),
-                layout: '{hnn}:{mnn}:{snn}'
-            }); 
 		</script>
 
 		<!--
