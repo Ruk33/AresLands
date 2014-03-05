@@ -148,8 +148,11 @@
 						<div class="icon-race-30 icon-race-30-{{ $member->race }}_{{ $member->gender }} pull-left"></div>
 					</li>
 					
-					<li style="vertical-align: 10px;" character-tooltip="{{ $member->name }}">
-						<a href="{{ URL::to('authenticated/character/' . $member->name) }}" style="line-height: 30px; margin-left: 10px;">{{ $member->name }} ({{ $member->level }})</a>
+					<li class="text-left" character-tooltip="{{ $member->name }}">
+						<a href="{{ URL::to('authenticated/character/' . $member->name) }}">{{ $member->name }} ({{ $member->level }})</a>
+						@if ( $character->clan_id != 0 && $character->clan_id == $member->clan_id )
+						<p style="font-size: 10px; text-transform: uppercase;">Zona: {{ $member->zone->name }}</p>
+						@endif
 					</li>
 	
 					@if ( $character->id == $clan->leader_id && $member->id != $character->id )
