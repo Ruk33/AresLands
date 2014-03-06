@@ -2420,7 +2420,7 @@ class Authenticated_Controller extends Base_Controller
 							$characterItemAmount += $characterItem->count;
 						}
 
-						$limit = (int) (($character->xp_next_level + $character->xp) * Config::get('game.bag_size'));
+						$limit = (int) ($character->xp_next_level * Config::get('game.bag_size'));
 
 						if ( $characterItemAmount + $skillsCount + $amount > $limit )
 						{
