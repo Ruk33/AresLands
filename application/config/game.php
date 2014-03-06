@@ -68,12 +68,12 @@ return array(
 	 *	Formula:
 	 *	cantidad de stat * multiplicador
 	 */
-	'strength_price_multiplier' => 0.5,
-	'dexterity_price_multiplier' => 0.8,
-	'resistance_price_multiplier' => 0.3,
-	'magic_price_multiplier' => 0.8,
-	'magic_skill_price_multiplier' => 1.2,
-	'magic_resistance_price_multiplier' => 0.3,
+	'strength_price_multiplier' => 0.3,
+	'dexterity_price_multiplier' => 0.4,
+	'resistance_price_multiplier' => 0.2,
+	'magic_price_multiplier' => 0.4,
+	'magic_skill_price_multiplier' => 0.5,
+	'magic_resistance_price_multiplier' => 0.2,
 
 	/*
 	 *	Multiplicadores de stat
@@ -195,6 +195,6 @@ return array(
 	'quest_xp_rate' => 0.8,
 	'drop_rate' => 1,
 	'explore_reward_rate' => 1,
-	'coins_rate' => 3,
-	'quest_coins_rate' => 5,
+	'coins_rate' => 2,
+	'quest_coins_rate' => 4,
 );
