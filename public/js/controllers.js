@@ -17,7 +17,6 @@ controller('CharacterController', ['$scope', '$http', '$timeout', 'CharacterOfLo
 	{
 		StatPrice.get({stat: 'stat_strength'}, function(price)
 		{
-			console.log(price.price);
 			DividedCoin.get({amount: price.price}, function(coins)
 			{
 				$scope.statsPrices.strength = 'Precio: ' + coins.text;
