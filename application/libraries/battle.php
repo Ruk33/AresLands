@@ -449,8 +449,9 @@ class Battle
 				$info['current_life'] += $unit->max_life_extra;
 				$info['added_life'] = $unit->max_life_extra;
 			}
-			
-			$info['cd'] -= $unit->attack_speed + $unit->attack_speed_extra;
+
+			// todo revisar para que no quede 0 > cd
+			//$info['cd'] = $info['cd'] / ($unit->attack_speed + $unit->attack_speed_extra + 1);
 		}
 		
 		$info['current_cd'] = $info['cd'];
