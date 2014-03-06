@@ -59,7 +59,7 @@ return array(
 	 *	Formula
 	 *	xp del personaje * bag_size
 	 */
-	'bag_size' => 0.20,
+	'bag_size' => 0.60,
 
 	/*
 	 *	Multiplicadores
@@ -79,33 +79,33 @@ return array(
 	 *	Multiplicadores de stat
 	 *	según la raza
 	 */
-	'dwarf_strength_price_multiplier' => 1,
-	'dwarf_dexterity_price_multiplier' => 0.9,
-	'dwarf_resistance_price_multiplier' => 0.7,
-	'dwarf_magic_price_multiplier' => 3,
-	'dwarf_magic_skill_price_multiplier' => 3.4,
-	'dwarf_magic_resistance_price_multiplier' => 3.3,
+	'dwarf_strength_price_multiplier' => 0.5,
+	'dwarf_dexterity_price_multiplier' => 0.45,
+	'dwarf_resistance_price_multiplier' => 0.35,
+	'dwarf_magic_price_multiplier' => 1.5,
+	'dwarf_magic_skill_price_multiplier' => 1.7,
+	'dwarf_magic_resistance_price_multiplier' => 1.65,
 
-	'human_strength_price_multiplier' => 1,
-	'human_dexterity_price_multiplier' => 1.4,
-	'human_resistance_price_multiplier' => 1.3,
-	'human_magic_price_multiplier' => 1.1,
-	'human_magic_skill_price_multiplier' => 1.7,
-	'human_magic_resistance_price_multiplier' => 1.9,
+	'human_strength_price_multiplier' => 0.5,
+	'human_dexterity_price_multiplier' => 0.7,
+	'human_resistance_price_multiplier' => 0.65,
+	'human_magic_price_multiplier' => 0.55,
+	'human_magic_skill_price_multiplier' => 0.85,
+	'human_magic_resistance_price_multiplier' => 0.95,
 
-	'drow_strength_price_multiplier' => 3,
-	'drow_dexterity_price_multiplier' => 3.6,
-	'drow_resistance_price_multiplier' => 3.3,
-	'drow_magic_price_multiplier' => 0.8,
-	'drow_magic_skill_price_multiplier' => 1,
-	'drow_magic_resistance_price_multiplier' => 1.8,
+	'drow_strength_price_multiplier' => 1.5,
+	'drow_dexterity_price_multiplier' => 1.8,
+	'drow_resistance_price_multiplier' => 1.65,
+	'drow_magic_price_multiplier' => 0.4,
+	'drow_magic_skill_price_multiplier' => 0.5,
+	'drow_magic_resistance_price_multiplier' => 0.9,
 
-	'elf_strength_price_multiplier' => 1.3,
-	'elf_dexterity_price_multiplier' => 1.5,
-	'elf_resistance_price_multiplier' => 1.3,
-	'elf_magic_price_multiplier' => 1.9,
-	'elf_magic_skill_price_multiplier' => 1.1,
-	'elf_magic_resistance_price_multiplier' => 1.8,
+	'elf_strength_price_multiplier' => 0.65,
+	'elf_dexterity_price_multiplier' => 0.75,
+	'elf_resistance_price_multiplier' => 0.65,
+	'elf_magic_price_multiplier' => 0.95,
+	'elf_magic_skill_price_multiplier' => 0.55,
+	'elf_magic_resistance_price_multiplier' => 0.9,
 
 	/*
 	 *	Cantidad de slots de inventario
@@ -195,6 +195,6 @@ return array(
 	'quest_xp_rate' => 0.8,
 	'drop_rate' => 1,
 	'explore_reward_rate' => 1,
-	'coins_rate' => 1.2,
-	'quest_coins_rate' => 2,
+	'coins_rate' => 1.4,
+	'quest_coins_rate' => 2.3,
 );
