@@ -139,16 +139,17 @@
 	
 	<h2 style="margin-top: 50px;">Miembros</h2>
 
+	<div class="row" style="margin-bottom: 25px;">
 	<ul class="inline text-center">
 	@foreach ( $members as $member )
-		<li style="width: 45%;">
+		<li class="span6">
 			<div class="clan-member-link">
 				<ul class="inline">
 					<li style="vertical-align: top;">
 						<div class="icon-race-30 icon-race-30-{{ $member->race }}_{{ $member->gender }} pull-left"></div>
 					</li>
 					
-					<li class="text-left" character-tooltip="{{ $member->name }}">
+					<li class="text-left" style="vertical-align: top;">
 						@if ( $character->is_in_clan_of($member) )
 							@if ( $member->is_online() )
 								<span class="badge badge-success">ON</span>
@@ -156,11 +157,21 @@
 								<span class="badge badge-important">OFF</span>
 							@endif
 						@endif
-						<a href="{{ URL::to('authenticated/character/' . $member->name) }}">{{ $member->name }} ({{ $member->level }})</a>
+						<a href="{{ URL::to('authenticated/character/' . $member->name) }}" character-tooltip="{{ $member->name }}">{{ $member->name }} ({{ $member->level }})</a>
 						@if ( $character->is_in_clan_of($member) )
 							<ul style="font-size: 10px; text-transform: uppercase; margin-top: 10px;" class="unstyled">
 								<li><b>Zona:</b> {{ $member->zone->name }}</li>
 								<li><b>Ultima actividad:</b> {{ date("d/m/Y", $member->last_activity_time) }}</li>
+								@if ( $character->id == $clan->leader_id && $character->id != $member->id )
+								<li>
+									{{ Form::open(URL::to('authenticated/giveLeaderShip')) }}
+										{{ Form::token() }}
+										{{ Form::hidden('id', $member->id) }}
+
+										{{ Form::submit('Ceder liderazgo', array('class' => 'ui-button ui-input-button', 'style' => 'color: orange; font-size: 10px; text-transform: uppercase;', 'onclick' => 'return confirm("¿Estas seguro que quieres cederle el liderazgo a ' . $member->name . '?");')) }}
+									{{ Form::close() }}
+								</li>
+								@endif
 							</ul>
 						@endif
 					</li>
@@ -229,6 +240,7 @@
 		</li>
 	@endforeach
 	</ul>
+	</div>
 
 	@if ( $character->clan_id == 0 && ! $character->petitions()->where('clan_id', '=', $clan->id)->first() )
 		<h2>¿Quieres ingresar?</h2>

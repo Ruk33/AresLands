@@ -173,6 +173,20 @@ class Authenticated_Controller extends Base_Controller
 		->with('exploringTime', $exploringTime);
 	}
 
+	public function post_giveLeaderShip()
+	{
+		$character = Character::get_character_of_logged_user(array('id', 'clan_id'));
+		$newLider = Character::find(Input::get('id'));
+
+		if ( $character->can_give_leadership_to($newLider) )
+		{
+			$character->give_leadership_to($newLider);
+			return Redirect::to('authenticated/index')->with('message', "Le haz dado el liderazgo del grupo a {$newLider->name}");
+		}
+
+		return Redirect::back();
+	}
+
 	public function post_followCharacter()
 	{
 		$characterToFollow = Character::find(Input::get('id'));

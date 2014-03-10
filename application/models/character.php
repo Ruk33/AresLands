@@ -27,6 +27,48 @@ class Character extends Base_Model
 	);
 
 	/**
+	 * Verificamos si personaje puede pasarle el liderazgo del grupo
+	 * a otro personaje
+	 *
+	 * @param Character $newLider
+	 * @return bool
+	 */
+	public function can_give_leadership_to(Character $newLider)
+	{
+		if ( ! $this->clan_id )
+		{
+			return false;
+		}
+
+		if ( $newLider->clan_id != $this->clan_id )
+		{
+			return false;
+		}
+
+		if ( $this->id != $this->clan->leader_id )
+		{
+			return false;
+		}
+
+		return true;
+	}
+
+	/**
+	 * Damos liderazgo del grupo a un personaje
+	 * @param Character $newLider
+	 */
+	public function give_leadership_to(Character $newLider)
+	{
+		$clan = $this->clan;
+
+		if ( $clan )
+		{
+			$clan->leader_id = $newLider->id;
+			$clan->save();
+		}
+	}
+
+	/**
 	 * Cancelamos (deshabilitamos) todos los comercios de clan de un personaje (util cuando sale de un clan)
 	 */
 	public function cancel_all_clan_trades()
