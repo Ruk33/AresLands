@@ -27,6 +27,14 @@ class Character extends Base_Model
 	);
 
 	/**
+	 * @return bool
+	 */
+	public function is_online()
+	{
+		return $this->last_activity_time > time() - 300;
+	}
+
+	/**
 	 * @return Eloquent
 	 */
 	public static function get_characters_for_xp_ranking()

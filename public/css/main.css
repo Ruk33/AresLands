@@ -63,6 +63,16 @@ body {
 	font-family: "Roboto Slab", Georgia, Verdana, Arial;
 }
 
+.label-important, .badge-important {
+    background-color: #d0462c;
+    text-shadow: black 0 0 2px;
+}
+
+.label-success, .badge-success {
+    background-color: #97d037;
+    text-shadow: black 0 0 2px;
+}
+
 .table-content {
     background-image: url('/img/table-background.jpg');
     background-repeat: repeat-y;

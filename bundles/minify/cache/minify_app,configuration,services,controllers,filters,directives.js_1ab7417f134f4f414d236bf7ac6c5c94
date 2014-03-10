@@ -5,7 +5,7 @@
 {$scope.character={};$scope.statsPrices={};$scope.pointsToChange=1;CharacterOfLoggedUser.get(function(character)
 {$scope.character=character;});$scope.$watch('character.stat_strength',function(value)
 {StatPrice.get({stat:'stat_strength'},function(price)
-{console.log(price.price);DividedCoin.get({amount:price.price},function(coins)
+{DividedCoin.get({amount:price.price},function(coins)
 {$scope.statsPrices.strength='Precio: '+coins.text;});});});$scope.$watch('character.stat_dexterity',function(value)
 {StatPrice.get({stat:'stat_dexterity'},function(price)
 {DividedCoin.get({amount:price.price},function(coins)

@@ -144,19 +144,29 @@
 		<li style="width: 45%;">
 			<div class="clan-member-link">
 				<ul class="inline">
-					<li>
+					<li style="vertical-align: top;">
 						<div class="icon-race-30 icon-race-30-{{ $member->race }}_{{ $member->gender }} pull-left"></div>
 					</li>
 					
 					<li class="text-left" character-tooltip="{{ $member->name }}">
+						@if ( $character->is_in_clan_of($member) )
+							@if ( $member->is_online() )
+								<span class="badge badge-success">ON</span>
+							@else
+								<span class="badge badge-important">OFF</span>
+							@endif
+						@endif
 						<a href="{{ URL::to('authenticated/character/' . $member->name) }}">{{ $member->name }} ({{ $member->level }})</a>
 						@if ( $character->is_in_clan_of($member) )
-						<p style="font-size: 10px; text-transform: uppercase;">Zona: {{ $member->zone->name }}</p>
+							<ul style="font-size: 10px; text-transform: uppercase; margin-top: 10px;" class="unstyled">
+								<li><b>Zona:</b> {{ $member->zone->name }}</li>
+								<li><b>Ultima actividad:</b> {{ date("d/m/Y", $member->last_activity_time) }}</li>
+							</ul>
 						@endif
 					</li>
 	
 					@if ( $character->id == $clan->leader_id && $member->id != $character->id )
-					<li style="vertical-align: 10px;">
+					<li style="vertical-align: top; margin-top: 2px;">
 						<div id="{{ $member->id }}_permissions" style="display: none;">
 							{{ Form::open('authenticated/clanModifyMemberPermissions') }}
 							
@@ -210,7 +220,7 @@
 					@endif
 					
 					@if ( $character->id != $member->id && $member->id != $clan->leader_id && ($character->id == $clan->leader_id || $clan->has_permission($character, Clan::PERMISSION_KICK_MEMBER)) )
-					<li class="pull-right" style="margin-top: 4px;" data-toggle="tooltip" data-original-title="Expulsar miembro del grupo">
+					<li class="pull-right" style="vertical-align: top;" data-toggle="tooltip" data-original-title="Expulsar miembro del grupo">
 						<a class="close" onclick="return confirm('¿Seguro que quieres eliminar a {{ $member->name }} del grupo?');" href="{{ URL::to('authenticated/clanRemoveMember/' . $member->name) }}">&times;</a>
 					</li>
 					@endif
