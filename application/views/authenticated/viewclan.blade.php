@@ -140,9 +140,9 @@
 	<h2 style="margin-top: 50px;">Miembros</h2>
 
 	<div class="row" style="margin-bottom: 25px;">
-	<ul class="inline text-center">
+	<ul class="inline text-center span12">
 	@foreach ( $members as $member )
-		<li class="span6">
+		<li style="width: 45%;">
 			<div class="clan-member-link">
 				<ul class="inline">
 					<li style="vertical-align: top;">
