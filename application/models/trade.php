@@ -30,9 +30,10 @@ class Trade extends Base_Model
 	 */
 	public static function get_valid()
 	{
-		$character = Character::get_character_of_logged_user(array('id'));
+		$character = Character::get_character_of_logged_user(array('id', 'clan_id'));
 
 		return static::where('until', '>', time())
+					 ->where_in('clan_id', array(0, $character->clan_id))
 					 ->or_where('seller_id', '=', $character->id);
 	}
 	
@@ -88,6 +89,14 @@ class Trade extends Base_Model
 		if ( $character->id == $this->seller_id )
 		{
 			return false;
+		}
+
+		if ( $this->clan_id > 0 )
+		{
+			if ( $character->clan_id != $this->clan_id )
+			{
+				return false;
+			}
 		}
 		
 		$coins = $character->get_coins();
@@ -172,7 +181,7 @@ class Trade extends Base_Model
 	}
 	
 	/**
-	 * Cancelamos el trade
+	 * Cancelamos el trade devolviendo el objeto al vendedor y borrando el registro
 	 * @return boolean
 	 */
 	public function cancel()

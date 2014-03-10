@@ -54,7 +54,7 @@
 			{{ Form::label('time', 'Tiempo hasta que el comercio se cancele') }}
 			{{ Form::select('time', array(8 => '8 horas (5% de comisión)', 16 => '16 horas  (9% de comisión)', 24 => '24 horas  (14% de comisión)'), null, array('class' => 'input-block-level')) }}
 		</div>
-		
+
 		<div style="margin-top: 25px;">
 			{{ Form::label('copper', 'Precio') }}
 			
@@ -73,6 +73,13 @@
 				{{ Form::number('copper', 0, array('max' => 99, 'class' => 'span2 text-right')) }}
 			</span>
 		</div>
+
+		@if ( $character->clan_id > 0 )
+		<div style="margin-top: 25px;">
+			{{ Form::checkbox('only_clan') }}
+			{{ Form::label('only_clan', 'Comercio visible solo para los miembros de tu grupo', array('style' => 'display: inline; vertical-align: -15%;')) }}
+		</div>
+		@endif
 
 		<div class="text-center" style="margin-top: 25px;">
 			<span class="ui-button button">

@@ -218,6 +218,8 @@ class Clan extends Base_Model
 
 	public function leave(Character $member)
 	{
+		$member->cancel_all_clan_trades();
+
 		$member->clan_permission = 0;
 		$member->save();
 		

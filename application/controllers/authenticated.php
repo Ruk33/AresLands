@@ -833,7 +833,7 @@ class Authenticated_Controller extends Base_Controller
 	
 	public function post_newTrade()
 	{
-		$sellerCharacter = Character::get_character_of_logged_user(array('id'));
+		$sellerCharacter = Character::get_character_of_logged_user(array('id', 'clan_id'));
 		
 		if ( ! $sellerCharacter->can_trade() )
 		{
@@ -915,6 +915,11 @@ class Authenticated_Controller extends Base_Controller
 		$trade->until = time() + $time * 60 * 60;
 		$trade->duration = $time;
 
+		if ( $sellerCharacter->clan_id > 0 && Input::get('only_clan') != 0 )
+		{
+			$trade->clan_id = $sellerCharacter->clan_id;
+		}
+
 		if ( $trade->validate() )
 		{
 			$tradeItem = new TradeItem();
@@ -967,6 +972,7 @@ class Authenticated_Controller extends Base_Controller
 
 			$this->layout->title = 'Nuevo comercio';
 			$this->layout->content = View::make('authenticated.newtrade')
+			->with('character', $character)
 			->with('characterItems', $characterItems);
 		}
 		else

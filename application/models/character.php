@@ -27,6 +27,20 @@ class Character extends Base_Model
 	);
 
 	/**
+	 * Cancelamos (deshabilitamos) todos los comercios de clan de un personaje (util cuando sale de un clan)
+	 */
+	public function cancel_all_clan_trades()
+	{
+		foreach ( $this->trades()->where('clan_id', '<>', 0)->get() as $clanTrade )
+		{
+			$clanTrade->until = 0;
+			$clanTrade->clan_id = 0;
+
+			$clanTrade->save();
+		}
+	}
+
+	/**
 	 * @return bool
 	 */
 	public function is_online()
