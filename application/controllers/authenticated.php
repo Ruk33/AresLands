@@ -1717,7 +1717,7 @@ class Authenticated_Controller extends Base_Controller
 			
 			if ( $character->can_attack_in_pairs() )
 			{
-				$pairs = $character->get_pairs();
+				$pairs = $character->get_pairs_to($characterToSee);
 			}
 
 			$this->layout->title = $characterToSee->name;
@@ -2040,7 +2040,7 @@ class Authenticated_Controller extends Base_Controller
 			
 			if ( $character->can_attack_in_pairs() )
 			{
-				$pairs = $character->get_pairs();
+				$pairs = $character->get_pairs_to($characterFinded);
 			}
 
 			$this->layout->title = $characterFinded->name;

@@ -534,7 +534,7 @@ class Battle
 		{
 			$attacks++;
 			
-			if ( $pairStats && $attacker != $pairStats && mt_rand(0, 100) <= 10 )
+			if ( $pairStats && $attacker != $pairStats && mt_rand(0, 100) <= 33 )
 			{
 				$attacker = &$pairStats;
 				$defender = &$attackedStats;

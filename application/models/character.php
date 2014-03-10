@@ -757,7 +757,7 @@ class Character extends Base_Model
 	}
 	
 	/**
-	 * Verificar si dos personajes pueden atacar como pareja
+	 * Verificar si dos personajes pueden atacar como pareja a un personaje
 	 * @param Character $pair
 	 * @return boolean
 	 */
@@ -771,11 +771,11 @@ class Character extends Base_Model
 	}
 	
 	/**
-	 * Obtenemos las posibles parejas
+	 * Obtenemos las posibles parejas para un enemigo
 	 * @param array $select Columnas a seleccionar
 	 * @return array
 	 */
-	public function get_pairs($select = array('*'))
+	public function get_pairs_to(Character $enemy, $select = array('*'))
 	{
 		$pairs = array();
 		
@@ -789,7 +789,7 @@ class Character extends Base_Model
 		
 		foreach ( $characters as $pair )
 		{
-			if ( $this->can_attack_with($pair) )
+			if ( $this->can_attack_with($pair) && $this->level + $pair->level < $enemy->level )
 			{
 				$pairs[] = $pair;
 			}
