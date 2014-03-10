@@ -46,7 +46,31 @@
 	</div>
 	@endif
 	<!-- END ACTIVIDADES -->
-	
+
+	<!-- TALENTOS -->
+	@if ( count($talents) > 0 )
+	<div style="margin-left: 20px;">
+		<h2>Talentos</h2>
+
+		<ul class="inline">
+			@foreach ( $talents as $skillId )
+			<li class="clan-member-link text-center">
+				{{ Form::open(URL::to('authenticated/castTalent')) }}
+				{{ Form::token() }}
+				{{ Form::hidden('skill_id', $skillId) }}
+				{{ Form::hidden('id', $character->id) }}
+				<img src="{{ URL::base() }}/img/icons/skills/{{ $skillId }}.png" alt="" skill-tooltip skill-id="{{ $skillId }}" skill-level="1">
+				<div>
+					{{ Form::submit('Lanzar', array('class' => 'ui-button ui-input-button')) }}
+				</div>
+				{{ Form::close() }}
+			</li>
+			@endforeach
+		</ul>
+	@endif
+	</div>
+	<!-- END TALENTOS -->
+
 	<div class="text-center" style="width: 700px; margin: 0 auto;">
 		@if ( Session::has('error') )
 			<div class="alert alert-error">

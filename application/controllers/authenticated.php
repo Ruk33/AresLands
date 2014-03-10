@@ -152,6 +152,11 @@ class Authenticated_Controller extends Base_Controller
 		 */
 		$orb = $character->orbs()->select(array('id', 'name', 'description'))->first();
 
+		/*
+		 *  Talentos que se puede lanzar a el mismo
+		 */
+		$talents = $character->get_castable_talents($character);
+
 		$zone = $character->zone()->select(array('id', 'name', 'description'))->first();
 
 		$exploringTime = $character->exploring_times()->where('zone_id', '=', $zone->id)->first();
@@ -163,6 +168,7 @@ class Authenticated_Controller extends Base_Controller
 		->with('items', $itemsToView)
 		->with('skills', $skills)
 		->with('orb', $orb)
+		->with('talents', $talents)
 		->with('zone', $zone)
 		->with('exploringTime', $exploringTime);
 	}
