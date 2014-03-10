@@ -2215,7 +2215,7 @@ class Authenticated_Controller extends Base_Controller
 		 *	y que esté ubicado en la zona
 		 *	en donde está el personaje
 		 */
-		$npc = Npc::select(array('id', 'name', 'dialog', 'time_to_appear', 'zone_id'))->where('id', '=', (int) $npcId)->where('zone_id', '=', $character->zone_id)->first();
+		$npc = Npc::select(array('id', 'name', 'dialog', 'level_to_appear', 'zone_id'))->where('id', '=', (int) $npcId)->where('zone_id', '=', $character->zone_id)->first();
 
 		/*
 		 *	Si no existe, redireccionamos
@@ -2303,7 +2303,7 @@ class Authenticated_Controller extends Base_Controller
 		if ( $merchandise )
 		{
 			$character = Character::get_character_of_logged_user(array('id', 'xp', 'xp_next_level'));
-			$npc = $merchandise->npc()->select(array('id', 'zone_id', 'time_to_appear'))->first();
+			$npc = $merchandise->npc()->select(array('id', 'zone_id', 'level_to_appear'))->first();
 
 			// Verificamos si el vendedor está desbloqueado
 			if ( ! $npc || $npc->is_blocked_to($character) )

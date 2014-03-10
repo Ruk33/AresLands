@@ -84,14 +84,13 @@ class Npc extends Base_Model
 			return array();
 		}
 
-		$character = Character::get_character_of_logged_user(array('id'));
-		$exploringTime = $character->exploring_times()->select(array('character_id', 'time'))->where('zone_id', '=', $zone->id)->first();
+		$character = Character::get_character_of_logged_user(array('id', 'level'));
 
 		return Npc::select(array('id', 'name', 'dialog', 'tooltip_dialog'))
 		->where('zone_id', '=', $zone->id)
 		->where('type', '=', 'npc')
-		->where('time_to_appear', '<=', ( isset($exploringTime->time) ) ? $exploringTime->time : 0 )
-		->order_by('time_to_appear', 'asc')
+		->where('level_to_appear', '<=', $character->level )
+		->order_by('level_to_appear', 'asc')
 		->get();
 	}
 
@@ -108,19 +107,12 @@ class Npc extends Base_Model
 			return true;
 		}
 		
-		if ( ! $this->time_to_appear )
+		if ( ! $this->level_to_appear )
 		{
 			return false;
 		}
 
-		$exploringTime = $character->exploring_times()->select(array('character_id', 'time'))->where('zone_id', '=', $this->zone_id)->first();
-
-		if ( ! $exploringTime )
-		{
-			return true;
-		}
-
-		return $this->time_to_appear > $exploringTime->time;
+		return $this->level_to_appear > $character->level;
 	}
 
 	/**
