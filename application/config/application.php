@@ -25,7 +25,7 @@ return array(
 	|
 	*/
 
-	'url' => 'http://areslands.ironfist.com.ar',
+	'url' => '//areslands.ironfist.com.ar',
 
 	/*
 	|--------------------------------------------------------------------------
@@ -147,7 +147,7 @@ return array(
 	|
 	*/
 
-	'timezone' => 'UTC',
+	'timezone' => 'America/Argentina/Buenos_Aires',
 
 	/*
 	|--------------------------------------------------------------------------
