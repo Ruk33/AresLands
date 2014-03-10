@@ -75,8 +75,8 @@
 			</li>
 			@endforeach
 		</ul>
-	@endif
 	</div>
+	@endif
 	<!-- END TALENTOS -->
 
 	<div class="text-center" style="width: 700px; margin: 0 auto;">
