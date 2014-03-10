@@ -19,8 +19,6 @@
 								<div style="font-size: 9px; font-family: arial;">
 									@if ( $skill->end_time != 0 )
 										<span class='timer' data-endtime='{{ $skill->end_time - time() }}'></span>
-									@else
-										∞
 									@endif
 								</div>
 							</div>

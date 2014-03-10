@@ -13,7 +13,14 @@
 		<link rel="stylesheet" type="text/css" href="{{ Minifier::make(array('//css/normalize.min.css', '//css/bootstrap.min.css', '//css/main.css')) }}">
 		<link href='http://fonts.googleapis.com/css?family=Roboto+Slab' rel='stylesheet' type='text/css'>
 
-		<script type="text/javascript" src="{{ Minifier::make(array('//js/vendor/jquery-1.9.1.min.js', '//js/vendor/bootstrap.min.js', '//js/vendor/angular.min.js', '//js/vendor/angular-resource.min.js')) }}"></script>
+		@if ( Request::env() == 'local' )
+			<script src="{{ URL::base() }}/js/vendor/jquery-1.9.1.min.js"></script>
+			<script src="{{ URL::base() }}/js/vendor/bootstrap.min.js"></script>
+			<script src="{{ URL::base() }}/js/vendor/angular.min.js"></script>
+			<script src="{{ URL::base() }}/js/vendor/angular-resource.min.js"></script>
+		@else
+			<script type="text/javascript" src="{{ Minifier::make(array('//js/vendor/jquery-1.9.1.min.js', '//js/vendor/bootstrap.min.js', '//js/vendor/angular.min.js', '//js/vendor/angular-resource.min.js')) }}"></script>
+		@endif
 	</head>
 
 	<?php flush(); ?>
@@ -480,7 +487,16 @@
 			</div>
 		@endif
 
-		<script type="text/javascript" src="{{ Minifier::make(array('//js/app.js', '//js/configuration.js', '//js/services.js', '//js/controllers.js', '//js/filters.js', '//js/directives.js')) }}"></script>
+		@if ( Request::env() == 'local' )
+			<script src="{{ URL::base() }}/js/app.js"></script>
+			<script src="{{ URL::base() }}/js/configuration.js"></script>
+			<script src="{{ URL::base() }}/js/services.js"></script>
+			<script src="{{ URL::base() }}/js/controllers.js"></script>
+			<script src="{{ URL::base() }}/js/filters.js"></script>
+			<script src="{{ URL::base() }}/js/directives.js"></script>
+		@else
+			<script type="text/javascript" src="{{ Minifier::make(array('//js/app.js', '//js/configuration.js', '//js/services.js', '//js/controllers.js', '//js/filters.js', '//js/directives.js')) }}"></script>
+		@endif
 		<script src="{{ URL::base() }}/js/libs/jquery.countdown.min.js"></script>
 
 		<script>
