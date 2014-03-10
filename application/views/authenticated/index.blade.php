@@ -13,6 +13,16 @@
 							<div class="box box-box-32-gray">
 							@endif
 								<img src="{{ URL::base() }}/img/icons/skills/{{ $skill->skill_id }}.png" alt="" width="32px" height="32px" skill-tooltip skill-id="{{ $skill->skill_id }}" skill-level="{{ $skill->level }}">
+
+								<div data-toggle="tooltip" data-placement="top" data-original-title="Cantidad">({{ $skill->amount }})</div>
+
+								<div style="font-size: 9px; font-family: arial;">
+									@if ( $skill->end_time != 0 )
+										<span class='timer' data-endtime='{{ $skill->end_time - time() }}'></span>
+									@else
+										∞
+									@endif
+								</div>
 							</div>
 						</li>
 					@endforeach

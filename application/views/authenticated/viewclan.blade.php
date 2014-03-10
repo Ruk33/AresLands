@@ -113,7 +113,7 @@
 			@if ( $clan->points_to_change > 0 && ($character->id == $clan->leader_id || $clan->has_permission($character, Clan::PERMISSION_LEARN_SPELL)) )
 				<?php $nextLevel = Skill::where('level', '=', $skill->level + 1)->where('id', '=', $skill->skill_id)->first(); ?>
 				@if ( $nextLevel && $nextLevel->can_be_learned_by_clan($clan) )
-					<p><a href="{{ URL::to('authenticated/learnClanSkill/' . $skill->skill_id . '/' . ($skill->level + 1)) }}">subir de nivel</a></p>
+					<p><a href="{{ URL::to('authenticated/learnClanSkill/' . $skill->skill_id . '/' . ($skill->level + 1)) }}">Subir de nivel</a></p>
 				@endif
 			@endif
 		</li>
@@ -123,7 +123,7 @@
 			<img class="grayEffect" src="{{ URL::base() }}/img/icons/skills/{{ $skill->id }}.png" alt="" skill-tooltip skill-id="{{ $skill->id }}" skill-level="{{ $skill->level }}" width="64px" height="64px">
 			@if ( $clan->points_to_change > 0 && ($character->id == $clan->leader_id || $clan->has_permission($character, Clan::PERMISSION_LEARN_SPELL)) )
 				@if ( $skill->can_be_learned_by_clan($clan) )
-					<p><a href="{{ URL::to('authenticated/learnClanSkill/' . $skill->id) }}">aprender</a></p>
+					<p><a href="{{ URL::to('authenticated/learnClanSkill/' . $skill->id) }}">Aprender</a></p>
 				@endif
 			@endif
 		</li>
