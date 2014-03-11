@@ -32,9 +32,12 @@ class Trade extends Base_Model
 	{
 		$character = Character::get_character_of_logged_user(array('id', 'clan_id'));
 
-		return static::where('until', '>', time())
-					 ->where_in('clan_id', array(0, $character->clan_id))
-					 ->or_where('seller_id', '=', $character->id);
+		return static::where(function($query) use ($character)
+					 {
+					 	$query->where('until', '>', time());
+					 	$query->or_where('seller_id', '=', $character->id);
+					 })
+					 ->where_in('clan_id', array(0, $character->clan_id));
 	}
 	
 	/**
