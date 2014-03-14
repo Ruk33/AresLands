@@ -301,22 +301,29 @@ class Admin_Controller extends Base_Controller
 			case 'create':
 				$this->layout->title = 'Admin';
 				$this->layout->content = View::make('admin.createeditquest')
+				->with('quest', new Quest())
+				->with('npcs', Npc::order_by('level', 'asc')->get())
+				->with('rewards', array())
+				->with('actions', array())
+				->with('actionAmount', array())
 				->with('items', Item::all());
 
 				break;
 
 			case 'edit':
 				$quest = Quest::find((int) $questId);
-				$questTriggers = $quest->triggers()->lists('id', 'event');
+				$npcActions = $quest->quest_npcs()->lists('action', 'npc_id');
+				$npcActionAmount = $quest->quest_npcs()->lists('amount', 'npc_id');
 				$questRewards = $quest->rewards()->lists('amount', 'item_id');
 
 				$this->layout->title = 'Admin';
 				$this->layout->content = View::make('admin.createeditquest')
 				->with('quest', $quest)
-				->with('triggers', $questTriggers)
+				->with('npcs', Npc::order_by('level', 'asc')->get())
+				->with('actions', $npcActions)
+				->with('actionAmount', $npcActionAmount)
 				->with('rewards', $questRewards)
-				->with('items', Item::all())
-				->render();
+				->with('items', Item::all());
 
 				break;
 		}
@@ -331,7 +338,7 @@ class Admin_Controller extends Base_Controller
 		{
 			$quest = Quest::find((int) $inputs['questId']);
 
-			$quest->triggers()->delete();
+			$quest->quest_npcs()->delete();
 			$quest->rewards()->delete();
 		}
 		else
@@ -339,7 +346,6 @@ class Admin_Controller extends Base_Controller
 			$quest = new Quest();
 		}
 
-		$quest->class_name = $inputs['class_name'];
 		$quest->name = $inputs['name'];
 		$quest->description = $inputs['description'];
 		$quest->min_level = $inputs['min_level'];
@@ -355,20 +361,27 @@ class Admin_Controller extends Base_Controller
 
 		$quest->save();
 
-		$questTrigger = null;
-		foreach ( $inputs['events'] as $event )
+		if ( isset($inputs['action']) )
 		{
-			$questTrigger = new QuestTrigger();
+			foreach ( $inputs['action'] as $npcId => $action )
+			{
+				if ( $action && isset($inputs['actionAmount'][$npcId]) )
+				{
+					$questNpc = new QuestNpc();
 
-			$questTrigger->quest_id = $quest->id;
-			$questTrigger->event = $event;
+					$questNpc->quest_id = $quest->id;
+					$questNpc->npc_id = $npcId;
+					$questNpc->quest_id = $quest->id;
+					$questNpc->action = $action;
+					$questNpc->amount = $inputs['actionAmount'][$npcId];
 
-			$questTrigger->save();
+					$questNpc->save();
+				}
+			}
 		}
 
 		if ( isset($inputs['rewards']) )
 		{
-			$questReward = null;
 			foreach ( $inputs['rewards'] as $reward )
 			{
 				$questReward = new QuestReward();

@@ -34,60 +34,19 @@ Event::listen('loggedOfDayReward', function(Character $character)
 
 Event::listen('npcTalk', function(Character $character, Npc $npc)
 {
-	/*
-	 *	No nos olvidamos de trabajar con los
-	 *	triggers que tengan de evento 'npcTalk'
-	 */
-	$characterTriggers = $character->triggers()->where('event', '=', 'npcTalk')->select(array('id', 'class_name'))->get();
-	$className = null;
+	$characterQuests = $character->quests_with_action('talk')
+								 ->where('progress', '=', 'started')
+								 ->get();
 
-	$obj;
-
-	foreach ($characterTriggers as $characterTrigger) {
-		$className = $characterTrigger->class_name;
-		$obj = new $className($character);
-		
-		/*
-		if ( $className::onNpcTalk($character, $npc) )
-		{
-			$characterTrigger->delete();
-		}
-		*/
-		
-		if ( $obj->run('npcTalk', $npc) )
-		{
-			$characterTrigger->delete();
-		}
+	foreach ( $characterQuests as $characterQuest )
+	{
+		$characterQuest->talk_to_npc($npc);
 	}
 });
 
 Event::listen('acceptQuest', function(Character $character, Quest $quest)
 {
 	ActivityBar::add($character, 1);
-	
-	/*
-	 *	No nos olvidamos de trabajar con los
-	 *	triggers que tengan de evento 'acceptQuest'
-	 */
-	$characterTriggers = $character->triggers()->where('event', '=', 'acceptQuest')->select(array('id', 'class_name'))->get();
-	$className = null;
-	
-	$obj;
-
-	foreach ($characterTriggers as $characterTrigger) {
-		$className = $characterTrigger->class_name;
-		$obj = new $className($character);
-		
-		/*if ( $className::onAcceptQuest($character, $quest) )
-		{
-			$characterTrigger->delete();
-		}*/
-		
-		if ( $obj->run('acceptQuest', $quest) )
-		{
-			$characterTrigger->delete();
-		}
-	}
 });
 
 Event::listen('unequipItem', function(CharacterItem $characterItem)
@@ -147,21 +106,6 @@ Event::listen('unequipItem', function(CharacterItem $characterItem)
 						}
 					}
 				}
-
-				/*
-				 *	No nos olvidamos de trabajar con los
-				 *	triggers que tengan de evento 'equipItem'
-				 */
-				$characterTriggers = $character->triggers()->where('event', '=', 'unequipItem')->select(array('id', 'class_name'))->get();
-				$className = null;
-
-				foreach ($characterTriggers as $characterTrigger) {
-					$className = $characterTrigger->class_name;
-					if ( $className::onEquipItem($item) )
-					{
-						$characterTrigger->delete();
-					}
-				}
 			}
 		}
 	}
@@ -169,7 +113,6 @@ Event::listen('unequipItem', function(CharacterItem $characterItem)
 
 Event::listen('battle', function($character_one, $character_two, $winner = null)
 {
-	//$character = Character::get_character_of_logged_user();
 	$character = $character_one;
 
 	if ( Tournament::is_active() )
@@ -196,21 +139,6 @@ Event::listen('battle', function($character_one, $character_two, $winner = null)
 
 				$tournament->update_battle_counter();
 			}
-		}
-	}
-
-	/*
-	 *	No nos olvidamos de trabajar con los
-	 *	triggers que tengan de evento 'battle'
-	 */
-	$characterTriggers = $character->triggers()->where('event', '=', 'battle')->select(array('id', 'class_name'))->get();
-	$className = null;
-
-	foreach ($characterTriggers as $characterTrigger) {
-		$className = $characterTrigger->class_name;
-		if ( $className::onBattle($character_one, $character_two) )
-		{
-			$characterTrigger->delete();
 		}
 	}
 });
@@ -295,21 +223,6 @@ Event::listen('equipItem', function(CharacterItem $characterItem, $amount = 1)
 						}
 					}
 				}
-
-				/*
-				 *	No nos olvidamos de trabajar con los
-				 *	triggers que tengan de evento 'equipItem'
-				 */
-				$characterTriggers = $character->triggers()->where('event', '=', 'equipItem')->select(array('id', 'class_name'))->get();
-				$className = null;
-
-				foreach ($characterTriggers as $characterTrigger) {
-					$className = $characterTrigger->class_name;
-					if ( $className::onEquipItem($character, $item) )
-					{
-						$characterTrigger->delete();
-					}
-				}
 			}
 		}
 	}
@@ -317,65 +230,15 @@ Event::listen('equipItem', function(CharacterItem $characterItem, $amount = 1)
 
 Event::listen('pveBattle', function(Character $character, Npc $monster, $winner)
 {
-	if ( $character && $monster )
+	if ( $winner && $winner->id == $character->id )
 	{
-		/*
-		 *	No nos olvidamos de trabajar con los
-		 *	triggers que tengan de evento 'equipItem'
-		 */
-		$characterTriggers = $character->triggers()->where('event', '=', 'pveBattle')->select(array('id', 'class_name'))->get();
-		$className = null;
+		$characterQuests = $character->quests_with_action('kill')
+									 ->where('progress', '=', 'started')
+									 ->get();
 
-		/*
-		foreach ($characterTriggers as $characterTrigger) {
-			$className = $characterTrigger->class_name;
-			if ( $className::onPveBattle($character, $monster) )
-			{
-				$characterTrigger->delete();
-			}
-		}
-		*/
-		
-		$obj;
-
-		foreach ($characterTriggers as $characterTrigger) {
-			$className = $characterTrigger->class_name;
-			$obj = new $className($character);
-			
-			if ( $obj->run('pveBattle', $monster) )
-			{
-				$characterTrigger->delete();
-			}
-		}
-
-		if ( $winner )
+		foreach ( $characterQuests as $characterQuest )
 		{
-			if ( $winner->id == $character->id )
-			{
-				$characterTriggers = $character->triggers()->where('event', '=', 'pveBattleWin')->select(array('id', 'class_name'))->get();
-				$className = null;
-
-				/*
-				foreach ($characterTriggers as $characterTrigger) {
-					$className = $characterTrigger->class_name;
-					
-					if ( $className::onPveBattleWin($character, $monster) )
-					{
-						$characterTrigger->delete();
-					}
-				}
-				*/
-				
-				foreach ($characterTriggers as $characterTrigger) {
-					$className = $characterTrigger->class_name;
-					$obj = new $className($character);
-					
-					if ( $obj->run('pveBattleWin', $monster) )
-					{
-						$characterTrigger->delete();
-					}
-				}
-			}
+			$characterQuest->kill_npc($monster);
 		}
 	}
 });

@@ -9,12 +9,14 @@ class CharacterQuest extends Base_Model
 
 	public function get_data()
 	{
-		if ( is_array($this->get_attribute('data')) )
+		$data = $this->get_attribute('data');
+
+		if ( is_array($data) )
 		{
-			return $this->get_attribute('data');
+			return $data;
 		}
 
-		return unserialize($this->get_attribute('data'));
+		return unserialize($data);
 	}
 
 	public function set_data($data)
@@ -22,96 +24,174 @@ class CharacterQuest extends Base_Model
 		$this->set_attribute('data', serialize($data));
 	}
 
-	public function get_progress_for_view()
+	/**
+	 * Obtenemos el data con los valores iniciales que son requeridos
+	 * tales como nombre del npc, la accion que hay que realizar con
+	 * el mismo (hablar, matar, etc.) y la cantidad de veces que
+	 * tenemos que realizar esta accion
+	 *
+	 * @param Quest $quest
+	 * @return array
+	 */
+	public function get_initial_data_for_quest(Quest $quest)
 	{
-		/*
-		$progresses = $this->data['progress_for_view'];
-		$stringToView = "";
+		$questNpcs = $quest->quest_npcs;
+		$data = array();
 
-		foreach ( $progresses as $progress )
+		foreach ( $questNpcs as $questNpc )
 		{
-			$stringToView .= "<li>$progress</li>";
+			$npc = $questNpc->npc()->select(array('id', 'name'))->first();
+
+			if ( $npc )
+			{
+				if ( ! isset($data[$questNpc->action]) )
+				{
+					$data[$questNpc->action] = array();
+				}
+
+				$data[$questNpc->action][$questNpc->npc_id] = array(
+					'name' => $npc->name,
+					'amount' => 0,
+					'needed_amount' => $questNpc->amount,
+					'completed' => false,
+				);
+			}
 		}
 
-		return "<ul>$stringToView</ul>";
-		*/
-		
+		return $data;
+	}
+
+	/**
+	 * Obtenemos un string con formato del progreso
+	 * de la mision del personaje
+	 *
+	 * @return string
+	 */
+	public function get_progress_for_view()
+	{
 		$data = $this->data;
 		$stringToView = '';
 		
-		if ( ! is_array($data) )
+		foreach ( $data as $action => $npcsId )
 		{
-			return;
-		}
-		
-		foreach ( $data as $text_for_view )
-		{
-			if ( isset($text_for_view['text_for_view']) )
+			foreach ( $npcsId as $npcId )
 			{
-				// Evitamos cadenas vacias
-				if ( $text_for_view['text_for_view'] ) 
+				$stringToView .= '<li>';
+
+				switch ( $action )
 				{
-					$stringToView .= '<li>' . $text_for_view['text_for_view'] . '</li>';
+					case 'talk':
+						$stringToView .= 'Hablar con ' . $npcId['name'];
+						break;
+
+					case 'kill':
+						$stringToView .= 'Derrotar ' . $npcId['name'];
+						break;
 				}
+
+				$stringToView .= ': ' . $npcId['amount'] . '/' . $npcId['needed_amount'];
+
+				if ( $npcId['completed'] )
+				{
+					$stringToView .= ' (Completado)';
+				}
+
+				$stringToView .= '</li>';
 			}
 		}
 		
 		return "<ul>$stringToView</ul>";
 	}
-	
-	public function set_var($key, $value, $textForView = null, $strike = false)
+
+	/**
+	 * Verificamos si personaje termino mision
+	 *
+	 * @return bool
+	 */
+	function is_completed()
 	{
+		if ( $this->progress != 'started' )
+		{
+			return true;
+		}
+
 		$data = $this->data;
-		
-		if ( ! is_array($data) )
+
+		foreach ( $data as $actions )
 		{
-			$data = array();
-		}
-		
-		if ( ! isset($data[$key]) )
-		{
-			$data[$key] = array();
-		}
-		
-		$data[$key]['value'] = $value;
-		
-		if ( $textForView )
-		{
-			$data[$key]['text_for_view'] = $textForView;
-		}
-		
-		if ( $strike )
-		{
-			if ( $data[$key]['text_for_view'] )
+			foreach ( $actions as $npc )
 			{
-				$data[$key]['text_for_view'] = '<s>' . $data[$key]['text_for_view'] . '</s>';
+				if ( ! $npc['completed'] )
+				{
+					return false;
+				}
 			}
 		}
-		
+
+		return true;
+	}
+
+	/**
+	 * Actualizamos progreso en mision de personaje
+	 *
+	 * @param $action
+	 * @param $npc      Id del NPC o instancia de Npc
+	 */
+	private function make_npc_progress($action, $npc)
+	{
+		if ( ! $npc instanceof Npc )
+		{
+			$npc = Npc::select(array('id'))->where('id', '=', $npc)->first();
+		}
+
+		if ( ! $npc )
+		{
+			return;
+		}
+
+		$data = $this->data;
+
+		if ( ! isset($data[$action][$npc->id]) )
+		{
+			return;
+		}
+
+		$data[$action][$npc->id]['amount']++;
+
+		if ( $data[$action][$npc->id]['amount'] >= $data[$action][$npc->id]['needed_amount'] )
+		{
+			$data[$action][$npc->id]['amount'] = $data[$action][$npc->id]['needed_amount'];
+			$data[$action][$npc->id]['completed'] = true;
+		}
+
 		$this->data = $data;
+
+		if ( $this->is_completed() )
+		{
+			$this->progress = 'reward';
+		}
+
 		$this->save();
 	}
-	
-	public function get_var($key)
+
+	/**
+	 * Actualizamos progreso de hablar con Npc
+	 *
+	 * @param $npc Instance de Npc o id de npc
+	 */
+	public function talk_to_npc($npc)
 	{
-		$data = $this->data;
-		
-		if ( ! is_array($data) )
-		{
-			return null;
-		}
-		
-		if ( ! isset($data[$key]) )
-		{
-			return null;
-		}
-		
-		if ( ! isset($data[$key]['value']) )
-		{
-			return null;
-		}
-		
-		return $data[$key]['value'];
+		$this->make_npc_progress('talk', $npc);
+	}
+
+	/**
+	 * Actualizamos progreso de matar Npc
+	 *
+	 * @param $npc Instancia de Npc o id de npc
+	 */
+	public function kill_npc($npc)
+	{
+		$this->make_npc_progress('kill', $npc);
 	}
 
 	public function quest()

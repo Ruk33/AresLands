@@ -2460,6 +2460,20 @@ class Character extends Base_Model
 		return $this->has_many('CharacterQuest', 'character_id');
 	}
 
+	/**
+	 * Obtenemos todas las quest del personaje con una accion especifica
+	 *
+	 * @param $action
+	 * @return Eloquent
+	 */
+	public function quests_with_action($action)
+	{
+		return $this->quests()
+					->join('quest_npcs', 'quest_npcs.quest_id', '=', 'character_quests.quest_id')
+					->where('action', '=', $action)
+					->select(array('character_quests.*'));
+	}
+
 	public function triggers()
 	{
 		return $this->has_many('CharacterTrigger', 'character_id');
