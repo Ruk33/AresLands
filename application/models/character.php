@@ -27,6 +27,25 @@ class Character extends Base_Model
 	);
 
 	/**
+	 * Verificamos si tiene segundo mercenario
+	 * @return bool
+	 */
+	public function has_second_mercenary()
+	{
+		if ( ! $this->has_skill(Config::get('game.invocation')) )
+		{
+			return false;
+		}
+
+		if ( ! $this->second_mercenary )
+		{
+			return false;
+		}
+
+		return true;
+	}
+
+	/**
 	 * Verificamos si personaje puede pasarle el liderazgo del grupo
 	 * a otro personaje
 	 *
@@ -1933,6 +1952,21 @@ class Character extends Base_Model
 		$stats['stat_magic'] = $this->stat_magic + $this->stat_magic_extra;
 		$stats['stat_magic_skill'] = $this->stat_magic_skill + $this->stat_magic_skill_extra;
 		$stats['stat_magic_resistance'] = $this->stat_magic_resistance + $this->stat_magic_resistance_extra;
+
+		if ( $this->has_second_mercenary() )
+		{
+			$second_mercenary = Item::find($this->second_mercenary);
+
+			if ( $second_mercenary )
+			{
+				$stats['stat_strength'] += $second_mercenary->stat_strength;
+				$stats['stat_dexterity'] += $second_mercenary->stat_dexterity;
+				$stats['stat_resistance'] += $second_mercenary->stat_resistance;
+				$stats['stat_magic'] += $second_mercenary->stat_magic;
+				$stats['stat_magic_skill'] += $second_mercenary->stat_magic_skill;
+				$stats['stat_magic_resistance'] += $second_mercenary->stat_magic_resistance;
+			}
+		}
 
 		return $stats;
 	}

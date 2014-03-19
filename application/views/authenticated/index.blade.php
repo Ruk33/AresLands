@@ -193,6 +193,20 @@
 				@endif
 			</div>
 			<!-- END AYUDANTE -->
+
+			<!-- AYUDANTE SECUNDARIO -->
+			@if ( $character->has_second_mercenary() )
+				<?php $mercenary = Item::find($character->second_mercenary); ?>
+				@if ( $mercenary )
+				<div style="position: absolute; left: 40px; top: 65px;">
+					<div class="box box-box-64-green">
+						<img src="{{ URL::base() }}/img/icons/items/{{ $mercenary->id }}.png" alt="" width="64px" height="64px" data-toggle="tooltip" data-placement="top" data-original-title="
+						{{ $mercenary->get_text_for_tooltip() }}">
+					</div>
+				</div>
+				@endif
+			@endif
+			<!-- END AYUDANTE SECUNDARIO -->
 			
 			<!-- PERSONAJE -->
 			<img src="{{ URL::base() }}/img/characters/{{ $character->race }}_{{ $character->gender }}_999.png" alt="">

@@ -20,6 +20,7 @@ return array(
 	'trap_skill' => 64,
 	'concede_skill' => 55,
 	'concede_member_skill' => 75,
+	'invocation' => 62,
 	
 	'trap_skills' => array(
 		47, // grito

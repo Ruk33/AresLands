@@ -106,7 +106,8 @@ class Authenticated_Controller extends Base_Controller
 			'xp',
 			'xp_next_level',
 			'regeneration_per_second',
-			'regeneration_per_second_extra'
+			'regeneration_per_second_extra',
+			'second_mercenary'
 		));
 		
 		/*
