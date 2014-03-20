@@ -237,6 +237,15 @@ class Battle
 				{
 					$coins = 0;
 				}
+				else
+				{
+					$drops = $this->loser->get_drop();
+
+					foreach ( $drops as $drop )
+					{
+						$this->winner->add_item($drop['item_id'], $drop['amount']);
+					}
+				}
 			}
 			
 			if ( $this->loser instanceof Character )
@@ -294,7 +303,7 @@ class Battle
 			
 			$this->add_blank_space();
 			$this->add_message_to_log($this->winner->name . ' recibe (' . $percentage . '% robado del enemigo): ' . Item::get_divided_coins($coins)['text'], true);
-			
+
 			$this->winner->add_coins($coins);
 		}
 	}
@@ -592,8 +601,6 @@ class Battle
 			
 			$defender['current_life'] -= $realDamage;
 			$attacker['damage_done'] += $realDamage;
-			
-			//self::after_hit($attacker, $defender, $realDamage);
 			
 			$randomMessage = sprintf(self::get_random_message($attacker['is_magic']), $attacker['name'], $defender['name']);
 			
