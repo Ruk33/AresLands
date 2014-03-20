@@ -50,8 +50,8 @@
 </div>
 
 <div>
-<label>time_to_appear</label>
-{{ Form::number('time_to_appear', Input::old('time_to_appear', ( $editMode ) ? $npc->time_to_appear : 0)) }}
+<label>level_to_appear</label>
+{{ Form::number('level_to_appear', Input::old('level_to_appear', ( $editMode ) ? $npc->level_to_appear : 0)) }}
 </div>
 
 <h4>Tipo (npc, monstruo, etc.)</h4>

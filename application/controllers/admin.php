@@ -225,7 +225,7 @@ class Admin_Controller extends Base_Controller
 		$npc->dialog = $inputs['dialog'];
 		$npc->tooltip_dialog = $inputs['tooltip_dialog'];
 		$npc->zone_id = $inputs['zone_id'];
-		$npc->time_to_appear = $inputs['time_to_appear'];
+		$npc->level_to_appear = $inputs['level_to_appear'];
 		$npc->type = $inputs['type'];
 		$npc->level = $inputs['level'];
 		$npc->life = $inputs['life'];

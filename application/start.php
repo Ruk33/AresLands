@@ -63,40 +63,6 @@ Autoloader::map(array(
 	'Base_Model' => path('app').'models/base_model.php',
 	
 	'Battle' => path('app').'libraries/battle.php',
-	
-	'QuestAction' => path('app').'libraries/questaction.php',
-	'QuestActionPve' => path('app').'libraries/questactionpve.php',
-	'QuestActionPveWin' => path('app').'libraries/questactionpvewin.php',
-	'QuestActionNpcTalk' => path('app').'libraries/questactionnpctalk.php',
-	'QuestActionNpcTalkAndGiveItem' => path('app').'libraries/questactionnpctalkandgiveitem.php',
-
-	/*
-	 *	Registramos las misiones
-	 */	
-	'Quest_AyudaATuPueblo' => path('app').'libraries/quest_ayudaatupueblo.php',
-	'Quest_PlagaDeSerpientes' => path('app').'libraries/quest_plagadeserpientes.php',
-	'Quest_CazadoresImplacables' => path('app').'libraries/quest_cazadoresimplacables.php',
-	'Quest_PlagaDeRatas' => path('app').'libraries/quest_plagaderatas.php',
-	
-	'Quest_LasMinasEstanBajoAtaque' => path('app').'libraries/quest_lasminasestanbajoataque.php',
-	'Quest_CuidadoLaCosecha' => path('app').'libraries/quest_cuidadolacosecha.php',
-	'Quest_LaTribuDeOrcos' => path('app').'libraries/quest_latribudeorcos.php',
-	'Quest_SuenoPerturbado' => path('app').'libraries/quest_suenoperturbado.php',
-	
-	'Quest_VoladoresNocturnos' => path('app').'libraries/quest_voladoresnocturnos.php',
-	'Quest_EnemigoEscondido' => path('app').'libraries/quest_enemigoescondido.php',
-	'Quest_BandidosAlAcecho' => path('app').'libraries/quest_bandidosalacecho.php',
-	'Quest_PocoPorAquiMuchoPorAlli' => path('app').'libraries/quest_pocoporaquimuchoporalli.php',
-	
-	'Quest_EnsenandoUnaLeccion' => path('app').'libraries/quest_ensenandounaleccion.php',
-	'Quest_AplastaALasTectites' => path('app').'libraries/quest_aplastaalastectites.php',
-	'Quest_LosDemoniosCaeran' => path('app').'libraries/quest_losdemonioscaeran.php',
-	'Quest_MostrandoSupremacia' => path('app').'libraries/quest_mostrandosupremacia.php',
-	
-	'Quest_RicosMinerales' => path('app').'libraries/quest_ricosminerales.php',
-	'Quest_AcabaConElMal' => path('app').'libraries/quest_acabaconelmal.php',
-	'Quest_VenceAUnaReina' => path('app').'libraries/quest_venceaunareina.php',
-	'Quest_DestruyeASusLideres' => path('app').'libraries/quest_destruyeasuslideres.php',
 ));
 
 /*
