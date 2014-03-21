@@ -389,10 +389,12 @@ class Battle
 
 		if ( $target instanceof Character )
 		{
+			Event::fire('battle', array($this->_attacker, $this->_target, $this->_winner));
 			$attacker->after_pvp_battle();
 		}
 		else
 		{
+			Event::fire('pveBattle', array($this->_attacker, $this->_target, $this->_winner));
 			$attacker->after_battle();
 		}
 
