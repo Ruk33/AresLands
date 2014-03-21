@@ -334,21 +334,21 @@ class Message extends Base_Model
 		if ( $battle->get_attacker()->id == $sender->id )
 		{
 			$message->subject = 'Has atacado a ' . $battle->get_target()->name;
+			$message->type = 'attack';
 		}
 		else
 		{
 			$message->subject = $battle->get_attacker()->name . ' te ha atacado';
+			$message->type = 'defense';
 		}
 
 		if ( $battle->get_target() instanceof Character )
 		{
 			$message->content = View::make('messages.battlepvp')->with('battle', $battle)->render();
-			$message->type = 'attack';
 		}
 		else
 		{
 			$message->content = View::make('messages.battlepve')->with('battle', $battle)->render();
-			$message->type = 'defense';
 		}
 
 		$message->is_special = true;
