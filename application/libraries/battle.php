@@ -353,6 +353,11 @@ class Battle
 		$this->_attacker->check_skills_time();
 		$this->_target->check_skills_time();
 
+		if ( $this->_target instanceof Character )
+		{
+			$target->regenerate_life(true);
+		}
+
 		if ( $this->_pair )
 		{
 			$this->_pair->check_skills_time();
@@ -380,6 +385,15 @@ class Battle
 		if ( $this->_pair )
 		{
 			Message::battle_report($this->_attacker, $this->_pair, $this);
+		}
+
+		if ( $target instanceof Character )
+		{
+			$attacker->after_pvp_battle();
+		}
+		else
+		{
+			$attacker->after_battle();
 		}
 
 		$this->_attacker->save();
