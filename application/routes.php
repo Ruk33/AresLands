@@ -228,7 +228,7 @@ Event::listen('equipItem', function(CharacterItem $characterItem, $amount = 1)
 	}
 });
 
-Event::listen('pveBattle', function(Character $character, Npc $monster, $winner)
+Event::listen('pveBattle', function(Character $character, Monster $monster, $winner)
 {
 	if ( $winner && $winner->id == $character->id )
 	{
