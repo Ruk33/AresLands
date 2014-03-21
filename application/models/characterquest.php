@@ -139,7 +139,7 @@ class CharacterQuest extends Base_Model
 	 */
 	private function make_npc_progress($action, $npc)
 	{
-		if ( ! $npc instanceof Npc )
+		if ( ! $npc instanceof Npc && ! $npc instanceof Monster )
 		{
 			$npc = Npc::select(array('id'))->where('id', '=', $npc)->first();
 		}
