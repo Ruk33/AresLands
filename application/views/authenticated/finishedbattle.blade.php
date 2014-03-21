@@ -1,3 +1,5 @@
+<h2>Reporte de batalla</h2>
+
 <ul class="inline">
 	<li style="width: 250px;">
 		<div class="thumbnail text-center">
@@ -18,5 +20,16 @@
 	</li>
 </ul>
 
+<h2>Informacion</h2>
+<ul class="unstyled">
+	<li>Daño realizado por {{ $winner->name }}: {{ $damageByWinner }}</li>
+	<li>Daño realizado por {{ $loser->name }}: {{ $damageByLoser }}</li>
+	@if ( $pair )
+	<li>Daño realizado por {{ $pair->name }}: {{ $damageByPair }}</li>
+	@endif
+</ul>
+
 <h2>Desarrollo de la pelea</h2>
-<p>{{ $message }}</p>
+@foreach ( $log as $message )
+	<p>{{ $message }}</p>
+@endforeach

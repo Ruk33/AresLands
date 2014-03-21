@@ -204,28 +204,4 @@ class Npc extends Base_Model
 	{
 		return $this->has_many('NpcMerchandise', 'npc_id');
 	}
-
-	/**
-	 * Obtenemos los objetos que dropeo el bicho
-	 * @return array
-	 */
-	public function get_drop()
-	{
-		$drops = array();
-
-		foreach ( $this->drops as $drop )
-		{
-			if ( mt_rand(0, 100) <= $drop->chance )
-			{
-				$drops[] = array('item_id' => $drop->item_id, 'amount' => $drop->amount);
-			}
-		}
-
-		return $drops;
-	}
-
-	public function drops()
-	{
-		return $this->has_many("MonsterDrop", "monster_id");
-	}
 }

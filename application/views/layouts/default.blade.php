@@ -360,6 +360,10 @@
 									<i class="icon icon-exclamation-sign icon-white"></i>
 									<a href="{{ URL::to('authenticated/battle') }}">Batallar</a>
 								</li>
+								<li>
+									<i class="icon icon-exclamation-sign icon-white"></i>
+									<a href="{{ URL::to('authenticated/battleDungeon') }}">Calabozos</a>
+								</li>
 								@endif
 	
 								@if ( $character->can_explore() )

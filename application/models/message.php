@@ -196,119 +196,6 @@ class Message extends Base_Model
 		$message->save();
 	}
 
-	public static function defense_report($receiver, $attacker, $battleMessage, $winner)
-	{
-		$message = new Message();
-
-		$message->sender_id = $attacker->id;
-		$message->receiver_id = $receiver->id;
-
-		$message->subject = '¡Te han atacado!';
-
-		$message->content = sprintf('
-			<ul class="inline">
-				<li style="width: 250px;">
-					<div class="thumbnail text-center">
-						<img src="%1$s/img/characters/%2$s_%3$s_%4$s.png" alt="">
-
-						<h3>%5$s</h3>
-					</div>
-				</li>
-
-				<li style="vertical-align: 100px; width: 175px;">
-					<p class="text-center" style="font-family: georgia; font-size: 32px;">contra</p>
-				</li>
-
-				<li style="width: 250px;">
-					<div class="thumbnail text-center">
-						<img src="%1$s/img/characters/%6$s_%7$s_%8$s.png" alt="">
-
-						<h3>%9$s</h3>
-					</div>
-				</li>
-			</ul>
-
-			<h2>Desarrollo de la pelea</h2>
-			<p>' . $battleMessage . '</p>',
-			
-			URL::base(),
-
-			$attacker->race,
-			$attacker->gender,
-			( $attacker->id == $winner->id ) ? 'win' : 'lose',
-			$attacker->name,
-
-			$receiver->race,
-			$receiver->gender,
-			( $receiver->id == $winner->id ) ? 'win' : 'lose',
-			$receiver->name
-		);
-
-		$message->unread = true;
-		$message->date = time();
-		$message->type = 'defense';
-
-		$message->is_special = true;
-
-		$message->save();
-	}
-
-	public static function attack_report($receiver, $target, $battleMessage, $winner)
-	{
-		$message = new Message();
-
-		$message->sender_id = $receiver->id;
-		$message->receiver_id = $receiver->id;
-
-		$message->subject = 'Atacaste a ' . $target->name;
-		$message->content = sprintf('
-			<ul class="inline">
-				<li style="width: 250px;">
-					<div class="thumbnail text-center">
-						<img src="%1$s/img/characters/%2$s_%3$s_%4$s.png" alt="">
-
-						<h3>%5$s</h3>
-					</div>
-				</li>
-
-				<li style="vertical-align: 100px; width: 175px;">
-					<p class="text-center" style="font-family: georgia; font-size: 32px;">contra</p>
-				</li>
-
-				<li style="width: 250px;">
-					<div class="thumbnail text-center">
-						<img src="%1$s/img/characters/%6$s_%7$s_%8$s.png" alt="">
-
-						<h3>%9$s</h3>
-					</div>
-				</li>
-			</ul>
-
-			<h2>Desarrollo de la pelea</h2>
-			<p>' . $battleMessage . '</p>',
-			
-			URL::base(),
-
-			$receiver->race,
-			$receiver->gender,
-			( $receiver->id == $winner->id ) ? 'win' : 'lose',
-			$receiver->name,
-
-			$target->race,
-			$target->gender,
-			( $target->id == $winner->id ) ? 'win' : 'lose',
-			$target->name
-		);
-
-		$message->unread = false;
-		$message->date = time();
-		$message->type = 'attack';
-
-		$message->is_special = true;
-
-		$message->save();
-	}
-
 	public static function exploration_finished($receiver, $monster, $battleMessage, $winner)
 	{
 		$message = new Message();
@@ -429,5 +316,47 @@ class Message extends Base_Model
 		$message->type = 'received';
 
 		$message->save();
+	}
+
+	/**
+	 * @param Character $sender
+	 * @param Character $receiver
+	 * @param Battle    $battle
+	 * @return Message
+	 */
+	public static function battle_report(Character $sender, Character $receiver, Battle $battle)
+	{
+		$message = new Message();
+
+		$message->sender_id = $sender->id;
+		$message->receiver_id = $receiver->id;
+
+		if ( $battle->get_attacker()->id == $sender->id )
+		{
+			$message->subject = 'Has atacado a ' . $battle->get_target()->name;
+		}
+		else
+		{
+			$message->subject = $battle->get_attacker()->name . ' te ha atacado';
+		}
+
+		if ( $battle->get_target() instanceof Character )
+		{
+			$message->content = View::make('messages.battlepvp')->with('battle', $battle)->render();
+			$message->type = 'attack';
+		}
+		else
+		{
+			$message->content = View::make('messages.battlepve')->with('battle', $battle)->render();
+			$message->type = 'defense';
+		}
+
+		$message->is_special = true;
+		$message->unread = true;
+		$message->date = time();
+
+		$message->save();
+
+		return $message;
 	}
 }

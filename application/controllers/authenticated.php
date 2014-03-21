@@ -1662,24 +1662,6 @@ class Authenticated_Controller extends Base_Controller
 			return Redirect::to('authenticated/messages/');
 		}
 	}
-
-//	public function get_messages($messageId = 0)
-//	{
-//		$character = Character::get_character_of_logged_user(array('id'));
-//		
-//		/*
-//		 *	Obtenemos todos los mensajes del personaje
-//		 */
-//		$messages = array();
-//		$messages['received'] = $character->messages()->select(array('id', 'sender_id', 'subject', 'unread', 'date'))->where('type', '=', 'received')->order_by('date', 'desc')->get();
-//		//$messages['sent'] = Message::select(array('id', 'sender_id', 'subject', 'unread', 'date'))->where('sender_id', '=', $character->id)->where('type', '=', 'received')->order_by('date', 'desc')->get();
-//		$messages['attack'] = $character->messages()->select(array('id', 'sender_id', 'subject', 'unread', 'date'))->where('type', '=', 'attack')->order_by('date', 'desc')->get();
-//		$messages['defense'] = $character->messages()->select(array('id', 'sender_id', 'subject', 'unread', 'date'))->where('type', '=', 'defense')->order_by('date', 'desc')->get();
-//
-//		$this->layout->title = 'Mensajes';
-//		$this->layout->content = View::make('authenticated.messages')
-//		->with('messages', $messages);
-//	}
 	
 	public function get_messages($type = 'received')
 	{
@@ -1765,38 +1747,12 @@ class Authenticated_Controller extends Base_Controller
 		}
 	}
 
-	public function get_toBattleMonster()
-	{
-		if ( Session::has('character_id') && Session::has('monster_id') && Session::has('winner_id') && Session::has('log_id') )
-		{
-			$character = Character::find((int) Session::get('character_id'));
-			$monster = Npc::find((int) Session::get('monster_id'));
-			$winner = ( $character->id == Session::get('winner_id') ) ? $character : $monster;
-			$log = BattleLog::find((int) Session::get('log_id'));
-			
-			$message = $log->message;
-			
-			$log->delete();
-			
-			$this->layout->title = '¡Ganador ' . $winner->name . '!';
-			$this->layout->content = View::make('authenticated.finishedbattlemonster')
-			->with('character', $character)
-			->with('monster', $monster)
-			->with('winner', $winner)
-			->with('message', $message);
-		}
-		else
-		{
-			return Redirect::to('authenticated/index/');
-		}
-	}
-
 	public function post_toBattleMonster()
 	{
 		$monsterId = Input::get('monster_id');
 		
 		$character = Character::get_character_of_logged_user();
-		$monster = ( $monsterId ) ? Npc::where('type', '=', 'monster')->where('zone_id', '=', $character->zone_id)->find((int) $monsterId) : false;
+		$monster = ( $monsterId ) ? Monster::where('type', '=', 'monster')->where('zone_id', '=', $character->zone_id)->find((int) $monsterId) : false;
 		
 		if ( $monster )
 		{
@@ -1809,45 +1765,12 @@ class Authenticated_Controller extends Base_Controller
 				Session::flash('errorMessage', 'Aún no puedes pelear');
 				return Redirect::to('authenticated/battle/');
 			}
-			
-			$winner = $battle->get_winner();
-			
-			return Redirect::to('authenticated/toBattleMonster')
-			->with('character_id', $character->id)
-			->with('monster_id', $monster->id)
-			->with('winner_id', $winner->id)
-			->with('log_id', $battle->log->id);
+
+			return Redirect::to('authenticated/readMessage/' . $battle->get_attacker_notification_message()->id);
 		}
 		else
 		{
 			return Redirect::to('authenticated/battle/');
-		}
-	}
-	
-	public function get_toBattle()
-	{
-		if ( Session::has('winner_id') && Session::has('loser_id') && Session::has('log_id') )
-		{
-			$fieldsToSelect = array('id', 'name', 'race', 'gender');
-			
-			$winner = Character::select($fieldsToSelect)->find((int) Session::get('winner_id'));
-			$loser = Character::select($fieldsToSelect)->find((int) Session::get('loser_id'));
-			$log = BattleLog::find((int) Session::get('log_id'));
-			
-			$message = $log->message;
-			
-			// Ya usamos el log, lo borramos
-			$log->delete();
-			
-			$this->layout->title = '¡Ganador ' . $winner->name . '!';
-			$this->layout->content = View::make('authenticated.finishedbattle')
-			->with('winner', $winner)
-			->with('loser', $loser)
-			->with('message', $message);
-		}
-		else
-		{
-			return Redirect::to('authenticated/index/');
 		}
 	}
 
@@ -1940,14 +1863,8 @@ class Authenticated_Controller extends Base_Controller
 			Session::flash('errorMessage', 'Aún no puedes pelear');
 			return Redirect::to('authenticated/battle');
 		}
-		
-		$winner = $battle->get_winner();
-		$loser = $battle->get_loser();
-		
-		return Redirect::to('authenticated/toBattle')
-		->with('winner_id', $winner->id)
-		->with('loser_id', $loser->id)
-		->with('log_id', $battle->log->id);
+
+		return Redirect::to('authenticated/readMessage/' . $battle->get_attacker_notification_message()->id);
 	}
 
 	public function post_battle()
@@ -2091,19 +2008,32 @@ class Authenticated_Controller extends Base_Controller
 		}
 	}
 
+	/* desactivado
+	public function get_battleDungeon()
+	{
+		$character = Character::get_character_of_logged_user(array('id', 'zone_id'));
+		$dungeons = Dungeon::where('zone_id', '=', $character->zone_id)->get();
+
+		$this->layout->title = 'Adentrate en las mazmorras';
+		$this->layout->content = View::make('authenticated.battledungeon')
+									 ->with('character', $character)
+									 ->with('dungeons', $dungeons);
+	}
+	*/
+
 	public function get_battle()
 	{
 		$character = Character::get_character_of_logged_user(array('id', 'zone_id', 'level'));
 
-		$monsters = Npc::where('zone_id', '=', $character->zone_id)
-		->where('type', '=', 'monster')
-		->order_by('level', 'asc')
-		->get();
+		$monsters = Monster::where('zone_id', '=', $character->zone_id)
+						   ->where('type', '=', 'monster')
+						   ->order_by('level', 'asc')
+						   ->get();
 
 		$this->layout->title = '¡Batallar!';
 		$this->layout->content = View::make('authenticated.battle')
-		->with('monsters', $monsters)
-		->with('character', $character);
+		->with('character', $character)
+		->with('monsters', $monsters);
 	}
 
 	public function get_rewardFromQuest($questId = false)

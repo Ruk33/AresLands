@@ -1,6 +1,6 @@
 <?php
 
-class Character extends Base_Model
+class Character extends Attackable
 {
 	public static $softDelete = true;
 	public static $timestamps = false;
@@ -25,6 +25,108 @@ class Character extends Base_Model
 		'gender_required' => 'El género es requerido',
 		'gender_match' => 'El género es incorrecto',
 	);
+
+	/**
+	 * Burlamos a la muerte (usado en batalla)
+	 */
+	public function cheat_death()
+	{
+		$skill = $this->skills()->where('skill_id', '=', Config::get('game.cheat_death_skill'))->first();
+
+		if ( $skill )
+		{
+			$data = $skill->data;
+
+			if ( ! isset($data['cheat_death']) )
+			{
+				$data['cheat_death'] = 5;
+			}
+
+			$data['cheat_death']--;
+
+			if ( $data['cheat_death'] <= 0 )
+			{
+				$this->remove_buff($skill);
+			}
+			else
+			{
+				$skill->data = $data;
+				$skill->save();
+			}
+		}
+	}
+
+	public function get_rewards()
+	{
+		return array(
+			array('item_id' => Config::get('game.xp_item_id'), 'amount' => 1),
+			array('item_id' => Config::get('game.coin_id'), 'amount' => mt_rand(20 * $this->level, 60 * $this->level))
+		);
+	}
+
+	public function get_attack($magical = false)
+	{
+		$attack = 0;
+
+		if ( $magical )
+		{
+			$attack = $this->stat_magic + $this->stat_magic_extra + $this->magic_damage + $this->magic_damage_extra;
+		}
+		else
+		{
+			$attack = $this->stat_strength + $this->stat_strength_extra + $this->physical_damage + $this->physical_damage_extra;
+		}
+
+		return $attack;
+	}
+
+	public function get_resistance($magical = false)
+	{
+		$resistence = 0;
+
+		if ( $magical )
+		{
+			$resistence = $this->stat_magic_resistance + $this->stat_magic_resistance_extra + $this->magic_defense + $this->magic_defense_extra;
+		}
+		else
+		{
+			$resistence = $this->stat_resistance + $this->stat_resistance_extra + $this->physical_defense + $this->physical_defense_extra;
+		}
+
+		return $resistence;
+	}
+
+	public function get_reflected_damage($magical = false)
+	{
+		return ( $magical ) ? $this->reflect_magic_damage + $this->reflect_magic_damage_extra : $this->reflect_physical_damage + $this->reflect_physical_damage_extra;
+	}
+
+	public function get_cd()
+	{
+		if ( $this->attacks_with_magic() )
+		{
+			return 1000 / ($this->stat_magic_skill + $this->stat_magic_skill_extra + $this->attack_speed + $this->attack_speed_extra + 1);
+		}
+		else
+		{
+			return 800 / ($this->stat_dexterity + $this->stat_dexterity_extra + $this->attack_speed + $this->attack_speed_extra + 1);
+		}
+	}
+
+	public function get_critical_chance()
+	{
+		return $this->get_attribute('critical_chance') + $this->critical_chance_extra;
+	}
+
+	public function get_evasion_chance()
+	{
+		return $this->evasion + $this->evasion_extra;
+	}
+
+	public function get_current_life()
+	{
+		return $this->get_attribute('current_life') + $this->max_life_extra;
+	}
 
 	/**
 	 * Verificamos si tiene segundo mercenario
@@ -1535,13 +1637,15 @@ class Character extends Base_Model
 		}
 		else
 		{
-			if ( $this->max_life < $value )
+			$maxLife = $this->max_life + $this->max_life_extra;
+
+			if ( $maxLife < $value )
 			{
-				$value = $this->max_life;
+				$value = $maxLife;
 			}
 		}
 
-		return parent::set_current_life($value);
+		return $this->set_attribute('current_life', $value);
 	}
 
 	public static function logged_user_has_character()
@@ -1923,13 +2027,7 @@ class Character extends Base_Model
 
 	public function battle_against($target, $pair = null)
 	{
-		if ( ! $target || ! $this )
-		{
-			return;
-		}
-
-		$battle = new Battle($this, $target, $pair);
-		return $battle;
+		return new Battle($this, $target, $pair);
 	}
 
 	public function give_explore_reward($reward)
