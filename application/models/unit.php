@@ -7,7 +7,7 @@ abstract class Unit extends Base_Model
 	 *
 	 * @var float
 	 */
-	public $current_life;
+	//public $current_life;
 
 	/**
 	 * @param float $value
