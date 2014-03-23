@@ -183,6 +183,6 @@ abstract class Attackable extends Unit
 			$defense *= 0.75;
 		}
 
-		return $defense;
+		return $defense * 0.4;
 	}
 }

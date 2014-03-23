@@ -2,7 +2,6 @@
 
 /**
  * Class Battle
- * TODO: Usar el id (por ejemplo donde obtenemos el daño realizado por la unidad) puede causar colision (algunos npcs pueden llegar a tener el mismo id que algunos personajes)
  */
 class Battle
 {
@@ -132,6 +131,23 @@ class Battle
 	}
 
 	/**
+	 * Obtenemos un indice seguro (para evitar colisiones)
+	 * @param  Attackable $attackable 
+	 * @return mixed
+	 */
+	private function get_secure_index(Attackable $attackable)
+	{
+		$index = $attackable->id;
+
+		if ( $attackable instanceof Monster )
+		{
+			$index = "npc-{$index}";
+		}
+
+		return $index;
+	}
+
+	/**
 	 * Obtenemos el daño realizado por unidad
 	 *
 	 * @param Attacker $unit
@@ -139,7 +155,8 @@ class Battle
 	 */
 	public function get_damage_done_by(Attackable $unit)
 	{
-		return ( isset($this->_damageDone[$unit->id]) ) ? $this->_damageDone[$unit->id] : 0;
+		$index = $this->get_secure_index($unit);
+		return ( isset($this->_damageDone[$index]) ) ? $this->_damageDone[$index] : 0;
 	}
 
 	/**
@@ -150,7 +167,8 @@ class Battle
 	 */
 	public function get_initial_life_of(Attackable $unit)
 	{
-		return ( isset($this->_initialLife[$unit->id]) ) ? $this->_initialLife[$unit->id] : 0;
+		$index = $this->get_secure_index($unit);
+		return ( isset($this->_initialLife[$index]) ) ? $this->_initialLife[$index] : 0;
 	}
 
 	/**
@@ -252,15 +270,15 @@ class Battle
 	{
 		// Guardamos los cooldown de las unidades
 		$cds = array(
-			$this->_attacker->id => $this->_attacker->get_cd(),
-			$this->_target->id => $this->_target->get_cd(),
+			$this->get_secure_index($this->_attacker) => $this->_attacker->get_cd(),
+			$this->get_secure_index($this->_target) => $this->_target->get_cd(),
 		);
 
 		$source = null;
 		$target = null;
 
-		// Maximo de 100 ataques
-		$attacks = 100;
+		// Maximo de 25 ataques
+		$attacks = 25;
 
 		while ( $attacks > 0 && $this->_attacker->get_current_life() > 0 && $this->_target->get_current_life() > 0 )
 		{
@@ -275,7 +293,7 @@ class Battle
 			}
 			else
 			{
-				if ( $cds[$this->_attacker->id] < $cds[$this->_target->id] )
+				if ( $cds[$this->get_secure_index($this->_attacker)] < $cds[$this->get_secure_index($this->_target)] )
 				{
 					$source = $this->_attacker;
 					$target = $this->_target;
@@ -286,7 +304,7 @@ class Battle
 					$target = $this->_attacker;
 				}
 
-				$cds[$source->id] += $source->get_cd();
+				$cds[$this->get_secure_index($source)] += $source->get_cd();
 			}
 
 			if ( mt_rand(0, 100) <= $target->get_evasion_chance() )
@@ -296,7 +314,7 @@ class Battle
 			else
 			{
 				$damage = Damage::normal($source, $target);
-				$this->_damageDone[$source->id] += $damage;
+				$this->_damageDone[$this->get_secure_index($source)] += $damage;
 
 				if ( $target->get_current_life() <= 0 && $target->has_skill(Config::get('game.cheat_death_skill')) )
 				{
@@ -317,7 +335,7 @@ class Battle
 				if ( $reflectedDamage > 0 && mt_rand(0, 100) <= 33 )
 				{
 					$damage = Damage::to_target($target, $source, $reflectedDamage, $source->attacks_with_magic());
-					$this->_damageDone[$target->id] += $damage;
+					$this->_damageDone[$this->get_secure_index($target)] += $damage;
 
 					$this->_log[] = "{$target->name} refleja {$damage} de daño a {$source->name}.";
 				}
@@ -361,14 +379,14 @@ class Battle
 		if ( $this->_pair )
 		{
 			$this->_pair->check_skills_time();
-			$this->_damageDone[$pair->id] = 0;
+			$this->_damageDone[$this->get_secure_index($pair)] = 0;
 		}
 
-		$this->_damageDone[$attacker->id] = 0;
-		$this->_damageDone[$target->id] = 0;
+		$this->_damageDone[$this->get_secure_index($attacker)] = 0;
+		$this->_damageDone[$this->get_secure_index($target)] = 0;
 
-		$this->_initialLife[$attacker->id] = $attacker->get_current_life();
-		$this->_initialLife[$target->id] = $target->get_current_life();
+		$this->_initialLife[$this->get_secure_index($attacker)] = $attacker->get_current_life();
+		$this->_initialLife[$this->get_secure_index($target)] = $target->get_current_life();
 
 		$this->begin();
 		$this->check_for_protection();

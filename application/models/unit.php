@@ -3,19 +3,16 @@
 abstract class Unit extends Base_Model
 {
 	/**
-	 * Necesario que sea public por Eloquent
+	 * Obtenemos la vida actual final (sumando atributos).
 	 *
-	 * @var float
+	 * @return float
 	 */
-	//public $current_life;
+	abstract public function get_current_life();
 
 	/**
 	 * @param float $value
 	 */
-	public function set_current_life($value)
-	{
-		$this->current_life = $value;
-	}
+	abstract public function set_current_life($value);
 
 	/**
 	 * Verificamos si unidad tiene buff (skill)
@@ -27,11 +24,4 @@ abstract class Unit extends Base_Model
 	{
 		return false;
 	}
-
-	/**
-	 * Obtenemos la vida actual final (sumando atributos).
-	 *
-	 * @return float
-	 */
-	abstract public function get_current_life();
 }

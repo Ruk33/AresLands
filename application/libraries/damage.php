@@ -14,7 +14,7 @@ abstract class Damage
 	 */
 	public static function to_target(Attackable $source, Attackable $target, $amount, $isMagic)
 	{
-		$damage = max(0, number_format($amount - $target->get_armor($isMagic), 2));
+		$damage = max(0, $amount - $target->get_armor($isMagic));
 		$target->set_current_life($target->get_current_life() - $damage);
 
 		return $damage;

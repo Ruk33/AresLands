@@ -38,12 +38,17 @@ class Monster extends Attackable
 
 	public function get_current_life()
 	{
-		if ( ! is_null($this->current_life) )
+		if ( is_null($this->current_life) )
 		{
-			return $this->current_life;
+			$this->current_life = $this->life;
 		}
 
-		return $this->life;
+		return $this->current_life;
+	}
+
+	public function set_current_life($value)
+	{
+		$this->current_life = $value;
 	}
 
 	public function check_skills_time()
@@ -82,7 +87,7 @@ class Monster extends Attackable
 
 	public function get_critical_chance()
 	{
-		return mt_rand(0, 25);
+		return mt_rand(0, 20);
 	}
 
 	public function save()
