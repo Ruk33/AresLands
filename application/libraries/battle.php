@@ -228,6 +228,7 @@ class Battle
 			if ( $this->_winner->level - 2 < $this->_loser->level )
 			{
 				$rewards = $this->_loser->get_rewards();
+				$xpBonus = max(0, $this->_loser->level - 2 - $this->_winner->level) / 5;
 
 				foreach ( $rewards as $reward )
 				{
@@ -235,6 +236,11 @@ class Battle
 
 					if ( $item )
 					{
+						if ( $item->id == Config::get('game.xp_item_id') )
+						{
+							$reward['amount'] += $reward['amount'] * $xpBonus;
+						}
+
 						if ( $this->_winner->add_item($reward['item_id'], $reward['amount']) )
 						{
 							$this->_rewardLog[] = "{$this->_winner->name} obtiene {$reward['amount']} {$item->name}";
