@@ -2379,6 +2379,9 @@ class Character extends Attackable
 		return true;
 	}
 	
+	/**
+	 * @deprecated
+	 */
 	public function after_battle()
 	{
 		$characterActivity = new CharacterActivity();
@@ -2386,6 +2389,17 @@ class Character extends Attackable
 		$characterActivity->character_id = $this->id;
 		$characterActivity->name = 'battlerest';
 		$characterActivity->end_time = time() + Config::get('game.battle_rest_time');
+
+		$characterActivity->save();
+	}
+
+	public function after_dungeon(Dungeon $dungeon)
+	{
+		$characterActivity = new CharacterActivity();
+
+		$characterActivity->character_id = $this->id;
+		$characterActivity->name = 'battlerest';
+		$characterActivity->end_time = time() + $dungeon->rest_time;
 
 		$characterActivity->save();
 	}
@@ -2644,6 +2658,11 @@ class Character extends Attackable
 	public function attack_protections()
 	{
 		return $this->has_many('AttackProtection', 'target_id');
+	}
+
+	public function dungeons()
+	{
+		return $this->has_many('CharacterDungeon', 'character_id');
 	}
 
 	public function activity_bar()

@@ -1,6 +1,8 @@
 <?php
 
 return array(
+	'dungeon_time_per_monster' => 300,
+
 	'cheat_death_skill' => 65,
 	'overload_skill' =>	54,
 	'silence_skill' => 72,

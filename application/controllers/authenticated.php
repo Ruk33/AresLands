@@ -65,7 +65,18 @@ class Authenticated_Controller extends Base_Controller
 			*	en la que está el usuario
 			*/
 		   $npcs = Npc::get_npcs_from_zone($character->zone);
-		   
+
+		   $tournament = null;
+
+			if ( Tournament::is_active() )
+			{
+				$tournament = Tournament::get_active()->first();
+			}
+			else if ( Tournament::is_upcoming() )
+			{
+				$tournament = Tournament::get_upcoming()->first();
+			}
+
             /*
 			 *	Debemos pasar las monedas directamente
 			 *	al layout, puesto que es ahí donde
@@ -75,6 +86,7 @@ class Authenticated_Controller extends Base_Controller
 			$this->layout->with('character', $character);
 			$this->layout->with('startedQuests', $startedQuests);
 			$this->layout->with('npcs', $npcs);
+			$this->layout->with('tournament', $tournament);
 		}
 	}
     
@@ -2008,18 +2020,43 @@ class Authenticated_Controller extends Base_Controller
 		}
 	}
 
-	/* desactivado
-	public function get_battleDungeon()
+	public function post_dungeon()
 	{
-		$character = Character::get_character_of_logged_user(array('id', 'zone_id'));
-		$dungeons = Dungeon::where('zone_id', '=', $character->zone_id)->get();
+		$dungeon = Dungeon::find(Input::get('id'));
+		$redirection = Redirect::to('authenticated');
 
-		$this->layout->title = 'Adentrate en las mazmorras';
-		$this->layout->content = View::make('authenticated.battledungeon')
+		if ( $dungeon )
+		{
+			$character = Character::get_character_of_logged_user();
+
+			if ( $dungeon->can_character_do_dungeon($character) )
+			{
+				$dungeonBattle = new DungeonBattle($character, $dungeon, $dungeon->get_level($character));
+
+				if ( $dungeonBattle->get_completed() )
+				{
+					return $redirection->with('message', '¡Haz completado la mazmorra!');
+				}
+				else
+				{
+					return $redirection->with('error', 'Uno de los monstruos de la mazmorra te ha derrotado');
+				}
+			}
+		}
+
+		return $redirection;
+	}
+
+	public function get_dungeon()
+	{
+		$character = Character::get_character_of_logged_user(array('id', 'zone_id', 'level'));
+		$dungeons = Dungeon::available_for($character)->get();
+
+		$this->layout->title = 'Mazmorras';
+		$this->layout->content = View::make('authenticated.dungeon')
 									 ->with('character', $character)
 									 ->with('dungeons', $dungeons);
 	}
-	*/
 
 	public function get_battle()
 	{

@@ -185,24 +185,6 @@
 
 		<div id="wrap">
 			<div class="container">
-				<!-- Torneo -->
-				@if ( Tournament::is_active() )
-					<div class="pull-left alert alert-info" style="width: 200px; font-size: 12px;">
-						<?php $tournament = Tournament::get_active()->first(); ?>
-						<span>Torneo "{{ $tournament->name }}" finaliza en </span>
-						<span class='timer' data-layout="{hnn}:{mnn}:{snn} y {dn} día(s)" data-endtime='{{ $tournament->ends_at - time() }}'></span>
-					</div>
-				@else
-					@if ( Tournament::is_upcoming() )
-						<?php $tournament = Tournament::get_upcoming()->first(); ?>
-						<div class="pull-left alert alert-info" style="width: 200px; font-size: 12px;">
-							<span>El torneo "{{ $tournament->name }}" comienza en </span>
-							<span class='timer' data-layout="{hnn}:{mnn}:{snn} y {dn} día(s)" data-endtime='{{ $tournament->starts_at - time() }}'></span>
-						</div>
-					@endif
-				@endif
-				<!-- End Torneo -->
-				
 				<div style="position: absolute; right: 10px; top: -70px; padding: 10px; font-size: 12px; color: white; text-transform: uppercase;">
 					Hora del servidor: <span id='serverTime'>00:00:00</span>
 				</div>
@@ -362,7 +344,7 @@
 								</li>
 								<li>
 									<i class="icon icon-exclamation-sign icon-white"></i>
-									<a href="{{ URL::to('authenticated/battleDungeon') }}">Calabozos</a>
+									<a href="{{ URL::to('authenticated/dungeon') }}">Calabozos</a>
 								</li>
 								@endif
 	
@@ -403,6 +385,14 @@
 								<li>
 									<i class="icon icon-fire icon-white"></i>
 									<a href="{{ URL::to('authenticated/tournaments') }}">Torneos</a>
+
+									@if ( $tournament )
+									<div class="pull-right" data-toggle="tooltip" data-placement="top" data-original-title="El torneo {{ $tournament->name }} comienza en {{ date('z \d\i\a\(\s\) H:i:s', $tournament->starts_at) }}">
+										<span class="badge badge-important" style="font-family: arial;">
+											!
+										</span>
+									</div>
+									@endif
 								</li>
 								<li>
 									<i class="icon icon-eye-close icon-white"></i>

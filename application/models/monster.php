@@ -61,13 +61,17 @@ class Monster extends Attackable
 		return $this->has_many("MonsterDrop", "monster_id");
 	}
 
-	public function get_rewards()
+	/**
+	 * @param  integer $dungeonLevel Nivel de dungeon
+	 * @return array
+	 */
+	public function get_rewards($dungeonLevel = 1)
 	{
 		$rewards = array();
 
 		foreach ( $this->drops as $drop )
 		{
-			if ( mt_rand(0, 100) <= $drop->chance )
+			if ( mt_rand(0, 100) <= $drop->chance * $dungeonLevel )
 			{
 				$drops[] = array('item_id' => $drop->item_id, 'amount' => $drop->amount);
 			}

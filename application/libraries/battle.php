@@ -8,63 +8,63 @@ class Battle
 	/**
 	 * @var Attackable
 	 */
-	private $_winner;
+	protected $_winner;
 
 	/**
 	 * @var Attackable
 	 */
-	private $_loser;
+	protected $_loser;
 
 	/**
 	 * @var Message
 	 */
-	private $_attackerNotificationMessage;
+	protected $_attackerNotificationMessage;
 
 	/**
 	 * @var Attackable
 	 */
-	private $_attacker;
+	protected $_attacker;
 
 	/**
 	 * @var Attackable
 	 */
-	private $_target;
+	protected $_target;
 
 	/**
 	 * @var Attackable
 	 */
-	private $_pair;
+	protected $_pair;
 
 	/**
 	 * Mensaje de cada ataque
 	 *
 	 * @var Array
 	 */
-	private $_log = array();
+	protected $_log = array();
 
 	/**
 	 * Historial de recompensas
 	 *
 	 * @var Array
 	 */
-	private $_rewardLog = array();
+	protected $_rewardLog = array();
 
 	/**
 	 * @var Array
 	 */
-	private $_damageDone = array();
+	protected $_damageDone = array();
 
 	/**
 	 * @var Array
 	 */
-	private $_initialLife = array();
+	protected $_initialLife = array();
 
 	/**
 	 * Orbe que fue robado (si hubo)
 	 *
 	 * @var Orb
 	 */
-	private $_stolenOrb;
+	protected $_stolenOrb;
 
 	/**
 	 * @return Attackable
@@ -135,7 +135,7 @@ class Battle
 	 * @param  Attackable $attackable 
 	 * @return mixed
 	 */
-	private function get_secure_index(Attackable $attackable)
+	protected function get_secure_index(Attackable $attackable)
 	{
 		$index = $attackable->id;
 
@@ -182,7 +182,7 @@ class Battle
 	/**
 	 * Verificamos el orbe (en caso de que haya que robar o agregar proteccion)
 	 */
-	private function check_for_orbs()
+	protected function check_for_orbs()
 	{
 		if ( $this->_attacker instanceof Character && $this->_target instanceof Character )
 		{
@@ -213,8 +213,9 @@ class Battle
 
 	/**
 	 * Damos las recompensas al ganador (en caso de ser Character)
+	 * @param  integer $dungeonLevel Nivel del dungeon
 	 */
-	private function give_rewards()
+	protected function give_rewards($dungeonLevel = 1)
 	{
 		ActivityBar::add($this->_attacker, 2);
 
@@ -227,7 +228,7 @@ class Battle
 
 			if ( $this->_winner->level - 2 < $this->_loser->level )
 			{
-				$rewards = $this->_loser->get_rewards();
+				$rewards = $this->_loser->get_rewards($dungeonLevel);
 				$xpBonus = max(0, $this->_loser->level - 2 - $this->_winner->level) / 5;
 
 				foreach ( $rewards as $reward )
@@ -258,7 +259,7 @@ class Battle
 	/**
 	 * Verificamos si es necesario dar protecciones
 	 */
-	private function check_for_protection()
+	protected function check_for_protection()
 	{
 		if ( $this->_attacker instanceof Character && $this->_target instanceof Character )
 		{
@@ -272,7 +273,7 @@ class Battle
 	/**
 	 * Comenzamos la batalla
 	 */
-	private function begin()
+	protected function begin()
 	{
 		// Guardamos los cooldown de las unidades
 		$cds = array(
