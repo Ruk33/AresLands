@@ -387,7 +387,7 @@
 									<a href="{{ URL::to('authenticated/tournaments') }}">Torneos</a>
 
 									@if ( $tournament )
-									<div class="pull-right" data-toggle="tooltip" data-placement="top" data-original-title="El torneo {{ $tournament->name }} comienza en {{ date('z \d\i\a\(\s\) H:i:s', $tournament->starts_at) }}">
+									<div class="pull-right" data-toggle="tooltip" data-placement="top" data-original-title="El torneo {{ $tournament->name }} comienza en {{ date('z \d\i\a\(\s\) H:i:s', $tournament->starts_at - time()) }}">
 										<span class="badge badge-important" style="font-family: arial;">
 											!
 										</span>
