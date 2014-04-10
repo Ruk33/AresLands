@@ -185,14 +185,14 @@
 
 		<div id="wrap">
 			<div class="container">
-				<div style="position: absolute; right: 10px; top: -70px; padding: 10px; font-size: 12px; color: white; text-transform: uppercase;">
+				<div style="position: absolute; text-shadow: black 0 0 5px; right: 10px; top: -50px; padding: 10px; font-size: 12px; color: white; text-transform: uppercase;">
 					Hora del servidor: <span id='serverTime'>00:00:00</span>
 				</div>
 				
 				@if ( isset($character) && isset($npcs) && count($npcs) > 0 )
 					@if ( ! $character->is_traveling )
 					<div class="pull-right">
-						<div id="npcs" class="carousel slide" style="margin: 0; padding: 0;">
+						<div id="npcs" class="carousel slide" style="margin: 0; margin-top: 20px; padding: 0;">
 							<ul class="inline" style="margin: 0; padding: 0;">
 								<li style="width: 440px">
 									<div class="carousel-inner">

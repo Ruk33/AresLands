@@ -1099,21 +1099,17 @@ html, body {
 }
 
 body {
-	/*background-image: url('/img/background3.jpg');*/
 	background-image: url('/img/background8.jpg');
 	background-repeat: no-repeat;
 	background-position: top center;
 }
 
 #wrap {
-	/*width: 1252px;*/
-	/*background-image: url('/img/background4.jpg');*/
-
 	min-height: 100%;
 	height: auto !important;
 	height: 100%;
 	margin: 0 auto -200px;
-	padding-top: 70px;
+	padding-top: 50px;
 }
 
 h1 {
@@ -1197,12 +1193,20 @@ h4 {
 	background-repeat: no-repeat;
 }
 
-.logo {
-	background-image: url('/img/logo.png');
+/*.logo {
+	background-image: url('/img/ares-logo-2.png');
 	background-repeat: no-repeat;
-	width: 320px;
-	height: 74px;
 	display: block;
+	width: 256px;
+	height: 114px;
+}*/
+
+.logo {
+	background-image: url('/img/ares-logo-3.png');
+	background-repeat: no-repeat;
+	display: block;
+	width: 424px;
+	height: 104px;
 }
 
 .mini-player-display {
