@@ -3,6 +3,11 @@
 class DungeonBattle extends Battle
 {
 	/**
+	 * @var Dungeon
+	 */
+	protected $_dungeon = null;
+
+	/**
 	 * Nivel del dungeon
 	 * @var integer
 	 */
@@ -13,6 +18,14 @@ class DungeonBattle extends Battle
 	 * @var boolean
 	 */
 	protected $_completed = false;
+
+	/**
+	 * ¿Puede el personaje recibir la recompensa especial?
+	 * Solamente aquellos que no hayan completado 
+	 * aun la mazmorra y la hayan terminado pueden hacerlo
+	 * @var boolean
+	 */
+	protected $_canGetSpecialReward = false;
 
 	/**
 	 * Verificamos si personaje pudo completar la mazmorra
@@ -33,7 +46,13 @@ class DungeonBattle extends Battle
 
 	protected function give_special_rewards()
 	{
-
+		foreach ( $this->_dungeon->rewards as $reward )
+		{
+			if ( mt_rand(0, 100) <= $reward->chance )
+			{
+				$this->_attacker->add_item($reward->item_id, $reward->amount);
+			}
+		}
 	}
 
 	/**
@@ -62,8 +81,10 @@ class DungeonBattle extends Battle
 	 */
 	public function __construct(Character $character, Dungeon $dungeon, $level = 1)
 	{
+		$this->_dungeon = $dungeon;
 		$this->_attacker = $character;
 		$this->_level = $level;
+		$this->_canGetSpecialReward = $dungeon->get_progress_percent_of($character, $level) != 100;
 
 		$this->_attacker->check_skills_time();
 
@@ -105,12 +126,13 @@ class DungeonBattle extends Battle
 		}
 
 		$this->_completed = $this->_winner->id == $this->_attacker->id;
-		$this->_attacker->after_dungeon();
 
-		if ( $this->_completed )
+		if ( $this->_canGetSpecialReward && $this->_completed )
 		{
 			$this->give_special_rewards();
 		}
+
+		$this->_attacker->after_dungeon();
 
 		ActivityBar::add($this->_attacker, 5);
 

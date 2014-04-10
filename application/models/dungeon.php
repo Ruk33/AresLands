@@ -147,4 +147,13 @@ class Dungeon extends Base_Model
 	{
 		return $this->has_many_and_belongs_to("Monster", "dungeon_monsters");
 	}
+
+	/**
+	 * Query para obtener recompensas de mazmorra
+	 * @return Eloquent
+	 */
+	public function rewards()
+	{
+		return $this->has_many("DungeonReward", "dungeon_id");
+	}
 }
