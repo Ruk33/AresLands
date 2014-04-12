@@ -387,11 +387,15 @@
 									<a href="{{ URL::to('authenticated/tournaments') }}">Torneos</a>
 
 									@if ( $tournament )
-									<div class="pull-right" data-toggle="tooltip" data-placement="top" data-original-title="El torneo {{ $tournament->name }} comienza en {{ date('z \d\i\a\(\s\) H:i:s', $tournament->starts_at - time()) }}">
-										<span class="badge badge-important" style="font-family: arial;">
-											!
-										</span>
-									</div>
+										@if ( Tournament::is_active() )
+											<div class="pull-right" data-toggle="tooltip" data-placement="top" data-original-title="Torneo {{ $tournament->name }} finaliza en {{ date('z \d\i\a\(\s\) H:i:s', $tournament->ends_at - time()) }}">
+										@else
+											<div class="pull-right" data-toggle="tooltip" data-placement="top" data-original-title="El torneo {{ $tournament->name }} comienza en {{ date('z \d\i\a\(\s\) H:i:s', $tournament->starts_at - time()) }}">
+										@endif
+												<span class="badge badge-important" style="font-family: arial;">
+													!
+												</span>
+											</div>
 									@endif
 								</li>
 								<li>

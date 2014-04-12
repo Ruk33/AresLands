@@ -9,6 +9,40 @@ class Monster extends Attackable
 
 	public $current_life = null;
 
+	/**
+	 * Query para obtener bichos disponibles para personaje
+	 * @param  Character $character 
+	 * @return Eloquent
+	 * @deprecated
+	 */
+	public static function get_available_for(Character $character)
+	{
+		return static::where('zone_id', '=', $character->zone_id)
+					 ->where('type', '=', 'monster');
+	}
+
+	/**
+	 * Obtenemos clase (css/estilo) dependiendo de la diferencia
+	 * de nivel entre el personaje y el bicho
+	 * @param  Character $character 
+	 * @return string
+	 */
+	public function get_color_class(Character $character)
+	{
+		$monsterCharacterDifference = $this->level - $character->level;
+
+		if ( $monsterCharacterDifference >= 6 )
+			return 'level-very-high';
+		elseif ( $monsterCharacterDifference >= 4 )
+			return 'level-high';
+		elseif ( $monsterCharacterDifference >= 2 )
+			return 'level-normal';
+		elseif ( $monsterCharacterDifference >= -2 )
+			return 'level-low';
+		else
+			return 'level-very-low';
+	}
+
 	public function get_attack($magical = false)
 	{
 		return ( $magical ) ? $this->stat_magic : $this->_stat_strength;

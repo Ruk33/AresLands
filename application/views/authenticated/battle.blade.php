@@ -99,24 +99,7 @@
 			{{ Form::token() }}
 			{{ Form::hidden('monster_id', $monster->id) }}
 			
-			<?php
-			
-			$monsterCharacterDifference = $monster->level - $character->level;
-			
-			if ( $monsterCharacterDifference >= 6 )
-				$class = 'level-very-high';
-			elseif ( $monsterCharacterDifference >= 4 )
-				$class = 'level-high';
-			elseif ( $monsterCharacterDifference >= 2 )
-				$class = 'level-normal';
-			elseif ( $monsterCharacterDifference >= -2 )
-				$class = 'level-low';
-			else
-				$class = 'level-very-low';
-			
-			?>
-			
-			{{ Form::submit($monster->name, array('class' => 'btn btn-link ' . $class)) }}
+			{{ Form::submit($monster->name, array('class' => 'btn btn-link ' . $monster->get_color_class($character))) }}
 		{{ Form::close() }}
 	</li>
 	@endforeach

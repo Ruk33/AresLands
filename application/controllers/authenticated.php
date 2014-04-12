@@ -2061,11 +2061,7 @@ class Authenticated_Controller extends Base_Controller
 	public function get_battle()
 	{
 		$character = Character::get_character_of_logged_user(array('id', 'zone_id', 'level'));
-
-		$monsters = Monster::where('zone_id', '=', $character->zone_id)
-						   ->where('type', '=', 'monster')
-						   ->order_by('level', 'asc')
-						   ->get();
+		$monsters = Monster::get_available_for($character)->order_by('level', 'asc')->get();
 
 		$this->layout->title = '¡Batallar!';
 		$this->layout->content = View::make('authenticated.battle')
