@@ -344,7 +344,7 @@ class Tournament extends Base_Model
 		$registeredClans = $this->get_registered_clans()->get();
 
 		$clanWinner = null;
-		$clanWinnerScore = 0;
+		$clanWinnerScore = -1;
 
 		$tmpClan = null;
 		$tmpScore = 0;
@@ -501,7 +501,7 @@ class Tournament extends Base_Model
 	 */
 	public function get_character_coin_reward(Character $character)
 	{
-		$score = TournamentCharacterScore($this->id, $character->id)->first();
+		$score = TournamentCharacterScore::get_score($this->id, $character->id)->first();
 
 		return ($score->win_score + $score->defeat_score) * $character->level + $this->coin_reward;
 	}
@@ -513,17 +513,18 @@ class Tournament extends Base_Model
 	 */
 	public function give_coin_to_characters_and_exit_from_tournament()
 	{
-		$clans = $this->get_registered_clans()->get();
+		$registeredClans = $this->get_registered_clans()->get();
 
-		foreach ( $clans as $clan )
+		foreach ( $registeredClans as $registeredClan )
 		{
+			$clan = $registeredClan->clan;
 			$members = $clan->members()->get();
 
 			foreach ( $members as $member )
 			{
 				$amount = $this->get_character_coin_reward($member);
 				$member->add_coins($amount);
-				Message::tournament_coin_reward($amount);
+				Message::tournament_coin_reward($member, $amount);
 
 				$member->registered_in_tournament = false;
 				$member->save();
