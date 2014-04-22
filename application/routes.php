@@ -6,12 +6,12 @@ Route::get('admin/dungeons', array(
 ));
 
 Route::get('admin/dungeons/create', array(
-	'uses' => 'admin.dungeons@create',
+	'uses' => 'admin.dungeon@create',
 	'as' => 'get_admin_dungeon_create',
 ));
 
 Route::post('admin/dungeons/create', array(
-	'uses' => 'admin.dungeons@create',
+	'uses' => 'admin.dungeon@create',
 	'as' => 'post_admin_dungeon_create',
 ));
 
@@ -20,13 +20,13 @@ Route::get('admin/dungeons/(:num)', array(
 	'as' => 'get_admin_dungeon_edit',
 ));
 
-Route::post('admin/dungeons/(:num)', array(
-	'uses' => 'admin.dungeons@edit',
+Route::post('admin/dungeons/edit', array(
+	'uses' => 'admin.dungeon@edit',
 	'as' => 'post_admin_dungeon_edit',
 ));
 
 Route::get('admin/dungeons/(:num)/delete', array(
-	'uses' => 'admin.dungeons@delete',
+	'uses' => 'admin.dungeon@delete',
 	'as' => 'get_admin_dungeon_delete',
 ));
 

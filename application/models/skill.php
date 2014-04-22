@@ -396,8 +396,11 @@ class Skill extends Base_Model
 				                    ->select(array('id'))
 				                    ->first();
 
-			$target->second_mercenary = $second_mercenary->id;
-			$target->save();
+			if ( $second_mercenary )
+			{
+				$target->second_mercenary = $second_mercenary->id;
+				$target->save();
+			}
 		}
 		
 		if ( $this->duration != -1 )
