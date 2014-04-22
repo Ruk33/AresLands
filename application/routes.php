@@ -1,5 +1,35 @@
 <?php
 
+Route::get('admin/dungeons', array(
+	'uses' => 'admin.dungeon@index',
+	'as' => 'get_admin_dungeon_index',
+));
+
+Route::get('admin/dungeons/create', array(
+	'uses' => 'admin.dungeons@create',
+	'as' => 'get_admin_dungeon_create',
+));
+
+Route::post('admin/dungeons/create', array(
+	'uses' => 'admin.dungeons@create',
+	'as' => 'post_admin_dungeon_create',
+));
+
+Route::get('admin/dungeons/(:num)', array(
+	'uses' => 'admin.dungeon@edit',
+	'as' => 'get_admin_dungeon_edit',
+));
+
+Route::post('admin/dungeons/(:num)', array(
+	'uses' => 'admin.dungeons@edit',
+	'as' => 'post_admin_dungeon_edit',
+));
+
+Route::get('admin/dungeons/(:num)/delete', array(
+	'uses' => 'admin.dungeons@delete',
+	'as' => 'get_admin_dungeon_delete',
+));
+
 /*
 |--------------------------------------------------------------------------
 | Application Controllers
@@ -14,7 +44,6 @@ Route::controller('Api');
 Route::controller('Chat');
 Route::controller('Cron');
 Route::controller('Admin');
-
 
 /*
 |--------------------------------------------------------------------------

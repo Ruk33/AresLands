@@ -392,11 +392,9 @@ class Skill extends Base_Model
 
 		if ( $this->id == Config::get('game.invocation') )
 		{
-			$second_mercenary = Item::where('class', '=', 'mercenary')
-				->where('level', '>=', $target->level / 2)
-				->order_by(DB::raw('RAND()'))
-				->select(array('id'))
-				->first();
+			$second_mercenary = Item::get_random_secondary_mercenary($target)
+				                    ->select(array('id'))
+				                    ->first();
 
 			$target->second_mercenary = $second_mercenary->id;
 			$target->save();

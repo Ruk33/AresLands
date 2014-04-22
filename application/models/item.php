@@ -8,6 +8,18 @@ class Item extends Base_Model
 	public static $key = 'id';
 
 	/**
+	 * Query para obtener mercenario secundario
+	 * @param  Character $character
+	 * @return Eloquent
+	 */
+	public static function get_random_secondary_mercenary(Character $character)
+	{
+		return Item::where('class', '=', 'mercenary')
+				   ->where('level', '>=', $character->level / 2)
+				   ->order_by(DB::raw('RAND()'));
+	}
+
+	/**
 	 *	Obtenemos las monedas dividas en
 	 *	oro, plata y cobre de un personaje
 	 *
