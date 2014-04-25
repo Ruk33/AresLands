@@ -1,142 +1,185 @@
-<ul class="breadcrumb">
-	<li><a href="{{ URL::to('admin/index') }}">Panel de administración</a> <span class="divider">/</span></li>
-	<li><a href="{{ URL::to('admin/quest') }}">Misiones</a> <span class="divider">/</span></li>
-	<li class="active">Crear/editar mision</li>
-</ul>
-
-<style>
-	.tooltip {
-		position: fixed;
-		z-index: 10000;
-	}
-</style>
-
 <div class="row">
 
-@if ( $quest->exists )
-<h2>Editar mision</h2>
-@else
-<h2>Crear quest</h2>
-@endif
+	<ul class="breadcrumb">
+		<li><a href="{{ URL::to('admin/index') }}">Panel de administración</a> <span class="divider">/</span></li>
+		<li><a href="{{ URL::to('admin/quest') }}">Misiones</a> <span class="divider">/</span></li>
+		<li class="active">Crear/editar mision</li>
+	</ul>
 
-{{ Form::open('admin/quest') }}
+	@if ( $quest->exists )
+	<h1>Editar mision</h1>
+	@else
+	<h1>Crear quest</h1>
+	@endif
 
-{{ Form::hidden('questId', $quest->id ) }}
+	{{ Form::open('admin/quest', 'POST', array("class" => "form-horizontal")) }}
 
-@if ( $quest->exists )
-	<div class="alert alert-error">
-		<h3 class="text-center">Borrar mision</h3>
-		<p>
-			<strong>Nota:</strong> Esto no solo borrará la misión, sino que también borrará el progreso de los personajes que tengan aceptada y/o hayan completado dicha mision.
-		</p>
+	{{ Form::hidden('questId', $quest->id ) }}
 
-		<div class="text-center">
-			<a href="{{ URL::to('admin/quest/' . $quest->id . '/delete') }}" onclick="return confirm('¿Seguro?');" class="btn btn-danger">Borrar mision</a>
-		</div>
-	</div>
-@endif
+	@if ( $quest->exists )
+		<div class="alert alert-warning">
+			<h1>Borrar mision</h1>
+			<p>
+				<strong>Nota:</strong> Esto no solo borrará la misión, sino que también borrará el progreso de los personajes que tengan aceptada y/o hayan completado dicha mision.
+			</p>
 
-<div>
-<label>name</label>
-{{ Form::text('name', Input::old('name', $quest->name), array('class' => 'input-block-level')) }}
-</div>
-
-<div>
-<label>description</label>
-{{ Form::textarea('description', Input::old('description', $quest->description), array('id' => 'description')) }}
-</div>
-
-<h4>Nivel mínimo y máximo</h4>
-<div>
-<label>min_level</label>
-{{ Form::number('min_level', Input::old('min_level', $quest->min_level)) }}
-</div>
-
-<div>
-<label>max_level</label>
-{{ Form::number('max_level', Input::old('max_level', $quest->max_level)) }}
-</div>
-
-<h4>¿Es repetible?</h4>
-<div>
-repeatable {{ Form::checkbox('repeatable', null, Input::old('repeatable', $quest->repeatable)) }}
-</div>
-
-<h4>Repetible luego de... (en segundos)</h4>
-<div>
-<label>repeatable_after</label>
-{{ Form::number('repeatable_after', Input::old('repeatable_after', $quest->repeatable_after)) }}
-</div>
-
-<h4>¿Diaria?</h4>
-<div>
-daily {{ Form::checkbox('daily', null, Input::old('daily', $quest->daily)) }}
-</div>
-
-<h4>Razas y géneros que pueden realizar la misión</h4>
-<?php $races = array('dwarf', 'elf', 'drow', 'human'); ?>
-
-@foreach ( $races as $race )
-	<div>
-	<label>{{ $race }}</label>
-	{{ Form::select($race, array('none' => 'ninguno', 'male' => 'masculino', 'female' => 'femenino', 'both' => 'ambos'), Input::old($race, ( $quest->exists ) ? $quest->$race : 'both')) }}
-	</div>
-@endforeach
-
-<h4>Misión requerida</h4>
-<div>
-	<label>complete_required</label>
-	{{ Form::select('complete_required', array('ninguna', 'misiones' => Quest::lists('name', 'id')), Input::old('complete_required', $quest->complete_required)) }}
-</div>
-
-<h4>NPCs con los que se debe interactuar</h4>
-<ul class="inline text-center">
-	@foreach ( $npcs as $npc )
-	<li class="text-center clan-member-link" style="vertical-align: top; padding: 5px; margin-bottom: 10px; border: 1px solid #644e46;">
-		<label for="{{ $npc->id }}" data-toggle="tooltip" data-placement="top" data-original-title="{{ $npc->get_text_for_tooltip() }}">
-			<div class="box box-box-64-gold">
-				<img src="{{ URL::base() }}/img/icons/npcs/{{ $npc->id }}.png" alt="">
+			<div class="text-center">
+				<a href="{{ URL::to('admin/quest/' . $quest->id . '/delete') }}" onclick="return confirm('¿Seguro?');" class="btn btn-danger">Borrar mision</a>
 			</div>
-		</label>
-		<div>{{ Form::select("action[$npc->id]", array('nada', 'kill' => 'derrotar', 'talk' => 'hablar'), Input::old("action[$npc->id]", ( isset($actions[$npc->id]) ) ? $actions[$npc->id] : null), array('style' => 'width: 65px;')) }}</div>
-		<div>{{ Form::number("actionAmount[$npc->id]", Input::old("actionAmount[$npc->id]", ( isset($actionAmount[$npc->id]) ) ? $actionAmount[$npc->id] : 0), array('style' => 'width: 50px;', 'data-toggle' => 'tooltip', 'data-original-title' => 'Cantidad de veces que debe repetirse la accion')) }}</div>
-	</li>
-	@endforeach
-</ul>
-
-<h4>Recompensas</h4>
-<ul class="inline text-center">
-@foreach ( $items as $item )
-	<li class="text-center clan-member-link" style="vertical-align: top; padding: 5px; margin-bottom: 10px; border: 1px solid #644e46;">
-	<label for="{{ $item->id }}" data-toggle="tooltip" data-placement="top" data-original-title="{{ $item->get_text_for_tooltip() }}">
-		<div class="box box-box-64-blue">
-			<img src="{{ URL::base() }}/img/icons/items/{{ $item->id }}.png" alt="">
 		</div>
-	</label>
-	<div>{{ Form::number("rewardsAmount[$item->id]", Input::old("rewardsAmount[$item->id]", ( isset($rewards[$item->id]) ) ? $rewards[$item->id] : 0), array('style' => 'width: 50px;', 'data-toggle' => 'tooltip', 'data-original-title' => 'Cantidad')) }}</div>
-	{{ Form::checkbox('rewards[]', $item->id, Input::old('rewards[]', ( isset($rewards[$item->id]) ) ? 1 : 0)) }}
-	</li>
-@endforeach
-</ul>
+	@endif
 
-<div class="text-center">
-	{{ Form::submit(( $quest->exists ) ? 'Editar mision' : 'Crear mision', array('class' => 'btn btn-large btn-primary')) }}
-</div>
+	<div class="control-group text-center">
+		{{ Form::submit(( $quest->exists ) ? 'Editar mision' : 'Crear mision', array('class' => 'btn btn-large btn-primary')) }}
+	</div>
 
-{{ Form::close() }}
+	<div class="control-group">
+		{{ Form::label("name", "Nombre de la mision", array("class" => "control-label")) }}
+		<div class="controls">
+			{{ Form::text('name', Input::old('name', $quest->name), array('class' => 'input-block-level')) }}
+		</div>
+	</div>
 
-<script src="{{ URL::base() }}/js/libs/ckeditor/ckeditor.js"></script>
+	<div class="control-group">
+		{{ Form::label("description", "Descripcion", array("class" => "control-label")) }}
+		<div class="controls">
+			{{ Form::textarea('description', Input::old('description', $quest->description), array('id' => 'description')) }}
+		</div>
+	</div>
 
-<script>
-	CKEDITOR.replace('description', {
-		language: 'es',
-		disableObjectResizing: true,
-		extraPlugins: '',
-		removePlugins: '',
-		toolbar: null,
-		scayt_autoStartup: true,
-		scayt_sLang: 'es_ES'
-	});
-</script>
+	<div class="control-group">
+		{{ Form::label("min_level", "Nivel minimo", array("class" => "control-label")) }}
+		<div class="controls">
+			{{ Form::number('min_level', Input::old('min_level', $quest->min_level)) }}
+		</div>
+	</div>
+
+	<div class="control-group">
+		{{ Form::label("max_level", "Nivel maximo", array("class" => "control-label")) }}
+		<div class="controls">
+			{{ Form::number('max_level', Input::old('max_level', $quest->max_level)) }}
+		</div>
+	</div>
+
+	<div class="control-group">
+		<div class="control-label">Repetible</div>
+		<div class="controls">
+			{{ Form::checkbox('repeatable', null, Input::old('repeatable', $quest->repeatable)) }}
+		</div>
+	</div>
+
+	<div class="control-group">
+		{{ Form::label("repeatable_after", "Repetible luego de", array('class' => 'control-label')) }}
+		<div class="controls">
+			{{ Form::number('repeatable_after', Input::old('repeatable_after', $quest->repeatable_after)) }} segundos
+		</div>
+	</div>
+
+	<div class="control-group">
+		<div class="control-label">Diaria</div>
+		<div class="controls">
+			{{ Form::checkbox('daily', null, Input::old('daily', $quest->daily)) }}
+		</div>
+	</div>
+
+	<?php $races = array('dwarf', 'elf', 'drow', 'human'); ?>
+
+	@foreach ( $races as $race )
+		<div class="control-group">
+			{{ Form::label($race, ucfirst($race), array('class' => 'control-label')) }}
+			<div class="controls">
+				{{ Form::select($race, array('none' => 'Ninguno', 'male' => 'Masculino', 'female' => 'Femenino', 'both' => 'Ambos'), Input::old($race, ( $quest->exists ) ? $quest->$race : 'both')) }}
+				tiene(n) permitido hacer la mision
+			</div>
+		</div>
+	@endforeach
+
+	<div class="control-group">
+		{{ Form::label("complete_required", "Mision requerida", array('class' => 'control-label')) }}
+		<div class="controls">
+			{{ Form::select('complete_required', array('Ninguna', 'Misiones' => Quest::lists('name', 'id')), Input::old('complete_required', $quest->complete_required)) }}
+		</div>
+	</div>
+
+	<hr>
+
+	<h1>NPCs con los que se debe interactuar</h1>
+	<table class="table">
+		<thead>
+			<tr>
+				<th>Nombre</th>
+				<th>Nivel</th>
+				<th>Accion requerida</th>
+				<th><div class="text-center">Numero de veces a repetir la accion</div></th>
+			</tr>
+		</thead>
+
+		<tbody>
+			@foreach ( $npcs as $npc )
+			<tr data-toggle="tooltip" data-original-title="{{ $npc->get_text_for_tooltip() }}">
+				<td>
+					{{ $npc->name }}
+				</td>
+				<td>Nivel {{ $npc->level }}</td>
+				<td>
+					{{ Form::select("action[$npc->id]", array('Nada', 'kill' => 'Derrotar', 'talk' => 'Hablar'), Input::old("action[$npc->id]", ( isset($actions[$npc->id]) ) ? $actions[$npc->id] : null), array('class' => 'span8')) }}
+				</td>
+				<td>
+					<div class="text-center">
+						{{ Form::number("actionAmount[$npc->id]", Input::old("actionAmount[$npc->id]", ( isset($actionAmount[$npc->id]) ) ? $actionAmount[$npc->id] : 0), array('class' => 'span3')) }}
+					</div>
+				</td>
+			</tr>
+			@endforeach
+		</tbody>
+	</table>
+
+	<hr>
+
+	<h1>Recompensas</h1>
+
+	<table class="table">
+		<thead>
+			<tr>
+				<th></th>
+				<th>Nombre</th>
+				<th>Cantidad</th>
+			</tr>
+		</thead>
+
+		<tbody>
+			@foreach ( $items as $item )
+			<tr data-toggle="tooltip" data-original-title="{{ $item->get_text_for_tooltip() }}">
+				<td>
+					<div class="span1">
+						{{ Form::checkbox('rewards[]', $item->id, Input::old('rewards[]', ( isset($rewards[$item->id]) ) ? 1 : 0)) }}
+					</div>
+				</td>
+				<td>{{ $item->name }}</td>
+				<td>{{ Form::number("rewardsAmount[$item->id]", Input::old("rewardsAmount[$item->id]", ( isset($rewards[$item->id]) ) ? $rewards[$item->id] : 0)) }}</td>
+			</tr>
+			@endforeach
+		</tbody>
+	</table>
+
+	<div class="control-group text-center">
+		{{ Form::submit(( $quest->exists ) ? 'Editar mision' : 'Crear mision', array('class' => 'btn btn-large btn-primary')) }}
+	</div>
+
+	{{ Form::close() }}
+
+	<script src="{{ URL::base() }}/js/libs/ckeditor/ckeditor.js"></script>
+
+	<script>
+		CKEDITOR.replace('description', {
+			language: 'es',
+			disableObjectResizing: true,
+			extraPlugins: '',
+			removePlugins: '',
+			toolbar: null,
+			scayt_autoStartup: true,
+			scayt_sLang: 'es_ES'
+		});
+	</script>
 
 </div>

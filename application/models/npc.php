@@ -194,6 +194,11 @@ class Npc extends Base_Model
 		->where('character_quests.progress', '=', 'reward');
 	}
 
+	public function zone()
+	{
+		return $this->belongs_to("Zone", "zone_id");
+	}
+
 	public function quests()
 	{
 		//return $this->has_many('NpcQuest', 'npc_id');
@@ -203,5 +208,14 @@ class Npc extends Base_Model
 	public function merchandises()
 	{
 		return $this->has_many('NpcMerchandise', 'npc_id');
+	}
+
+	/**
+	 * Usar solo cuando sea necesario
+	 * @return Eloquent
+	 */
+	public function drops()
+	{
+		return $this->has_many("MonsterDrop", "monster_id");
 	}
 }

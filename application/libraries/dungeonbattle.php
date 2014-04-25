@@ -132,7 +132,7 @@ class DungeonBattle extends Battle
 			$this->give_special_rewards();
 		}
 
-		$this->_attacker->after_dungeon();
+		$this->_attacker->after_dungeon($dungeon, $level);
 
 		ActivityBar::add($this->_attacker, 5);
 

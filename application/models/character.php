@@ -2393,13 +2393,13 @@ class Character extends Attackable
 		$characterActivity->save();
 	}
 
-	public function after_dungeon(Dungeon $dungeon)
+	public function after_dungeon(Dungeon $dungeon, $level)
 	{
 		$characterActivity = new CharacterActivity();
 
 		$characterActivity->character_id = $this->id;
 		$characterActivity->name = 'battlerest';
-		$characterActivity->end_time = time() + $dungeon->rest_time;
+		$characterActivity->end_time = time() + $dungeon->rest_time * ($level / 2 + 0.5);
 
 		$characterActivity->save();
 	}

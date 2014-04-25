@@ -1,5 +1,35 @@
 <?php
 
+Route::get("admin/npcs", array(
+	"uses" => "admin.npc@index",
+	"as" => "get_admin_npc_index",
+));
+
+Route::get("admin/npcs/create", array(
+	"uses" => "admin.npc@create",
+	"as" => "get_admin_npc_create",
+));
+
+Route::post("admin/npcs/create", array(
+	"uses" => "admin.npc@create",
+	"as" => "post_admin_npc_create",
+));
+
+Route::get("admin/npcs/(:num)", array(
+	"uses" => "admin.npc@edit",
+	"as" => "get_admin_npc_edit",
+));
+
+Route::post("admin/npcs/edit", array(
+	"uses" => "admin.npc@edit",
+	"as" => "post_admin_npc_edit",
+));
+
+Route::get("admin/npcs/(:num)/delete", array(
+	"uses" => "admin.npc@delete",
+	"as" => "get_admin_npc_delete",
+));
+
 Route::get('admin/dungeons', array(
 	'uses' => 'admin.dungeon@index',
 	'as' => 'get_admin_dungeon_index',

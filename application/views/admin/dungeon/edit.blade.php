@@ -11,7 +11,6 @@
 		</li>
 	</ul>
 
-
 	@if ( $dungeon->exists )
 		<h1>Editar dungeon</h1>
 		{{ Form::open(URL::to_route("post_admin_dungeon_edit"), "POST", array("class" => "form-horizontal")) }}
@@ -44,7 +43,16 @@
 			{{ Form::label("rest_time", "Duracion de la mazmorra", array("class" => "control-label")) }}
 			<div class="controls">
 				{{ Form::text("rest_time", Input::old("rest_time", $dungeon->rest_time), array("class" => "span11")) }}
-				<span class="help-block">Tiempo (en segundos) que deben esperar luego de hacer una mazmorra.</span>
+				<span class="help-block">
+					<p>Tiempo (en segundos) que deben esperar luego de hacer una mazmorra.</p>
+					<div>
+						Formula recomendada:<br>
+						<code>
+							(nivel minimo + cantidad de bichos * (nivel bichos / cantidad de bichos) * solo grupo) * 6
+						</code>
+						<p>solo grupo = 1 (no), 2 (si)</p>
+					</div>
+				</span>
 			</div>
 		</div>
 
@@ -82,6 +90,7 @@
 				<tr>
 					<th></th>
 					<th>Nombre</th>
+					<th>Zona</th>
 					<th>Nivel</th>
 				</tr>
 			</thead>
@@ -99,6 +108,9 @@
 						</div>
 					</td>
 					<td>
+						{{ $monster->zone->name }}
+					</td>
+					<td>
 						Nivel {{ $monster->level }}
 					</td>
 				</tr>
@@ -113,6 +125,10 @@
 			<p>Esta(s) recomenza(s) solamente se da(n) una vez en cada nivel de dificultad.</p>
 			<p><b>Ejemplo:</b> Un jugador termina la mazmorra en nivel iniciante. Si no ha completado ya la mazmorra en esta dificultad, se le da recompensa.</p>
 			<p>Se recuerda además que cada monstruo dará sus propias recompensas (haya o no completado la mazmorra).</p>
+			<p class="alert alert-info">
+				Formula recomendada para las monedas (cobre):<br>
+				<code>(nivel minimo * 4 * (nivel bichos / cantidad de bichos) * 2 + duracion mazmorra) * 10</code>
+			</p>
 		</div>
 
 		<table class="table">

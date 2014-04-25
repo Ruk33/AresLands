@@ -182,4 +182,9 @@ class Monster extends Attackable
 
 		return $message;
 	}
+
+	public function zone()
+	{
+		return $this->belongs_to("Zone", "zone_id");
+	}
 }
