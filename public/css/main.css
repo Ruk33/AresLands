@@ -63,6 +63,31 @@ body {
 	font-family: "Roboto Slab", Georgia, Verdana, Arial;
 }
 
+/**
+ * Util para Modal chico (bootstrap)
+ */
+.potionModal {
+	width: 339px;
+	height: 124px;
+	margin-left: -169px;
+	background-color: transparent;
+	background-image: url("/img/alert-background.jpg");
+	background-repeat: no-repeat;
+	box-shadow: black 0 0 5px;
+}
+
+.potionModal .modal-header {
+	border-bottom: none;
+}
+
+.potionModal .modal-header h4 {
+	color: white;
+}
+
+.potionModal .modal-header .close {
+	color: white;
+}
+
 .dungeon {
 	color: white;
 	text-shadow: black 0 0 5px;

@@ -1,6 +1,41 @@
 'use strict';
 
-angular.module('areslands.directives', []).
+angular.module('areslands.directives', ['configuration']).
+
+directive('inventoryButton', [
+	'BASE_PATH',
+	function(BASE_PATH)
+	{
+		function link(scope, element, attrs)
+		{
+			var equipButton = '<a class="pull-right" href="' + BASE_PATH + 'authenticated/manipulateItem/' + attrs.characterItemId + '">Equipar</a>';
+
+			if ( attrs.type == 'potion' )
+			{
+				equipButton = '<div class="input-append pull-right span4">'+
+							  '<form method="POST" action="' + BASE_PATH + 'authenticated/manipulateItem' + '" accept-charset="UTF-8">'+
+							  '<input type="hidden" name="csrf_token" value="' + attrs.token + '">'+
+							  '<input type="hidden" name="id" value="' + attrs.characterItemId + '">'+
+							  '<input type="number" name="amount" placeholder="Cantidad" value="1" class="span7">'+
+							  '<input type="submit" class="btn btn-primary" value="Usar">'+
+							  '</form>'+
+							  '</div>';
+			}
+
+			var destroyButton = '<a class="pull-left" href="' + BASE_PATH + 'authenticated/destroyItem/' + attrs.characterItemId + '" onclick="return confirm(1);">Destruir</a>';
+
+			$(element).popover({
+				title: attrs.itemTooltip + '<div style="margin-top: 25px;">' + equipButton + destroyButton + '</div>',
+				html: true,
+				placement: "top"
+			});
+		}
+
+		return {
+			link: link
+		};
+	}
+]).
 
 directive('lifeBar', [
 	'$timeout', 

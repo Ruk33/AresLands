@@ -27,6 +27,72 @@ class Character extends Attackable
 	);
 
 	/**
+	 * Obtenemos el arma del personaje
+	 * @return CharacterItem
+	 */
+	public function get_weapon()
+	{
+		return $this->items()->where_in('location', array('lrhand', 'rhand'))->first();
+	}
+
+	/**
+	 * Obtenemos el escudo del personaje
+	 * @return CharacterItem
+	 */
+	public function get_shield()
+	{
+		return $this->items()->where('location', '=', 'lhand')->first();
+	}
+
+	/**
+	 * Query para obtener los objetos del inventario
+	 * @return Eloquent
+	 */
+	public function get_inventory_items()
+	{
+		return $this->items()->where('location', '=', 'inventory');
+	}
+
+	/**
+	 * Obtenemos mercenario de personaje
+	 * @return CharacterItem
+	 */
+	public function get_mercenary()
+	{
+		return $this->items()->where('location', '=', 'mercenary')->first();
+	}
+
+	/**
+	 * Query para obtener el segundo mercenario del personaje
+	 * @return Eloquent|null
+	 */
+	public function get_second_mercenary()
+	{
+		return Item::where('id', '=', $this->second_mercenary);
+	}
+
+	/**
+	 * Verificamos si personaje tiene equipada arma de dos manos
+	 * @return boolean
+	 */
+	public function has_two_handed_weapon()
+	{
+		return $this->items()->with(array('item' => function($query)
+		{
+			$query->where('body_part', '=', 'lrhand');
+		}))->take(1)->count() == 0;
+	}
+
+	/**
+	 * Verificamos si merece la recompensa "Logueada del dia"
+	 * @return boolean
+	 */
+	public function check_logged_of_day()
+	{
+		return $this->last_logged + 24 * 60 * 60 < time();
+	}
+
+	/**
 	 * Burlamos a la muerte (usado en batalla)
 	 */
 	public function cheat_death()
@@ -1800,6 +1866,8 @@ class Character extends Attackable
 	{
 		$this->add_coins(mt_rand($this->level * 10, $this->level * 20));
 		Event::fire('loggedOfDayReward', array($this));
+		$this->last_logged = time();
+		$this->save();
 	}
 
 	public function is_in_clan_of(Character $character)

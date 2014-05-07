@@ -123,55 +123,30 @@
 		<h2>Personaje</h2>
 
 		<div style="min-height: 405px; position: relative;">
-			<!-- DOS MANOS -->
-			@if ( isset($items['lrhand']) && $lrhand = $items['lrhand'][0]->item )
-				<div style="position: absolute; left: 40px; top: 150px;">
-					<div class="box box-box-64-gold">
-						<img style="cursor: pointer;" src="{{ URL::base() }}/img/icons/items/{{ $items['lrhand'][0]->item->id }}.png" alt="" width="80px" height="80px" data-toggle="popover" data-placement="top" data-original-title="
-						{{ $lrhand->get_text_for_tooltip() }}
-						
-						<div class='text-center'>
-							<a href='{{ URL::to('authenticated/manipulateItem/' . $items['lrhand'][0]->id) }}'>
-								Desequipar
-							</a>
-						</div>">
-					</div>
-				</div>
-			<!-- END DOS MANOS -->
-			@else
-				<!-- MANO DERECHA -->
-				<div style="position: absolute; left: 40px; top: 150px;">
-					<div class="box box-box-64-gold">
-					@if ( isset($items['rhand']) && $rhand = $items['rhand'][0]->item )
-						<img style="cursor: pointer;" src="{{ URL::base() }}/img/icons/items/{{ $rhand->id }}.png" alt="" width="80px" height="80px" data-toggle="popover" data-placement="top" data-original-title="
-						{{ $rhand->get_text_for_tooltip() }}
-						
-						<div class='text-center'>
-							<a href='{{ URL::to('authenticated/manipulateItem/' . $items['rhand'][0]->id) }}'>
-								Desequipar
-							</a>
-						</div>">
+			<!-- ARMA -->
+			<div style="position: absolute; left: 40px; top: 150px;">
+				<div class="box box-box-64-gold">
+					@if ( $weapon )
+						<a href="{{ URL::to('authenticated/manipulateItem/' . $weapon->id) }}">
+							<img style="cursor: pointer;" src="{{ $weapon->item->get_image_path() }}" alt="" width="80px" height="80px" data-toggle="tooltip" data-placement="top" data-original-title="{{ $weapon->item->get_text_for_tooltip() }}">
+						</a>
 					@endif
-					</div>
 				</div>
-				<!-- END MANO DERECHA -->
+			</div>
+			<!-- END ARMA -->
 
-				<!-- MANO IZQUIERDA -->
+			@if ( ! $character->has_two_handed_weapon() )
+				<!-- ESCUDO -->
 				<div style="position: absolute; left: 230px; top: 150px;">
 					<div class="box box-box-64-gold">
-					@if ( isset($items['lhand']) && $lhand = $items['lhand'][0]->item )
-						<img style="cursor: pointer;" src="{{ URL::base() }}/img/icons/items/{{ $lhand->id }}.png" alt="" width="80px" height="80px" data-toggle="popover" data-placement="top" data-original-title="
-						{{ $lhand->get_text_for_tooltip() }}
-						
-						<div class='text-center'>
-							<a href='{{ URL::to('authenticated/manipulateItem/' . $items['lhand'][0]->id) }}'>
-								Desequipar
+						@if ( $shield && $shield->item )
+							<a href="{{ URL::to('authenticated/manipulateItem/' . $shield->id) }}">
+								<img style="cursor: pointer;" src="{{ $shield->item->get_image_path() }}" alt="" width="80px" height="80px" data-toggle="tooltip" data-placement="top" data-original-title="{{ $shield->item->get_text_for_tooltip() }}">
 							</a>
-						</div>">
-					@endif
+						@endif
 					</div>
 				</div>
-				<!-- END MANO IZQUIERDA -->
+				<!-- END ESCUDO -->
 			@endif
 
 			<!-- ORBES -->
@@ -184,27 +159,21 @@
 
 			<!-- AYUDANTE -->
 			<div style="position: absolute; left: 230px; top: 65px;">
-				@if ( isset($items['mercenary']) )
-					<?php $mercenary = $items['mercenary'][0]->item; ?>
+				@if ( $mercenary )
 					<div class="box box-box-64-blue">
-					<img src="{{ URL::base() }}/img/icons/items/{{ $mercenary->id }}.png" alt="" width="64px" height="64px" data-toggle="tooltip" data-placement="top" data-original-title="
-					{{ $mercenary->get_text_for_tooltip() }}">
+						<img src="{{ $mercenary->get_image_path() }}" alt="" width="64px" height="64px" data-toggle="tooltip" data-placement="top" data-original-title="{{ $mercenary->get_text_for_tooltip() }}">
 					</div>
 				@endif
 			</div>
 			<!-- END AYUDANTE -->
 
 			<!-- AYUDANTE SECUNDARIO -->
-			@if ( $character->has_second_mercenary() )
-				<?php $mercenary = Item::find($character->second_mercenary); ?>
-				@if ( $mercenary )
+			@if ( $secondMercenary )
 				<div style="position: absolute; left: 40px; top: 65px;">
 					<div class="box box-box-64-green">
-						<img src="{{ URL::base() }}/img/icons/items/{{ $mercenary->id }}.png" alt="" width="64px" height="64px" data-toggle="tooltip" data-placement="top" data-original-title="
-						{{ $mercenary->get_text_for_tooltip() }}">
+						<img src="{{ $secondMercenary->get_image_path() }}" alt="" width="64px" height="64px" data-toggle="tooltip" data-placement="top" data-original-title="{{ $secondMercenary->get_text_for_tooltip() }}">
 					</div>
 				</div>
-				@endif
 			@endif
 			<!-- END AYUDANTE SECUNDARIO -->
 			
@@ -215,83 +184,25 @@
 		
 		<div class="span6" style="margin-top: -20px;">
 			<!-- INVENTARIO -->
-			<script>
-				function confirmItemDestroy()
-				{
-					return confirm('¿Realmente deseas destruir el objeto?');
-				}
-			</script>
-
 			<div class="alert-center">
 				<div class="alert-top">
 				</div>
 
 				<div class="alert-content">
-					<div style="text-transform: uppercase; color: #D0D2D0; font-size: 11px;">inventario<hr style="border: none; border-top: 1px solid #572d00;"></div>
+					<div style="text-transform: uppercase; color: #D0D2D0; font-size: 11px;">
+						inventario
+						<hr style="border: none; border-top: 1px solid #572d00;">
+					</div>
 
 					<ul class="inline">
 						@for ( $i = 1, $max = 6; $i <= $max; $i++ )
-							@if ( $i == 5 )
-								</ul>
-								<ul class="inline">
-							@endif
 							<li style="vertical-align: top;">
-							<div class="box box-box-64-gray">
-							@if ( isset($items['inventory']) )
-								@foreach ( $items['inventory'] as $characterItem )
-									@if ( $characterItem->slot == $i && $item = $characterItem->item )
-										@if ( $item->type == 'potion' )
-										<div id="{{ $characterItem->id }}" class="modal hide fade" style="background-color: #0C0B0B; border: 1px solid #353535; box-shadow: #4282D5 0px 0px 15px; top: 35%;">
-											<button type="button" class="close" data-dismiss="modal" style="color: white; margin-right: 10px; margin-top: 5px; opacity: 1;">&times;</button>
-											<div class="modal-body">                                    
-											{{ Form::open('authenticated/manipulateItem') }}
-												{{ Form::token() }}
-												{{ Form::hidden('id', $characterItem->id) }}
-
-												<h4>¿Qué cantidad de deseas usar?</h4>
-
-												<div>
-													<span class="positive">Cantidad máxima: {{ $characterItem->count }}</span>
-													<br>
-													{{ Form::number('amount', 1, array('min' => 1, 'max' => $characterItem->count)) }}
-												</div>
-
-												<script>
-													function useAmountConfirmation(element)
-													{
-														var amount = $(element).parent().find('[name="amount"]').val();
-														return confirm('¿Seguro que quieres usar ' + amount + '?');
-													}
-												</script>
-
-												{{ Form::submit('Usar', array('class' => 'btn btn-primary', 'onclick' => 'return useAmountConfirmation(this);')) }}
-											{{ Form::close() }}
-											</div>
-										</div>
-										@endif
-										<img style="cursor: pointer;" src="{{ URL::base() }}/img/icons/items/{{ $characterItem->item_id }}.png" alt="" width="80px" height="80px" data-toggle="popover" data-placement="top" data-original-title="
-										{{ $item->get_text_for_tooltip() }}
-
-										<div class='text-center' style='margin-top: 20px;'>
-										@if ( $item->id == Config::get('game.chest_item_id') )
-											<a href='{{ URL::to('authenticated/manipulateItem/' . $characterItem->id) }}' class='pull-left'>Abrir</a>
-										@elseif ( $item->type == 'arrow' && isset($items['lrhand']) && $items['lrhand'][0]->item->type != 'bow' )
-											<span style='font-size: 11px;'>Debes tener equipado un arco para usar flechas</span>
-										@else
-											@if ( $item->type == 'potion' )
-												<a href='#{{ $characterItem->id }}' data-toggle='modal' class='pull-left'>Usar</a>
-											@else
-												<a href='{{ URL::to('authenticated/manipulateItem/' . $characterItem->id) }}' class='pull-left'>Equipar</a>
-											@endif
-
-											<a href='{{ URL::to('authenticated/destroyItem/' . $characterItem->id) }}' onclick='return confirmItemDestroy();' class='pull-right' color: white;'>Tirar</a>
-										@endif
-										</div>">
-										<div class="inventory-item-amount" data-toggle="tooltip" data-placement="top" data-original-title="Cantidad">{{ $characterItem->count }}</div>
+								<div class="box box-box-64-gray">
+									@if ( isset($inventoryItems[$i]) && $inventoryItems[$i]->item )
+										<img inventory-button character-item-id="{{ $inventoryItems[$i]->id }}" token="{{ Session::token() }}" type="{{ $inventoryItems[$i]->item->type }}" amount="{{ $inventoryItems[$i]->count }}" item-tooltip="{{ $inventoryItems[$i]->item->get_text_for_tooltip() }}" style="cursor: pointer;" src="{{ $inventoryItems[$i]->item->get_image_path() }}" alt="" width="80px" height="80px">
+										<div class="inventory-item-amount" data-toggle="tooltip" data-placement="top" data-original-title="Cantidad">{{ $inventoryItems[$i]->count }}</div>
 									@endif
-								@endforeach
-							@endif
-							</div>
+								</div>
 							</li>
 						@endfor
 

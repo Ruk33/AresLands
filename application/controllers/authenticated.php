@@ -125,27 +125,9 @@ class Authenticated_Controller extends Base_Controller
 		/*
 		 *	Verificamos logueada del día
 		 */
-		if ( $character->last_logged + 24 * 60 * 60 < time() )
+		if ( $character->check_logged_of_day() )
 		{
 			$character->give_logged_of_day_reward();
-
-			$character->last_logged = time();
-			$character->save();
-		}
-
-		/*
-		 *	Obtenemos los objetos del personaje
-		 */
-		$items = $character->items;
-		$itemsToView = array();
-
-		/*
-		 *	Los ordenamos solo para que sea
-		 *	más cómodo de trabajar en la vista
-		 */
-		foreach ( $items as $item )
-		{
-			$itemsToView[$item->location][] = $item;
 		}
 
 		/*
@@ -170,20 +152,53 @@ class Authenticated_Controller extends Base_Controller
 		 */
 		$talents = $character->get_castable_talents($character);
 
+		/*
+		 * Zona en donde se encuentra el personaje y la cantidad
+		 * de tiempo que lleva explorando en ella
+		 */
 		$zone = $character->zone()->select(array('id', 'name', 'description'))->first();
-
 		$exploringTime = $character->exploring_times()->where('zone_id', '=', $zone->id)->first();
 
+		/*
+		 * Arma, escudo y mercenarios
+		 */
+		$weapon = $character->get_weapon();
+		$shield = $character->get_shield();
+
+		$mercenary = $character->get_mercenary();
+		$mercenary = ( $mercenary ) ? $mercenary->item : null;
+
+		$secondMercenary = null;
+		if ( $character->has_second_mercenary() )
+		{
+			$secondMercenary = $character->get_second_mercenary()->first();
+		}
+
+		/*
+		 * Objetos del inventario
+		 */
+		$inventoryItems = array();
+		
+		foreach ( $character->get_inventory_items()->with('item')->get() as $inventoryItem )
+		{
+			$inventoryItems[$inventoryItem->slot] = $inventoryItem;
+		}
+
 		$this->layout->title = 'Inicio';
-		$this->layout->content = View::make('authenticated.index')
-		->with('character', $character)
-		->with('activities', $activities)
-		->with('items', $itemsToView)
-		->with('skills', $skills)
-		->with('orb', $orb)
-		->with('talents', $talents)
-		->with('zone', $zone)
-		->with('exploringTime', $exploringTime);
+		$this->layout->content = View::make('authenticated.index')->with(array(
+			'character'       => $character,
+			'weapon'          => $weapon,
+			'shield'          => $shield,
+			'mercenary'       => $mercenary,
+			'secondMercenary' => $secondMercenary,
+			'activities'      => $activities,
+			'skills'          => $skills,
+			'orb'             => $orb,
+			'talents'         => $talents,
+			'zone'            => $zone,
+			'exploringTime'   => $exploringTime,
+			'inventoryItems'  => $inventoryItems
+		));
 	}
 
 	public function post_giveLeaderShip()
@@ -791,18 +806,18 @@ class Authenticated_Controller extends Base_Controller
 		{
 			case 'xp':
 				$select = array('id', 'name', 'gender', 'race', 'xp', 'level', 'characteristics');
-				$elements = Character::get_characters_for_xp_ranking()->select($select)->paginate(50);
+				$elements = Character::with('clan')->get_characters_for_xp_ranking()->select($select)->paginate(50);
 
 				break;
 
 			case 'pvp':
 				$select = array('id', 'name', 'gender', 'race', 'pvp_points', 'characteristics');
-				$elements = Character::get_characters_for_pvp_ranking()->select($select)->paginate(50);
+				$elements = Character::with('clan')->get_characters_for_pvp_ranking()->select($select)->paginate(50);
 
 				break;
 
 			case 'clan':
-				$elements = ClanOrbPoint::order_by('points', 'desc')->paginate(50);
+				$elements = ClanOrbPoint::with('clan')->order_by('points', 'desc')->paginate(50);
 				break;
 
 			default:

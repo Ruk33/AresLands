@@ -60,6 +60,21 @@ Route::get('admin/dungeons/(:num)/delete', array(
 	'as' => 'get_admin_dungeon_delete',
 ));
 
+Route::get('admin/generators', array(
+	'uses' => 'admin.generator@index',
+	'as' => 'get_admin_generator_index'
+));
+
+Route::get('admin/generators/item', array(
+	'uses' => 'admin.generator@item',
+	'as' => 'get_admin_generator_item'
+));
+
+Route::post('admin/generators/item', array(
+	'uses' => 'admin.generator@item',
+	'as' => 'post_admin_generator_item'
+));
+
 /*
 |--------------------------------------------------------------------------
 | Application Controllers

@@ -7,6 +7,249 @@ class Item extends Base_Model
 	public static $table = 'items';
 	public static $key = 'id';
 
+	const WARRIOR = 1;
+	const WIZARD  = 2;
+	const MIXED   = 3;
+
+	/**
+	 * Obtenemos la ruta de la imagen del objeto
+	 * @return string
+	 */
+	public function get_image_path()
+	{
+		return URL::base() . '/img/' . $this->image;
+	}
+
+	/**
+	 * Generamos objeto aleatorio
+	 * @param  int    $min_level Nivel minimo
+	 * @param  int    $max_level Nivel maximo
+	 * @param  int    $magical   Ver constantes WARRIOR, WIZARD y MIXED
+	 * @param  bool   $adjetive  true para agregar un adjetivo
+	 * @param  string $type      Valores posibles: random, blunt, sword, bow, dagger, staff, shield, potion y mercenary
+	 * @return Item
+	 */
+	public static function generate_random($min_level, $max_level, $magical, $adjetive, $type)
+	{
+		$imgPath = "icons/items/";
+
+		switch ( $type )
+		{
+			case "random":
+				$types = array("blunt", "sword", "bow", "dagger", "staff", "shield", /*"potion", "mercenary"*/);
+				return self::get_random_name($min_level, $max_level, $magical, $adjetive, $types[mt_rand(0, count($types) - 1)]);
+
+			case "blunt":
+				$names = array(
+					"Garrote",
+					"Lucero",
+					"Mazo",
+					"Cascanueces",
+					"Guardian",
+					"Cascanucas",
+					"Rajanucas",
+					"Abrenucas",
+					"Sacaojos",
+					"Despojador de almas",
+				);
+
+				$images = array(
+					"39.png",
+					"40.png",
+					"41.png",
+					"43.png",
+					"64.png",
+					"65.png",
+					"66.png",
+				);
+
+				$image = $imgPath . $images[mt_rand(0, count($images) - 1)];
+				$body_part = "rhand";
+				$class = "weapon";
+
+				break;
+
+			case "sword":
+				$names = array(
+					"Tajador",
+					"Lamento de viuda",
+					"Guardajuramento",
+					"Aguja",
+					"Espada",
+					"Cazamonstruos",
+					"Cortanucas",
+					"Espada condenadora",
+					"Decapitadora",
+					"Espada runica",
+					"Decapitareyes",
+					"Desgarradora",
+				);
+
+				$body_part = "rhand";
+				$class = "weapon";
+
+				break;
+
+			case "bow":
+				$names = array(
+					"Arco",
+					"Arco golpeanucas",
+					"Arco de batalla",
+					"Soplo",
+				);
+
+				$body_part = "rhand";
+				$class = "weapon";
+				
+				break;
+
+			case "dagger":
+				$names = array(
+					"Apuñalanucas",
+					"Daga",
+					"Puñal",
+					"Espina",
+					"Filo",
+					"Daga del ladron",
+					"Desgarradora",
+					"Hojanuca",
+				);
+
+				$body_part = "rhand";
+				$class = "weapon";
+				
+				break;
+
+			case "staff":
+				$names = array(
+					"Baston",
+					"Palo",
+					"Cetro",
+				);
+
+				$body_part = "rhand";
+				$class = "weapon";
+				
+				break;
+
+			case "shield":
+				$names = array(
+					"Escudo",
+					"Reflejo de la muerte",
+					"Muro de desviacion",
+					"Escudo real",
+					"Muro repelemonstruos",
+				);
+
+				$body_part = "lhand";
+				$class = "armor";
+				
+				break;
+
+			case "potion":
+				$names = array(
+					""
+				);
+
+				$body_part = "none";
+				$class = "consumible";
+				
+				break;
+
+			case "mercenary":
+				$names = array(
+					""
+				);
+
+				$body_part = "mercenary";
+				$class = "mercenary";
+				
+				break;
+
+			default:
+				throw new Exception("{$type} no se reconoce para generar un nombre aleatorio");
+		}
+
+		$name = $names[mt_rand(0, count($names) - 1)];
+
+		if ( $type != "mercenary" && $adjetive )
+		{
+			$adjetives = array(
+				"Deleitante", 
+				"Pesado", 
+				"Mortal", 
+				"Divino",
+				"Perturbador",
+				"Abismal",
+				"Destructor",
+				"Infernal",
+				"Oscuro",
+				"Dentada",
+				"del Maestro",
+				"Sangrienta",
+				"Ancestral",
+				"Resistente",
+				"Reflejante",
+				"Cegador",
+				"Inferior",
+				"Superior",
+				"Elite",
+			);
+
+			$name .= " " . $adjetives[mt_rand(0, count($adjetives) - 1)];
+		}
+
+		$stats = array(
+			"stat_strength"         => ($max_level * mt_rand(1, 3)) + mt_rand($min_level * 2, $max_level * 4) * .2,
+			"stat_dexterity"        => ($max_level * mt_rand(1, 3)) + mt_rand($min_level * 2, $max_level * 6) * .3,
+			"stat_resistance"       => ($max_level * mt_rand(1, 3)) + mt_rand($min_level * 2, $max_level * 3) * .2,
+			"stat_magic"            => ($max_level * mt_rand(1, 3)) + mt_rand($min_level * 3, $max_level * 7) * .4,
+			"stat_magic_skill"      => ($max_level * mt_rand(1, 3)) + mt_rand($min_level * 4, $max_level * 6) * .3,
+			"stat_magic_resistance" => ($max_level * mt_rand(1, 3)) + mt_rand($min_level * 1, $max_level * 2) * .1
+		);
+
+		switch ( $magical )
+		{
+			case self::WARRIOR:
+				$stats['stat_magic'] /= mt_rand(2, 3);
+				$stats['stat_magic_skill'] /= mt_rand(2, 3);
+				$stats['stat_magic_resistance'] /= mt_rand(2, 3);
+				break;
+
+			case self::WIZARD:
+				$stats['stat_strength'] /= mt_rand(2, 3);
+				$stats['stat_dexterity'] /= mt_rand(2, 3);
+				$stats['stat_resistance'] /= mt_rand(2, 3);
+				break;
+
+			case self::MIXED:
+				$stats['stat_strength'] /= mt_rand(1, 3);
+				$stats['stat_dexterity'] /= mt_rand(1, 3);
+				$stats['stat_resistance'] /= mt_rand(1, 3);
+				$stats['stat_magic'] *= 0.6;
+				$stats['stat_magic_skill'] /= mt_rand(1, 4);
+				$stats['stat_magic_resistance'] /= mt_rand(1, 2);
+				break;
+		}
+
+		$item = new Item(array(
+			"name"                  => $name,
+			"image"                 => $image,
+			"level"                 => $min_level,
+			"body_part"             => $body_part,
+			"type"                  => $type,
+			"class"                 => $class,
+			"stat_strength"         => $stats["stat_strength"],
+			"stat_dexterity"        => $stats["stat_dexterity"],
+			"stat_resistance"       => $stats["stat_resistance"],
+			"stat_magic"            => $stats["stat_magic"],
+			"stat_magic_skill"      => $stats["stat_magic_skill"],
+			"stat_magic_resistance" => $stats["stat_magic_resistance"],
+		));
+
+		return $item;
+	}
+
 	/**
 	 * Query para obtener mercenario secundario
 	 * @param  Character $character
