@@ -22,7 +22,7 @@ directive('inventoryButton', [
 							  '</div>';
 			}
 
-			var destroyButton = '<a class="pull-left" href="' + BASE_PATH + 'authenticated/destroyItem/' + attrs.characterItemId + '" onclick="return confirm(1);">Destruir</a>';
+			var destroyButton = '<a class="pull-left" href="' + BASE_PATH + 'authenticated/destroyItem/' + attrs.characterItemId + '" onclick="return confirm(\'¿Seguro que quieres destruir el objeto?\');">Destruir</a>';
 
 			$(element).popover({
 				title: attrs.itemTooltip + '<div style="margin-top: 25px;">' + equipButton + destroyButton + '</div>',

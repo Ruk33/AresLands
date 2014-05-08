@@ -231,46 +231,26 @@
 		@endif
 		
 		<div style="position: relative; width: 340px; margin: 0 auto;">
-			<!-- DOS MANOS -->
-			@if ( isset($items['lrhand']) && $lrhand = $items['lrhand'][0]->item )
-				<div style="position: absolute; left: 50px; top: 150px;">
-					<div class="box box-box-64-gold">
-						@if ( $character->is_admin() )
-							<a style="position: absolute; top: -2px; right: 5px;" href="{{ URL::to('admin/removeEquippedCharacterItem/' . $items['lrhand'][0]->id) }}">&times;</a>
-						@endif
-						
-						<img src="{{ URL::base() }}/img/icons/items/{{ $items['lrhand'][0]->item->id }}.png" alt="" width="80px" height="80px" data-toggle="tooltip" data-container="body" data-placement="top" data-original-title="{{ $lrhand->get_text_for_tooltip() }}">
-					</div>
-				</div>
-			<!-- END DOS MANOS -->
-			@else
-				<!-- MANO DERECHA -->
-				<div style="position: absolute; left: 50px; top: 150px;">
-					<div class="box box-box-64-gold">
-					@if ( isset($items['rhand']) && $rhand = $items['rhand'][0]->item )
-						@if ( $character->is_admin() )
-							<a style="position: absolute; top: -2px; right: 5px;" href="{{ URL::to('admin/removeEquippedCharacterItem/' . $items['rhand'][0]->id) }}">&times;</a>
-						@endif
-						
-						<img src="{{ URL::base() }}/img/icons/items/{{ $rhand->id }}.png" alt="" width="80px" height="80px" data-toggle="tooltip" data-container="body" data-placement="top" data-original-title="{{ $rhand->get_text_for_tooltip() }}">
+			<!-- ARMA -->
+			<div style="position: absolute; left: 40px; top: 150px;">
+				<div class="box box-box-64-gold">
+					@if ( $weapon )
+						<img style="cursor: pointer;" src="{{ $weapon->item->get_image_path() }}" alt="" width="80px" height="80px" data-toggle="tooltip" data-placement="top" data-original-title="{{ $weapon->item->get_text_for_tooltip() }}">
 					@endif
-					</div>
 				</div>
-				<!-- END MANO DERECHA -->
+			</div>
+			<!-- END ARMA -->
 
-				<!-- MANO IZQUIERDA -->
-				<div style="position: absolute; left: 225px; top: 150px;">
+			@if ( ! $character->has_two_handed_weapon() )
+				<!-- ESCUDO -->
+				<div style="position: absolute; left: 230px; top: 150px;">
 					<div class="box box-box-64-gold">
-					@if ( isset($items['lhand']) && $lhand = $items['lhand'][0]->item )
-						@if ( $character->is_admin() )
-							<a style="position: absolute; top: -2px; right: 5px;" href="{{ URL::to('admin/removeEquippedCharacterItem/' . $items['lhand'][0]->id) }}">&times;</a>
+						@if ( $shield && $shield->item )
+							<img style="cursor: pointer;" src="{{ $shield->item->get_image_path() }}" alt="" width="80px" height="80px" data-toggle="tooltip" data-placement="top" data-original-title="{{ $shield->item->get_text_for_tooltip() }}">
 						@endif
-						
-						<img src="{{ URL::base() }}/img/icons/items/{{ $lhand->id }}.png" alt="" width="80px" height="80px" data-toggle="tooltip" data-container="body" data-placement="top" data-original-title="{{ $lhand->get_text_for_tooltip() }}">
-					@endif
 					</div>
 				</div>
-				<!-- END MANO IZQUIERDA -->
+				<!-- END ESCUDO -->
 			@endif
 
 			<!-- ORBES -->
@@ -282,16 +262,11 @@
 			<!-- END ORBES -->
 
 			<!-- AYUDANTE -->
-			<div class="box box-box-64-blue" style="position: absolute; left: 225px; top: 40px">
-				@if ( isset($items['mercenary']) )
-					<?php $mercenary = $items['mercenary'][0]->item; ?>
-				
-					@if ( $character->is_admin() )
-						<a style="position: absolute; top: -10px; right: 0px;" href="{{ URL::to('admin/removeEquippedCharacterItem/' . $items['mercenary'][0]->id) }}">&times;</a>
-					@endif
-					
-					<img src="{{ URL::base() }}/img/icons/items/{{ $mercenary->id }}.png" alt="" width="64px" height="64px" data-toggle="tooltip" data-container="body" data-placement="top" data-original-title="
-					{{ $mercenary->get_text_for_tooltip() }}">
+			<div style="position: absolute; left: 230px; top: 65px;">
+				@if ( $mercenary )
+					<div class="box box-box-64-blue">
+						<img src="{{ $mercenary->get_image_path() }}" alt="" width="64px" height="64px" data-toggle="tooltip" data-placement="top" data-original-title="{{ $mercenary->get_text_for_tooltip() }}">
+					</div>
 				@endif
 			</div>
 			<!-- END AYUDANTE -->

@@ -1718,21 +1718,6 @@ class Authenticated_Controller extends Base_Controller
 			{
 				$characterActivity->update_time();
 			}
-            
-			/*
-			 *	Obtenemos los objetos del personaje
-			 */
-			$items = $characterToSee->items()->select(array('id', 'item_id', 'location', 'data'))->where_not_in('location', array('inventory', 'none'))->get();
-			$itemsToView = array();
-
-			/*
-			 *	Los ordenamos solo para que sea
-			 *	más cómodo de trabajar en la vista
-			 */
-			foreach ( $items as $item )
-			{
-				$itemsToView[$item->location][] = $item;
-			}
 
 			/*
 			 *	Obtenemos los orbes
@@ -1756,13 +1741,21 @@ class Authenticated_Controller extends Base_Controller
 				$pairs = $character->get_pairs_to($characterToSee);
 			}
 
+			$weapon = $characterToSee->get_weapon();
+			$shield = $characterToSee->get_shield();
+
+			$mercenary = $characterToSee->get_mercenary();
+			$mercenary = ( $mercenary ) ? $mercenary->item : null;
+
 			$this->layout->title = $characterToSee->name;
 			$this->layout->content = View::make('authenticated.character')
 			->with('character', $character)
-			->with('items', $itemsToView)
 			->with('orb', $orb)
 			->with('skills', $skills)
 			->with('characterToSee', $characterToSee)
+			->with('weapon', $weapon)
+			->with('shield', $shield)
+			->with('mercenary', $mercenary)
 			->with('hideStats', $characterToSee->has_characteristic(Characteristic::RESERVED))
 			->with('castableSkills', $character->get_castable_talents($characterToSee))
 			->with('pairs', $pairs);
