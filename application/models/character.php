@@ -64,11 +64,11 @@ class Character extends Attackable
 
 	/**
 	 * Query para obtener el segundo mercenario del personaje
-	 * @return Eloquent|null
+	 * @return Eloquent
 	 */
 	public function get_second_mercenary()
 	{
-		return Item::where('id', '=', $this->second_mercenary);
+		return Item::where('id', '=', $this->get_attribute('second_mercenary'));
 	}
 
 	/**
@@ -205,7 +205,7 @@ class Character extends Attackable
 			return false;
 		}
 
-		if ( ! $this->second_mercenary )
+		if ( ! $this->get_attribute('second_mercenary') )
 		{
 			return false;
 		}

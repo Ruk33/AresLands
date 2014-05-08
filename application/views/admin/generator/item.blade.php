@@ -4,7 +4,7 @@
 	{{ Form::token() }}
 
 	{{ Form::label("to_who", "¿Para quien?") }}
-	{{ Form::select("to_who", array("warrior" => "Guerrero", "magician" => "Mago", "neutral" => "Neutro")) }}
+	{{ Form::select("to_who", array(Item::WARRIOR => "Guerrero", Item::WIZARD => "Mago", Item::MIXED => "Mixto")) }}
 
 	{{ Form::label("type", "Tipo") }}
 	{{ Form::select("type", array("blunt" => "Mazas", "sword" => "Espadas", "bow" => "Arcos", "dagger" => "Dagas", "staff" => "Palos magicos", "shield" => "Escudos", "potion" => "Pociones", "mercenary" => "Mercenarios")) }}

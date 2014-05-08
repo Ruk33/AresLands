@@ -19,19 +19,18 @@ class Admin_Generator_Controller extends Base_Controller
 
 	public function post_item()
 	{
-		$items = array(
-			Item::generate_random(1, 1, Item::WARRIOR, true, "blunt"),
-			Item::generate_random(1, 1, Item::WIZARD, true, "blunt"),
-			Item::generate_random(1, 1, Item::MIXED, true, "blunt"),
-		);
+		$level = Input::get('level');
+		$toWho = Input::get('to_who');
+		$type = Input::get('type');
 
-		foreach ( $items as $item )
+		$generatedItems = array();
+
+		for ( $i = 0, $max = Input::get('amount', 1); $i < $max; $i++ )
 		{
-			echo "<img src='" . $item->get_image_path() . "' />";
-			echo $item->name;
+			$generatedItems[] = Item::generate_random($level, $level, $toWho, mt_rand(0, 1) == 1, $type)->to_array();
 		}
 
-		die();
+		die(var_dump($generatedItems));
 	}
 
 	public function get_item()
