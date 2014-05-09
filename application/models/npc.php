@@ -209,6 +209,130 @@ class Npc extends Base_Model
 	{
 		return $this->has_many('NpcMerchandise', 'npc_id');
 	}
+	
+	public function random_merchandises()
+	{
+		return $this->has_many('NpcRandomMerchandise', 'npc_id');
+	}
+	
+	/**
+	 * Verificamos si la lista de mercancias aleatoria esta vieja (usada
+	 * para saber si necesitamos generar una nueva)
+	 * @return boolean
+	 */
+	public function is_random_merchandises_list_old()
+	{
+		$randomMerchandise = $this->random_merchandises()->first();
+		
+		if ( ! $randomMerchandise )
+		{
+			return true;
+		}
+		
+		return $randomMerchandise->valid_until < time();
+	}
+	
+	/**
+	 * Obtenemos el mejor objeto de la lista de mercancias del npc
+	 * @return Eloquent
+	 */
+	public function get_best_item_from_normal_merchandise_list()
+	{
+		return $this->merchandises()
+					->join('items', 'items.id', '=', 'npc_merchandises.item_id')
+					->order_by('items.level', 'desc')
+					->select(array('npc_merchandises.*'));
+	}
+	
+	/**
+	 * Generamos nueva lista de mercancias aleatorias
+	 */
+	public function generate_random_merchandise_list()
+	{
+		// Borramos la lista anterior
+		$this->random_merchandises()->delete();
+		
+		// Valido luego de un dia de haber sido generado
+		$validUntil = time() + 60 * 60 * 24;
+		
+		$bestMerchandise = $this->get_best_item_from_normal_merchandise_list()->with('item')->first();
+		$bestItem = ( $bestMerchandise ) ? $bestMerchandise->item : new Item();
+		
+		if ( $bestItem->type == 'mercenary' )
+		{
+			$types = array('mercenary');
+		}
+		else
+		{
+			$types = array('blunt','bigblunt','sword','bigsword','bow','dagger','staff','bigstaff','hammer','bighammer','ring','axe','shield','potion','arrow');
+
+			switch ( $this->zone_id )
+			{
+				// Montes barbaros
+				case 1:
+					$types = array("blunt", "bigblunt", "sword", "bigsword", "dagger", "hammer", "bighammer", "axe");
+					break;
+
+				// Valle de la sangre
+				case 2:
+					$types = array("staff", "bigstaff", "ring");
+					break;
+
+				// Lago subterraneo
+				case 3:
+					$types = array("potion");
+					break;
+
+				// Piramides
+				case 4:
+					$types = array("bow", "dagger", "shield");
+					break;
+			}
+		}
+		
+		$items = Item::where('level', '>', $bestItem->level + mt_rand(0, 10))
+					 ->where('level', '<', $bestItem->level + mt_rand(25, 60))
+					 ->where_in('type', $types)
+					 ->take(16) // 16 asi encaja justo con la pagina :D
+					 ->order_by(DB::raw("RAND()"))
+					 ->select(array('id', 'level'))
+					 ->get();
+		
+		foreach ( $items as $item )
+		{
+			$this->random_merchandises()->insert(new NpcRandomMerchandise(array(
+				'item_id'      => $item->id,
+				'price_copper' => $item->level * mt_rand(11800, 15700),
+				'valid_until'  => $validUntil
+			)));
+		}
+	}
+	
+	/**
+	 * Obtenemos lista de mercancias para personaje
+	 * @param Character $character
+	 * @return Eloquent
+	 */
+	public function get_merchandises_for(Character $character)
+	{
+		$bestItem = $this->get_best_item_from_normal_merchandise_list()
+						 ->with('item')
+						 ->first();
+		
+		if ( $bestItem && $bestItem->level < $character->level - 3 )
+		{
+			if ( $this->is_random_merchandises_list_old() )
+			{
+				$this->generate_random_merchandise_list();
+			}
+			
+			return $this->random_merchandises();
+		}
+		else
+		{
+			return $this->merchandises();
+		}
+	}
 
 	/**
 	 * Usar solo cuando sea necesario

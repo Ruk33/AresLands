@@ -2266,18 +2266,7 @@ class Authenticated_Controller extends Base_Controller
 		/*
 		 *	Obtenemos las mercancías del npc
 		 */
-		$merchandises = $npc->merchandises()
-		->left_join('items', 'items.id', '=', 'npc_merchandises.item_id')
-		->get(array(
-			'npc_merchandises.id', 
-			'npc_merchandises.item_id', 
-			'npc_merchandises.price_copper', 
-
-			'items.stackable',
-			'items.type',
-			'items.zone_to_explore',
-			'items.time_to_appear'
-		));
+		$merchandises = $npc->get_merchandises_for($character)->with('item')->get();
 
 		$this->layout->title = $npc->name;
 		$this->layout->content = View::make('authenticated.npc')
@@ -2297,6 +2286,12 @@ class Authenticated_Controller extends Base_Controller
 		$amount = Input::get('amount', 1);
 
 		$merchandise = ( $merchandiseId ) ? NpcMerchandise::find((int) $merchandiseId) : false;
+		
+		// Probamos si es una mercencia de la lista aleatoria
+		if ( $merchandise == null )
+		{
+			$merchandise = NpcRandomMerchandise::find((int) $merchandiseId);
+		}
 
 		if ( $merchandise )
 		{
@@ -2492,7 +2487,7 @@ class Authenticated_Controller extends Base_Controller
 			}
 		}
 
-		Session::flash('buyed', "Compraste {$amount} {$item->name}, ¡gracias!.");
+		Session::flash('buyed', "Haz comprado {$amount} {$item->name}, ¡muchas gracias!. ¿No te interesa algo mas?");
 		return Redirect::back();
 	}
 	

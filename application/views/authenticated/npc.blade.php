@@ -144,7 +144,7 @@
 					{{ Form::hidden('merchandise_id', $merchandise->id) }}
 					
 					<div class="box box-box-64-gray">
-						<img src="{{ URL::base() }}/img/icons/items/{{ $merchandise->item_id }}.png" width="80px" height="80px">
+						<img src="{{ $merchandise->item->get_image_path() }}" width="80px" height="80px">
 					</div>
 
 					<div>

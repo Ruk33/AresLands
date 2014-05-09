@@ -19,18 +19,25 @@ class Admin_Generator_Controller extends Base_Controller
 
 	public function post_item()
 	{
-		$level = Input::get('level');
-		$toWho = Input::get('to_who');
-		$type = Input::get('type');
+		$levels = explode(",", Input::get('level'));
+		$targets = Input::get('to_who', array());
+		$types = Input::get('type', array());
 
-		$generatedItems = array();
-
-		for ( $i = 0, $max = Input::get('amount', 1); $i < $max; $i++ )
+		foreach ( $levels as $level )
 		{
-			$generatedItems[] = Item::generate_random($level, $level, $toWho, mt_rand(0, 1) == 1, $type)->to_array();
+			for ( $i = 0, $max = Input::get('amount', 1); $i < $max; $i++ )
+			{
+				foreach ( $types as $type )
+				{
+					foreach ( $targets as $toWho )
+					{
+						Item::generate_random($level, $level, $toWho, mt_rand(0, 1) == 1, $type)->save();
+					}
+				}
+			}
 		}
-
-		die(var_dump($generatedItems));
+		
+		return \Laravel\Redirect::to_route('get_admin_generator_item');
 	}
 
 	public function get_item()

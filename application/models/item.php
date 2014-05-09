@@ -51,6 +51,9 @@ class Item extends Base_Model
 					"Abrenucas",
 					"Sacaojos",
 					"Despojador de almas",
+					"Mazo de la forja de enanos",
+					"Maza antigua",
+					"Rompecorazones",
 				);
 
 				$images = array(
@@ -62,8 +65,7 @@ class Item extends Base_Model
 					"65.png",
 					"66.png",
 				);
-
-				$image = $imgPath . $images[mt_rand(0, count($images) - 1)];
+				
 				$body_part = "rhand";
 				$class = "weapon";
 
@@ -84,6 +86,22 @@ class Item extends Base_Model
 					"Decapitareyes",
 					"Desgarradora",
 				);
+				
+				$images = array(
+					"7.png",
+					"21.png",
+					"48.png",
+					"49.png",
+					"50.png",
+					"51.png",
+					"53.png",
+					"59.png",
+					"60.png",
+					"61.png",
+					"62.png",
+					"63.png",
+					"153.png",
+				);
 
 				$body_part = "rhand";
 				$class = "weapon";
@@ -96,6 +114,26 @@ class Item extends Base_Model
 					"Arco golpeanucas",
 					"Arco de batalla",
 					"Soplo",
+					"Arco largo",
+					"Arco elfico",
+					"Arco forestal",
+					"Arco de guardia real",
+					"Arco cazademonios",
+					"Arco flexible",
+					"Arco del canto",
+					"Arco lunar",
+					"Arco rastreador",
+					"Arco ejecutamonstruos",
+				);
+				
+				$images = array(
+					"17.png",
+					"18.png",
+					"19.png",
+					"20.png",
+					"44.png",
+					"45.png",
+					"46.png",
 				);
 
 				$body_part = "rhand";
@@ -106,6 +144,16 @@ class Item extends Base_Model
 			case "dagger":
 				$names = array(
 					"Apuñalanucas",
+					"Navaja",
+					"Arrancatripas",
+					"Desangradora",
+					"Cortademonios",
+					"Cortajuramentos",
+					"Drenasangre",
+					"Hoja de sacrificio",
+					"Daga de reyes",
+					"Cortademonios",
+					"Venganza",
 					"Daga",
 					"Puñal",
 					"Espina",
@@ -113,6 +161,17 @@ class Item extends Base_Model
 					"Daga del ladron",
 					"Desgarradora",
 					"Hojanuca",
+				);
+				
+				$images = array(
+					"33.png",
+					"34.png",
+					"35.png",
+					"36.png",
+					"37.png",
+					"38.png",
+					"53.png",
+					"58.png",
 				);
 
 				$body_part = "rhand";
@@ -125,6 +184,33 @@ class Item extends Base_Model
 					"Baston",
 					"Palo",
 					"Cetro",
+					"Baston de guerra",
+					"Gran baston",
+					"Baston espiritual",
+					"Baston lunar",
+					"Cetro elfico",
+					"Baston con escencia de Drow",
+					"Hechiza enanos",
+					"Perdicion oscura",
+					"Cetro de mil estrellas",
+					"Baston malevolo",
+					"Baston bailarin",
+				);
+				
+				$images = array(
+					"3.png",
+					"4.png",
+					"5.png",
+					"6.png",
+					"8.png",
+					"9.png",
+					"10.png",
+					"11.png",
+					"29.png",
+					"30.png",
+					"31.png",
+					"32.png",
+					"61.png",
 				);
 
 				$body_part = "rhand";
@@ -139,6 +225,37 @@ class Item extends Base_Model
 					"Muro de desviacion",
 					"Escudo real",
 					"Muro repelemonstruos",
+					"Barrera ancestral",
+					"Escudo burlon",
+					"Escudo grande",
+					"Escudo pequeño",
+					"Escudo guerrero",
+					"Escudo antidemonios",
+				);
+				
+				$images = array(
+					"68.png",
+					"69.png",
+					"70.png",
+					"71.png",
+					"72.png",
+					"73.png",
+					"74.png",
+					"75.png",
+					"76.png",
+					"77.png",
+					"78.png",
+					"79.png",
+					"80.png",
+					"82.png",
+					"83.png",
+					"84.png",
+					"85.png",
+					"87.png",
+					"88.png",
+					"89.png",
+					"90.png",
+					"92.png",
 				);
 
 				$body_part = "lhand";
@@ -234,7 +351,7 @@ class Item extends Base_Model
 
 		$item = new Item(array(
 			"name"                  => $name,
-			"image"                 => $image,
+			"image"                 => $imgPath . $images[mt_rand(0, count($images) - 1)],
 			"level"                 => $min_level,
 			"body_part"             => $body_part,
 			"type"                  => $type,
@@ -321,7 +438,7 @@ class Item extends Base_Model
 
 	public function get_text_for_tooltip()
 	{
-		$message = "<div class='pull-left text-center' style='width: 80px;'><img src='" . URL::base() . "/img/icons/items/$this->id.png' /></div>";
+		$message = "<div class='pull-left text-center' style='width: 80px;'><img src='" . $this->get_image_path() . "' /></div>";
 
 		$message .= "<div style='margin-left: 85px; text-align: left;'>";
 		$message .= "<span class='pull-right' style='color: #AFAFAF; font-size: 10px; text-transform: uppercase;'>";
