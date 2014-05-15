@@ -6,6 +6,15 @@ class Npc extends Base_Model
 	public static $timestamps = false;
 	public static $table = 'npcs';
 	public static $key = 'id';
+    
+    /**
+     * Obtenemos la ruta de la imagen del npc
+     * @return type
+     */
+    public function get_image_path()
+    {
+        return URL::base() . "/img/icons/npcs/{$this->id}.png";
+    }
 	
 	public function get_text_for_tooltip()
 	{
@@ -316,7 +325,7 @@ class Npc extends Base_Model
 						 ->with('item')
 						 ->first();
 		
-		if ( $bestItem && $bestItem->level < $character->level - 3 )
+		if ( $bestItem && $bestItem->item->level < $character->level - 3 )
 		{
 			if ( $this->is_random_merchandises_list_old() )
 			{

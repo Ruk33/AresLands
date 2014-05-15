@@ -2487,7 +2487,7 @@ class Authenticated_Controller extends Base_Controller
 			}
 		}
 
-		Session::flash('buyed', "Haz comprado {$amount} {$item->name}, ¡muchas gracias!. ¿No te interesa algo mas?");
+		Session::flash('buyed', "Gracias por comprar {$amount} {$item->name}, ¿no te interesa algo mas?");
 		return Redirect::back();
 	}
 	

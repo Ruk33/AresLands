@@ -10,7 +10,8 @@
 <div class="clearfix"></div>
 
 @if ( Session::has('buyed') )
-	<div class="alert alert-success">
+	<div class="alert alert-success span11" style="margin-top: 20px;">
+        <b>{{ $npc->name }}</b>:
 		{{ Session::get('buyed') }}
 	</div>
 @endif
@@ -19,7 +20,7 @@
 	<h4 class="text-center" style="margin-top: 100px;">Por el momento, no tengo nada para ti. Vuelve en otra ocación.</h4>
 @else
 	@if ( count($repeatableQuests) > 0 )
-		<h2>Misiones repetibles</h2>
+		<h2 style="margin-top: 20px;">Misiones repetibles</h2>
 
 		@foreach ( $repeatableQuests as $repeatableQuest )
 			<div class="dark-box span11" style="cursor: pointer; margin-bottom: 5px;" data-toggle="collapse" data-target="#{{ $repeatableQuest->id }}">
@@ -42,24 +43,30 @@
 	<div class="clearfix"></div>
 
 	@if ( count($rewardQuests) > 0 )
-		<h2>Misiones completadas, ¡pide tu recompensa!</h2>
+		<h2 style="margin-top: 20px;">Misiones completadas, ¡pide tu recompensa!</h2>
 
 		@foreach ( $rewardQuests as $rewardQuest )
-			<div class="dark-box span11" style="cursor: pointer; margin-bottom: 5px;" data-toggle="collapse" data-target="#{{ $rewardQuest->id }}">
+			<div class="dark-box span11 {{ $rewardQuest->get_css_class($character) }}" style="cursor: pointer; margin-bottom: 5px;" data-toggle="collapse" data-target="#{{ $rewardQuest->id }}">
 				@if ( $rewardQuest->daily )
-					<span class="label label-warning">DIARIA</span>
+					<div class="pull-right label label-warning">DIARIA</div>
 				@endif
-				<strong style="line-height: 60px;">{{ $rewardQuest->name }}</strong>
-				<div class="pull-right">
-					<small>Recompensa(s)</small>
-					{{ $rewardQuest->get_rewards_for_view() }}
-				</div>
+				<h5>{{ $rewardQuest->name }}</h5>
 
 				<div id="{{ $rewardQuest->id }}" class="collapse">
-					<p>{{ $rewardQuest->description }}</p>
-					<p>
-						<a href="{{ URL::to('authenticated/rewardFromQuest/' . $rewardQuest->id) }}">Obtener recompensa</a>
-					</p>
+                    <p><small>{{ $rewardQuest->description }}</small></p>
+                    <div style="margin-top: 20px; margin-bottom: 100px;">
+                        <div class="span6 text-center">
+                            <b>Objetivo(s)</b>
+                            {{ $rewardQuest->get_actions_for_view() }}
+                        </div>
+                        <div class="span6 text-center">
+                            <b>Recompensa(s)</b>
+                            {{ $rewardQuest->get_rewards_for_view() }}
+                        </div>
+                    </div>
+					<div class="text-center" style="margin-top: 20px;">
+						<a href="{{ URL::to('authenticated/rewardFromQuest/' . $rewardQuest->id) }}" class="normal-button">Obtener recompensa</a>
+					</div>
 				</div>
 			</div>
 		@endforeach
@@ -68,21 +75,28 @@
 	<div class="clearfix"></div>
 
 	@if ( count($startedQuests) > 0 )
-		<h2>Misiones aceptadas</h2>
+		<h2 style="margin-top: 20px;">Misiones aceptadas</h2>
 
 		@foreach ( $startedQuests as $startedQuest )
-			<div class="dark-box span11" style="cursor: pointer; margin-bottom: 5px;" data-toggle="collapse" data-target="#{{ $startedQuest->id }}">
+			<div class="dark-box span11 {{ $startedQuest->get_css_class($character) }}" style="cursor: pointer; margin-bottom: 5px;" data-toggle="collapse" data-target="#{{ $startedQuest->id }}">
 				@if ( $startedQuest->daily )
-					<span class="label label-warning">DIARIA</span>
+					<div class="pull-right label label-warning">DIARIA</div>
 				@endif
-				<strong style="line-height: 60px;">{{ $startedQuest->name }}</strong>
-				<div class="pull-right">
-					<small>Recompensa(s)</small>
-					{{ $startedQuest->get_rewards_for_view() }}
-				</div>
+				<h5>{{ $startedQuest->name }}</h5>
 
 				<div id="{{ $startedQuest->id }}" class="collapse">
-					<p>{{ $startedQuest->description }}</p>
+                    <p><small>{{ $startedQuest->description }}</small></p>
+                    
+                    <div style="margin-top: 20px; margin-bottom: 100px;">
+                        <div class="span6 text-center">
+                            <b>Objetivo(s)</b>
+                            {{ $startedQuest->get_actions_for_view() }}
+                        </div>
+                        <div class="span6 text-center">
+                            <b>Recompensa(s)</b>
+                            {{ $startedQuest->get_rewards_for_view() }}
+                        </div>
+                    </div>
 
 					@if ( $progress = $character->get_progress_for_view($startedQuest) )
 						<strong>Tu progreso</strong>
@@ -96,7 +110,7 @@
 	<div class="clearfix"></div>
 
 	@if ( count($quests) > 0 )
-		<h2>Misiones disponibles</h2>
+		<h2 style="margin-top: 20px;">Misiones disponibles</h2>
 
 		@foreach ( $quests as $quest )
 			<div class="dark-box span11 {{ $quest->get_css_class($character) }}" style="cursor: pointer; margin-bottom: 5px;" data-toggle="collapse" data-target="#{{ $quest->id }}">
@@ -108,9 +122,15 @@
 				<div id="{{ $quest->id }}" class="collapse">
                     <p><small>{{ $quest->description }}</small></p>
                     
-                    <div style="margin-top: 20px;">
-                        <b>Recompensa(s)</b>
-                        {{ $quest->get_rewards_for_view() }}
+                    <div style="margin-top: 20px; margin-bottom: 100px;">
+                        <div class="span6 text-center">
+                            <b>Objetivo(s)</b>
+                            {{ $quest->get_actions_for_view() }}
+                        </div>
+                        <div class="span6 text-center">
+                            <b>Recompensa(s)</b>
+                            {{ $quest->get_rewards_for_view() }}
+                        </div>
                     </div>
                     
                     <div class="text-center" style="margin-top: 20px;">

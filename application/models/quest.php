@@ -36,6 +36,36 @@ class Quest extends Base_Model
         }
     }
     
+    /**
+     * Devolvemos string con formato mostrando los
+     * npcs con los que se debe interactuar
+     * @return string
+     */
+    public function get_actions_for_view()
+    {
+        $view = "";
+        
+        foreach ( $this->quest_npcs()->with('npc')->get() as $questNpc )
+        {
+            if ( $questNpc->action == 'kill' )
+            {
+                $action = "Derrotar {$questNpc->amount}";
+            }
+            else
+            {
+                $action = "Hablar";
+            }
+            
+            $view .= "<li style='vertical-align: top;'>"
+                    . "<div class='quest-reward-item' data-toggle='tooltip' data-original-title='<h6>{$questNpc->npc->name}</h6><p>Ubicacion: {$questNpc->npc->zone->name}<br>Accion: {$action}</p>'>"
+                    . "<img src='{$questNpc->npc->get_image_path()}' width='30px' height='30px' />"
+                    . "</div>"
+                    . "</li>";
+        }
+        
+        return "<ul class='inline'>{$view}</ul>";
+    }
+    
 	/**
 	 *	Devolvemos un string con formato
 	 *	para mostrar la recompensa en las vistas
