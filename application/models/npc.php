@@ -89,7 +89,6 @@ class Npc extends Base_Model
 		return Npc::select(array('id', 'name', 'dialog', 'tooltip_dialog'))
 		->where('zone_id', '=', $zone->id)
 		->where('type', '=', 'npc')
-		->where('level_to_appear', '<=', $character->level )
 		->order_by('level_to_appear', 'asc')
 		->get();
 	}

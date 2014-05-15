@@ -207,10 +207,14 @@
 												<ul class="item inline">
 											@endif
 
-											<li data-toggle="tooltip" data-placement="bottom" data-original-title="<div style='color: #FFC200;'>Mercader {{ $npc->name }}</div>{{ $npc->tooltip_dialog }}">
-												<a href="{{ URL::to('authenticated/npc/' . $npc->id . '/' . Str::slug($npc->name)) }}">
-													<img src="{{ URL::base() }}/img/icons/npcs/{{ $npc->id }}.png" alt="" width="72px" height="82px">
-												</a>
+											<li>
+												@if ( $npc->is_blocked_to($character) )
+                                                    <img class="grayEffect" data-toggle="tooltip" data-toggle-placement="bottom" data-original-title="Mercader bloqueado, necesitas mas nivel" src="{{ URL::base() }}/img/icons/npcs/{{ $npc->id }}.png" alt="" width="72px" height="82px">
+                                                @else
+                                                    <a href="{{ URL::to('authenticated/npc/' . $npc->id . '/' . Str::slug($npc->name)) }}" data-toggle="tooltip" data-placement="bottom" data-original-title="<div style='color: #FFC200;'>Mercader {{ $npc->name }}</div>{{ $npc->tooltip_dialog }}">
+                                                        <img src="{{ URL::base() }}/img/icons/npcs/{{ $npc->id }}.png" alt="" width="72px" height="82px">
+                                                    </a>
+                                                @endif
 											</li>
 										@endforeach
 										</ul>
