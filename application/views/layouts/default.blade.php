@@ -254,17 +254,17 @@
 								<ul class="inline pull-right">
 									<li style="padding: 0; vertical-align: top;">
 										<div id="quests_popover" style="display: none;">
-											<div style="width: 250px; margin-top: -15px;">
+											<div style="width: 300px; margin-top: -15px;">
 											@if ( count($startedQuests) > 0 )
 												@foreach ( $startedQuests as $startedQuest )
 													<?php $quest = $startedQuest->quest()->select(array('id', 'name'))->first(); ?>
 													@if ( $startedQuest->progress == 'reward' )
 													<div class="positive">
 													@endif
-													<span style="line-height: 60px; color: orange;">{{ $quest->name }}</span>
+													<span style="line-height: 25px; color: orange;">{{ $quest->name }}</span>
 
 													@if ( $progress = $character->get_progress_for_view($quest) )
-														{{ $progress }}
+                                                        <small>{{ $progress }}</small>
 													@endif
 													@if ( $startedQuest->progress == 'reward' )
 													</div>
@@ -276,7 +276,7 @@
 											</div>
 										</div>
 
-										<img id="quests" style="cursor: pointer;" src="{{ URL::base() }}/img/quest-icon.png" width="16px" height="19px" data-toggle="tooltip" data-original-title="<center>Misiones</center>" data-placement="top" data-container="body">
+										<img id="quests" style="cursor: pointer;" src="{{ URL::base() }}/img/quest-icon.png" width="16px" height="19px" data-toggle="tooltip" data-original-title="<center><b>Misiones</b></center>" data-placement="top" data-container="body">
 										
 										<script>
 											$('#quests').popover({
