@@ -99,22 +99,23 @@
 		<h2>Misiones disponibles</h2>
 
 		@foreach ( $quests as $quest )
-			<div class="dark-box span11" style="cursor: pointer; margin-bottom: 5px;" data-toggle="collapse" data-target="#{{ $quest->id }}">
+			<div class="dark-box span11 {{ $quest->get_css_class($character) }}" style="cursor: pointer; margin-bottom: 5px;" data-toggle="collapse" data-target="#{{ $quest->id }}">
 				@if ( $quest->daily )
-					<span class="label label-warning">DIARIA</span>
+					<div class="pull-right label label-warning">DIARIA</div>
 				@endif
-				<strong style="line-height: 60px;">{{ $quest->name }}</strong>
-
-				<div class="pull-right">
-					<small>Recompensa(s)</small>
-					{{ $quest->get_rewards_for_view() }}
-				</div>
+                <h5>{{ $quest->name }}</h5>
 
 				<div id="{{ $quest->id }}" class="collapse">
-					<p>{{ $quest->description }}</p>
-					<p>
+                    <p><small>{{ $quest->description }}</small></p>
+                    
+                    <div style="margin-top: 20px;">
+                        <b>Recompensa(s)</b>
+                        {{ $quest->get_rewards_for_view() }}
+                    </div>
+                    
+                    <div class="text-center" style="margin-top: 20px;">
 						<a href="{{ URL::to('authenticated/acceptQuest/' . $quest->id) }}" class="normal-button">Aceptar misión</a>
-					</p>
+					</div>
 				</div>
 			</div>
 		@endforeach

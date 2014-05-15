@@ -7,6 +7,35 @@ class Quest extends Base_Model
 	public static $table = 'quests';
 	public static $key = 'id';
 
+    /**
+     * Obtenemos clase css para mision (roja en caso de ser muy dificil, etc.)
+     * @param Character $character
+     * @return string
+     */
+    public function get_css_class(Character $character)
+    {
+        if ( $character->level <= $this->min_level - 10 )
+        {
+            return 'very-hard-quest';
+        }
+        elseif ( $character->level <= $this->min_level - 5 )
+        {
+            return 'hard-quest';
+        }
+        elseif ( $character->level <= $this->min_level - 2 )
+        {
+            return 'normal-quest';
+        }
+        elseif ( $character->level <= $this->min_level )
+        {
+            return 'easy-quest';
+        }
+        else
+        {
+            return 'very-easy-quest';
+        }
+    }
+    
 	/**
 	 *	Devolvemos un string con formato
 	 *	para mostrar la recompensa en las vistas

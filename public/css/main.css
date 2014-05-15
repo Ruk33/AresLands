@@ -54,6 +54,26 @@ textarea {
    Author's custom styles
    ========================================================================== */
 
+.very-hard-quest h5 {
+    color: red !important;
+}
+
+.hard-quest h5 {
+    color: orange !important;
+}
+
+.normal-quest h5 {
+    color: white !important;
+}
+
+.easy-quest h5 {
+    color: greenyellow !important;
+}
+
+.very-easy-quest h5 {
+    color: gray !important;
+}
+
 body {
 	/*background-color: #360000;*/
 	cursor: default;
@@ -1166,9 +1186,9 @@ h4 {
 }
 
 .dark-box {
-	padding: 20px;
+	padding: 10px;
 	background-color: rgb(16, 17, 17);
-	border: 1px dashed rgb(60, 60, 60);
+	border: 1px solid rgb(60, 60, 60);
 }
 
 .menu-column {
@@ -1305,13 +1325,14 @@ h4 {
 	margin: 0;
 	line-height: 45px;
 	text-shadow: 0px 0px 5px black, 0px 0px 5px black, 0px 0px 5px black;
-	font-size: 12px;
+	font-size: 11px;
 	border: 0;
 	background-color: transparent;
+    text-transform: uppercase;
 }
 
 .normal-button:hover {
-	background-position: 0 -44px;
+	background-position: 0 -43px;
 	color: white;
 	text-decoration: none;
 }

@@ -143,8 +143,7 @@ class Npc extends Base_Model
 		return $this->
 				quests()->
 				where('quests.id', 'NOT IN', $characterQuests)->
-				where('min_level', '<=', $character->level)->
-				where('max_level', '>=', $character->level);
+				where('min_level', '<=', $character->level + 10);
 	}
 
 	/**
@@ -200,7 +199,6 @@ class Npc extends Base_Model
 
 	public function quests()
 	{
-		//return $this->has_many('NpcQuest', 'npc_id');
 		return $this->has_many_and_belongs_to('Quest', 'npc_quests');
 	}
 
