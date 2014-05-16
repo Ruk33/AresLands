@@ -25,17 +25,30 @@
 		@foreach ( $repeatableQuests as $repeatableQuest )
 			<div class="dark-box span11" style="cursor: pointer; margin-bottom: 5px;" data-toggle="collapse" data-target="#{{ $repeatableQuest->id }}">
 				@if ( $repeatableQuest->daily )
-					<span class="label label-warning">DIARIA</span>
+					<div class="pull-right label label-warning">DIARIA</div>
 				@endif
-				<strong style="line-height: 60px;">{{ $repeatableQuest->name }} (<small>Disponible en: <span class='timer' data-endtime='{{ $repeatableQuest->repeatable_at - time() }}'></span></small>)</strong>
-				<div class="pull-right">
-					<small>Recompensa(s)</small>
-					{{ $repeatableQuest->get_rewards_for_view() }}
-				</div>
+				<h5>{{ $repeatableQuest->name }} (<small>Disponible en: <span class='timer' data-endtime='{{ $repeatableQuest->repeatable_at - time() }}'></span></small>)</h5>
+				
+                <div id="{{ $repeatableQuest->id }}" class="collapse">
+                    <p><small>{{ $repeatableQuest->description }}</small></p>
+                
+                    @if ( $deblockQuest = $repeatableQuest->get_deblock_quest()->first() )
+                    <div class="clan-member-link text-center" style="text-transform: uppercase; font-size: 12px; color: orange;">
+                        Al completarla, desbloquearás la misión: <b>{{ $deblockQuest->name }}</b>
+                    </div>
+                    @endif
 
-				<div id="{{ $repeatableQuest->id }}" class="collapse">
-					<p>{{ $repeatableQuest->description }}</p>
-				</div>
+                    <div style="margin-top: 20px; margin-bottom: 100px;">
+                        <div class="span6 text-center">
+                            <b>Objetivo(s)</b>
+                            {{ $repeatableQuest->get_actions_for_view() }}
+                        </div>
+                        <div class="span6 text-center">
+                            <b>Recompensa(s)</b>
+                            {{ $repeatableQuest->get_rewards_for_view() }}
+                        </div>
+                    </div>
+                </div>
 			</div>
 		@endforeach
 	@endif
@@ -54,6 +67,13 @@
 
 				<div id="{{ $rewardQuest->id }}" class="collapse">
                     <p><small>{{ $rewardQuest->description }}</small></p>
+                    
+                    @if ( $deblockQuest = $rewardQuest->get_deblock_quest()->first() )
+                    <div class="clan-member-link text-center" style="text-transform: uppercase; font-size: 12px; color: orange;">
+                        Al completarla, desbloquearás la misión: <b>{{ $deblockQuest->name }}</b>
+                    </div>
+                    @endif
+                    
                     <div style="margin-top: 20px; margin-bottom: 100px;">
                         <div class="span6 text-center">
                             <b>Objetivo(s)</b>
@@ -86,6 +106,12 @@
 
 				<div id="{{ $startedQuest->id }}" class="collapse">
                     <p><small>{{ $startedQuest->description }}</small></p>
+                    
+                    @if ( $deblockQuest = $startedQuest->get_deblock_quest()->first() )
+                    <div class="clan-member-link text-center" style="text-transform: uppercase; font-size: 12px; color: orange;">
+                        Al completarla, desbloquearás la misión: <b>{{ $deblockQuest->name }}</b>
+                    </div>
+                    @endif
                     
                     <div style="margin-top: 20px; margin-bottom: 100px;">
                         <div class="span6 text-center">
@@ -121,6 +147,12 @@
 
 				<div id="{{ $quest->id }}" class="collapse">
                     <p><small>{{ $quest->description }}</small></p>
+                    
+                    @if ( $deblockQuest = $quest->get_deblock_quest()->first() )
+                    <div class="clan-member-link text-center" style="text-transform: uppercase; font-size: 12px; color: orange;">
+                        Al completarla, desbloquearás la misión: <b>{{ $deblockQuest->name }}</b>
+                    </div>
+                    @endif
                     
                     <div style="margin-top: 20px; margin-bottom: 100px;">
                         <div class="span6 text-center">

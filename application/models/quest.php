@@ -6,6 +6,16 @@ class Quest extends Base_Model
 	public static $timestamps = false;
 	public static $table = 'quests';
 	public static $key = 'id';
+        
+    /**
+     * Obtenemos query para obtener mision que ayuda a desbloquear
+     * (util cuando se quiere mostrar algo como: "ayuda a desbloquear la mision...")
+     * @return Eloquent
+     */
+    public function get_deblock_quest()
+    {
+        return self::where('complete_required', '=', $this->id);
+    }
 
     /**
      * Obtenemos clase css para mision (roja en caso de ser muy dificil, etc.)
