@@ -264,6 +264,10 @@ class Npc extends Base_Model
 		$bestMerchandise = $this->get_best_item_from_normal_merchandise_list()->with('item')->first();
 		$bestItem = ( $bestMerchandise ) ? $bestMerchandise->item : new Item();
 		
+        // Cuantos objetos vamos a agregar a la lista
+        // 16 asi encaja justo con la pagina :D
+        $howMany = 16;
+        
 		if ( $bestItem->type == 'mercenary' )
 		{
 			$types = array('mercenary');
@@ -287,6 +291,15 @@ class Npc extends Base_Model
 				// Lago subterraneo
 				case 3:
 					$types = array("potion");
+                    
+                    // Aseguramos que haya pocion de vida en la nueva lista
+                    $howMany--;
+                    $this->random_merchandises()->insert(new NpcRandomMerchandise(array(
+                        'item_id'      => 122,
+                        'price_copper' => 500,
+                        'valid_until'  => $validUntil
+                    )));
+                    
 					break;
 
 				// Piramides
@@ -299,7 +312,8 @@ class Npc extends Base_Model
 		$items = Item::where('level', '>', $bestItem->level + mt_rand(0, 10))
 					 ->where('level', '<', $bestItem->level + mt_rand(25, 60))
 					 ->where_in('type', $types)
-					 ->take(16) // 16 asi encaja justo con la pagina :D
+                     ->where('id', '<>', 122) // pocion de vida
+					 ->take($howMany)
 					 ->order_by(DB::raw("RAND()"))
 					 ->select(array('id', 'level'))
 					 ->get();
@@ -309,6 +323,7 @@ class Npc extends Base_Model
             $min = 11800;
             $max = 15700;
             
+            // Si es una pocion, evitamos que su precio sea muy elevado
             if ( $item->type == 'potion' )
             {
                 $min = 663;
