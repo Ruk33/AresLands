@@ -306,9 +306,18 @@ class Npc extends Base_Model
 		
 		foreach ( $items as $item )
 		{
+            $min = 11800;
+            $max = 15700;
+            
+            if ( $item->type == 'potion' )
+            {
+                $min = 663;
+                $max = 779;
+            }
+            
 			$this->random_merchandises()->insert(new NpcRandomMerchandise(array(
 				'item_id'      => $item->id,
-				'price_copper' => $item->level * mt_rand(11800, 15700),
+				'price_copper' => $item->level * mt_rand($min, $max),
 				'valid_until'  => $validUntil
 			)));
 		}
