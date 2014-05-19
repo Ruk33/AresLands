@@ -180,11 +180,11 @@
 
 		<ul class="inline" ng-controller="Item">
 		@foreach ( $merchandises as $merchandise )
-			@if ( $merchandise->type == 'mercenary' )
-				@if ( $merchandise->zone_to_explore && $merchandise->time_to_appear && $character->exploring_times()->where('zone_id', '=', $merchandise->zone_to_explore)->where('time', '>=', $merchandise->time_to_appear)->take(1)->count() == 0 )
+			@if ( $merchandise->item->type == 'mercenary' )
+				@if ( $merchandise->item->zone_to_explore && $merchandise->item->time_to_appear && $character->exploring_times()->where('zone_id', '=', $merchandise->zone_to_explore)->where('time', '>=', $merchandise->time_to_appear)->take(1)->count() == 0 )
 					<li class="text-center" style="vertical-align: top; padding: 10px;" data-toggle="tooltip" data-original-title="Bloqueado, necesitas explorar mas para que este mercenario se te habilite">
 						<div class="box box-box-64-gray grayEffect">
-							<img src="{{ URL::base() }}/img/icons/items/{{ $merchandise->item_id }}.png" width="80px" height="80px">
+							<img src="{{ $merchandise->item->get_image_path() }}" width="80px" height="80px">
 						</div>
 					</li>
 					<?php continue; ?>
@@ -201,7 +201,7 @@
 					</div>
 
 					<div>
-					@if ( $merchandise->stackable )
+					@if ( $merchandise->item->stackable )
                         <div data-toggle="tooltip" data-original-title="Podes comprar {{ number_format($characterCoinsCount / $merchandise->price_copper, 0, ',', '.') }}">
                         {{ Form::number('amount', 0, array('max' => number_format($characterCoinsCount / $merchandise->price_copper, 0, '', ''), 'style' => 'width: 50px;')) }}
                         </div>
@@ -215,7 +215,7 @@
 				{{ Form::close() }}
 			@else
 				<div class="box box-box-64-gray">
-					<img src="{{ URL::base() }}/img/icons/items/{{ $merchandise->item_id }}.png" width="80px" height="80px">
+					<img src="{{ $merchandise->item->get_image_path() }}" width="80px" height="80px">
 				</div>
 				<div class="btn disabled" style="font-size: 10px;" data-toggle="tooltip" data-title="No tienes suficientes monedas">Comprar</div>
 			@endif
