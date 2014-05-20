@@ -310,11 +310,11 @@
 						<ul class="unstyled menu" width="150px;">
 							@if ( Auth::check() && isset($character) )
 								<li>
-									<i class="icon icon-arrow-right icon-white"></i>
+									<i class="img-circle menu-icon menu-index"></i>
 									<a href="{{ URL::to('authenticated/index') }}">Tu personaje</a>
 								</li>
 								<li>
-									<i class="icon icon-inbox icon-white"></i>
+									<i class="img-circle menu-icon menu-messages"></i>
 									<a href="{{ URL::to('authenticated/messages') }}">
 										Mensajes
 										@if ( $character->get_unread_messages_count() > 0 )
@@ -329,39 +329,39 @@
 
 								@if ( $character->clan_id == 0 )
 								<li>
-									<i class="icon icon-certificate icon-white"></i>
+									<i class="img-circle menu-icon menu-ranking"></i>
 									<a href="{{ URL::to('authenticated/createclan') }}">Crear grupo</a>
 								</li>
 								@endif
 								
 								@if ( $character->can_travel() === true )
 								<li>
-									<i class="icon icon-move icon-white"></i>
+									<i class="img-circle menu-icon menu-travel"></i>
 									<a href="{{ URL::to('authenticated/travel') }}">Viajar</a>
 								</li>
 								@endif
 								
 								@if ( $character->can_fight() )
 								<li>
-									<i class="icon icon-exclamation-sign icon-white"></i>
+									<i class="img-circle menu-icon menu-battle"></i>
 									<a href="{{ URL::to('authenticated/battle') }}">Batallar</a>
 								</li>
 								<li>
-									<i class="icon icon-exclamation-sign icon-white"></i>
+									<i class="img-circle menu-icon menu-dungeons"></i>
 									<a href="{{ URL::to('authenticated/dungeon') }}">Calabozos</a>
 								</li>
 								@endif
 	
 								@if ( $character->can_explore() )
 								<li>
-									<i class="icon icon-eye-open icon-white"></i>
+									<i class="img-circle menu-icon menu-explore"></i>
 									<a href="{{ URL::to('authenticated/explore') }}">Explorar</a>
 								</li>
 								@endif
 								
 								@if ( $character->characteristics )
 								<li>
-									<i class="icon icon-gift icon-white"></i>
+									<i class="img-circle menu-icon menu-talents"></i>
 									<a href="{{ URL::to('authenticated/talents') }}">Talentos</a>
 
 									@if ( $character->talent_points > 0 )
@@ -375,19 +375,19 @@
 								@endif
 								
 								<li>
-									<i class="icon icon-wrench icon-white"></i>
+									<i class="img-circle menu-icon menu-trade"></i>
 									<a href="{{ URL::to('authenticated/trades') }}">Comercios</a>
 								</li>
 								<li>
-									<i class="icon icon-star icon-white"></i>
+									<i class="img-circle menu-icon menu-ranking"></i>
 									<a href="{{ URL::to('authenticated/ranking') }}">Ranking</a>
 								</li>
 								<li>
-									<i class="icon icon-question-sign icon-white"></i>
+									<i class="img-circle menu-icon menu-orbs"></i>
 									<a href="{{ URL::to('authenticated/orbs') }}">Orbes</a>
 								</li>
 								<li>
-									<i class="icon icon-fire icon-white"></i>
+									<i class="img-circle menu-icon menu-tournaments"></i>
 									<a href="{{ URL::to('authenticated/tournaments') }}">Torneos</a>
 
 									@if ( $tournament )
@@ -403,19 +403,19 @@
 									@endif
 								</li>
 								<li>
-									<i class="icon icon-eye-close icon-white"></i>
+									<i class="img-circle menu-icon menu-secret-shop"></i>
 									<a href="{{ URL::to('authenticated/secretShop') }}">Mercado secreto</a>
 								</li>
 								<li>
-									<i class="icon icon-book icon-white"></i>
+									<i class="img-circle menu-icon menu-tutorial"></i>
 									<a href="{{ URL::to('game/index') }}" target="_blank">Guia</a>
 								</li>
 								<li>
-									<i class="icon icon-book icon-white"></i>
+									<i class="img-circle menu-icon menu-forum"></i>
 									<a href="http://ironfist.com.ar/forums" target="_blank">Foro</a>
 								</li>
 								<li>
-									<i class="icon icon-off icon-white"></i>
+									<i class="img-circle menu-icon menu-logout"></i>
 									<a href="{{ URL::to('authenticated/logout') }}">Desconectarse</a>
 								</li>
 							@else

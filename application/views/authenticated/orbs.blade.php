@@ -1,5 +1,5 @@
-<div class="orb-content">
-	<div style="margin-left: 200px; color: rgb(162, 158, 147);">
+<div class="row orb-content">
+	<div style="margin-left: 200px; margin-top: 20px; margin-bottom: 20px;">
 		<h2>Orbes</h2>
 		<p>
 			<i>
@@ -9,35 +9,46 @@
 		</p>
 		<p>Si quieres hacerte con uno de estos extraños objetos, ¡deberás atacar a su poseedor y vencerlo!.</p>
 	</div>
+    <table class="table table-striped brown-table">
+        <thead>
+            <tr class="text-left">
+                <th></th>
+                <th>Nombre</th>
+                <th>Poseedor</th>
+                <th>Lo tiene desde</th>
+                <th>Ultimo atacante</th>
+            </tr>
+        </thead>
 
-	<ul class="inline text-center">
-		@foreach ( $orbs as $orb )
-			<li style="vertical-align: top; width: 230px; margin-bottom: 25px;">
-				<h2>{{ $orb->name }}</h2>
-				
-				<img src="{{ URL::base() }}/img/icons/orbs/{{ $orb->id }}.png" width="150px" height="150px" data-toggle="tooltip" data-title="{{ $orb->get_tooltip() }}">
-				
-				<p>
-					<strong>Poseedor:</strong> 
-					@if ( $orb->owner_character ) 
-						{{ $orb->owner()->select(array('name'))->first()->get_link() }} 
-					@else 
-						Nadie 
-						
-						@if ( $orb->can_be_stolen_by($character) )
-							<div><a href="{{ URL::to('authenticated/claimOrb/' . $orb->id) }}">¡Reclamar orbe!</a></div>
-						@endif
-					@endif
-				</p>
-				
-				@if ( $orb->last_attack_time && $orb->last_attacker )
-				<p>
-					<strong>Último ataque:</strong> 
-					{{ date('H:i:s d/m/y', $orb->last_attack_time) }} <br>
-					por {{ $orb->attacker()->select(array('name'))->first()->get_link() }}
-				</p>
-				@endif
-			</li>
-		@endforeach
-	</ul>
+        <tbody>
+            @foreach ( $orbs as $orb )
+            <tr>
+                <td class="span1"><img src="{{ URL::base() }}/img/icons/orbs/{{ $orb->id }}.png" width="32" height="32" /></td>
+                <td data-toggle="tooltip" data-original-title="{{ $orb->get_tooltip() }}">{{ $orb->name }}</td>
+                <td>
+                    @if ( $orb->owner_character )
+                        {{ $orb->owner()->select(array('name'))->first()->get_link() }}
+                    @else
+                        Nadie
+                    @endif
+                </td>
+                <td>
+                    @if ( $orb->owner_character )
+                        {{ date('H:i:s d/m/y', $orb->acquisition_time) }}
+                    @else
+                        --:--:--
+                    @endif
+                </td>
+                <td>
+                    @if ( $orb->last_attack_time && $orb->last_attacker )
+                        {{ date('H:i:s d/m/y', $orb->last_attack_time) }} por 
+                        {{ $orb->attacker()->select(array('name'))->first()->get_link() }}
+                    @else
+                        Nadie
+                    @endif
+                </td>
+            </tr>
+            @endforeach
+        </tbody>
+    </table>
 </div>

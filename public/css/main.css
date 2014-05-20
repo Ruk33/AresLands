@@ -284,6 +284,7 @@ form {
 .brown-table tbody tr td {
 	padding: 10px;
 	vertical-align: middle;
+    background-color: #141414;
 }
 
 .table-striped tbody > tr:nth-child(odd) > td, .table-striped tbody > tr:nth-child(odd) > th {
@@ -788,14 +789,20 @@ a:hover {
 }
 
 .menu {
-    text-shadow: black 0 0 5px;
+    text-shadow: black 0 0 5px, black 0 0 5px;
 	padding: 10px;
 }
 
 .menu li {
+    transition: margin-left 0.2s ease;
 	padding-bottom: 5px;
 	margin-bottom: 5px;
 	border-bottom: 1px solid #451907;
+}
+
+.menu li:hover {
+    margin-left: 5px;
+    text-shadow: white 0 0 5px;
 }
 
 .menu a {
@@ -803,116 +810,106 @@ a:hover {
     color: white;
 }
 
-.menu a:hover {
-    color: #fff2df;
+.menu .menu-icon {
+    border: 2px solid rgb(72, 31, 18);
+    box-shadow: black 0 0 2px, black 0 0 2px;
+    vertical-align: -5px;
+}
+
+.menu-icon {
+    background-image: url(/img/menu/menu.jpg);
+    background-repeat: no-repeat;
+    display: inline-block;
 }
 
 .menu-battle {
-    width: 177px;
-    height: 36px;
-    background-position: -5px -5px;
+    width: 16px;
+    height: 16px;
+    background-position: 0 0;
 }
 
-.menu-character {
-    width: 177px;
-    height: 36px;
-    background-position: -192px -5px;
-}
-
-.menu-characters {
-    width: 177px;
-    height: 36px;
-    background-position: -5px -51px;
+.menu-dungeons {
+    width: 16px;
+    height: 16px;
+    background-position: 0 -16px;
 }
 
 .menu-explore {
-    width: 177px;
-    height: 36px;
-    background-position: -192px -51px;
+    width: 16px;
+    height: 16px;
+    background-position: 0 -32px;
 }
 
 .menu-forum {
-    width: 177px;
-    height: 36px;
-    background-position: -5px -97px;
+    width: 16px;
+    height: 16px;
+    background-position: 0 -48px;
 }
 
-.menu-group {
-    width: 177px;
-    height: 36px;
-    background-position: -192px -97px;
-}
-
-.menu-guide {
-    width: 177px;
-    height: 36px;
-    background-position: -5px -143px;
-}
-
-.menu-inicio {
-    width: 177px;
-    height: 36px;
-    background-position: -192px -143px;
+.menu-index {
+    width: 16px;
+    height: 16px;
+    background-position: 0 -64px;
 }
 
 .menu-logout {
-    width: 177px;
-    height: 36px;
-    background-position: -5px -189px;
+    width: 16px;
+    height: 16px;
+    background-position: 0 -80px;
 }
 
 .menu-messages {
-    width: 177px;
-    height: 36px;
-    background-position: -192px -189px;
+    width: 16px;
+    height: 16px;
+    background-position: 0 -96px;
 }
 
 .menu-orbs {
-    width: 177px;
-    height: 36px;
-    background-position: -5px -235px;
+    width: 16px;
+    height: 16px;
+    background-position: 0 -112px;
 }
 
 .menu-ranking {
-    width: 177px;
-    height: 36px;
-    background-position: -192px -235px;
+    width: 16px;
+    height: 16px;
+    background-position: 0 -128px;
 }
 
 .menu-secret-shop {
-    width: 177px;
-    height: 36px;
-    background-position: -5px -281px;
+    width: 16px;
+    height: 16px;
+    background-position: 0 -144px;
 }
 
 .menu-talents {
-    width: 177px;
-    height: 36px;
-    background-position: -192px -281px;
-}
-
-.menu-thanks {
-    width: 177px;
-    height: 36px;
-    background-position: -5px -327px;
+    width: 16px;
+    height: 16px;
+    background-position: 0 -160px;
 }
 
 .menu-tournaments {
-    width: 177px;
-    height: 36px;
-    background-position: -192px -327px;
+    width: 16px;
+    height: 16px;
+    background-position: 0 -176px;
 }
 
 .menu-trade {
-    width: 177px;
-    height: 36px;
-    background-position: -379px -5px;
+    width: 16px;
+    height: 16px;
+    background-position: 0 -192px;
 }
 
 .menu-travel {
-    width: 177px;
-    height: 36px;
-    background-position: -379px -51px;
+    width: 16px;
+    height: 16px;
+    background-position: 0 -208px;
+}
+
+.menu-tutorial {
+    width: 16px;
+    height: 16px;
+    background-position: 0 -224px;
 }
 
 .coin {
@@ -1226,11 +1223,8 @@ h4 {
 .orb-content {
 	background-image: url('/img/orb-background.png');
 	background-repeat: no-repeat;
-	min-width: 475px;
 	min-height: 412px;
 	margin-top: -15px;
-	margin-left: -15px;
-	padding: 15px;
 }
 
 .battle-monsters-content {

@@ -77,6 +77,7 @@ class Orb extends Base_Model
 	public function give_to(Character $character)
 	{
 		$this->owner_character = $character->id;
+        $this->acquisition_time = time();
 		$this->last_attacker = null;
 		$this->last_attack_time = null;
 
@@ -106,12 +107,12 @@ class Orb extends Base_Model
 
 	public function give_periodic_reward()
 	{
-		$owner = $this->owner()->select(array('id', 'clan_id'))->first();
+		$owner = $this->owner()->select(array('id', 'clan_id', 'level'))->first();
 		$clanOrbPoint = null;
 
 		if ( $owner )
 		{
-			$owner->add_coins($this->coins);
+			$owner->add_coins($this->coins + $owner->level);
 
 			/*
 			 *	Verificamos que esté en un grupo
