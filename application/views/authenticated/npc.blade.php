@@ -1,10 +1,16 @@
-<div class="pull-left">
-	<img src="{{ URL::base() }}/img/npcs/{{ $npc->id }}.jpg" alt="" width="150px" height="193px" style="border: 2px solid #160500;">
-</div>
+<div class="row">
 
-<div style="margin-left: 175px;">
-	<h2>{{ $npc->name }}</h2>
-	<p>{{ $npc->dialog }}</p>
+<div class="dialog-box" style="margin-left: 20px; margin-top: 30px; width: 690px;">
+    <div style="margin-left: 150px;">
+        <h2>{{ $npc->name }}</h2>
+        <p>{{ $npc->dialog }}</p>
+    </div>
+</div>
+    
+<div style="position: absolute; top: 0; left: 0;">
+    <img src="{{ URL::base() }}/img/npcs/{{ $npc->id }}.jpg" alt="" width="150px" height="193px" class="img-rounded" style="border: 2px solid #160500; box-shadow: black 0 0 5px;">
+</div>
+    
 </div>
 
 <div class="clearfix"></div>

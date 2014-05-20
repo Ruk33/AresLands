@@ -1,5 +1,5 @@
 <div class="row orb-content">
-	<div style="margin-left: 200px; margin-top: 20px; margin-bottom: 20px;">
+	<div class="dialog-box">
 		<h2>Orbes</h2>
 		<p>
 			<i>
