@@ -194,6 +194,7 @@
 			@if ( $characterCoinsCount >= $merchandise->price_copper )
 				{{ Form::open('authenticated/buyMerchandise', 'POST') }}
 					{{ Form::token() }}
+                    {{ Form::hidden('random_merchandise', ( $merchandise instanceof NpcRandomMerchandise ) ? 1 : 0) }}
 					{{ Form::hidden('merchandise_id', $merchandise->id) }}
 					
 					<div class="box box-box-64-gray">

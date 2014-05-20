@@ -2284,14 +2284,19 @@ class Authenticated_Controller extends Base_Controller
 	{
 		$merchandiseId = Input::get('merchandise_id', false);
 		$amount = Input::get('amount', 1);
+        $merchandise = null;
 
-		$merchandise = ( $merchandiseId ) ? NpcMerchandise::find((int) $merchandiseId) : false;
-		
-		// Probamos si es una mercencia de la lista aleatoria
-		if ( $merchandise == null )
-		{
-			$merchandise = NpcRandomMerchandise::find((int) $merchandiseId);
-		}
+        if ( $merchandiseId )
+        {
+            if ( Input::get('random_merchandise', false) )
+            {
+                $merchandise = NpcRandomMerchandise::find((int) $merchandiseId);
+            }
+            else
+            {
+                $merchandise = NpcMerchandise::find((int) $merchandiseId);
+            }
+        }
 
 		if ( $merchandise )
 		{
