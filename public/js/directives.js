@@ -8,8 +8,20 @@ directive('inventoryButton', [
 	{
 		function link(scope, element, attrs)
 		{
-			var equipButton = '<a class="pull-right" href="' + BASE_PATH + 'authenticated/manipulateItem/' + attrs.characterItemId + '">Equipar</a>';
-
+			var equipButton = '<a class="pull-right" href="' + BASE_PATH + 'authenticated/manipulateItem/' + attrs.characterItemId + '">';
+            
+            // Verificamos si es cofre
+            if ( attrs.itemId == 136 )
+            {
+                equipButton += 'Abrir';
+            }
+            else
+            {
+                equipButton += 'Equipar';
+            }
+            
+            equipButton += '</a>';
+            
 			if ( attrs.type == 'potion' )
 			{
 				equipButton = '<div class="input-append pull-right span4">'+

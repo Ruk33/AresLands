@@ -199,7 +199,7 @@
 							<li style="vertical-align: top;">
 								<div class="box box-box-64-gray">
 									@if ( isset($inventoryItems[$i]) && $inventoryItems[$i]->item )
-										<img inventory-button character-item-id="{{ $inventoryItems[$i]->id }}" token="{{ Session::token() }}" type="{{ $inventoryItems[$i]->item->type }}" amount="{{ $inventoryItems[$i]->count }}" item-tooltip="{{ $inventoryItems[$i]->item->get_text_for_tooltip() }}" style="cursor: pointer;" src="{{ $inventoryItems[$i]->item->get_image_path() }}" alt="" width="80px" height="80px">
+										<img inventory-button item-id="{{ $inventoryItems[$i]->item->id }}" character-item-id="{{ $inventoryItems[$i]->id }}" token="{{ Session::token() }}" type="{{ $inventoryItems[$i]->item->type }}" amount="{{ $inventoryItems[$i]->count }}" item-tooltip="{{ $inventoryItems[$i]->item->get_text_for_tooltip() }}" style="cursor: pointer;" src="{{ $inventoryItems[$i]->item->get_image_path() }}" alt="" width="80px" height="80px">
 										<div class="inventory-item-amount" data-toggle="tooltip" data-placement="top" data-original-title="Cantidad">{{ $inventoryItems[$i]->count }}</div>
 									@endif
 								</div>
