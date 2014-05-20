@@ -800,7 +800,7 @@ a:hover {
     border-image: none;
     box-shadow: 0px 0px 5px #000 inset, 0px 0px 5px #000;
     color: #926C46;
-    background-color: #140A02;
+    background-color: rgb(15, 7, 0);
     font-size: 14px;
     text-shadow: 0px 0px 5px #000;
     background-image: url('/img/dialog-box-background.png');
@@ -1220,9 +1220,6 @@ h4 {
 }
 
 .content {
-	/*border-left: 1px solid rgb(37, 37, 37);*/
-	border-right: 1px solid rgb(37, 37, 37);
-	/*background-color: #18191a;*/
 	background-color: rgb(20, 20, 20);
 }
 

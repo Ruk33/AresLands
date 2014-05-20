@@ -425,12 +425,14 @@
 						</ul>
 					</div>
 
-					<div class="span10 content col rock-background" style="width: 764px; margin-left: 0;">
+					<div class="span10 content col rock-background" style="width: 764px; margin-left: 0; border-left: 1px solid black;">
 						<div id="content">
 							{{ $content }}
 						</div> <!-- /content -->
 					</div>
 				</div>
+                    
+                <div style="background-image: url({{ URL::base() }}/img/footer-content.png); height: 100px; margin-top: -5px; background-position: 1px 0; background-repeat: no-repeat;"></div>
 				
 				<div id="footer" style="margin-top: 50px; padding-left: 50px;">
 					<div class="pull-left">

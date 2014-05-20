@@ -36,7 +36,7 @@
                     @if ( $orb->owner_character )
                         {{ date('H:i:s d/m/y', $orb->acquisition_time) }}
                     @else
-                        --:--:--
+                        --:--:-- --/--/--
                     @endif
                 </td>
                 <td>
