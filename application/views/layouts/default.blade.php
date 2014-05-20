@@ -74,7 +74,7 @@
 							case 'chest':
 								$itemId = (int) Session::get('chest');
 								echo '<div class="inventory-item pull-left" style="margin-left: 25px;">
-										<img src="' . URL::base() . '/img/icons/items/' . $itemId . '.png" width="80px" height="80px">
+										<img src="' . Item::find($itemId)->get_image_path() . '" width="80px" height="80px">
 									</div>
 									<div style="margin-left: 125px;">Has abierto el cofre y dentro del mismo, se encontraba esto. ¡Felicitaciones!</div>';
 								break;
