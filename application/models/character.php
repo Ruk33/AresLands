@@ -2172,7 +2172,8 @@ class Character extends Attackable
 			Config::get('game.xp_item_id')
 		);
 
-		return Item::where('level', '<=', $this->level + 5)
+		return Item::where('level', '>=', $this->level - 5)
+                   ->where('level', '<=', $this->level + 5)
 				   ->where('class', '<>', 'mercenary')
 				   ->where('class', '<>', 'consumible')
 				   ->where_not_in('id', $invalidItems)
