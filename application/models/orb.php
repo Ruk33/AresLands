@@ -118,7 +118,7 @@ class Orb extends Base_Model
             // Si lo mantiene por 4 dias, comienza a obtener nuevas recompensas
             if ( $this->acquisition_time + (60 * 60 * 24 * 4) < time() )
             {
-                $coins *= 1.3;
+                $coins *= 1.5;
                 
                 // 30% de posibilidad para obtener cofre
                 if ( mt_rand(1, 3) == 1 )
@@ -129,12 +129,12 @@ class Orb extends Base_Model
                     }
                 }
                 
-                // 25% de posibilidad de obtener ironcoins
-                if ( mt_rand(1, 4) == 1 )
+                // 16% de posibilidad de obtener ironcoins
+                if ( mt_rand(1, 6) == 1 )
                 {
-                    if ( Auth::user()->add_coins(10) )
+                    if ( Auth::user()->add_coins(5) )
                     {
-                        Message::orb_ironcoins_reward($owner, 10);
+                        Message::orb_ironcoins_reward($owner, 5);
                     }
                 }
                 
