@@ -2622,6 +2622,15 @@ class Character extends Attackable
 
 		return true;
 	}
+    
+    /**
+     * Query para obtener el usuario de ironfist del personaje
+     * @return Eloquent
+     */
+    public function ironfist_user()
+    {
+        return $this->belongs_to("IronFistUser", "user_id");
+    }
 
 	public function get_unread_messages_count()
 	{

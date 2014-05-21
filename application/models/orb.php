@@ -132,7 +132,7 @@ class Orb extends Base_Model
                 // 16% de posibilidad de obtener ironcoins
                 if ( mt_rand(1, 6) == 1 )
                 {
-                    if ( Auth::user()->add_coins(5) )
+                    if ( $owner->ironfist_user->add_coins(5) )
                     {
                         Message::orb_ironcoins_reward($owner, 5);
                     }

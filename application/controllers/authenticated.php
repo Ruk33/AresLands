@@ -121,7 +121,7 @@ class Authenticated_Controller extends Base_Controller
 			'regeneration_per_second_extra',
 			'second_mercenary'
 		));
-		
+        
 		/*
 		 *	Verificamos logueada del día
 		 */
