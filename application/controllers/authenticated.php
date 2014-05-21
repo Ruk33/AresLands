@@ -1040,11 +1040,11 @@ class Authenticated_Controller extends Base_Controller
 		
 		if ( $filter == 'all' )
 		{
-			$trades = Trade::get_valid()->get();
+			$trades = Trade::with(array('trade_item', 'trade_item.item'))->get_valid()->get();
 		}
 		elseif ( $filter == 'self' )
 		{
-			$trades = $character->trades;
+			$trades = $character->trades()->with(array('trade_item', 'trade_item.item'))->get();
 		}
 		else
 		{

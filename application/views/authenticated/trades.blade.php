@@ -76,7 +76,7 @@
 		<tr>
 			<td>
 				<div class="box box-box-32-gold" style="margin: 0 auto;">
-					<img src="{{ URL::base() }}/img/icons/items/{{ $trade->trade_item->item->id }}.png" data-toggle="tooltip" data-original-title="{{ $trade->trade_item->item->get_text_for_tooltip() }}" />
+                    <img src="{{ $trade->trade_item->item->get_image_path() }}" data-toggle="tooltip" data-original-title="{{ $trade->trade_item->item->get_text_for_tooltip() }}" />
 				</div>
 			</td>
 			<td style="text-align: center;">{{ $trade->amount }}</td>
