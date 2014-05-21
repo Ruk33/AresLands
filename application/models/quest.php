@@ -32,11 +32,11 @@ class Quest extends Base_Model
         {
             return 'hard-quest';
         }
-        elseif ( $character->level <= $this->min_level - 2 )
+        elseif ( $character->level <= $this->min_level )
         {
             return 'normal-quest';
         }
-        elseif ( $character->level <= $this->min_level )
+        elseif ( $character->level <= $this->min_level + 5 )
         {
             return 'easy-quest';
         }

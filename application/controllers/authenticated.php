@@ -2234,7 +2234,7 @@ class Authenticated_Controller extends Base_Controller
 		 *	Obtenemos todas las misiones del npc
 		 *	que el personaje pueda realmente realizar
 		 */
-		$quests = $npc->available_quests_of($character)->order_by('min_level', 'desc')->take(5)->get();
+		$quests = $npc->available_quests_of($character)->order_by('max_level', 'asc')->get();
 
 		/*
 		 *	Obtenemos las misiones que el personaje

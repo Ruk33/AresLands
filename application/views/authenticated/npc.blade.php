@@ -149,7 +149,7 @@
 				@if ( $quest->daily )
 					<div class="pull-right label label-warning">DIARIA</div>
 				@endif
-                <h5>{{ $quest->name }}</h5>
+                <h5>{{ $quest->name }}</h5> nivel minimo: {{ $quest->min_level }}
 
 				<div id="{{ $quest->id }}" class="collapse">
                     <p><small>{{ $quest->description }}</small></p>
