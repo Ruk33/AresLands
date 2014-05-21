@@ -1,15 +1,15 @@
 <div class="row">
 
-<div class="dialog-box" style="margin-left: 20px; margin-top: 30px; width: 690px;">
-    <div style="margin-left: 150px;">
-        <h2>{{ $npc->name }}</h2>
-        <p>{{ $npc->dialog }}</p>
+    <div class="dialog-box" style="margin-left: 20px; margin-top: 30px; width: 690px;">
+        <div style="margin-left: 150px;">
+            <h2>{{ $npc->name }}</h2>
+            <p>{{ $npc->dialog }}</p>
+        </div>
     </div>
-</div>
-    
-<div style="position: absolute; top: 0; left: 0;">
-    <img src="{{ URL::base() }}/img/npcs/{{ $npc->id }}.jpg" alt="" width="150px" height="193px" class="img-rounded" style="border: 2px solid #160500; box-shadow: black 0 0 5px;">
-</div>
+
+    <div style="position: absolute; top: 0; left: 0;">
+        <img src="{{ URL::base() }}/img/npcs/{{ $npc->id }}.jpg" alt="" width="150px" height="193px" class="img-rounded" style="border: 2px solid #160500; box-shadow: black 0 0 5px;">
+    </div>
     
 </div>
 
@@ -187,7 +187,7 @@
 		<ul class="inline" ng-controller="Item">
 		@foreach ( $merchandises as $merchandise )
 			@if ( $merchandise->item->type == 'mercenary' )
-				@if ( $merchandise->item->zone_to_explore && $merchandise->item->time_to_appear && $character->exploring_times()->where('zone_id', '=', $merchandise->zone_to_explore)->where('time', '>=', $merchandise->time_to_appear)->take(1)->count() == 0 )
+				@if ( $merchandise->item->zone_to_explore && $merchandise->item->time_to_appear && $character->exploring_times()->where('zone_id', '=', $merchandise->item->zone_to_explore)->where('time', '>=', $merchandise->item->time_to_appear)->take(1)->count() == 0 )
 					<li class="text-center" style="vertical-align: top; padding: 10px;" data-toggle="tooltip" data-original-title="Bloqueado, necesitas explorar mas para que este mercenario se te habilite">
 						<div class="box box-box-64-gray grayEffect">
 							<img src="{{ $merchandise->item->get_image_path() }}" width="80px" height="80px">
