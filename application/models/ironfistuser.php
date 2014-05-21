@@ -47,4 +47,16 @@ class IronFistUser extends Eloquent
 		
 		return $this->save();
 	}
+    
+    /**
+     * Agregamos IronCoins al usuario
+     * 
+     * @param integer $amount
+     * @return boolean
+     */
+    public function add_coins($amount)
+    {
+        $this->coins += $amount;
+        return $this->save();
+    }
 }

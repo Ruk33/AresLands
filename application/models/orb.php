@@ -48,6 +48,7 @@ class Orb extends Base_Model
 	public function reset()
 	{
 		$this->owner_character = null;
+        $this->acquisition_time = null;
 		$this->last_attacker = null;
 		$this->last_attack_time = null;
 
@@ -112,7 +113,36 @@ class Orb extends Base_Model
 
 		if ( $owner )
 		{
-			$owner->add_coins($this->coins + $owner->level);
+            $coins = $this->coins + $owner->level;
+            
+            // Si lo mantiene por 4 dias, comienza a obtener nuevas recompensas
+            if ( $this->acquisition_time + (60 * 60 * 24 * 4) < time() )
+            {
+                $coins *= 1.3;
+                
+                // 30% de posibilidad para obtener cofre
+                if ( mt_rand(1, 3) == 1 )
+                {
+                    if ( $owner->add_item(Config::get('game.chest_item_id')) )
+                    {
+                        Message::orb_chest_reward($owner, 1);
+                    }
+                }
+                
+                // 25% de posibilidad de obtener ironcoins
+                if ( mt_rand(1, 4) == 1 )
+                {
+                    if ( Auth::user()->add_coins(10) )
+                    {
+                        Message::orb_ironcoins_reward($owner, 10);
+                    }
+                }
+                
+                Skill::find(Config::get('game.cure_skill'))->cast($owner, $owner);
+                Skill::find(Config::get('game.reflect_skill'))->cast($owner, $owner);
+            }
+            
+            $owner->add_coins($coins);
 
 			/*
 			 *	Verificamos que esté en un grupo

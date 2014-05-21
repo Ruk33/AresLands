@@ -35,6 +35,40 @@ class Message extends Base_Model
 	{
 		return $this->belongs_to('Character', 'sender_id');
 	}
+    
+    public static function orb_chest_reward(Character $character, $amount)
+    {
+        $message = new Message();
+
+		$message->sender_id = $character->id;
+		$message->receiver_id = $character->id;
+        
+        $message->subject = "¡Haz recibido un Cofre por tu Orbe!";
+        $message->content = "¡Felicidades {$character->name} por recibir {$amount} Cofre(s) por resistir el Orbe!. Sigue asi y seguiras recibiendo mas recompensas.";
+        $message->unread = true;
+		$message->date = time();
+		$message->type = 'received';
+		$message->is_special = true;
+
+		$message->save();
+    }
+    
+    public static function orb_ironcoins_reward(Character $character, $amount)
+    {
+        $message = new Message();
+
+		$message->sender_id = $character->id;
+		$message->receiver_id = $character->id;
+        
+        $message->subject = "¡Haz recibido IronCoins por tu Orbe!";
+        $message->content = "¡Felicidades {$character->name} por recibir {$amount} IronCoins por resistir el Orbe!. Sigue asi y seguiras recibiendo mas recompensas.";
+        $message->unread = true;
+		$message->date = time();
+		$message->type = 'received';
+		$message->is_special = true;
+
+		$message->save();
+    }
 	
 	public static function group_tournament(Character $character, $rankPosition, $reward)
 	{
