@@ -128,11 +128,11 @@
 
 			<!-- AYUDANTE -->
 			<div style="position: absolute; left: 230px; top: 65px;">
-				@if ( $mercenary )
-					<div class="box box-box-64-blue">
-						<img src="{{ $mercenary->get_image_path() }}" alt="" width="64px" height="64px" data-toggle="tooltip" data-placement="top" data-original-title="{{ $mercenary->get_text_for_tooltip() }}">
-					</div>
-				@endif
+                <div class="box box-box-64-blue">
+                    @if ( $mercenary )
+                        <img src="{{ $mercenary->get_image_path() }}" alt="" width="64px" height="64px" data-toggle="tooltip" data-placement="top" data-original-title="{{ $mercenary->get_text_for_tooltip() }}">
+                    @endif
+                </div>
 			</div>
 			<!-- END AYUDANTE -->
 
