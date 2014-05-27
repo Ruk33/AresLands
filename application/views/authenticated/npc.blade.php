@@ -146,7 +146,7 @@
 
 		@foreach ( $quests as $quest )
 			<div class="dark-box span11 {{ $quest->get_css_class($character) }}" style="cursor: pointer; margin-bottom: 5px;" data-toggle="collapse" data-target="#{{ $quest->id }}">
-				@if ( $quest->daily )
+                @if ( $quest->daily )
 					<div class="pull-right label label-warning">DIARIA</div>
 				@endif
                 <h5>{{ $quest->name }}</h5>
