@@ -34,27 +34,17 @@
 			<!-- END BUFFS -->
 		@endif
 		
-		
-		@if ( $character->is_admin() )
-			{{ Form::open('admin/modifyCharacterStats') }}
-			{{ Form::hidden('character', $characterToSee->id) }}
-		@endif
-		
 		<ul class="inline" style="margin-top: 40px; margin-bottom: 25px;">
 			<li>
 				<span data-toggle="tooltip" data-placement="top" data-original-title="<b>Fuerza física:</b> Aumenta la potencia de tus ataques físicos.">
 					<span class="ui-button button" style="cursor: default;">
 						<i class="button-icon axe"></i>
 						<span class="button-content">
-							@if ( $character->is_admin() )
-								{{ Form::number('stat_strength', $characterToSee->stat_strength, array('style' => 'width: 50px')) }}
-							@else
-								@if ( $hideStats )
-									{{ mt_rand($characterToSee->stat_strength, $characterToSee->stat_strength * 1.3) }}
-								@else
-									{{ $characterToSee->stat_strength }}
-								@endif
-							@endif
+                            @if ( $hideStats )
+                                {{ mt_rand($characterToSee->stat_strength, $characterToSee->stat_strength * 1.3) }}
+                            @else
+                                {{ $characterToSee->stat_strength }}
+                            @endif
 						</span>
 					</span>
 				</span>
@@ -64,15 +54,11 @@
 					<span class="ui-button button" style="cursor: default;">
 						<i class="button-icon boot"></i>
 						<span class="button-content">
-							@if ( $character->is_admin() )
-								{{ Form::number('stat_dexterity', $characterToSee->stat_dexterity, array('style' => 'width: 50px')) }}
-							@else
-								@if ( $hideStats )
-									{{ mt_rand($characterToSee->stat_dexterity, $characterToSee->stat_dexterity * 1.3) }}
-								@else
-									{{ $characterToSee->stat_dexterity }}
-								@endif
-							@endif
+                            @if ( $hideStats )
+                                {{ mt_rand($characterToSee->stat_dexterity, $characterToSee->stat_dexterity * 1.3) }}
+                            @else
+                                {{ $characterToSee->stat_dexterity }}
+                            @endif
 						</span>
 					</span>
 				</span>
@@ -82,15 +68,11 @@
 					<span class="ui-button button" style="cursor: default;">
 						<i class="button-icon hearth"></i>
 						<span class="button-content">
-							@if ( $character->is_admin() )
-								{{ Form::number('stat_resistance', $characterToSee->stat_resistance, array('style' => 'width: 50px')) }}
-							@else
-								@if ( $hideStats )
-									{{ mt_rand($characterToSee->stat_resistance, $characterToSee->stat_resistance * 1.3) }}
-								@else
-									{{ $characterToSee->stat_resistance }}
-								@endif
-							@endif
+                            @if ( $hideStats )
+                                {{ mt_rand($characterToSee->stat_resistance, $characterToSee->stat_resistance * 1.3) }}
+                            @else
+                                {{ $characterToSee->stat_resistance }}
+                            @endif
 						</span>
 					</span>
 				</span>
@@ -100,15 +82,11 @@
 					<span class="ui-button button" style="cursor: default;">
 						<i class="button-icon fire"></i>
 						<span class="button-content">
-							@if ( $character->is_admin() )
-								{{ Form::number('stat_magic', $characterToSee->stat_magic, array('style' => 'width: 50px')) }}
-							@else
-								@if ( $hideStats )
-									{{ mt_rand($characterToSee->stat_magic, $characterToSee->stat_magic * 1.3) }}
-								@else
-									{{ $characterToSee->stat_magic }}
-								@endif
-							@endif
+                            @if ( $hideStats )
+                                {{ mt_rand($characterToSee->stat_magic, $characterToSee->stat_magic * 1.3) }}
+                            @else
+                                {{ $characterToSee->stat_magic }}
+                            @endif
 						</span>
 					</span>
 				</span>
@@ -118,15 +96,11 @@
 					<span class="ui-button button" style="cursor: default;">
 						<i class="button-icon arrow"></i>
 						<span class="button-content">
-							@if ( $character->is_admin() )
-								{{ Form::number('stat_magic_skill', $characterToSee->stat_magic_skill, array('style' => 'width: 50px')) }}
-							@else
-								@if ( $hideStats )
-									{{ mt_rand($characterToSee->stat_magic_skill, $characterToSee->stat_magic_skill * 1.3) }}
-								@else
-									{{ $characterToSee->stat_magic_skill }}
-								@endif
-							@endif
+                            @if ( $hideStats )
+                                {{ mt_rand($characterToSee->stat_magic_skill, $characterToSee->stat_magic_skill * 1.3) }}
+                            @else
+                                {{ $characterToSee->stat_magic_skill }}
+                            @endif
 						</span>
 					</span>
 				</span>
@@ -136,15 +110,11 @@
 					<span class="ui-button button" style="cursor: default;">
 						<i class="button-icon thunder"></i>
 						<span class="button-content">
-							@if ( $character->is_admin() )
-								{{ Form::number('stat_magic_resistance', $characterToSee->stat_magic_resistance, array('style' => 'width: 50px')) }}
-							@else
-								@if ( $hideStats )
-									{{ mt_rand($characterToSee->stat_magic_resistance, $characterToSee->stat_magic_resistance * 1.3) }}
-								@else
-									{{ $characterToSee->stat_magic_resistance }}
-								@endif
-							@endif
+                            @if ( $hideStats )
+                                {{ mt_rand($characterToSee->stat_magic_resistance, $characterToSee->stat_magic_resistance * 1.3) }}
+                            @else
+                                {{ $characterToSee->stat_magic_resistance }}
+                            @endif
 						</span>
 					</span>
 				</span>
@@ -152,24 +122,15 @@
 		</ul>
 		
 		@if ( $character->is_admin() )
-			{{ Form::submit('Editar atributos', array('class' => 'btn btn-primary')) }}
-			{{ Form::close() }}
-		@endif
-		
-		@if ( $character->is_admin() )
-			<hr>
 			<h3>Atributos extra</h3>
-		
-			{{ Form::open('admin/modifyCharacterExtraStats') }}
-			{{ Form::hidden('character', $characterToSee->id) }}
 			
 			<ul class="inline" style="margin-top: 40px; margin-bottom: 25px;">
 				<li>
 					<span data-toggle="tooltip" data-placement="top" data-original-title="<b>Fuerza física:</b> Aumenta la potencia de tus ataques físicos.">
 						<span class="ui-button button" style="cursor: default;">
-							<i class="button-icon hearth"></i>
+							<i class="button-icon axe"></i>
 							<span class="button-content">
-								{{ Form::number('stat_strength_extra', $characterToSee->stat_strength_extra, array('style' => 'width: 50px')) }}
+								{{ $characterToSee->stat_strength_extra }}
 							</span>
 						</span>
 					</span>
@@ -179,7 +140,7 @@
 						<span class="ui-button button" style="cursor: default;">
 							<i class="button-icon boot"></i>
 							<span class="button-content">
-								{{ Form::number('stat_dexterity_extra', $characterToSee->stat_dexterity_extra, array('style' => 'width: 50px')) }}
+								{{ $characterToSee->stat_dexterity_extra }}
 							</span>
 						</span>
 					</span>
@@ -187,9 +148,9 @@
 				<li>
 					<span data-toggle="tooltip" data-placement="top" data-original-title="<b>Resistencia:</b> Aumenta tu defensa contra ataques físicos.">
 						<span class="ui-button button" style="cursor: default;">
-							<i class="button-icon boot"></i>
+							<i class="button-icon hearth"></i>
 							<span class="button-content">
-								{{ Form::number('stat_resistance_extra', $characterToSee->stat_resistance_extra, array('style' => 'width: 50px')) }}
+								{{ $characterToSee->stat_resistance_extra }}
 							</span>
 						</span>
 					</span>
@@ -199,7 +160,7 @@
 						<span class="ui-button button" style="cursor: default;">
 							<i class="button-icon fire"></i>
 							<span class="button-content">
-								{{ Form::number('stat_magic_extra', $characterToSee->stat_magic_extra, array('style' => 'width: 50px')) }}
+								{{ $characterToSee->stat_magic_extra }}
 							</span>
 						</span>
 					</span>
@@ -207,9 +168,9 @@
 				<li>
 					<span data-toggle="tooltip" data-placement="top" data-original-title="<b>Habilidad mágica:</b> Aumenta tu velocidad de golpeo en las batallas, pudiendo lograr así múltiples ataques consecutivos.">
 						<span class="ui-button button" style="cursor: default;">
-							<i class="button-icon axe"></i>
+							<i class="button-icon arrow"></i>
 							<span class="button-content">
-								{{ Form::number('stat_magic_skill_extra', $characterToSee->stat_magic_skill_extra, array('style' => 'width: 50px')) }}
+								{{ $characterToSee->stat_magic_skill_extra }}
 							</span>
 						</span>
 					</span>
@@ -219,15 +180,12 @@
 						<span class="ui-button button" style="cursor: default;">
 							<i class="button-icon thunder"></i>
 							<span class="button-content">
-								{{ Form::number('stat_magic_resistance_extra', $characterToSee->stat_magic_resistance_extra, array('style' => 'width: 50px')) }}
+								{{ $characterToSee->stat_magic_resistance_extra }}
 							</span>
 						</span>
 					</span>
 				</li>
 			</ul>
-			
-			{{ Form::submit('Editar atributos extra', array('class' => 'btn btn-primary')) }}
-			{{ Form::close() }}
 		@endif
 		
 		<div style="position: relative; width: 340px; margin: 0 auto;">

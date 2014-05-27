@@ -1743,19 +1743,16 @@ class Authenticated_Controller extends Base_Controller
 
 			$mercenary = $characterToSee->get_mercenary();
 			$mercenary = ( $mercenary ) ? $mercenary->item : null;
+            
+            $hideStats = $characterToSee->has_characteristic(Characteristic::RESERVED);
+            $castableSkills = $character->get_castable_talents($characterToSee);
 
 			$this->layout->title = $characterToSee->name;
-			$this->layout->content = View::make('authenticated.character')
-			->with('character', $character)
-			->with('orb', $orb)
-			->with('skills', $skills)
-			->with('characterToSee', $characterToSee)
-			->with('weapon', $weapon)
-			->with('shield', $shield)
-			->with('mercenary', $mercenary)
-			->with('hideStats', $characterToSee->has_characteristic(Characteristic::RESERVED))
-			->with('castableSkills', $character->get_castable_talents($characterToSee))
-			->with('pairs', $pairs);
+			$this->layout->content = View::make('authenticated.character')->with(compact(
+                'character', 'orb', 'skills', 'characterToSee',
+                'weapon', 'shield', 'mercenary', 'hideStats', 
+                'castableSkills', 'pairs'
+            ));
 		}
 		else
 		{
