@@ -2189,7 +2189,11 @@ class Authenticated_Controller extends Base_Controller
 			}
 		}
 
-		$zones = Zone::where('type', '=', 'city')->where('min_level', '<=', $character->level)->select(array('id', 'name', 'description', 'min_level'))->get();
+		$zones = Zone::where('type', '=', 'city')
+                     ->where('min_level', '<=', $character->level)
+                     ->where('id', '<>', $character->zone_id)
+                     ->select(array('id', 'name', 'description', 'min_level'))
+                     ->get();
 
 		$exploringTime = $character->exploring_times()->lists('time', 'zone_id');
 
