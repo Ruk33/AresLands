@@ -108,7 +108,7 @@ class Orb extends Base_Model
 
 	public function give_periodic_reward()
 	{
-		$owner = $this->owner()->select(array('id', 'clan_id', 'level'))->first();
+		$owner = $this->owner;
 		$clanOrbPoint = null;
 
 		if ( $owner )
@@ -138,8 +138,15 @@ class Orb extends Base_Model
                     }
                 }
                 
-                Skill::find(Config::get('game.cure_skill'))->cast($owner, $owner);
-                Skill::find(Config::get('game.reflect_skill'))->cast($owner, $owner);
+                if ( $cureSkill = Skill::find(Config::get('game.cure_skill')) )
+                {
+                    $cureSkill->cast($owner, $owner);
+                }
+                
+                if ( $reflectSkill = Skill::find(Config::get('game.reflect_skill')) )
+                {
+                    $reflectSkill->cast($owner, $owner);
+                }
             }
             
             $owner->add_coins($coins);
