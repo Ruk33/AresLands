@@ -1,35 +1,4 @@
-<div ng-controller="CharacterController" style="margin-left: -15px;">
-	<div ng-controller="Skill" style="margin-left: 20px;">		
-		<!-- BUFFS -->
-		@if ( count($skills) > 0 )
-			<div class="buff-container">
-				<div style="text-transform: uppercase; color: #D0D2D0; font-size: 10px; margin-bottom: 11px; margin-left: 30px; color: #fff3df;">efectos activos</div>
-				<ul class="unstyled inline">
-					@foreach ( $skills as $skill )
-						<li>
-							@if ( $skill->type == 'debuf' )
-							<div class="box box-box-32-pink">
-							@else
-							<div class="box box-box-32-gray">
-							@endif
-								<img src="{{ URL::base() }}/img/icons/skills/{{ $skill->skill_id }}.png" alt="" width="32px" height="32px" skill-tooltip skill-id="{{ $skill->skill_id }}" skill-level="{{ $skill->level }}">
-
-								<div data-toggle="tooltip" data-placement="top" data-original-title="Cantidad">({{ $skill->amount }})</div>
-
-								<div style="font-size: 9px; font-family: arial;">
-									@if ( $skill->end_time != 0 )
-										<span class='timer' data-endtime='{{ $skill->end_time - time() }}'></span>
-									@endif
-								</div>
-							</div>
-						</li>
-					@endforeach
-				</ul>
-			</div>
-		@endif
-		<!-- END BUFFS -->
-	</div>
-		
+<div ng-controller="CharacterController" style="margin-left: -15px;">		
 	<!-- ACTIVIDADES -->
 	@if ( count($activities) > 0 )
 	<div class="activity-container" style="margin-left: 20px;">
@@ -62,12 +31,12 @@
 
 		<ul class="inline">
 			@foreach ( $talents as $skillId )
-			<li class="clan-member-link text-center">
+			<li class="clan-member-link text-center" skill-tooltip skill-id="{{ $skillId }}" skill-level="1">
 				{{ Form::open(URL::to('authenticated/castTalent')) }}
 				{{ Form::token() }}
 				{{ Form::hidden('skill_id', $skillId) }}
 				{{ Form::hidden('id', $character->id) }}
-				<img src="{{ URL::base() }}/img/icons/skills/{{ $skillId }}.png" alt="" skill-tooltip skill-id="{{ $skillId }}" skill-level="1">
+				<img src="{{ URL::base() }}/img/icons/skills/{{ $skillId }}.png" alt="" width="48px" height="48px">
 				<div>
 					{{ Form::submit('Lanzar', array('class' => 'ui-button ui-input-button')) }}
 				</div>
@@ -417,28 +386,61 @@
 	<!-- END ESTADÍSTICAS -->
 
 	<div class="clearfix" style="margin-bottom: 35px;"></div>
+    
+    <div class="row" style="margin-left: 20px;">
+        <div ng-controller="Skill" class="span6">		
+            <!-- BUFFS -->
+            <h2>Efectos activos</h2>
+            @if ( count($skills) > 0 )
+                <ul class="unstyled inline">
+                    @foreach ( $skills as $skill )
+                        <li>
+                            @if ( $skill->type == 'debuf' )
+                            <div class="box box-box-32-pink">
+                            @else
+                            <div class="box box-box-32-gray">
+                            @endif
+                                <img src="{{ URL::base() }}/img/icons/skills/{{ $skill->skill_id }}.png" alt="" width="32px" height="32px" skill-tooltip skill-id="{{ $skill->skill_id }}" skill-level="{{ $skill->level }}">
 
-	<div class="span6">
-		<!-- ZONA -->
-		<div>
-			<h2>Ubicación</h2>
-			@if ( count($activities) > 0 )
-				@foreach ( $activities as $activity )
-					@if ( $activity->name == 'travel' )
-						Saliendo de 
-					@endif
-				@endforeach
-			@endif
+                                <div data-toggle="tooltip" data-placement="top" data-original-title="Cantidad">({{ $skill->amount }})</div>
 
-			@if ( $exploringTime && $exploringTime->time > 0 )
-			<span data-toggle="tooltip" data-original-title="<p>{{ $zone->description }}</p><p><b>Tiempo explorado:</b> {{ date('z \d\í\a\(\s\) H:i:s', $exploringTime->time) }}</p>">
-			@else
-			<span data-toggle="tooltip" data-original-title="<p>{{ $zone->description }}</p><p><b>Tiempo explorado:</b> 0 días 00:00:00</p>">
-			@endif
-				<img src="{{ URL::base() }}/img/zones/32/{{ $zone->id }}.png" alt="{{ $zone->name }}" width="32px" height="32px">
-				<b>{{ $zone->name }}</b>
-			</span>
-		</div>
-		<!-- END ZONA -->
-	</div>
+                                <div style="font-size: 9px; font-family: arial;">
+                                    @if ( $skill->end_time != 0 )
+                                        <span class='timer' data-endtime='{{ $skill->end_time - time() }}'></span>
+                                    @endif
+                                </div>
+                            </div>
+                        </li>
+                    @endforeach
+                </ul>
+            @else
+            Ninguno
+            @endif
+            <!-- END BUFFS -->
+        </div>
+
+        <div class="span6">
+            <!-- ZONA -->
+            <div>
+                <h2>Ubicación</h2>
+                @if ( count($activities) > 0 )
+                    @foreach ( $activities as $activity )
+                        @if ( $activity->name == 'travel' )
+                            Saliendo de 
+                        @endif
+                    @endforeach
+                @endif
+
+                @if ( $exploringTime && $exploringTime->time > 0 )
+                <span data-toggle="tooltip" data-original-title="<p>{{ $zone->description }}</p><p><b>Tiempo explorado:</b> {{ date('z \d\í\a\(\s\) H:i:s', $exploringTime->time) }}</p>">
+                @else
+                <span data-toggle="tooltip" data-original-title="<p>{{ $zone->description }}</p><p><b>Tiempo explorado:</b> 0 días 00:00:00</p>">
+                @endif
+                    <img src="{{ URL::base() }}/img/zones/32/{{ $zone->id }}.png" alt="{{ $zone->name }}" width="32px" height="32px">
+                    <b>{{ $zone->name }}</b>
+                </span>
+            </div>
+            <!-- END ZONA -->
+        </div>
+    </div>
 </div>

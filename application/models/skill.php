@@ -442,6 +442,15 @@ class Skill extends Base_Model
 			$skill->cast($target, $target);
 		}
 	}
+    
+    /**
+     * Obtenemos path de la imagen de la habilidad
+     * @return string
+     */
+    public function get_image_path()
+    {
+        return URL::base() . '/img/icons/skills/' . $this->id . '.png';
+    }
 	
 	/**
 	 * 
@@ -451,6 +460,7 @@ class Skill extends Base_Model
 	{
 		$message = "<div style='width: 350px; text-align: left;'>";
 		
+        $message .= "<img src='{$this->get_image_path()}' class='pull-left' style='margin-right: 15px;' />";
 		$message .= "<p><b>$this->name</b> - Nivel: $this->level</p>";
 		$message .= "<p>$this->description</p>";
 		$message .= "<p class='negative'>$this->requirements_text</p>";
