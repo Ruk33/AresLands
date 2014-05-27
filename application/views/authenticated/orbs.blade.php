@@ -30,6 +30,10 @@
                         {{ $orb->owner()->select(array('name'))->first()->get_link() }}
                     @else
                         Nadie
+                        
+                        @if ( $orb->can_be_stolen_by($character) )
+							<div><a href="{{ URL::to('authenticated/claimOrb/' . $orb->id) }}">¡Reclamar orbe!</a></div>
+						@endif
                     @endif
                 </td>
                 <td>
