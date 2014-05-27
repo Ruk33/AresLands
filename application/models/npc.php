@@ -344,6 +344,13 @@ class Npc extends Base_Model
 	 */
 	public function get_merchandises_for(Character $character)
 	{
+        // Como no tenemos muchas pociones, en el lago subterraneo
+        // simplemente hacemos que devuelva la lista normal
+        if ( $character->zone_id == 3 )
+        {
+            return $this->merchandises();
+        }
+        
 		$bestItem = $this->get_best_item_from_normal_merchandise_list()
 						 ->with('item')
 						 ->first();
