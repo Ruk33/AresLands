@@ -149,7 +149,12 @@
                 @if ( $quest->daily )
 					<div class="pull-right label label-warning">DIARIA</div>
 				@endif
-                <h5>{{ $quest->name }}</h5>
+                <h5>
+                    {{ $quest->name }}
+                    @if ( $quest->complete_required && ! $character->has_quest_completed($quest->required_quest) )
+                        <small class="pull-right negative">Requiere mision "{{ $quest->required_quest->name }}"</small>
+                    @endif
+                </h5>
 
 				<div id="{{ $quest->id }}" class="collapse">
                     <p><small>{{ $quest->description }}</small></p>
@@ -171,9 +176,11 @@
                         </div>
                     </div>
                     
+                    @if ( $quest->can_character_accept_quest($character) )
                     <div class="text-center" style="margin-top: 20px;">
 						<a href="{{ URL::to('authenticated/acceptQuest/' . $quest->id) }}" class="normal-button">Aceptar misión</a>
 					</div>
+                    @endif
 				</div>
 			</div>
 		@endforeach

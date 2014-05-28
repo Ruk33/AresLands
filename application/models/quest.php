@@ -159,20 +159,17 @@ class Quest extends Base_Model
 			$character->add_item($reward->item_id, $reward->amount);
 		}
 	}
-
-	/**
-	 *	Aceptamos la misión para un personaje
-	 *
-	 *	Se devuelve false en caso de que
-	 *	no se haya podido aceptar.
-	 *
-	 *	@return <bool>
-	 */
-	public function accept(Character $character)
-	{
-		if ( $this->complete_required )
+    
+    /**
+     * Verificamos si personaje puede aceptar mision
+     * @param Character $character
+     * @return boolean
+     */
+    public function can_character_accept_quest(Character $character)
+    {
+        if ( $this->complete_required )
 		{
-			if ( ! $character->has_quest_completed(Quest::find($this->complete_required)) )
+			if ( ! $character->has_quest_completed($this->required_quest) )
 			{
 				return false;
 			}
@@ -184,32 +181,53 @@ class Quest extends Base_Model
 		{
 			return false;
 		}
-
-		if ( $character->has_quest_completed($this) )
+        
+        if ( $character->has_quest_completed($this) )
 		{
 			if ( $this->repeatable )
 			{
-				$characterQuest = $character->quests()->where('quest_id', '=', $this->id)->first();
-
-				// Verificamos si ha pasado el tiempo requerido
+                $characterQuest = $character->quests()
+                                            ->where('quest_id', '=', $this->id)
+                                            ->first();
+                
+                // Verificamos si ha pasado el tiempo requerido
 				// para volver a pedir nuevamente la misión
 				if ( $this->repeatable_after > time() - $characterQuest->time )
 				{
 					return false;
 				}
-				else
-				{
-					// Borramos así creamos de nuevo
-					// (porque recordemos, el progreso se guarda)
-					$characterQuest->delete();
-				}
-			}
-			else
-			{
-				// Si no es repetible, y el personaje
-				// ya la ha completado...
-				return false;
-			}
+            }
+            else
+            {
+                return false;
+            }
+        }
+        
+        return true;
+    }
+
+	/**
+	 *	Aceptamos la misión para un personaje
+	 *
+	 *	Se devuelve false en caso de que
+	 *	no se haya podido aceptar.
+	 *
+	 *	@return <bool>
+	 */
+	public function accept(Character $character)
+	{
+		if ( ! $this->can_character_accept_quest($character) )
+        {
+            return false;
+        }
+
+		if ( $character->has_quest_completed($this) )
+		{
+            // Si ya tiene completada la mision, entonces reiniciamos
+            // para que pueda volver a hacerla
+            // Nota: no hay necesidad de verificar si la mision puede ser
+            // repetible, ya que can_character_accept_quest se encarga de ello
+            $character->quests()->where('quest_id', '=', $this->id)->delete();
 		}
 
 		/*
@@ -251,4 +269,13 @@ class Quest extends Base_Model
 	{
 		return $this->has_many('QuestReward', 'quest_id');
 	}
+    
+    /**
+     * Query para obtener la mision que es requerida
+     * @return Eloquent
+     */
+    public function required_quest()
+    {
+        return $this->belongs_to("Quest", "complete_required");
+    }
 }

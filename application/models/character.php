@@ -1730,8 +1730,8 @@ class Character extends Attackable
 	 *	Verificamos si el personaje tiene
 	 *	una quest completada
 	 *
-	 *	@param $questId <integer>
-	 *	@return <bool>
+	 *	@param Quest $quest
+	 *	@return boolean
 	 */
 	public function has_quest_completed(Quest $quest)
 	{

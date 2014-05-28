@@ -132,7 +132,10 @@ class Npc extends Base_Model
 	 */
 	public function available_quests_of(Character $character)
 	{
-		$characterQuests = DB::raw("(
+        // Misiones que no se pueden repetir o que aun
+        // estan con CD
+		$notRepeatableCharacterQuests = DB::raw(
+        "(
 			SELECT 
 				quest_id 
 			FROM 
@@ -150,7 +153,7 @@ class Npc extends Base_Model
 		)");
 		
 		return $this->quests()
-                    ->where('quests.id', 'NOT IN', $characterQuests)
+                    ->where('quests.id', 'NOT IN', $notRepeatableCharacterQuests)
                     ->where('min_level', '<=', $character->level);
 	}
 
