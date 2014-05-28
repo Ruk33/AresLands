@@ -224,6 +224,8 @@ controller('CharacterController', ['$scope', '$http', '$timeout', 'CharacterOfLo
 				for (var i in data) {
 					$scope.chat.messages[$scope.chat.channel].unshift(data[i]);
 				}
+                
+                
 			}
 			
 			$timeout(getMessages, 2000);
@@ -266,7 +268,7 @@ controller('CharacterController', ['$scope', '$http', '$timeout', 'CharacterOfLo
 	};
 
 	$scope.sendMessage = function() {
-		switch ( $scope.chat.input ) {
+		switch ( $scope.chat.input.toLowerCase() ) {
 			case '/online':
 				showConnected();
 				break;

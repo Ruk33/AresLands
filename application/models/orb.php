@@ -109,8 +109,7 @@ class Orb extends Base_Model
 	public function give_periodic_reward()
 	{
 		$owner = $this->owner;
-		$clanOrbPoint = null;
-
+        
 		if ( $owner )
 		{
             $coins = $this->coins + $owner->level;

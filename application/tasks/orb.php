@@ -4,8 +4,7 @@ class Orb_Task
 {
 	public function run($arguments)
 	{
-		$orbs = Orb::where_not_null('owner_character')->select(array('id', 'coins', 'points', 'owner_character'))->get();
-		$owner = null;
+		$orbs = Orb::where_not_null('owner_character')->get();
 
 		foreach ( $orbs as $orb )
 		{
