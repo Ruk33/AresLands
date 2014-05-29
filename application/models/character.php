@@ -534,8 +534,8 @@ class Character extends Attackable
 	public function get_name()
 	{
 		$character = Character::get_character_of_logged_user(array('id'));
-		
-		if ( $character->id != $this->id )
+
+		if ( $character && $character->id != $this->id )
 		{
 			$characterHasConfusion = $character->has_skill(Config::get('game.confusion_skill'));
 
@@ -556,7 +556,7 @@ class Character extends Attackable
 	{
 		$character = Character::get_character_of_logged_user(array('id'));
 		
-		if ( $character->id != $this->id )
+		if ( $character && $character->id != $this->id )
 		{
 			if ( $this->has_characteristic(Characteristic::SHY) )
 			{
