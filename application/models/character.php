@@ -1829,7 +1829,7 @@ class Character extends Attackable
 
 	public function give_full_activity_bar_reward()
 	{
-		$xpAmount = (int) ($this->level / 3);
+		$xpAmount = (int) ($this->level / 3) * $this->get_xp_quest_rate();
 		$coinsAmount = $this->level * 50 * $this->get_coins_rate();
 
 		$this->add_coins($coinsAmount);
@@ -1855,9 +1855,6 @@ class Character extends Attackable
 				'name' => 'Experiencia'
 			)
 		);
-
-		// if ( 10% chance )
-		// n ironcoins
 
 		Message::activity_bar_reward($this, $rewards);
 	}
