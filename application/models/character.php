@@ -129,7 +129,7 @@ class Character extends Attackable
 			array('item_id' => Config::get('game.coin_id'), 'amount' => mt_rand(20 * $this->level, 60 * $this->level))
 		);
 	}
-
+    
 	public function get_attack($magical = false)
 	{
 		$attack = 0;

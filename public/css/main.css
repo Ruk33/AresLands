@@ -54,6 +54,11 @@ textarea {
    Author's custom styles
    ========================================================================== */
 
+.king_of_the_hill_aura_first {
+    background-image: url(/img/king_of_the_hill_aura_first.png);
+    background-repeat: no-repeat;
+}
+
 .very-hard-quest h5 {
     color: red !important;
 }

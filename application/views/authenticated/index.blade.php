@@ -147,7 +147,9 @@
 			<!-- END AYUDANTE SECUNDARIO -->
 			
 			<!-- PERSONAJE -->
-			<img src="{{ URL::base() }}/img/characters/{{ $character->race }}_{{ $character->gender }}_999.png" alt="">
+            <div class="{{ KingOfTheHill::get_character_css_aura_class($character) }}">
+                <img src="{{ URL::base() }}/img/characters/{{ $character->race }}_{{ $character->gender }}_999.png" alt="">
+            </div>
 			<!-- END PERSONAJE -->
 		</div>
 		

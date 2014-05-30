@@ -1965,20 +1965,13 @@ class Authenticated_Controller extends Base_Controller
 				$characterFinded->remove_invisibility();
 			}
 			
-			/*
-			 *	Obtenemos los objetos del personaje
-			 */
-			$items = $characterFinded->items()->select(array('item_id', 'location', 'data'))->where_not_in('location', array('inventory', 'none'))->get();
-			$itemsToView = array();
+			$weapon = $characterFinded->get_weapon();
+			$shield = $characterFinded->get_shield();
 
-			/*
-			 *	Los ordenamos solo para que sea
-			 *	más cómodo de trabajar en la vista
-			 */
-			foreach ( $items as $item )
-			{
-				$itemsToView[$item->location][] = $item;
-			}
+			$mercenary = $characterFinded->get_mercenary();
+			$mercenary = ( $mercenary ) ? $mercenary->item : null;
+            
+            $castableSkills = $character->get_castable_talents($characterFinded);
 
 			/*
 			 *	Obtenemos los orbes
@@ -2002,15 +1995,18 @@ class Authenticated_Controller extends Base_Controller
 			}
 
 			$this->layout->title = $characterFinded->name;
-			$this->layout->content = View::make('authenticated.character')
-										 ->with('character', $character)
-										 ->with('items', $itemsToView)
-										 ->with('orbs', $orbs)
-										 ->with('skills', $skills)
-										 ->with('characterToSee', $characterFinded)
-										 ->with('hideStats', $characterFinded->has_characteristic(Characteristic::RESERVED))
-										 ->with('castableSkills', $character->get_castable_talents($characterFinded))
-										 ->with('pairs', $pairs);
+			$this->layout->content = View::make('authenticated.character', array(
+                'character' => $character,
+                'weapon' => $weapon,
+                'shield' => $shield,
+                'mercenary' => $mercenary,
+                'orbs' => $orbs,
+                'skills' => $skills,
+                'characterToSee' => $characterFinded,
+                'hideStats' => $characterFinded->has_characteristic(Characteristic::RESERVED),
+                'castableSkills' => $character->get_castable_talents($characterFinded),
+                'pairs' => $pairs
+            ));
 		}
 		else
 		{
