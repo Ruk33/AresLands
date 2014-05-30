@@ -214,7 +214,7 @@
 			<!-- ORBES -->
 			<div class="box box-box-64-violet" style="position: absolute; left: 225px; top: 250px;">
 				@if ( isset($orb) )
-					<img src="{{ URL::base() }}/img/icons/orbs/{{ $orb->id }}.png" data-toggle="tooltip" data-title="<div style='width: 200px;'><strong>{{ $orb->name }}</strong><p>{{ $orb->description }}</p></div>">
+					<img src="{{ $orb->get_image_path() }}" data-toggle="tooltip" data-title="<div style='width: 200px;'><strong>{{ $orb->name }}</strong><p>{{ $orb->description }}</p></div>">
 				@endif
 			</div>
 			<!-- END ORBES -->

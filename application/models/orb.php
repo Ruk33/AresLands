@@ -6,7 +6,16 @@ class Orb extends Base_Model
 	public static $timestamps = false;
 	public static $table = 'orbs';
 	public static $key = 'id';
-
+    
+    /**
+     * Obtenemos el path de la imagen del orbe
+     * @return string
+     */
+    public function get_image_path()
+    {
+        return URL::base() . '/img/' . $this->image;
+    }
+    
 	public function get_tooltip()
 	{
 		$orb = $this;

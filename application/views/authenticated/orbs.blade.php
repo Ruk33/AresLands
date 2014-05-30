@@ -23,7 +23,7 @@
         <tbody>
             @foreach ( $orbs as $orb )
             <tr>
-                <td class="span1"><img src="{{ URL::base() }}/img/icons/orbs/{{ $orb->id }}.png" width="32" height="32" /></td>
+                <td class="span1"><img src="{{ $orb->get_image_path() }}" width="32" height="32" /></td>
                 <td data-toggle="tooltip" data-original-title="{{ $orb->get_tooltip() }}">{{ $orb->name }}</td>
                 <td>
                     @if ( $orb->owner_character )
