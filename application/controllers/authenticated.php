@@ -689,13 +689,16 @@ class Authenticated_Controller extends Base_Controller
 
 	public function get_destroyItem($characterItemId = false)
 	{
-		$character = Character::get_character_of_logged_user(array('id'));
-		$characterItem = ( $characterItemId ) ? $character->items()->select(array('id'))->find($characterItemId) : false;
-
-		if ( $characterItem )
-		{
-			$characterItem->delete();
-		}
+        if ( $characterItemId )
+        {
+            $character = Character::get_character_of_logged_user(array('id'));
+            $characterItem = $character->items()->with(array('item'))->find($characterItemId);
+            
+            if ( $characterItem && $characterItem->item->destroyable )
+            {
+                $characterItem->delete();
+            }
+        }
 
 		return Redirect::to('authenticated/index/');
 	}

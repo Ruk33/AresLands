@@ -205,6 +205,7 @@ body {
 .label-important, .badge-important {
     background-color: #d0462c;
     text-shadow: black 0 0 2px;
+    box-shadow: rgb(255, 0, 0) 0 0 5px;
 }
 
 .label-success, .badge-success {

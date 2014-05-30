@@ -1,14 +1,12 @@
-<div class="orb-content">
-	<div class="row">
-		<div class="span9 offset3">
-			<h2>Torneos</h2>
-			<p>
-				<i>
-					¡Solo los mejores grupos se enlistan en estos torneos!.
-				</i>
-			</p>
-			<p><a href="{{ URL::to('authenticated/allTournaments') }}">Ver torneos anteriores</a></p>
-		</div>
+<div class="row orb-content">
+    <div class="dialog-box">
+		<h2>Torneos</h2>
+		<p>
+			<i>
+                ¡Solo los mejores grupos se enlistan en estos torneos!.
+            </i>
+		</p>
+		<p><a href="{{ URL::to('authenticated/allTournaments') }}">Ver torneos anteriores</a></p>
 	</div>
 
 	@if ( $tournament )
@@ -32,10 +30,10 @@
 			<a href="{{ URL::to('authenticated/claimTournamentClanLeaderReward/' . $tournament->id) }}" class="normal-button">Reclama tu recompensa lider</a>
 		</div>
 	@endif
-	<table style="width: 100%; margin-bottom: 25px;" class="tournament-table">
+	<table class="table table-striped brown-table">
 		<thead>
 			<tr>
-				<td colspan="2"><i class="icon-info-sign" style="vertical-align: -1px;"></i> Información del torneo</td>
+				<th colspan="2"><i class="icon-info-sign icon-white" style="vertical-align: -1px;"></i> Información del torneo</th>
 			</tr>
 		</thead>
 		<tbody>
@@ -105,12 +103,12 @@
 			</tr>
 
 			<tr>
-				<td>Recompensa de monedas para todos (varia dependiendo de actividad)</td>
+				<td data-toggle="tooltip" data-original-title="Varia segun actividad">Recompensa de monedas para todos</td>
 				<td>{{ Item::get_divided_coins($tournament->coin_reward)['text'] }}</td>
 			</tr>
 
 			<tr>
-				<td>Recompensa monedas para MVP (varia dependiendo de actividad)</td>
+				<td data-toggle="tooltip" data-original-title="Varia segun actividad">Recompensa monedas para MVP</td>
 				<td>{{ Item::get_divided_coins($tournament->mvp_coin_reward)['text'] }}</td>
 			</tr>
 
@@ -134,15 +132,27 @@
 		</tbody>
 	</table>
 
-	<table style="width: 100%;" class="tournament-table">
+	<table class="table table-striped brown-table">
 		<thead>
 			<tr>
-				<td>#</td>
-				<td><i class="icon-flag" style="vertical-align: -1px;"></i> Grupo</td>
-				<td><i class="icon-signal" style="vertical-align: -1px;"></i> % de victorias</td>
-				<td><i class="icon-fire" style="vertical-align: -1px;"></i> Victorias</td>
-				<td><i class="icon-asterisk" style="vertical-align: -1px;"></i> Derrotas</td>
-				<td></td>
+				<th>#</th>
+				<th><i class="icon-flag icon-white" style="vertical-align: -1px;"></i> Grupo</th>
+                <th>
+                    <div class="text-center">
+                        <i class="icon-signal icon-white" style="vertical-align: -1px;"></i> % de victorias
+                    </div>
+                </th>
+				<th>
+                    <div class="text-center">
+                        <i class="icon-fire icon-white" style="vertical-align: -1px;"></i> Victorias
+                    </div>
+                </th>
+				<th>
+                    <div class="text-center">
+                        <i class="icon-asterisk icon-white" style="vertical-align: -1px;"></i> Derrotas
+                    </div>
+                </th>
+				<th></th>
 			</tr>
 		</thead>
 
@@ -152,16 +162,28 @@
 			<tr>
 				<td>{{ $n++; }}</td>
 				<td>{{ ( $registeredClan->disqualified ) ? '<s data-toggle="tooltip" data-original-title="Descalificado">' . $registeredClan->clan->get_link() . '</s>' : $registeredClan->clan->get_link() }}</td>
-				<td>{{ TournamentClanScore::get_victory_percentage($tournament->id, $registeredClan->clan->id) }}%</td>
-				<td>{{ TournamentClanScore::get_victories($tournament->id, $registeredClan->clan->id) }}</td>
-				<td>{{ TournamentClanScore::get_defeats($tournament->id, $registeredClan->clan->id) }}</td>
+				<td>
+                    <div class="text-center">
+                        {{ TournamentClanScore::get_victory_percentage($tournament->id, $registeredClan->clan->id) }}%
+                    </div>
+                </td>
+				<td>
+                    <div class="text-center">
+                        {{ TournamentClanScore::get_victories($tournament->id, $registeredClan->clan->id) }}
+                    </div>
+                </td>
+				<td>
+                    <div class="text-center">
+                        {{ TournamentClanScore::get_defeats($tournament->id, $registeredClan->clan->id) }}
+                    </div>
+                </td>
 				<td style="font-size: 12px; text-transform: uppercase;" class="text-center"><a href="#">Res. grupo</a> - <a href="#">Res. individual</a></td>
 			</tr>
 			@endforeach
 		</tbody>
 	</table>
 	@else
-		<div class="row" style="margin-top: 50px;">
+		<div style="margin-top: 50px;">
 			<h1 class="text-center">Sin torneos... aún...</h1>
 		</div>
 	@endif
