@@ -458,10 +458,11 @@
 		</div> <!-- /wrap -->
 
 		@if ( Auth::check() && isset($character) )
-			<div style="position: fixed; border: 2px solid #E99337; border-bottom: 0; border-top-left-radius: 5px; border-top-right-radius: 5px; z-index: 999; bottom: 0; right: 10px; padding: 5px; width: auto; height: auto; background-color: #181818;" ng-controller="Chat">
+			<div class="chat" ng-controller="Chat">
 				<ul class="inline" style="margin-bottom: 5px;">
-					<li ng-click="chat.show = ! chat.show;" style="width: 190px; cursor: pointer; color: white;">
-						Chat <span class="label label-info" data-toggle="tooltip" data-original-title="<div class='text-left'><b>Comandos disponibles:</b><ul class='unstyled'><li><span class='positive'>/online</span> : Muestra los personajes conectados</li><li><span class='positive'>/clear</span> : Vacia el historial de mensajes</li></ul></div>">?</span>
+					<li ng-click="toggleChat();" style="width: 190px; cursor: pointer; color: white;">
+                        <span data-toggle="tooltip" data-original-title="Nuevos mensajes" ng-show="chat.newMessages">*</span>
+                        Chat <span class="label label-info" data-toggle="tooltip" data-original-title="<div class='text-left'><b>Comandos disponibles:</b><ul class='unstyled'><li><span class='positive'>/online</span> : Muestra los personajes conectados</li><li><span class='positive'>/clear</span> : Vacia el historial de mensajes</li></ul></div>">?</span>
 					</li>
 					
 					@if ( $character->clan_id > 0 )
@@ -476,10 +477,10 @@
 				
 				<div ng-show="chat.show" style="height: 300px; width: 500px;">
 					<div style="width: 50; height: 270px; background-color: #0F0F0F; overflow: auto; border: 1px solid #4F4843;">
-						<ul class="unstyled" style="font-family: Verdana;">
-							<li ng-repeat="message in chat.messages[chat.channel]" style="padding: 5px; border-bottom: 1px dashed #292929; font-size: 13px;">
+						<ul class="unstyled" style="font-family: Verdana;" name="messages">
+							<li ng-repeat="message in chat.messages[chat.channel]" style="padding: 5px; border-bottom: 1px solid #292929; font-size: 13px;">
 								<div class="pull-right" style="color: rgb(77, 77, 77);">[[ formatMessageTime(message.time) ]]</div>
-								<strong style="color: orange;">[[ message.name ]]:</strong> [[ message.message ]]
+								<a href="{{ URL::base() }}/authenticated/character/[[ message.name ]]">[[ message.name ]]</a>: [[ message.message ]]
 							</li>
 						</ul>
 					</div>

@@ -190,11 +190,19 @@ controller('CharacterController', ['$scope', '$http', '$timeout', 'CharacterOfLo
 
 .controller('Chat', ['$scope', '$http', '$timeout', function($scope, $http, $timeout) {
 	$scope.chat = {};
+    $scope.chat.newMessages = false;
 	$scope.chat.messages = [];
 	$scope.chat.connected = [];
 	$scope.chat.last = [];
 	$scope.chat.show = false;
 	$scope.chat.channel = 0;
+    
+    $scope.toggleChat = function() {
+        $scope.chat.show = ! $scope.chat.show;
+        if ( $scope.chat.show ) {
+            $scope.chat.newMessages = false;
+        }
+    }
 
 	var showConnected = function() {
 		$http.get($scope.basePath + 'chat/connected/' + $scope.chat.channel).success(function (data) {
@@ -225,7 +233,10 @@ controller('CharacterController', ['$scope', '$http', '$timeout', 'CharacterOfLo
 					$scope.chat.messages[$scope.chat.channel].unshift(data[i]);
 				}
                 
-                
+                if ( ! $scope.chat.show )
+                {
+                    $scope.chat.newMessages = true;
+                }
 			}
 			
 			$timeout(getMessages, 2000);

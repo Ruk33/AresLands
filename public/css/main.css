@@ -54,6 +54,21 @@ textarea {
    Author's custom styles
    ========================================================================== */
 
+.chat { 
+    position: fixed; 
+    border: 2px solid #E99337; 
+    border-bottom: 0; 
+    border-top-left-radius: 5px;
+    border-top-right-radius: 5px; 
+    z-index: 999; 
+    bottom: 0; 
+    right: 10px; 
+    padding: 5px; 
+    width: auto; 
+    height: auto; 
+    background-color: #181818;
+}
+
 .king_of_the_hill_aura_first {
     background-image: url(/img/king_of_the_hill_aura_first.png);
     background-repeat: no-repeat;
