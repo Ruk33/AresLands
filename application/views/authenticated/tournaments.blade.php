@@ -2,9 +2,7 @@
     <div class="dialog-box">
 		<h2>Torneos</h2>
 		<p>
-			<i>
-                ¡Solo los mejores grupos se enlistan en estos torneos!.
-            </i>
+			Ante nosotros una nueva prueba, un nuevo desafío, una nueva oportunidad para demostrar el poder de los nuestros. ¿Quieres ser recordado por siempre? Solo los mejores son recordados, solo quienes pueden demostrar su valia seran los homenajeados.
 		</p>
 		<p><a href="{{ URL::to('authenticated/allTournaments') }}">Ver torneos anteriores</a></p>
 	</div>

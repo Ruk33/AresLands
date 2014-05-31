@@ -62,7 +62,7 @@ return array(
 	 *	Formula
 	 *	xp del personaje * bag_size
 	 */
-	'bag_size' => 0.60,
+	'bag_size' => 9999999,
 
 	/*
 	 *	Multiplicadores
