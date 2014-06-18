@@ -284,8 +284,9 @@ class Battle
 		$source = null;
 		$target = null;
 
-		// Maximo de 25 ataques
-		$attacks = 25;
+		// Maximo de 30 ataques
+		$attacks = 20;
+        $attackWithMagic = false;
 
 		while ( $attacks > 0 && $this->_attacker->get_current_life() > 0 && $this->_target->get_current_life() > 0 )
 		{
@@ -348,9 +349,12 @@ class Battle
 				}
 			}
 		}
-
-		// Gana aquel que tenga mas vida
-		if ( $this->_attacker->get_current_life() > $this->_target->get_current_life() )
+        
+        $attackerIsAlive = $this->_attacker->get_current_life() > 0;
+        $attackerHasDoneMoreDamage = $this->get_damage_done_by($this->_attacker) > $this->get_damage_done_by($this->_target);
+        
+        // Gana aquel que haya hecho mas daño y este vivo
+		if ( $attackerIsAlive && $attackerHasDoneMoreDamage )
 		{
 			$this->_winner = $this->_attacker;
 			$this->_loser = $this->_target;
@@ -365,12 +369,19 @@ class Battle
 	}
 
 	/**
-	 * @param Attackable $attacker
-	 * @param Attackable $target
-	 * @param Attackable $pair
-	 */
-	public function __construct(Attackable $attacker, Attackable $target, Attackable $pair = null)
+     * 
+     * @param Unit $attacker
+     * @param Unit $target
+     * @param Unit $pair
+     */
+	public function __construct(Unit $attacker, Unit $target, Unit $pair = null)
 	{
+        // Si uno de los dos no puede ser atacado entonces no hacemos nada
+        if ( ! $attacker->is_attackable() || ! $target->is_attackable() )
+        {
+            return;
+        }
+        
 		$this->_attacker = $attacker;
 		$this->_target = $target;
 		$this->_pair = $pair;
@@ -378,22 +389,23 @@ class Battle
 		$this->_attacker->check_skills_time();
 		$this->_target->check_skills_time();
 
-		if ( $this->_target instanceof Character )
-		{
-			$target->regenerate_life(true);
-		}
+		$this->_attacker->regenerate_life(true);
+        $this->_target->regenerate_life(true);
 
 		if ( $this->_pair )
 		{
 			$this->_pair->check_skills_time();
 			$this->_damageDone[$this->get_secure_index($pair)] = 0;
 		}
+        
+        $attackerIndex = $this->get_secure_index($attacker);
+        $targetIndex = $this->get_secure_index($target);
 
-		$this->_damageDone[$this->get_secure_index($attacker)] = 0;
-		$this->_damageDone[$this->get_secure_index($target)] = 0;
+		$this->_damageDone[$attackerIndex] = 0;
+		$this->_damageDone[$targetIndex] = 0;
 
-		$this->_initialLife[$this->get_secure_index($attacker)] = $attacker->get_current_life();
-		$this->_initialLife[$this->get_secure_index($target)] = $target->get_current_life();
+		$this->_initialLife[$attackerIndex] = $attacker->get_current_life();
+		$this->_initialLife[$targetIndex] = $target->get_current_life();
 
 		$this->begin();
 		$this->check_for_protection();

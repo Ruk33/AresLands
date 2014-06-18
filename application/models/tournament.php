@@ -401,7 +401,7 @@ class Tournament extends Base_Model
 	 */
 	public function can_reclaim_clan_lider_reward(Character $character)
 	{
-		$clan = $character->clan()->select(array('id'))->first();
+		$clan = $character->clan()->select(array('id', 'leader_id'))->first();
 
 		if ( ! $clan )
 		{

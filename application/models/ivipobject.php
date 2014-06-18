@@ -27,7 +27,14 @@ interface IVipObject
 	public function get_price();
 	
 	/**
+	 * 
+	 * @param array $attributes
+	 * @return Validator
+	 */
+	public function get_validator(Array $attributes);
+	
+	/**
 	 * Se ejecutan las acciones del objeto vip
 	 */
-	public function execute();
+	public function execute(Character $buyer, Array $attributes);
 }

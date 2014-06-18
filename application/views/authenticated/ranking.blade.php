@@ -1,13 +1,10 @@
-<h2>Ranking
-
-@if ( $rank == 'xp' )
-	de Experiencia
+@if ( $rank == 'kingOfTheHill' )
+	<h2>Rey de la colina</h2>
 @elseif ( $rank == 'pvp' )
-	de Jugador contra Jugador
+	<h2>Ranking Jugador contra Jugador</h2>
 @elseif ( $rank == 'clan' )
-	de Grupos
+	<h2>Ranking Grupos</h2>
 @endif
-</h2>
 
 <div class="row">
 <ul class="inline text-center span11" style="margin-top: 20px;">
@@ -20,10 +17,10 @@
 		</a>
 	</li>
 	<li>
-		<a href="{{ URL::to('authenticated/ranking/xp') }}" class="ui-button button">
+		<a href="{{ URL::to('authenticated/ranking/kingOfTheHill') }}" class="ui-button button">
 			<i class="button-icon axe"></i>
 			<span class="button-content">
-				Experiencia
+				Rey de la colina
 			</span>
 		</a>
 	</li>
@@ -37,9 +34,11 @@
 	</li>
 </ul>
 
+@if ( $rank != 'kingOfTheHill' )
 <div class="text-center" style="margin-top: 100px;">
 	{{ $elements->links() }}
 </div>
+@endif
 
 <table class="table table-striped brown-table">
 	<thead>
@@ -55,9 +54,10 @@
 			@if ( $rank == 'pvp' )
 			<th width="150px">Puntos de PVP</th>
 			@endif
-			@if ( $rank == 'xp' )
-			<th width="50px">Nivel</th>
-			<th width="100px">Experiencia</th>
+			@if ( $rank == 'kingOfHill' )
+			<th width="50px">Grupo</th>
+			<th width="100px">Nivel</th>
+            <th>Dias invicto</th>
 			@endif
 			@if ( $rank == 'clan' )
 			<th>Puntos</th>

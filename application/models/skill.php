@@ -8,6 +8,55 @@ class Skill extends Base_Model
 	public static $key = 'id';
 	
 	/**
+	 * Obtenemos los skills de personalidad en array cuyo key es el nombre de la personalidad
+	 * Ejemplo: array('nombre_personalidad' => array(skills))
+	 * @param string|array $characteristics
+	 * @return array
+	 */
+	public function get_talents($characteristics)
+	{
+		$talents = array();
+		
+		foreach ( (array) $characteristics as $characteristic )
+		{
+			if ( is_string($characteristic) )
+			{
+				$characteristic = Characteristic::get($characteristic);
+			}
+			
+			if ( $characteristic )
+			{
+				$talents[$characteristic->get_name()] = static::where_in('id', $characteristic->get_skills())->get();
+			}
+		}
+		
+		return $talents;
+	}
+	
+	/**
+	 * Obtenemos las raciales de una raza
+	 * @param string $race
+	 * @return array
+	 */
+	public function get_racials($race)
+	{
+		$racialSkills = Config::get('game.racial_skills');
+		
+		if ( ! isset($racialSkills[$race]) )
+		{
+			return array();
+		}
+		
+		return static::where_in('id', $racialSkills[$race])->get();
+	}
+	
+	public function get_next_level()
+	{
+		return static::where('id', '=', $this->id)
+					 ->where('level', '=', $this->level + 1);
+	}
+	
+	/**
 	 * 
 	 * @return array
 	 */

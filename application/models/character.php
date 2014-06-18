@@ -1,6 +1,6 @@
 <?php
 
-class Character extends Attackable
+class Character extends Unit
 {
 	public static $softDelete = true;
 	public static $timestamps = false;
@@ -25,6 +25,119 @@ class Character extends Attackable
 		'gender_required' => 'El género es requerido',
 		'gender_match' => 'El género es incorrecto',
 	);
+    
+    /**
+     * No cambiar su contenido
+     * 
+     * Array con las columnas basicas
+     * 
+     * @var array
+     */
+    public static $COLUMNS_BASIC = array('id','user_id','ip','name','level','gender','race','clan_id','clan_permission','zone_id','characteristics','xp','xp_next_level');
+    
+    /**
+     * No cambiar su contenido
+     * 
+     * Array con las columnas que tengan que ver con la vida del personaje
+     * 
+     * @var array
+     */
+    public static $COLUMNS_LIFE = array('max_life','current_life','regeneration_per_second','regeneration_per_second_extra');
+    
+    /**
+     * No cambiar su contenido
+     * 
+     * Array con las columnas que tengan que ver con las estadisticas fisicas del personaje
+     * 
+     * @var array
+     */
+    public static $COLUMNS_PHYSICAL_STATS = array('reflect_physical_damage','reflect_physical_damage_extra','physical_defense','physical_defense_extra','physical_damage','physical_damage_extra');
+    
+    /**
+     * No cambiar su contenido
+     * 
+     * Array con las columnas que tengan que ver con las estadisticas magicas del personaje
+     * 
+     * @var array
+     */
+    public static $COLUMNS_MAGIC_STATS = array('reflect_magic_damage','reflect_magic_damage_extra','magic_defense','magic_defense_extra','magic_damage','magic_damage_extra');
+    
+    /**
+     * No cambiar su contenido
+     * 
+     * Array con las columnas que tengan que ver con las estadisticas del personaje
+     * 
+     * @var array
+     */
+    public static $COLUMNS_STATS = array('luck','attack_speed','critical_chance','evasion','stat_strength','stat_dexterity','stat_resistance','stat_magic','stat_magic_skill','stat_magic_resistance');
+    
+    /**
+     * No cambiar su contenido
+     * 
+     * Array con las columnas que tengan que ver con las estadisticas extras del personaje
+     * 
+     * @var array
+     */
+    public static $COLUMNS_STATS_EXTRA = array('luck_extra','attack_speed_extra','critical_chance_extra','evasion_extra','stat_strength_extra','stat_dexterity_extra','stat_resistance_extra','stat_magic_extra','stat_magic_skill_extra','stat_magic_resistance_extra');
+    
+    /**
+     * No cambiar su contenido
+     * 
+     * Array con las columnas que tengan que ver con los rates propios del personaje
+     * 
+     * @var array
+     */
+    public static $COLUMNS_RATES = array('xp_rate','xp_rate_extra','quest_xp_rate','quest_xp_rate_extra','drop_rate','drop_rate_extra','explore_reward_rate','explore_reward_rate_extra','coin_rate','coin_rate_extra','quest_coin_rate','quest_coin_rate_extra');
+    
+    /**
+     * No cambiar su contenido
+     * 
+     * Array con las columnas que tengan que ver con registros (fechas) del personaje
+     * 
+     * @var array
+     */
+    public static $COLUMNS_LOG_TIMES = array('created_at','updated_at','deleted_at','last_regeneration_time','last_activity_time','last_logged','invisible_until');
+    
+    /**
+     * No cambiar su contenido
+     * 
+     * Array con columnas que contienen valores boleanos del personaje 
+     * (por ejemplo si esta explorando)
+     * 
+     * @var array
+     */
+    public static $COLUMNS_BOOLEANS = array('is_traveling','is_exploring','registered_in_tournament');
+    
+    /**
+     * No cambiar su contenido
+     * 
+     * Array con las columnas que contengan los tiempos que el personaje 
+     * requiere para realizar ciertas acciones (por ejemplo viajar)
+     * 
+     * @var array
+     */
+    public static $COLUMNS_TIMES = array('travel_time','travel_time_extra','battle_rest_time','battle_rest_time_extra','skill_cd_time','skill_cd_time_extra');
+    
+    /**
+     * No cambiar su contenido
+     * 
+     * Array con las columnas que contengan otros valores no encontrados en las
+     * otras variables "COLUMNS"
+     * 
+     * @var array
+     */
+    public static $COLUMNS_OTHER = array('pvp_points','language','points_to_change','talent_points','second_mercenary');
+    
+    public function __construct($attributes = array(), $exists = false)
+    {
+        parent::__construct($attributes, $exists);
+        $this->combatBehavior = new AttackableBehavior($this, new Damage($this), new MonsterArmor($this));
+    }
+    
+    public function get_image_path()
+    {
+        return URL::base() . "/img/characters/{$this->race}_{$this->gender}_999.png";
+    }
 
 	/**
 	 * Obtenemos el arma del personaje
@@ -91,6 +204,19 @@ class Character extends Attackable
 	{
 		return $this->last_logged + 24 * 60 * 60 < time();
 	}
+	
+	/**
+	 * Actualizamos los tiempos de sus actividades
+	 */
+	public function update_activities_time()
+	{
+		$activities = $this->activities()->where('end_time', '<=', time())->get();
+
+		foreach ( $activities as $activity )
+		{
+			$activity->update_time();
+		}
+	}
 
 	/**
 	 * Burlamos a la muerte (usado en batalla)
@@ -122,12 +248,17 @@ class Character extends Attackable
 		}
 	}
 
-	public function get_rewards()
-	{
-		return array(
+    public function drops()
+    {
+        return array(
 			array('item_id' => Config::get('game.xp_item_id'), 'amount' => 1),
 			array('item_id' => Config::get('game.coin_id'), 'amount' => mt_rand(20 * $this->level, 60 * $this->level))
 		);
+    }
+    
+	public function get_rewards()
+	{
+		return $this->drops();
 	}
     
 	public function get_attack($magical = false)
@@ -191,7 +322,7 @@ class Character extends Attackable
 
 	public function get_current_life()
 	{
-		return $this->get_attribute('current_life') + $this->max_life_extra;
+		return $this->get_attribute('current_life');
 	}
 
 	/**
@@ -781,15 +912,6 @@ class Character extends Attackable
 		
 		$characteristics = explode(',', $this->get_attribute('characteristics'));
 		return $characteristics;
-		
-		/*$characteristicsArray = array();
-		
-		foreach ( $characteristics as $characteristic )
-		{
-			$characteristicsArray[] = Characteristic::get($characteristic);
-		}
-		
-		return $characteristicsArray;*/
 	}
 	
 	/**
@@ -1703,7 +1825,7 @@ class Character extends Attackable
 		}
 		else
 		{
-			$maxLife = $this->max_life + $this->max_life_extra;
+			$maxLife = $this->max_life;
 
 			if ( $maxLife < $value )
 			{
@@ -1807,23 +1929,81 @@ class Character extends Attackable
 
 		return null;
 	}
-
+	
+	/**
+	 * Verificamos si personaje puede salirse de su clan
+	 * @return boolean
+	 */
+	public function can_leave_clan()
+	{
+		if ( $clan = $this->clan )
+		{
+			return $clan->can_leave($this);
+		}
+		
+		return false;
+	}
+	
+	/**
+	 * Se saca al personaje de su grupo
+	 */
 	public function leave_clan()
 	{
-		$clan = $this->clan;
-		if ( $clan )
+		if ( $clan = $this->clan )
 		{
-			/*
-			 *	El lider de clan no puede salir
-			 *	del mismo
-			 */
-			if ( $this->id != $clan->leader_id )
-			{
-				$this->clan_id = 0;
-				$this->save();
-
-				$clan->leave($this);
-			}
+			$clan->leave($this);
+		}
+	}
+	
+	/**
+	 * Verificamos si personaje puede borrar el grupo en el que esta
+	 * @return boolean
+	 */
+	public function can_delete_clan()
+	{
+		if ( $clan = $this->clan )
+		{
+			return $clan->can_delete($this);
+		}
+		
+		return false;
+	}
+	
+	/**
+	 * Borramos el clan en el que esta el personaje
+	 */
+	public function delete_clan()
+	{
+		if ( $clan = $this->clan )
+		{
+			$clan->delete();
+		}
+	}
+	
+	/**
+	 * Verificamos si personaje puede sacar a otro de su grupo
+	 * @param Character $member
+	 * @return boolean
+	 */
+	public function can_kick_clan_member(Character $member)
+	{
+		if ( $clan = $this->clan )
+		{
+			return $clan->can_kick_member($this, $member);
+		}
+		
+		return false;
+	}
+	
+	/**
+	 * Sacamos personaje del grupo
+	 * @param Character $member
+	 */
+	public function kick_clan_member(Character $member)
+	{
+		if ( $clan = $this->clan )
+		{
+			$clan->kick_member($this, $member);
 		}
 	}
 
@@ -2089,6 +2269,11 @@ class Character extends Attackable
 		
 		return $user->character;
 	}
+	
+	public function get_logged($select = array())
+	{
+		return static::get_character_of_logged_user($select);
+	}
 
 	public function battle_against($target, $pair = null)
 	{
@@ -2142,7 +2327,64 @@ class Character extends Attackable
 	 */
 	public function get_coins()
 	{
-		return $this->items()->select(array('id', 'count'))->where('item_id', '=', Config::get('game.coin_id'))->first();
+		$coins = $this->items()->select(array('id', 'count'))->where('item_id', '=', Config::get('game.coin_id'))->first();
+		
+		if ( ! $coins )
+		{
+			$coins = new CharacterItem();
+			
+			$coins->owner_id = $this->id;
+			$coins->item_id = Config::get('game.coin_id');
+			
+			$coins->save();
+		}
+		
+		return $coins;
+	}
+	
+	/**
+	 * Verificamos si personaje puede agregar atributos
+	 * @param string $stat stat_strength|stat_dexterity|...
+	 * @param integer $amount
+	 */
+	public function can_add_stat($stat, $amount)
+	{
+		if ( !in_array($stat, array('stat_strength', 'stat_dexterity', 'stat_resistance', 'stat_magic', 'stat_magic_skill', 'stat_magic_resistance')) )
+		{
+			return false;
+		}
+		
+		if ( $this->points_to_change <= 0 )
+		{
+			return false;
+		}
+		
+		if ( $this->get_coins()->count < $this->get_stat_price($stat) * $amount )
+		{
+			return false;
+		}
+		
+		return true;
+	}
+	
+	/**
+	 * Agregamos atributos al personaje
+	 * @param string $stat stat_strength|stat_dexterity|...
+	 * @param integer $amount
+	 */
+	public function add_stat($stat, $amount)
+	{
+		if ( !in_array($stat, array('stat_strength', 'stat_dexterity', 'stat_resistance', 'stat_magic', 'stat_magic_skill', 'stat_magic_resistance')) )
+		{
+			return;
+		}
+		
+		$this->{$stat} += $amount;
+		$this->points_to_change -= $amount;
+		
+		$this->add_coins(-($this->get_stat_price($stat) * $amount));
+		
+		$this->save();
 	}
 	
 	/**
@@ -2656,11 +2898,6 @@ class Character extends Attackable
 		return $this->quests()->where('progress', '=', 'reward');
 	}
 
-	public function zone()
-	{
-		return $this->belongs_to('Zone', 'zone_id');
-	}
-
 	public function activities()
 	{
 		return $this->has_many('CharacterActivity', 'character_id');
@@ -2743,5 +2980,84 @@ class Character extends Attackable
 	public function activity_bar()
 	{
 		return $this->has_one('ActivityBar', 'character_id');
+	}
+	
+	/**
+	 * Asignamos caracteristicas del personaje desde array
+	 * @param array $characteristics
+	 */
+	public function set_characteristics_from_array(Array $characteristics)
+	{
+		// todo
+		
+		if ( $this->has_characteristic(Characteristic::CLUMSY) )
+		{
+			$this->luck += 6;
+		}
+		
+		$this->save();
+	}
+	
+	public function save()
+	{
+		if ( ! $this->exists )
+		{
+			switch ( $this->race )
+			{
+				case 'dwarf':
+					$this->regeneration_per_second = 0.25;
+					$this->evasion = -1;
+					$this->critical_chance = 3;
+					$this->attack_speed = -2;
+					$this->magic_defense = 3;
+					$this->physical_defense = 5;
+					$this->magic_damage = -10;
+					$this->physical_damage = 15;
+					$this->luck = 5;
+
+					break;
+
+				case 'elf':
+					$this->regeneration_per_second = 0.14;
+					$this->evasion = 2;
+					$this->critical_chance = 5;
+					$this->attack_speed = 3;
+					$this->magic_defense = 2;
+					$this->physical_defense = 2;
+					$this->magic_damage = 5;
+					$this->physical_damage = 10;
+					$this->luck = 5;
+
+					break;
+
+				case 'drow':
+					$this->regeneration_per_second = 0.12;
+					$this->evasion = -1;
+					$this->critical_chance = 6;
+					$this->attack_speed = 2;
+					$this->magic_defense = 5;
+					$this->physical_defense = 1;
+					$this->magic_damage = 15;
+					$this->physical_damage = -5;
+					$this->luck = 5;
+
+					break;
+
+				case 'human':
+					$this->regeneration_per_second = 0.19;
+					$this->evasion = 1;
+					$this->critical_chance = 2;
+					$this->attack_speed = 1;
+					$this->magic_defense = 1;
+					$this->physical_defense = 3;
+					$this->magic_damage = 1;
+					$this->physical_damage = 6;
+					$this->luck = 5;
+
+					break;
+			}
+		}
+		
+		return parent::save();
 	}
 }

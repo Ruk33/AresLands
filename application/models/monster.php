@@ -1,14 +1,20 @@
 <?php
 
-class Monster extends Attackable
+class Monster extends Npc
 {
-	public static $softDelete = false;
-	public static $timestamps = false;
-	public static $table = 'npcs';
-	public static $key = 'id';
-
 	public $current_life = null;
+    
+    public function __construct()
+    {
+        parent::__construct();
+        $this->combatBehavior = new AttackableBehavior($this, new Damage($this), new MonsterArmor($this));
+    }
 
+    protected function inject_query($query)
+    {
+        return $query->where('type', '=', 'monster');
+    }
+    
 	/**
 	 * Query para obtener bichos disponibles para personaje
 	 * @param  Character $character 
@@ -17,8 +23,7 @@ class Monster extends Attackable
 	 */
 	public static function get_available_for(Character $character)
 	{
-		return static::where('zone_id', '=', $character->zone_id)
-					 ->where('type', '=', 'monster');
+		return static::where('zone_id', '=', $character->zone_id);
 	}
 
 	/**
@@ -82,7 +87,7 @@ class Monster extends Attackable
 
 	public function set_current_life($value)
 	{
-		$this->current_life = $value;
+		$this->current_life = min($value, $this->life);
 	}
 
 	public function check_skills_time()
@@ -92,7 +97,7 @@ class Monster extends Attackable
 
 	public function drops()
 	{
-		return $this->has_many("MonsterDrop", "monster_id");
+		return $this->has_many("MonsterDrop", "monster_id")->get();
 	}
 
 	/**
@@ -118,73 +123,17 @@ class Monster extends Attackable
 		return $rewards;
 	}
 
-	public function get_evasion_chance()
-	{
-		return mt_rand(0, 10);
-	}
-
-	public function get_critical_chance()
-	{
-		return mt_rand(0, 20);
-	}
-
 	public function save()
 	{
 		unset($this->current_life);
 		return parent::save();
 	}
 
+    /**
+     * @deprecated
+     */
 	public function get_text_for_tooltip()
 	{
-		$message = "<div style='min-width: 250px; text-align: left;'>";
-
-		$message .= "<img src='" . URL::base() . "/img/icons/npcs/$this->id.png' class='pull-left' width='32px' height='32px' style='margin-right: 10px;'>";
-
-		$message .= "<strong style='color: orange; margin-top: 10px;'>$this->name</strong>";
-		$message .= "<br>Nivel: $this->level";
-		$message .= "<p><small><em>$this->dialog</em></small></p>";
-
-		$message .= "<ul class='unstyled'>";
-
-		if ( $this->stat_strength != 0 )
-		{
-			$message .= "<li>Fuerza física: $this->stat_strength</li>";
-		}
-
-		if ( $this->stat_dexterity != 0 )
-		{
-			$message .= "<li>Destreza física: $this->stat_dexterity</li>";
-		}
-
-		if ( $this->stat_resistance != 0 )
-		{
-			$message .= "<li>Resistencia: $this->stat_resistance</li>";
-		}
-
-		if ( $this->stat_magic != 0 )
-		{
-			$message .= "<li>Poder mágico: $this->stat_magic</li>";
-		}
-
-		if ( $this->stat_magic_skill != 0 )
-		{
-			$message .= "<li>Habilidad mágica: $this->stat_magic_skill</li>";
-		}
-
-		if ( $this->stat_magic_resistance != 0 )
-		{
-			$message .= "<li>Contraconjuro: $this->stat_magic_resistance</li>";
-		}
-
-		$message .= '</ul>';
-
-		$message .= '</div>';
-
-		return $message;
-	}
-
-	public function zone()
-	{
-		return $this->belongs_to("Zone", "zone_id");
+		return $this->get_tooltip();
 	}
 }

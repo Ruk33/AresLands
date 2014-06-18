@@ -104,7 +104,11 @@ class Clan extends Base_Model
      */
     public function has_skill(Skill $skill)
     {
-        return $this->skills()->where('skill_id', '=', $skill->id)->where('level', '=', $skill->level)->take(1)->count() == 1;
+        return $this->learned_skills()
+					->where('skill_id', '=', $skill->id)
+					->where('level', '=', $skill->level)
+					->take(1)
+					->count() == 1;
     }
 
 	public function add_xp($amount)
@@ -186,10 +190,15 @@ class Clan extends Base_Model
 			$this->give_clan_skill_to_member($member, $skill);
 		}
 	}
+	
+	public function can_learn_skill(Skill $skill)
+	{
+		return $this->points_to_change > 0 && ! $this->has_skill($skill) && $skill->can_be_learned_by_clan($this);
+	}
 
 	public function learn_skill(Skill $skill)
 	{
-		$clanSkill = $this->skills()->where('skill_id', '=', $skill->id)->select(array('id', 'skill_id', 'level'))->first();
+		$clanSkill = $this->learned_skills()->where('skill_id', '=', $skill->id)->select(array('id', 'skill_id', 'level'))->first();
 
 		if ( $clanSkill )
 		{
@@ -205,38 +214,305 @@ class Clan extends Base_Model
 		}
 
 		$clanSkill->save();
+		
 		$this->update_members_skill($skill);
+		
+		$this->points_to_change--;
+		$this->save();
+	}
+	
+	/**
+	 * Verificamos si personaje puede unirse al grupo
+	 * @param Character $character
+	 * @return boolean
+	 */
+	public function can_join(Character $character)
+	{
+		return $character->clan_id == 0;
+	}
+	
+	/**
+	 * Verificamos si personaje puede enviar peticiones de ingreso al grupo
+	 * @param Character $character
+	 */
+	public function can_send_petition(Character $character)
+	{
+		if ( ! $this->can_join($character) )
+		{
+			return false;
+		}
+		
+		// Verificamos si ya ha enviado peticiones
+		if ( $this->petitions()->where_character_id($character->id)->take(1)->count() != 0 )
+		{
+			return false;
+		}
+		
+		return true;
+	}
+	
+	/**
+	 * Enviamos peticion de ingreso de personaje
+	 * @param Character $character
+	 */
+	public function send_petition(Character $character)
+	{		
+		$petition = new ClanPetition();
+
+		$petition->clan_id = $this->id;
+		$petition->character_id = $character->id;
+
+		$petition->save();
+		
+		Message::clan_new_petition($character, $this->lider);
 	}
 
+	/**
+	 * Ingresar personaje a grupo
+	 * @param Character $member
+	 */
 	public function join(Character $member)
 	{
+		$member->petitions()->delete();
+		
+		$member->clan_id = $this->id;
 		$member->clan_permission = 0;
 		$member->save();
 		
 		$this->give_clan_skills_to_member($member);
 	}
+	
+	/**
+	 * Verificamos si personaje puede alterar permisos
+	 * @param Character $character
+	 * @return boolean
+	 */
+	public function can_modify_permissions(Character $character)
+	{
+		return $this->leader_id == $character->id;
+	}
+	
+	/**
+	 * Verificamos si personaje puede aceptar peticiones de inclusion al grupo
+	 * @param Character $character
+	 * @return boolean
+	 */
+	public function can_accept_petitions(Character $character)
+	{
+		return $this->has_permission($character, self::PERMISSION_ACCEPT_PETITION);
+	}
+	
+	/**
+	 * Aceptamos peticion de inclusion al grupo
+	 * @param Character $character
+	 * @param ClanPetition $petition
+	 * @return boolean
+	 */
+	public function accept_petition(Character $character, ClanPetition $petition)
+	{
+		$newMember = $petition->character;
+		
+		if ( $this->can_join($newMember) )
+		{
+			$this->join($newMember);
+			Message::clan_accept_message($character, $newMember, $this);
+			
+			return true;
+		}
+		
+		return false;
+	}
+	
+	/**
+	 * Verificamos si personaje puede rechazar peticiones de inclusion al grupo
+	 * @param Character $character
+	 * @return boolean
+	 */
+	public function can_reject_petitions(Character $character)
+	{
+		return $this->has_permission($character, self::PERMISSION_DECLINE_PETITION);
+	}
+	
+	/**
+	 * Rechazamos peticion de inclusion al grupo
+	 * @param Character $character
+	 * @param ClanPetition $petition
+	 */
+	public function reject_petition(Character $character, ClanPetition $petition)
+	{
+		Message::clan_reject_message($character, $petition->character, $this);
+		$petition->delete();
+	}
+	
+	/**
+	 * Verificamos si personaje puede expulsar a otro del grupo
+	 * @param Character $character
+	 * @param Character $member
+	 * @return boolean
+	 */
+	public function can_kick_member(Character $character, Character $member)
+	{
+		if ( $member->clan_id != $character->clan_id )
+		{
+			return false;
+		}
+		
+		if ( ! $this->has_permission($character, self::PERMISSION_KICK_MEMBER) )
+		{
+			return false;
+		}
+		
+		if ( $character->id == $member->id )
+		{
+			return false;
+		}
+		
+		if ( $this->leader_id == $member->id )
+		{
+			return false;
+		}
+		
+		if ( Tournament::is_active() )
+		{
+			$tournament = Tournament::get_active()->first();
 
+			if ( $tournament->is_clan_registered($this) )
+			{
+				return false;
+			}
+		}
+		
+		return true;
+	}
+	
+	/**
+	 * Sacamos a un personaje del grupo
+	 * @param Character $performer El personaje que saco al miembro del grupo
+	 * @param Character $member
+	 */
+	public function kick_member(Character $performer, Character $member)
+	{
+		$this->leave($member);
+		Message::clan_expulsion_message($performer, $member);
+	}
+	
+	/**
+	 * Verificamos si personaje puede salir de clan
+	 * @param Character $character
+	 * @return boolean
+	 */
+	public function can_leave(Character $character)
+	{
+		if ( $character->clan_id != $this->id )
+		{
+			return false;
+		}
+		
+		if ( $this->leader_id == $character->id )
+		{
+			return false;
+		}
+		
+		if ( Tournament::is_active() )
+		{
+			$tournament = Tournament::get_active()->first();
+			
+			if ( $tournament->is_clan_registered($this) )
+			{
+				return false;
+			}
+		}
+		
+		return true;
+	}
+
+	/**
+	 * Sacar personaje del grupo
+	 * @param Character $member
+	 */
 	public function leave(Character $member)
 	{
 		$member->cancel_all_clan_trades();
 
+		$member->clan_id = 0;
 		$member->clan_permission = 0;
 		$member->save();
 		
  		$this->remove_clan_skills_from_member($member);
 	}
+	
+	/**
+	 * Verificamos si personaje puede borrar grupo
+	 * @param Character $character
+	 * @return boolean
+	 */
+	public function can_delete(Character $character)
+	{
+		if ( $character->clan_id != $this->id )
+		{
+			return false;
+		}
+		
+		if ( $character->id != $this->leader_id )
+		{
+			return false;
+		}
+		
+		if ( $this->members()->count() != 1 )
+		{
+			return false;
+		}
+		
+		if ( Tournament::is_active() )
+		{
+			$tournament = Tournament::get_active()->first();
+
+			if ( $tournament->is_clan_registered($this) )
+			{
+				return false;
+			}
+		}
+		
+		return true;
+	}
 
 	public function delete()
 	{
-		$this->leave($this->lider()->select(array('id'))->first());
+		$this->leave($this->lider);
 
-		$this->skills()->delete();
+		$this->learned_skills()->delete();
 		$this->petitions()->delete();
+		$this->orb_points()->delete();
 
-		parent::delete();
+		return parent::delete();
+	}
+	
+	/**
+	 * Query para obtener habilidades de clan
+	 * @return Eloquent
+	 */
+	public function get_skills()
+	{
+		return Skill::clan_skills();
+	}
+	
+	/**
+	 * Query para obtener habilidades no aprendidas del clan
+	 * @return Eloquent
+	 */
+	public function get_non_learned_skills()
+	{
+		$learnedSkills = DB::raw("( SELECT skill_id FROM clan_skills WHERE clan_id = $this->id )");
+		return static::get_skills()
+					 ->where('level', '=', 1)
+					 ->where('id', 'NOT IN', $learnedSkills);
 	}
 
-	public function skills()
+	/**
+	 * Query para obtener habilidades aprendidas del clan
+	 * @return Eloquent
+	 */
+	public function learned_skills()
 	{
 		return $this->has_many('ClanSkill', 'clan_id');
 	}
@@ -259,5 +535,29 @@ class Clan extends Base_Model
 	public function petitions()
 	{
 		return $this->has_many('ClanPetition', 'clan_id');
+	}
+	
+	public function orb_points()
+	{
+		return $this->has_one('ClanOrbPoint', 'clan_id');
+	}
+	
+	public function save()
+	{
+		$exists = $this->exists;
+		$result = parent::save();
+		
+		// Si no existe, entonces lo agregamos al ranking de clanes
+		if ( ! $exists )
+		{
+			$clanRanking = new ClanOrbPoint();
+			
+			$clanRanking->clan_id = $this->id;
+			$clanRanking->points = 0;
+			
+			$clanRanking->save();
+		}
+		
+		return $result;
 	}
 }

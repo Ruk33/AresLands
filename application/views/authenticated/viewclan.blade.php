@@ -107,22 +107,17 @@
 	<h2 style="margin-top: 50px;">Habilidades</h2>
 
 	<ul class="inline text-center" ng-controller="Skill">
-	@foreach ( $clanSkills as $skill )
-		<li style="vertical-align: top;">
-			<img src="{{ URL::base() }}/img/icons/skills/{{ $skill->skill_id }}.png" alt="" skill-tooltip skill-id="{{ $skill->skill_id }}" skill-level="{{ $skill->level }}" skill-show-next-level="true" width="64px" height="64px">
-			@if ( $clan->points_to_change > 0 && ($character->id == $clan->leader_id || $clan->has_permission($character, Clan::PERMISSION_LEARN_SPELL)) )
-				<?php $nextLevel = Skill::where('level', '=', $skill->level + 1)->where('id', '=', $skill->skill_id)->first(); ?>
-				@if ( $nextLevel && $nextLevel->can_be_learned_by_clan($clan) )
-					<p><a href="{{ URL::to('authenticated/learnClanSkill/' . $skill->skill_id . '/' . ($skill->level + 1)) }}">Subir de nivel</a></p>
-				@endif
-			@endif
-		</li>
-	@endforeach
 	@foreach ( $skills as $skill )
 		<li style="vertical-align: top;">
-			<img class="grayEffect" src="{{ URL::base() }}/img/icons/skills/{{ $skill->id }}.png" alt="" skill-tooltip skill-id="{{ $skill->id }}" skill-level="{{ $skill->level }}" width="64px" height="64px">
-			@if ( $clan->points_to_change > 0 && ($character->id == $clan->leader_id || $clan->has_permission($character, Clan::PERMISSION_LEARN_SPELL)) )
-				@if ( $skill->can_be_learned_by_clan($clan) )
+			@if ( $clan->has_skill($skill) )
+				<img src="{{ $skill->get_image_path() }}" alt="" skill-tooltip skill-id="{{ $skill->id }}" skill-level="{{ $skill->level }}" skill-show-next-level="true" width="64px" height="64px">
+				<?php $nextLevel = $skill->get_next_level()->first(); ?>
+				@if ( $nextLevel && $clan->can_learn_skill($nextLevel) && $clan->has_permission($character, Clan::PERMISSION_LEARN_SPELL) )
+					<p><a href="{{ URL::to('authenticated/learnClanSkill/' . $nextLevel->id . '/' . $nextLevel->level) }}">Subir de nivel</a></p>
+				@endif
+			@else
+				<img class="grayEffect" src="{{ $skill->get_image_path() }}" alt="" skill-tooltip skill-id="{{ $skill->id }}" skill-level="1" width="64px" height="64px">
+				@if ( $clan->can_learn_skill($skill) && $clan->has_permission($character, Clan::PERMISSION_LEARN_SPELL) )
 					<p><a href="{{ URL::to('authenticated/learnClanSkill/' . $skill->id) }}">Aprender</a></p>
 				@endif
 			@endif

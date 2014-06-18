@@ -1,6 +1,6 @@
 <?php
 
-abstract class VipFactory
+class VipFactory
 {
 	const COIN_MULTIPLIER = 1;
 	const XP_MULTIPLIER = 2;
@@ -14,7 +14,7 @@ abstract class VipFactory
 	 * @param integer $vipObject
 	 * @return IVipObject o null
 	 */
-	public static function get($vipObject)
+	public function get($vipObject)
 	{
 		switch ( $vipObject )
 		{
@@ -50,7 +50,7 @@ abstract class VipFactory
 	 * Obtenemos todos los objetos vips
 	 * @return array
 	 */
-	public static function get_all()
+	public function get_all()
 	{
 		$vipObjects = array();
 		

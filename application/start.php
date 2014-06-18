@@ -14,6 +14,11 @@
 
 ini_set('display_errors', 'On');
 
+// --------------------------------------------------------------
+// Autoload composer vendors.
+// --------------------------------------------------------------
+require path('composer').'autoload.php';
+
 /*
 |--------------------------------------------------------------------------
 | Laravel Configuration Loader
@@ -59,10 +64,15 @@ Laravel\Autoloader::$aliases = $aliases;
 */
 
 Autoloader::map(array(
-	'Base_Controller' => path('app').'controllers/base.php',
-	'Base_Model' => path('app').'models/base_model.php',
+	'Base_Controller'    => path('app').'controllers/base.php',
 	
-	'Battle' => path('app').'libraries/battle.php',
+    'Authenticated_Base' => path('app').'controllers/authenticated_base.php',
+	
+	'Authenticated_Controller' => path('app').'controllers/authenticated.php',
+	'Authenticated_Character_Controller' => path('app').'controllers/authenticated/character.php',
+	'Authenticated_Talent_Controller' => path('app').'controllers/authenticated/talent.php',
+	
+	'Base_Model'         => path('app').'models/base_model.php',
 ));
 
 /*
@@ -83,6 +93,7 @@ Autoloader::directories(array(
 
 Autoloader::namespaces(array(
 	'Libraries' => path('app').'libraries',
+	'Tests' => path('app').'tests',
 ));
 
 /*
@@ -180,3 +191,36 @@ if ( ! Request::cli() and Config::get('session.driver') !== '')
 }
 
 Laravel\Database\Eloquent\Pivot::$timestamps = false;
+
+/*
+ * Resolvemos las dependencias de los controladores
+ * automaticamente en lugar de estar haciendo:
+ * 
+ * IoC::register('nombre_controlador', function()
+ * { 
+ *		return new nombre_controlador(dependencias);
+ * });
+ * 
+ * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ * Prueba ferviente de que la magia existe
+ * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ */
+Event::listen(Controller::factory, function($class)
+{
+	$reflection = new ReflectionClass($class);
+	$reflectionParams = $reflection->getMethod('__construct')->getParameters();
+	$params = array();
+	
+	foreach ( $reflectionParams as $param )
+	{
+		$params[] = IoC::resolve($param->getClass()->name);
+	}
+	
+	return $reflection->newInstanceArgs($params);
+});
+
+IoC::instance('Character', new Character());
+IoC::instance('Clan', new Clan());
+IoC::instance('Skill', new Skill());
+IoC::instance('VipFactory', new VipFactory());
+IoC::instance('CharacterTalent', new CharacterTalent());

@@ -128,8 +128,8 @@ class Orb extends Base_Model
             {
                 $coins *= 1.5;
                 
-                // 30% de posibilidad para obtener cofre
-                if ( mt_rand(1, 3) == 1 )
+                // 3% de posibilidad para obtener cofre
+                if ( mt_rand(1, 33) == 1 )
                 {
                     if ( $owner->add_item(Config::get('game.chest_item_id')) )
                     {
@@ -137,8 +137,8 @@ class Orb extends Base_Model
                     }
                 }
                 
-                // 16% de posibilidad de obtener ironcoins
-                if ( mt_rand(1, 6) == 1 )
+                // 1% de posibilidad de obtener ironcoins
+                if ( mt_rand(1, 100) == 1 )
                 {
                     if ( $owner->ironfist_user->add_coins(3) )
                     {

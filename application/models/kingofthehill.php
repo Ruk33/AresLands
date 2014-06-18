@@ -30,6 +30,32 @@ class KingOfTheHill extends Eloquent
     const THIRD_TIME_REDUCTION_BUFF_ID = 5;
     
     /**
+     * @const Maxima cantidad de posiciones
+     */
+    const MAX_POSITIONS = 5;
+    
+    /**
+     * Obtenemos la lista de personajes (o monstruos) de la lista (ranking)
+     * @return array
+     */
+    public static function get_list()
+    {
+        $list = array();
+        
+        for ( $i = 1; $i < self::MAX_POSITIONS; $i++ )
+        {
+            $list[$i] = self::where_position($i)->first();
+            
+            if ( ! $list[$i] )
+            {
+                $list[$i] = Monster::order_by(DB::raw("RAND()"))->first();
+            }
+        }
+        
+        return $list;
+    }
+    
+    /**
      * Damos recompensa periodica al jugador
      */
     public function give_periodic_reward()
@@ -72,7 +98,7 @@ class KingOfTheHill extends Eloquent
      */
     public static function give_periodic_reward_all()
     {
-        $kings = static::where_in('position', array(1, 2, 3))->get();
+        $kings = static::where_in('position', range(1, self::MAX_POSITIONS))->get();
         
         foreach ( $kings  as $king )
         {

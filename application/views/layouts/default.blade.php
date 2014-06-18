@@ -11,7 +11,7 @@
 		<meta name="viewport" content="width=device-width">
 
 		<link rel="stylesheet" type="text/css" href="{{ Minifier::make(array('//css/normalize.min.css', '//css/bootstrap.min.css', '//css/main.css')) }}">
-        <link href='http://fonts.googleapis.com/css?family=Roboto+Slab' rel='stylesheet' type='text/css'>
+        <!--<link href='http://fonts.googleapis.com/css?family=Roboto+Slab' rel='stylesheet' type='text/css'>-->
 
 		@if ( Request::env() == 'local' )
 			<script src="{{ URL::base() }}/js/vendor/jquery-1.9.1.min.js"></script>
@@ -237,7 +237,7 @@
 				
 				<div class="row-fluid col-wrap">
 					<div class="span2 col menu-column" style="width: 176px;">
-						@if ( Request::route()->controller == 'authenticated' )
+						@if ( isset($character) )
 							<div class="mini-player-display">
 								<div class="icon-race-30 icon-race-30-{{ $character->race }}_{{ $character->gender }} pull-left"></div>
 								<div class="pull-left" style="margin-left: 5px;">
@@ -489,7 +489,7 @@
 						<input type="text" class="input-block-level" style="border-radius: 0;" ng-model="chat.input" />
 					</form>
 				</div>
-			</div>
+			</div>        
 		@endif
 
 		@if ( Request::env() == 'local' )
