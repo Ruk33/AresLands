@@ -64,15 +64,18 @@ Laravel\Autoloader::$aliases = $aliases;
 */
 
 Autoloader::map(array(
-	'Base_Controller'    => path('app').'controllers/base.php',
+	'Base_Controller' => path('app').'controllers/base.php',
 	
     'Authenticated_Base' => path('app').'controllers/authenticated_base.php',
 	
 	'Authenticated_Controller' => path('app').'controllers/authenticated.php',
 	'Authenticated_Character_Controller' => path('app').'controllers/authenticated/character.php',
 	'Authenticated_Talent_Controller' => path('app').'controllers/authenticated/talent.php',
+	'Authenticated_Clan_Controller' => path('app').'controllers/authenticated/clan.php',
+	'Authenticated_SecretShop_Controller' => path('app').'controllers/authenticated/secretshop.php',
+	'Authenticated_Tournament_Controller' => path('app').'controllers/authenticated/tournament.php',
 	
-	'Base_Model'         => path('app').'models/base_model.php',
+	'Base_Model' => path('app').'models/base_model.php',
 ));
 
 /*
@@ -224,3 +227,4 @@ IoC::instance('Clan', new Clan());
 IoC::instance('Skill', new Skill());
 IoC::instance('VipFactory', new VipFactory());
 IoC::instance('CharacterTalent', new CharacterTalent());
+IoC::instance('Tournament', new Tournament());

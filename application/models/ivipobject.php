@@ -3,6 +3,13 @@
 interface IVipObject
 {
 	/**
+	 * 
+	 * @param Character $buyer
+	 * @param array $attributes
+	 */
+	public function set_attributes(Character $buyer, Array $attributes);
+	
+	/**
 	 * Se obtiene el nombre del objeto vip
 	 * @return string
 	 */
@@ -28,13 +35,14 @@ interface IVipObject
 	
 	/**
 	 * 
-	 * @param array $attributes
 	 * @return Validator
 	 */
-	public function get_validator(Array $attributes);
+	public function get_validator();
 	
 	/**
 	 * Se ejecutan las acciones del objeto vip
+	 * 
+	 * @return bool
 	 */
-	public function execute(Character $buyer, Array $attributes);
+	public function execute();
 }

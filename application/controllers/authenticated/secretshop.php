@@ -8,11 +8,25 @@ class Authenticated_SecretShop_Controller extends Authenticated_Base
 	 */
 	protected $vipFactory;
 	
-	public function __construct(VipFactory $vipFactory)
+	public static function register_routes()
+	{
+		Route::get("authenticated/secretShop", array(
+			"uses" => "authenticated.secretshop@index",
+			"as"   => "get_authenticated_secret_shop_index"
+		));
+		
+		Route::post("authenticated/secretShop/buy", array(
+			"uses" => "authenticated.secretshop@buy",
+			"as"   => "post_authenticated_secret_shop_buy"
+		));
+	}
+	
+	public function __construct(VipFactory $vipFactory, Character $character)
 	{
 		parent::__construct();
 		
 		$this->vipFactory = $vipFactory;
+		$this->character = $character;
 	}
 	
 	public function get_index()
@@ -25,32 +39,26 @@ class Authenticated_SecretShop_Controller extends Authenticated_Base
 	
 	public function post_buy()
 	{
-		$vipObject = $this->vipFactory->get(Input::get('id'));
+		$character = $this->character->get_logged();
+		$vipObject = $this->vipFactory->get(Input::get("id"));
 		
-		if ( ! $vipObject )
-		{
-			return Response::error('404');
-		}
+		$vipObject->set_attributes($character, Input::all());
 		
-		$character = $this->auth->user()->character;
-		$attributes = Input::all();
-		$validator = $vipObject->get_validator($attributes);
+		$validator = $vipObject->get_validator();
 		
 		if ( $validator->fails() )
 		{
-			$this->session->flash('errors', $validator->errors->all());
-			return Redirect::to('authenticated/secretShop');
+			Session::flash("errors", $validator->errors->all());
+			return \Laravel\Redirect::to_route("get_authenticated_secret_shop_index");
 		}
 		
-		if ( ! $this->auth->user()->consume_coins($vipObject->get_price()) )
+		if ( ! $vipObject->execute() )
 		{
-			$this->session->flash('errors', array('No tienes suficientes IronCoins para comprar este objeto'));
-			return Redirect::to('authenticated/secretShop');
+			Session::flash("errors", array("No tienes suficientes IronCoins o hubo un error al procesar la peticion"));
+			return \Laravel\Redirect::to_route("get_authenticated_secret_shop_index");
 		}
 		
-		$vipObject->execute($character, $attributes);
-		
-		$this->layout->title = '¡Compra exitosa!';
-		$this->layout->content = View::make('authenticated.buyfromsecretshop', compact('vipObject'));
+		$this->layout->title = "¡Compra exitosa!";
+		$this->layout->content = View::make('authenticated.buyfromsecretshop', compact("vipObject"));
 	}
 }

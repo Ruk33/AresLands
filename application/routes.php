@@ -20,7 +20,12 @@ Route::group(array("before" => "auth|hasNoCharacter"), function()
 	Authenticated_Controller::register_routes();
 	Authenticated_Character_Controller::register_routes();
 	Authenticated_Talent_Controller::register_routes();
+	Authenticated_SecretShop_Controller::register_routes();
+	Authenticated_Tournament_Controller::register_routes();
 	
+	// Los que requieran diferentes filtros abajo, ya que modifican
+	// a los siguientes
+	Authenticated_Clan_Controller::register_routes();
 });
 
 

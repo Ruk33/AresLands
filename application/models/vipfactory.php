@@ -43,7 +43,7 @@ class VipFactory
 				break;
 		}
 		
-		return null;
+		return new VipNull;
 	}
 	
 	/**

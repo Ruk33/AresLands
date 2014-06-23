@@ -314,7 +314,7 @@ abstract class TestHelper extends PHPUnit_Framework_TestCase
 	 */
 	public function assertHasFilter($method, $uri, $event, $filterName, array $args = array())
 	{
-		$this->assertTrue($this->hasFilter($method, $uri, $event, $filterName, $args));
+		$this->assertTrue($this->hasFilter($method, $uri, $event, $filterName, $args), "[{$method}] El uri {$uri} no tiene el filtro {$filterName} en el evento {$event}");
 	}
 	
 	public function __call($name, $arguments)

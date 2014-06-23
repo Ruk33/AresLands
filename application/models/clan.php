@@ -51,6 +51,27 @@ class Clan extends Base_Model
 	);
 	
 	/**
+	 * Verificamos si personaje puede ver las peticiones del grupo
+	 * 
+	 * @param Character $character
+	 * @return boolean
+	 */
+	public function can_see_petitions(Character $character)
+	{
+		return $this->can_accept_petitions($character) || $this->can_reject_petitions($character);
+	}
+	
+	/**
+	 * 
+	 * @param array $attributes
+	 * @return Clan
+	 */
+	public static function create_instance(Array $attributes = array())
+	{
+		return new static($attributes);
+	}
+	
+	/**
 	 * Verificamos si el personaje tiene un permiso
 	 * en específico
 	 * 

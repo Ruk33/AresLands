@@ -2,6 +2,9 @@
 
 class VipReductionTime implements IVipObject
 {
+	protected $buyer;
+	protected $attributes;
+	
 	public function get_name()
 	{
 		return 'Reductor de tiempos';
@@ -30,5 +33,19 @@ class VipReductionTime implements IVipObject
 		{
 			Skill::find(Config::get('game.vip_reduction_time_skill'))->cast($character, $character);
 		}
+	}
+
+	public function get_validator()
+	{
+		$rules = array();
+		$messages = array();
+		
+		return Validator::make($this->attributes, $rules, $messages);
+	}
+
+	public function set_attributes(Character $buyer, array $attributes)
+	{
+		$this->buyer = $buyer;
+		$this->attributes = $attributes;
 	}
 }

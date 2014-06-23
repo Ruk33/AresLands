@@ -125,6 +125,17 @@ Route::filter('auth', function($redirectTo = '')
 	}
 });
 
+Route::filter("hasClan", function()
+{
+	$character = IoC::resolve("Character");
+	$loggedCharacter = $character->get_logged();
+	
+	if ( ! $loggedCharacter || ! $loggedCharacter->clan_id > 0 )
+	{
+		return Response::error("403");
+	}
+});
+
 /*
  *	hard-coded, solo para salir del paso
  */
