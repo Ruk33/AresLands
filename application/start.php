@@ -75,6 +75,7 @@ Autoloader::map(array(
 	'Authenticated_SecretShop_Controller' => path('app').'controllers/authenticated/secretshop.php',
 	'Authenticated_Tournament_Controller' => path('app').'controllers/authenticated/tournament.php',
 	'Authenticated_Quest_Controller' => path('app').'controllers/authenticated/quest.php',
+	'Authenticated_Orb_Controller' => path('app').'controllers/authenticated/orb.php',
 	
 	'Base_Model' => path('app').'models/base_model.php',
 ));

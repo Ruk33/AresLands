@@ -109,37 +109,6 @@ class Authenticated_Controller extends Authenticated_Base
 			'inventoryItems'  => $inventoryItems
 		));
 	}
-	
-	public function get_claimOrb($orbId = 0)
-	{
-		if ( $orbId > 0 )
-		{
-			$orb = Orb::find((int) $orbId);
-			
-			if ( $orb )
-			{
-				$character = Character::get_character_of_logged_user(array('id'));
-				
-				if ( ! $orb->owner_id && $orb->can_be_stolen_by($character) )
-				{
-					$orb->give_to($character);
-				}
-			}
-		}
-		
-		return Laravel\Redirect::to('authenticated/orbs/');
-	}
-
-	public function get_orbs()
-	{
-		$character = Character::get_character_of_logged_user(array('id', 'level'));
-		$orbs = Orb::order_by('min_level', 'asc')->get();
-
-		$this->layout->title = 'Orbes';
-		$this->layout->content = View::make('authenticated.orbs')
-									 ->with('character', $character)
-									 ->with('orbs', $orbs);
-	}
 
 	public function get_destroyItem($characterItemId = false)
 	{
