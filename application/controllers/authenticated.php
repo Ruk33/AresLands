@@ -941,18 +941,6 @@ class Authenticated_Controller extends Authenticated_Base
 		return Redirect::to('authenticated/index');
 	}
 
-	public function get_acceptQuest($questId = false)
-	{
-		$quest = ( $questId ) ? Quest::find((int) $questId) : false;
-
-		if ( $quest )
-		{
-			$quest->accept(Character::get_character_of_logged_user());
-		}
-
-		return Redirect::to('authenticated/index');
-	}
-
 	public function get_travel($zoneId = '')
 	{
 		$character = Character::get_character_of_logged_user(array('id', 'is_traveling', 'zone_id', 'name', 'level', 'xp', 'clan_id'));

@@ -22,9 +22,9 @@ Route::group(array("before" => "auth|hasNoCharacter"), function()
 	Authenticated_Talent_Controller::register_routes();
 	Authenticated_SecretShop_Controller::register_routes();
 	Authenticated_Tournament_Controller::register_routes();
+	Authenticated_Quest_Controller::register_routes();
 	
-	// Los que requieran diferentes filtros abajo, ya que modifican
-	// a los siguientes
+	// Los que usan Route::group abajo, ya que modifican los filtros
 	Authenticated_Clan_Controller::register_routes();
 });
 

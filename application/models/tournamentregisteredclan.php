@@ -45,7 +45,7 @@ class TournamentRegisteredClan extends Base_Model
 	{
 		return $this->belongs_to('Tournament', 'tournament_id');
 	}
-
+	
 	/**
 	 * Query para obtener registro de clan en torneo
 	 * @param  Tournament $tournament 

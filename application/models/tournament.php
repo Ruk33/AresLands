@@ -399,7 +399,7 @@ class Tournament extends Base_Model
 	 * @param  Character $character 
 	 * @return boolean
 	 */
-	public function can_reclaim_clan_lider_reward(Character $character)
+	public function can_reclaim_leader_reward(Character $character)
 	{
 		$clan = $character->clan()->select(array('id', 'leader_id'))->first();
 

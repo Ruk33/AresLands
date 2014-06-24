@@ -74,6 +74,7 @@ Autoloader::map(array(
 	'Authenticated_Clan_Controller' => path('app').'controllers/authenticated/clan.php',
 	'Authenticated_SecretShop_Controller' => path('app').'controllers/authenticated/secretshop.php',
 	'Authenticated_Tournament_Controller' => path('app').'controllers/authenticated/tournament.php',
+	'Authenticated_Quest_Controller' => path('app').'controllers/authenticated/quest.php',
 	
 	'Base_Model' => path('app').'models/base_model.php',
 ));
@@ -228,3 +229,6 @@ IoC::instance('Skill', new Skill());
 IoC::instance('VipFactory', new VipFactory());
 IoC::instance('CharacterTalent', new CharacterTalent());
 IoC::instance('Tournament', new Tournament());
+IoC::instance('TournamentClanScore', new TournamentClanScore());
+IoC::instance('TournamentRegisteredClan', new TournamentRegisteredClan());
+IoC::instance('Quest', new Quest());

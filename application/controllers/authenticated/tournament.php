@@ -14,6 +14,12 @@ class Authenticated_Tournament_Controller extends Authenticated_Base
 	 */
 	protected $character;
 	
+	/**
+	 *
+	 * @var TournamentClanScore
+	 */
+	protected $tournamentClanScore;
+	
 	public static function register_routes()
 	{
 		Route::get("authenticated/tournament", array(
@@ -25,14 +31,44 @@ class Authenticated_Tournament_Controller extends Authenticated_Base
 			"uses" => "authenticated.tournament@show",
 			"as"   => "get_authenticated_tournament_show"
 		));
+		
+		Route::post("authenticated/tournament/registerClan", array(
+			"uses"   => "authenticated.tournament@registerClan",
+			"as"     => "post_authenticated_tournament_register_clan",
+			"before" => "auth|hasNoCharacter|hasClan"
+		));
+		
+		Route::post("authenticated/tournament/unregisterClan", array(
+			"uses"   => "authenticated.tournament@unregisterClan",
+			"as"     => "post_authenticated_tournament_unregister_clan",
+			"before" => "auth|hasNoCharacter|hasClan"
+		));
+		
+		Route::get("authenticated/tournament/(:num)/claim/mvp", array(
+			"uses" => "authenticated.tournament@claimMvpReward",
+			"as"   => "get_authenticated_tournament_claim_mvp_reward"
+		));
+		
+		Route::get("authenticated/tournament/(:num)/claim/leader", array(
+			"uses"   => "authenticated.tournament@claimLeaderReward",
+			"as"     => "post_authenticated_tournament_claim_leader_reward",
+			"before" => "auth|hasNoCharacter|hasClan"
+		));
 	}
 	
-	public function __construct(Tournament $tournament, Character $character)
+	/**
+	 * 
+	 * @param Tournament $tournament
+	 * @param Character $character
+	 * @param TournamentClanScore $tournamentClanScore
+	 */
+	public function __construct(Tournament $tournament, Character $character, TournamentClanScore $tournamentClanScore)
 	{
 		parent::__construct();
 		
 		$this->tournament = $tournament;
 		$this->character = $character;
+		$this->tournamentClanScore = $tournamentClanScore;
  	}
 	
 	public function get_index()
@@ -47,111 +83,97 @@ class Authenticated_Tournament_Controller extends Authenticated_Base
 	{
 		$tournament = $this->tournament->find_or_die($id);
 		$character = $this->character->get_logged();
+		$canRegisterClan = $tournament->can_register_clan($character);
+		$canUnRegisterClan = $tournament->can_unregister_clan($character);
+		$canReclaimMvpReward = $tournament->can_reclaim_mvp_reward($character);
+		$canReclaimClanLiderReward = $tournament->can_reclaim_clan_lider_reward($character);
+		$registeredClans = $tournament->get_registered_clans()->get();
 		
-		/*
-		$tournament = null;
-		$canRegisterClan = false;
-		$canUnRegisterClan = false;
-		$canReclaimMvpReward = false;
-		$canReclaimClanLiderReward = false;
-
-		$registeredClans = array();
-
-		if ( $tournament )
+		// Ordenamos los grupos registrados de acuerdo a su porcentaje de victoria
+		usort($registeredClans, function($a, $b) use ($tournament)
 		{
-			$canReclaimMvpReward = $tournament->can_reclaim_mvp_reward($character);
-			$canReclaimClanLiderReward = $tournament->can_reclaim_clan_lider_reward($character);
-
-			$registeredClans = TournamentRegisteredClan::left_join('tournament_clan_scores', function($join)
+			$aScore = $this->tournamentClanScore->get_victory_percentage($tournament->id, $a->clan_id);
+			$bScore = $this->tournamentClanScore->get_victory_percentage($tournament->id, $b->clan_id);
+			
+			if ( $aScore == $bScore )
 			{
-				$join->on('tournament_clan_scores.clan_id', '=', 'tournament_registered_clans.clan_id');
-				$join->on('tournament_clan_scores.tournament_id', '=', 'tournament_registered_clans.tournament_id');
-			})
-				->where('tournament_registered_clans.tournament_id', '=', $tournament->id)
-				->group_by('tournament_registered_clans.id')
-				->order_by('total_win_score', 'desc')
-				->distinct()
-				->select(array('tournament_registered_clans.*', DB::raw('sum(tournament_clan_scores.win_score) as total_win_score')))
-				->get();
-		}
-
-		$this->layout->title = 'Torneos';
-		$this->layout->content = View::make('authenticated.tournaments')
-									 ->with('tournament', $tournament)
-									 ->with('canRegisterClan', $canRegisterClan)
-									 ->with('canUnRegisterClan', $canUnRegisterClan)
-									 ->with('canReclaimMvpReward', $canReclaimMvpReward)
-									 ->with('canReclaimClanLiderReward', $canReclaimClanLiderReward)
-									 ->with('registeredClans', $registeredClans);
-		 * 
-		 */
+				return 0;
+			}
+			
+			return ($aScore > $bScore) ? -1 : 1;
+		});
+		
+		$this->layout->title = "Torneo";
+		$this->layout->content = View::make('authenticated.tournaments', compact(
+			"tournament",
+			"character",
+			"canRegisterClan",
+			"canUnRegisterClan",
+			"canReclaimMvpReward",
+			"canReclaimClanLiderReward",
+			"registeredClans"
+		));
 	}
 
-	public function get_registerClanInTournament($tournament)
+	public function post_registerClan()
 	{
-		$tournament = Tournament::find((int) $tournament);
-
-		if ( $tournament )
+		$tournament = $this->tournament->find_or_die(Input::get("id"));
+		$character = $this->character->get_logged();
+		
+		if ( $tournament->can_register_clan($character) )
 		{
-			$character = Character::get_character_of_logged_user(array('id', 'clan_id', 'clan_permission'));
-
-			if ( $tournament->can_register_clan($character) )
-			{
-				$tournament->register_clan($character->clan);
-			}
+			$tournament->register_clan($character->clan);
+			Session::flash("success", "Haz registrado tu grupo exitosamente");
 		}
-
-		return Redirect::to('authenticated/tournaments');
+		else
+		{
+			Session::flash("error", "No puedes registrar tu grupo en este momento");
+		}
+		
+		return \Laravel\Redirect::to_route("get_authenticated_tournament_show", array($tournament->id));
 	}
 
-	public function get_unregisterClanFromTournament($tournament)
+	public function post_unregisterClan()
 	{
-		$tournament = Tournament::find((int) $tournament);
-
-		if ( $tournament )
+		$tournament = $this->tournament->find_or_die(Input::get("id"));
+		$character = $this->character->get_logged();
+		
+		if ( $tournament->can_unregister_clan($character) )
 		{
-			$character = Character::get_character_of_logged_user(array('id', 'clan_id', 'clan_permission'));
-
-			if ( $tournament->can_unregister_clan($character) )
-			{
-				$tournament->unregister_clan($character->clan);
-			}
+			$tournament->unregister_clan($character->clan);
+			Session::flash("success", "Haz sacado a tu grupo exitosamente");
 		}
-
-		return Redirect::to('authenticated/tournaments');
+		else
+		{
+			Session::flash("error", "No puedes sacar a tu grupo en este momento");
+		}
+		
+		return \Laravel\Redirect::to_route("get_authenticated_tournament_show", array($tournament->id));
 	}
 
-	public function get_claimTournamentMvpReward($tournament)
+	public function get_claimMvpReward($id)
 	{
-		$tournament = Tournament::find((int) $tournament);
-
-		if ( $tournament )
+		$tournament = $this->tournament->find_or_die($id);
+		$character = $this->character->get_logged();
+		
+		if ( $tournament->can_reclaim_mvp_reward($character) )
 		{
-			$character = Character::get_character_of_logged_user(array('id', 'clan_id'));
-
-			if ( $tournament->can_reclaim_mvp_reward($character) )
-			{
-				$tournament->give_mvp_reward_and_send_message();
-			}
+			$tournament->give_mvp_reward_and_send_message();
 		}
-
-		return Redirect::to('authenticated/tournaments');
+		
+		return Laravel\Redirect::to_route("get_authenticated_tournament_show", array($tournament->id));
 	}
 
-	public function get_claimTournamentClanLeaderReward($tournament)
+	public function get_claimLeaderReward($id)
 	{
-		$tournament = Tournament::find((int) $tournament);
-
-		if ( $tournament )
+		$tournament = $this->tournament->find_or_die($id);
+		$character = $this->character->get_logged();
+		
+		if ( $tournament->can_reclaim_leader_reward($character) )
 		{
-			$character = Character::get_character_of_logged_user(array('id', 'clan_id'));
-
-			if ( $tournament->can_reclaim_clan_lider_reward($character) )
-			{
-				$tournament->give_clan_leader_reward_and_send_message();
-			}
+			$tournament->give_clan_leader_reward_and_send_message();
 		}
-
-		return Redirect::to('authenticated/tournaments');
+		
+		return Laravel\Redirect::to_route("get_authenticated_tournament_show", array($tournament->id));
 	}
 }
