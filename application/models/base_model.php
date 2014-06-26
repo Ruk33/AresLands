@@ -8,6 +8,27 @@ abstract class Base_Model extends Eloquent
 	
 	/**
 	 * 
+	 * @param array $attributes
+	 * @return Eloquent
+	 */
+	public static function create_instance(Array $attributes = array())
+	{
+		return new static($attributes);
+	}
+	
+	/**
+	 * Primero o vacio (se evita el null) asi se puede usar la instancia
+	 * exista o no el registro
+	 * 
+	 * @return Eloquent
+	 */
+	public function first_or_empty()
+	{
+		return ( is_null($model = $this->first) ) ? new static : $model ;
+	}
+	
+	/**
+	 * 
 	 * @return Eloquent|void
 	 */
 	public function first_or_die()

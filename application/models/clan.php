@@ -62,16 +62,6 @@ class Clan extends Base_Model
 	}
 	
 	/**
-	 * 
-	 * @param array $attributes
-	 * @return Clan
-	 */
-	public static function create_instance(Array $attributes = array())
-	{
-		return new static($attributes);
-	}
-	
-	/**
 	 * Verificamos si el personaje tiene un permiso
 	 * en específico
 	 * 

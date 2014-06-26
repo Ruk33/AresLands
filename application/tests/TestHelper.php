@@ -173,6 +173,14 @@ abstract class TestHelper extends PHPUnit_Framework_TestCase
 	}
 	
 	/**
+	 * Verificamos que se esten pasando los inputs
+	 */
+	public function assertWithInputs()
+	{
+		$this->assertSessionHas(\Input::old_input);
+	}
+	
+	/**
 	 * 
 	 * @param string $expected
 	 * @param Response $actual

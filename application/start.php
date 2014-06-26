@@ -64,20 +64,22 @@ Laravel\Autoloader::$aliases = $aliases;
 */
 
 Autoloader::map(array(
-	'Base_Controller' => path('app').'controllers/base.php',
+	'Base_Controller'                     => path('app').'controllers/base.php',
 	
-    'Authenticated_Base' => path('app').'controllers/authenticated_base.php',
+    'Authenticated_Base'                  => path('app').'controllers/authenticated_base.php',
 	
-	'Authenticated_Controller' => path('app').'controllers/authenticated.php',
-	'Authenticated_Character_Controller' => path('app').'controllers/authenticated/character.php',
-	'Authenticated_Talent_Controller' => path('app').'controllers/authenticated/talent.php',
-	'Authenticated_Clan_Controller' => path('app').'controllers/authenticated/clan.php',
+	'Authenticated_Controller'            => path('app').'controllers/authenticated.php',
+	'Authenticated_Character_Controller'  => path('app').'controllers/authenticated/character.php',
+	'Authenticated_Talent_Controller'     => path('app').'controllers/authenticated/talent.php',
+	'Authenticated_Clan_Controller'       => path('app').'controllers/authenticated/clan.php',
 	'Authenticated_SecretShop_Controller' => path('app').'controllers/authenticated/secretshop.php',
 	'Authenticated_Tournament_Controller' => path('app').'controllers/authenticated/tournament.php',
-	'Authenticated_Quest_Controller' => path('app').'controllers/authenticated/quest.php',
-	'Authenticated_Orb_Controller' => path('app').'controllers/authenticated/orb.php',
+	'Authenticated_Quest_Controller'      => path('app').'controllers/authenticated/quest.php',
+	'Authenticated_Orb_Controller'        => path('app').'controllers/authenticated/orb.php',
+	'Authenticated_Message_Controller'    => path('app').'controllers/authenticated/message.php',
+	'Authenticated_Trade_Controller'      => path('app').'controllers/authenticated/trade.php',
 	
-	'Base_Model' => path('app').'models/base_model.php',
+	'Base_Model'                          => path('app').'models/base_model.php',
 ));
 
 /*
@@ -233,3 +235,5 @@ IoC::instance('Tournament', new Tournament());
 IoC::instance('TournamentClanScore', new TournamentClanScore());
 IoC::instance('TournamentRegisteredClan', new TournamentRegisteredClan());
 IoC::instance('Quest', new Quest());
+IoC::instance('Message', new Message());
+IoC::instance('Trade', new Trade());
