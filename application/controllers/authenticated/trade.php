@@ -8,20 +8,60 @@ class Authenticated_Trade_Controller extends Authenticated_Base
 	 */
 	protected $trade;
 	
+	/**
+	 *
+	 * @var TradeItem
+	 */
+	protected $tradeItem;
+	
 	public static function register_routes()
 	{
+		Route::get("authenticated/trade", array(
+			"uses" => "authenticated.trade@index",
+			"as"   => "get_authenticated_trade_index"
+		));
 		
+		Route::get("authenticated/trade/category/(:any)", array(
+			"uses" => "authenticated.trade@category",
+			"as"   => "get_authenticated_trade_category"
+		));
+		
+		Route::get("authenticated/trade/new", array(
+			"uses" => "authenticated.trade@new",
+			"as"   => "get_authenticated_trade_new"
+		));
+		
+		Route::post("authenticated/trade/new", array(
+			"uses" => "authenticated.trade@new",
+			"as"   => "post_authenticated_trade_new"
+		));
+		
+		Route::post("authenticated/trade/cancel", array(
+			"uses" => "authenticated.trade@cancel",
+			"as"   => "post_authenticated_trade_cancel"
+		));
+		
+		Route::post("authenticated/trade/buy", array(
+			"uses" => "authenticated.trade@buy",
+			"as"   => "post_authenticated_trade_buy"
+		));
 	}
 	
-	public function __construct(Trade $trade, Character $character)
+	public function __construct(Trade $trade, TradeItem $tradeItem, Character $character)
 	{
 		parent::__construct();
 		
 		$this->trade = $trade;
+		$this->tradeItem = $tradeItem;
 		$this->character = $character;
 	}
 	
-	public function get_index($filter = "all")
+	public function get_index()
+	{
+		return Laravel\Redirect::to_route("get_authenticated_trade_category", array("all"));
+	}
+	
+	public function get_category($filter)
 	{
 		$availableFilters = array("self", "weapon", "armor", "consumible", "all");
 		
@@ -39,209 +79,116 @@ class Authenticated_Trade_Controller extends Authenticated_Base
 				break;
 			
 			case "self":
-				$trades = $character->trades()->with(array('trade_item', 'trade_item.item'))->get();
+				$trades = $character->trades()->with(array("trade_item", "trade_item.item"))->get();
 				break;
 			
 			default:
-				$trades = $this->trade->filter_by_item_class($filter)->select(array('trades.*'))->get();
+				$trades = $this->trade->filter_by_item_class($filter)->select(array("trades.*"))->get();
 		}
 
 		$this->layout->title = "Comercios";
 		$this->layout->content = View::make('authenticated.trades', compact("trades", "character"));
 	}
 	
-	public function get_newTrade()
+	public function get_new()
 	{
-		$character = Character::get_character_of_logged_user();
-
-		if ( $character->can_trade() )
+		$character = $this->character->get_logged();
+		
+		if ( ! $character->can_trade() )
 		{
-			$characterItems = $character->tradeable_items()->select(array('character_items.*'))->get();
-
-			$this->layout->title = 'Nuevo comercio';
-			$this->layout->content = View::make('authenticated.newtrade')
-			->with('character', $character)
-			->with('characterItems', $characterItems);
+			Session::flash("error", "No tienes ningun objeto para comerciar");
+			return Laravel\Redirect::to_route("get_authenticated_trade_index");
 		}
-		else
-		{
-			return Redirect::to('authenticated/trades')
-			->with('errorMessages', array('No tienes ningún objeto para comerciar.'));
-		}
+		
+		$characterItems = $character->tradeable_items()->select(array('character_items.*'))->get();
+		
+		$this->layout->title = "Nuevo comercio";
+		$this->layout->content = View::make("authenticated.newtrade", compact("character", "characterItems"));
 	}
 	
-	public function post_cancelTrade()
+	public function post_new()
 	{
-		$character = Character::get_character_of_logged_user();
-		$trade = $character->trades()->where('id', '=', Input::get('id'))->first();
-
-		if ( $trade )
+		$seller = $this->character->get_logged();
+		
+		if ( ! $seller->can_trade() )
 		{
-			if ( ! $trade->cancel() )
-			{
-				return Redirect::to('authenticated/trades')->with('error', array('El comercio no se pudo cancelar. Verifica que tengas espacio en tu inventario.'));
-			}
-			else
-			{
-				return Redirect::to('authenticated/trades')->with('success', 'El comercio ha sido cancelado.');
-			}
+			return Laravel\Redirect::to_route("get_authenticated_index");
 		}
 		
-		return Redirect::to('authenticated/trades');
-	}
-	
-	public function post_newTrade()
-	{
-		$sellerCharacter = Character::get_character_of_logged_user(array('id', 'clan_id'));
+		$nonNumericReg = "/[^\d]+/";
 		
-		if ( ! $sellerCharacter->can_trade() )
-		{
-			return Redirect::to('authenticated/index');
-		}
-		
-		$amount = Input::get('amount');
-		
-		if ( ! isset($amount[Input::get('item')]) )
-		{
-			return Redirect::to('authenticated/newTrade/');
-		}
-		
-		$amount = $amount[Input::get('item')];
-		
-		$time = Input::get('time');
-		
-		if ( ! in_array($time, array(8, 16, 24)) )
-		{
-			return Redirect::to('authenticated/newTrade/');
-		}
-
-		$sellerCharacterItem = $sellerCharacter->items()
-											   ->where('id', '=', Input::get('item'))
-											   ->where('count', '>=', $amount)
-											   ->where('location', '=', 'inventory')
-											   ->first();
-
-		if ( ! $sellerCharacterItem )
-		{
-			return Redirect::to('authenticated/newTrade/');
-		}
-		
-		$item = $sellerCharacterItem->item()
-									->select(array('id', 'stackable', 'selleable'))
-									->first();
-		
-		if ( ! $item )
-		{
-			return Redirect::to('authenticated/newTrade/');
-		}
-		
-		if ( ! $item->selleable )
-		{
-			return Redirect::to('authenticated/newTrade/');
-		}
-		
-		/*
-		 *	Evitamos que intenten comerciar
-		 *	cantidad en un objeto que no puede ser acumulado
-		 */
-		if ( ! $item->stackable )
-		{
-			$amount = 1;
-		}
-		
-		$price = '';
-		
-		foreach ( array(Input::get('gold', '00'), Input::get('silver', '00'), Input::get('copper', '00')) as $coin )
-		{
-			if ( ! is_numeric($coin) )
-			{
-				$coin = '00';
-			}
-			
-			if ( strlen($coin) == 1 )
-			{
-				$coin = '0' . $coin;
-			}
-			
-			$price .= $coin;
-		}
-
-		$trade = new Trade();
-
-		$trade->seller_id = $sellerCharacter->id;
-		$trade->amount = $amount;
-		$trade->price_copper = $price;
-		$trade->until = time() + $time * 60 * 60;
-		$trade->duration = $time;
-
-		if ( $sellerCharacter->clan_id > 0 && Input::get('only_clan') != 0 )
-		{
-			$trade->clan_id = $sellerCharacter->clan_id;
-		}
+		// Sacamos todos los caracteres que no sean numeros y ademas
+		// completamos 0 (ceros) en caso de faltar (por ejemplo, 1 -> 01)
+		$price = 
+			str_pad(preg_replace($nonNumericReg, "", Input::get("gold")),   2, "0", STR_PAD_LEFT) .
+			str_pad(preg_replace($nonNumericReg, "", Input::get("silver")), 2, "0", STR_PAD_LEFT) .
+			str_pad(preg_replace($nonNumericReg, "", Input::get("copper")), 2, "0", STR_PAD_LEFT);
+				
+		$trade = $this->trade->create_instance(array_merge(
+			array(
+				"seller_id"    => $seller->id,
+				"price_copper" => $price,
+				"until"        => time() + Input::get("duration") * 60 * 60,
+				"clan_id"      => Input::get("only_clan") ? $seller->clan_id : 0
+			),
+			Input::only("duration", "amount", "item_id")
+		));
 
 		if ( $trade->validate() )
 		{
-			$tradeItem = new TradeItem();
+			$characterItem = $seller->items()->find(Input::get("item_id"));
 			
-			$tradeItem->item_id = $sellerCharacterItem->item_id;
-			$tradeItem->data = $sellerCharacterItem->get_attribute('data');
-			
-			$tradeItem->save();
-			
-			$trade->trade_item_id = $tradeItem->id;
+			$trade->trade_item()->insert(
+				$this->tradeItem->create_instance(array(
+					"item_id" => $characterItem->item_id,
+					"data"    => $characterItem->get_attribute("data")
+				))
+			);
 			
 			$trade->save();
 
-			/*
-			 *	Sacamos el objeto al personaje
-			 *	vendedor y/o únicamente restamos cantidad
-			 */
-			$sellerCharacterItem->count -= $amount;
+			$characterItem->count -= Input::get("amount");
+			$characterItem->save();
 
-			if ( $sellerCharacterItem->count > 0 )
-			{
-				$sellerCharacterItem->save();
-			}
-			else
-			{
-				/*
-				 *	La cantidad es menor a 0
-				 *	así que borramos
-				 */
-				$sellerCharacterItem->delete();
-			}
-
-			Session::flash('successMessage', 'Comercio creado con éxito');
-			return Redirect::to('authenticated/newTrade/');
+			Session::flash("success", "Comercio creado con éxito");
+			return Laravel\Redirect::to_route("get_authenticated_trade_index");
+		}
+		
+		Session::flash("errors", $trade->errors->all());
+		return Laravel\Redirect::to_route("get_authenticated_trade_new")->with_input();
+	}
+	
+	public function post_cancel()
+	{
+		$character = $this->character->get_logged();
+		$trade = $character->trades()->find_or_die(Input::get("id"));
+		
+		if ( $trade->cancel() )
+		{
+			Session::flash("success", "El comercio ha sido cancelado");
 		}
 		else
 		{
-			Session::flash('errorMessages', $trade->errors()->all());
-			return Redirect::to('authenticated/newTrade/')->with_input();
-		}
-	}
-	
-	public function post_buyTrade()
-	{
-		$character = Character::get_character_of_logged_user();
-		$trade = Trade::where('id', '=', Input::get('id'))->first();
-
-		if ( $trade )
-		{
-			if ( $trade->buy($character) )
-			{
-				return Redirect::to('authenticated/trades')->with('success', array(
-					'Compraste el objeto exitosamente.'
-				));
-			}
-			else
-			{
-				return Redirect::to('authenticated/trades')->with('error', array(
-					'No puedes comprar el objeto porque o no tienes espacio en tu inventario o no tienes suficientes monedas.'
-				));
-			}
+			Session::flash("error", "El comercio no pudo ser cancelado. Verifica que tengas espacio en tu inventario");
 		}
 		
-		return Redirect::to('authenticated/trades');
+		return Laravel\Redirect::to_route("get_authenticated_trade_index");
+	}
+	
+	public function post_buy()
+	{
+		$character = $this->character->get_logged();
+		$trade = $this->trade->find_or_die(Input::get("id"));
+		
+		if ( $trade->buy($character) )
+		{
+			Session::flash("success", "Compraste el objeto exitosamente");
+		}
+		else
+		{
+			Session::flash("error", "No puedes comprar el objeto porque o no tienes espacio en tu inventario o no tienes suficientes monedas");
+		}
+		
+		return Laravel\Redirect::to_route("get_authenticated_trade_index");
 	}
 }

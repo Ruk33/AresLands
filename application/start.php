@@ -227,6 +227,7 @@ Event::listen(Controller::factory, function($class)
 });
 
 IoC::instance('Character', new Character());
+IoC::instance('CharacterItem', new CharacterItem());
 IoC::instance('Clan', new Clan());
 IoC::instance('Skill', new Skill());
 IoC::instance('VipFactory', new VipFactory());

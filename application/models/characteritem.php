@@ -9,15 +9,16 @@ class CharacterItem extends Base_Model
 	
 	public function save()
 	{
+		// Evitamos tener negativos como cantidad
+		$this->count = max(0, $this->count);
+		
 		// Si la cantidad es menor o igual a 0 y el objeto no son monedas...
-		if ( $this->count <= 0 && $this->item_id != Config::get('game.coin_id') )
+		if ( $this->count == 0 && $this->item_id != Config::get('game.coin_id') )
 		{
-			$this->delete();
+			return $this->delete();
 		}
-		else
-		{
-			parent::save();
-		}
+		
+		return parent::save();
 	}
 	
 	public function item()

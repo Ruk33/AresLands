@@ -8,8 +8,10 @@ class Trade extends Base_Model
 	public static $key = 'id';
 
 	protected $rules = array(
-		'amount' => 'required|numeric|min:1',
+		'trade_item_id' => 'required|exists:character_items|tradeitem|tradeowner:seller_id',
+		'amount' => 'required|numeric|min:1|tradeitemamount:trade_item_id',
 		'price_copper' => 'required|numeric|min:1',
+		'time' => 'in:8,16,24'
 	);
 
 	protected $messages = array(
