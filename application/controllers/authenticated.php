@@ -484,49 +484,6 @@ class Authenticated_Controller extends Authenticated_Base
 		$this->layout->content = View::make('authenticated.battle', compact('character', 'monsters'));
 	}
 
-	public function get_rewardFromQuest($questId = false)
-	{
-		$quest = ( $questId ) ? Quest::select(array('id', 'repeatable', 'repeatable_after'))->find((int) $questId) : false;
-
-		if ( $quest )
-		{
-			$character = Character::get_character_of_logged_user(array('id'));
-
-			/*
-			 *	Obtenemos el progreso de la quest
-			 *	del personaje
-			 */
-			$characterQuest = $character->quests()->where('quest_id', '=', $quest->id)->where('progress', '=', 'reward')->first();
-
-			/*
-			 *	Si existe...
-			 */
-			if ( $characterQuest )
-			{
-				/*
-				 *	Recompensamos
-				 */
-				$characterQuest->quest->give_reward();
-
-				/*
-				 *	Y no nos olvidamos de guardar
-				 *	el progreso a finalizado
-				 */
-				$characterQuest->finished_time = time();
-
-				if ( $quest->repeatable )
-				{
-					$characterQuest->repeatable_at = time() + $quest->repeatable_after;
-				}
-				$characterQuest->progress = 'finished';
-
-				$characterQuest->save();
-			}
-		}
-
-		return Redirect::to('authenticated/index');
-	}
-
 	public function get_travel($zoneId = '')
 	{
 		$character = Character::get_character_of_logged_user(array('id', 'is_traveling', 'zone_id', 'name', 'level', 'xp', 'clan_id'));

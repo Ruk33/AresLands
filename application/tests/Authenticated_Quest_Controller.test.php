@@ -40,4 +40,24 @@ class Authenticated_Quest_Controller_Test extends Tests\TestHelper
 		$response = $this->post("authenticated/quest/accept");
 		$this->assertRedirect(URL::to_route("get_authenticated_index"), $response);
 	}
+	
+	public function testObtenerRecompensa()
+	{
+		$this->assertHasFilter("get", "authenticated/quest/reward/1", "before", "auth");
+		$this->assertHasFilter("get", "authenticated/quest/reward/1", "before", "hasNoCharacter");
+		
+		$this->character->shouldReceive("get_logged")->once()->andReturnSelf();
+		
+		$progress = m::mock("CharacterQuest");
+		
+		$this->character->shouldReceive("quests")->once()->andReturn($progress);
+		$progress->shouldReceive("where_quest_id")->once()->with(1)->andReturnSelf();
+		$progress->shouldReceive("where_progress")->once()->with("reward")->andReturnSelf();
+		$progress->shouldReceive("first_or_die")->once()->andReturnSelf();
+		
+		$progress->shouldReceive("finish")->once();
+		
+		$response = $this->get("authenticated/quest/reward/1");
+		$this->assertRedirect(URL::to_route("get_authenticated_index"), $response);
+	}
 }

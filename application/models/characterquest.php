@@ -7,6 +7,24 @@ class CharacterQuest extends Base_Model
 	public static $table = 'character_quests';
 	public static $key = 'id';
 
+	/**
+	 * Finalizamos progreso y damos recompensa al personaje
+	 */
+	public function finish()
+	{
+		$this->quest->give_reward();
+		
+		if ( $this->quest->repeatable )
+		{
+			$this->repeatable_at = time() + $this->quest->repeatable_after;
+		}
+		
+		$this->finished_time = time();
+		$this->progress = "finished";
+		
+		$this->save();
+	}
+	
 	public function get_data()
 	{
 		$data = $this->get_attribute('data');
