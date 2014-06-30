@@ -1,5 +1,37 @@
 <?php
 
+Route::filter('authenticated_layout_variables', function()
+{
+	// El ultimo parametro es el controlador
+	$controller = func_get_arg(func_num_args() - 1);
+	
+	$character = IoC::resolve("Character")->get_logged();
+	
+	$startedQuests = array_merge(
+		 $character->started_quests()->get(), 
+		 $character->reward_quests()->get()
+	 );
+
+	$npcs = Merchant::get_from_zone($character->zone, $character)->get();
+
+	$tournament = null;
+
+	 if ( Tournament::is_active() )
+	 {
+		 $tournament = Tournament::get_active()->first();
+	 }
+	 else if ( Tournament::is_upcoming() )
+	 {
+		 $tournament = Tournament::get_upcoming()->first();
+	 }
+
+	 $controller->layout->with('coins', $character->get_divided_coins());
+	 $controller->layout->with('character', $character);
+	 $controller->layout->with('startedQuests', $startedQuests);
+	 $controller->layout->with('npcs', $npcs);
+	 $controller->layout->with('tournament', $tournament);
+});
+
 /*
  *	Antes de todo, verificamos
  *	si el usuario está logueado

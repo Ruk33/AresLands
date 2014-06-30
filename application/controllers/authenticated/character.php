@@ -27,9 +27,9 @@ class Authenticated_Character_Controller extends Authenticated_Base
 	
 	public function __construct(Character $character)
 	{
-		parent::__construct();
-		
 		$this->character = $character;
+		
+		parent::__construct();
 	}
 	
 	/**

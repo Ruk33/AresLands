@@ -20,35 +20,9 @@ abstract class Authenticated_Base extends Base_Controller
 	 */
 	protected $character;
 	
-	/**
-	 * 
-	 */
-	public function pass_variables_to_layout()
+	public function __construct()
 	{
-		$character = $this->character()->get_character_of_logged_user();
-		
-		$startedQuests = array_merge(
-			 $character->started_quests()->get(), 
-			 $character->reward_quests()->get()
-		 );
-
-		$npcs = Merchant::get_from_zone($character->zone, $character)->get();
-
-		$tournament = null;
-
-		 if ( Tournament::is_active() )
-		 {
-			 $tournament = Tournament::get_active()->first();
-		 }
-		 else if ( Tournament::is_upcoming() )
-		 {
-			 $tournament = Tournament::get_upcoming()->first();
-		 }
-
-		 $this->layout->with('coins', $character->get_divided_coins());
-		 $this->layout->with('character', $character);
-		 $this->layout->with('startedQuests', $startedQuests);
-		 $this->layout->with('npcs', $npcs);
-		 $this->layout->with('tournament', $tournament);
+		parent::__construct();
+		$this->filter('before', 'authenticated_layout_variables', array('controller' => $this));
 	}
 }

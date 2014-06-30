@@ -49,11 +49,11 @@ class Authenticated_Trade_Controller extends Authenticated_Base
 	
 	public function __construct(Trade $trade, TradeItem $tradeItem, Character $character)
 	{
-		parent::__construct();
-		
 		$this->trade = $trade;
 		$this->tradeItem = $tradeItem;
 		$this->character = $character;
+		
+		parent::__construct();
 	}
 	
 	public function get_index()

@@ -93,11 +93,11 @@ class Authenticated_Clan_Controller extends Authenticated_Base
 	 */
     public function __construct(Character $character, Clan $clan, Skill $skill)
     {
-        parent::__construct();
-        
 		$this->character = $character;
         $this->clan = $clan;
 		$this->skill = $skill;
+		
+        parent::__construct();
     }
     
 	/**

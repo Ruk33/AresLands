@@ -64,11 +64,11 @@ class Authenticated_Tournament_Controller extends Authenticated_Base
 	 */
 	public function __construct(Tournament $tournament, Character $character, TournamentClanScore $tournamentClanScore)
 	{
-		parent::__construct();
-		
 		$this->tournament = $tournament;
 		$this->character = $character;
 		$this->tournamentClanScore = $tournamentClanScore;
+		
+		parent::__construct();
  	}
 	
 	public function get_index()

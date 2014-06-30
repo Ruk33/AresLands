@@ -78,6 +78,8 @@ Autoloader::map(array(
 	'Authenticated_Orb_Controller'        => path('app').'controllers/authenticated/orb.php',
 	'Authenticated_Message_Controller'    => path('app').'controllers/authenticated/message.php',
 	'Authenticated_Trade_Controller'      => path('app').'controllers/authenticated/trade.php',
+	'Authenticated_Inventory_Controller'  => path('app').'controllers/authenticated/inventory.php',
+	'Authenticated_Npc_Controller'        => path('app').'controllers/authenticated/npc.php',
 	
 	'Base_Model'                          => path('app').'models/base_model.php',
 ));
@@ -228,6 +230,7 @@ Event::listen(Controller::factory, function($class)
 
 IoC::instance('Character', new Character());
 IoC::instance('CharacterItem', new CharacterItem());
+IoC::instance('Item', new Item());
 IoC::instance('Clan', new Clan());
 IoC::instance('Skill', new Skill());
 IoC::instance('VipFactory', new VipFactory());

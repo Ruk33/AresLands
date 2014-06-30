@@ -53,10 +53,10 @@ class Authenticated_Message_Controller extends Authenticated_Base
 	 */
 	public function __construct(Message $message, Character $character)
 	{
-		parent::__construct();
-		
 		$this->message = $message;
 		$this->character = $character;
+		
+		parent::__construct();
 	}
 	
 	/**

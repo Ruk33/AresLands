@@ -19,10 +19,10 @@ class Authenticated_Orb_Controller extends Authenticated_Base
 	
 	public function __construct(Orb $orb, Character $character)
 	{
-		parent::__construct();
-		
 		$this->orb = $orb;
 		$this->character = $character;
+		
+		parent::__construct();
 	}
 	
 	public function get_index()

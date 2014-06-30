@@ -133,6 +133,81 @@ class Character extends Unit
         parent::__construct($attributes, $exists);
         $this->combatBehavior = new AttackableBehavior($this, new Damage($this), new MonsterArmor($this));
     }
+	
+	/**
+	 * 
+	 * @param CharacterItem $chest
+	 * @return string
+	 */
+	public function open_chest(CharacterItem $chest)
+	{
+		if ( $chest->item_id != Config::get('game.chest_item_id') )
+		{
+			return "¡Ese objeto no es un cofre!";
+		}
+		
+		if ( ! $this->empty_slot() )
+		{
+			return "No tienes espacio en el inventario";
+		}
+		
+		$item = $this->get_item_from_chest()->first();
+
+		$this->add_item($item->id, 1);
+
+		Session::flash('modalMessage', 'chest');
+		Session::flash('chest', $item->id);
+
+		$chest->count--;
+		$chest->save();
+		
+		return "";
+	}
+	
+	/**
+	 * 
+	 * @param CharacterItem $characterItem
+	 * @param type $amount
+	 * @return string|boolean
+	 */
+	public function use_inventory_item(CharacterItem $characterItem, $amount)
+	{		
+		if ( $characterItem->count < $amount )
+		{
+			return "No tienes esa cantidad";
+		}
+		
+		$item = $characterItem->item;
+		
+		if ( $item->class == "none" )
+		{
+			return "Ese objeto no puede ser usado";
+		}
+		
+		if ( $item->class == "consumible" )
+		{
+			return $this->use_consumable_of_inventory($characterItem, $amount);
+		}
+		
+		if ( $item->id == Config::get('game.chest_item_id') )
+		{
+			return $this->open_chest($characterItem);
+		}
+		
+		if ( $characterItem->location == "inventory" )
+		{
+			return $this->equip_item($characterItem);
+		}
+		else
+		{
+			if ( ! $this->unequip_item($characterItem) )
+			{
+				return "No tienes espacio en el inventario";
+			}
+		}
+		
+		return true;
+	}
     
     public function get_image_path()
     {
@@ -2137,6 +2212,8 @@ class Character extends Unit
 			$this->update_extra_stat($characterItem->item->to_array(), false);
 
 			$characterItem->save();
+			
+			Event::fire('unequipItem', array($characterItem));
 
 			return true;
 		}
@@ -2216,6 +2293,8 @@ class Character extends Unit
 		$characterItem->location = $itemBodyPart;
 		$characterItem->slot = 0;
 		$characterItem->save();
+		
+		Event::fire('equipItem', array($characterItem));
 
 		return '';
 	}

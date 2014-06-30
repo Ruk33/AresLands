@@ -101,7 +101,7 @@ abstract class Base_Model extends Eloquent
         // Si estamos en local, y la columna no ha sido traida...
         if ( Request::env() == 'local' && ! array_key_exists($attribute, $this->attributes) )
         {
-            echo "<div style='background-color: red; color: white; font-family: consolas;' class='text-center'>[Error] Posible columna sin traer -> {$attribute}</div>";
+            //echo "<div style='background-color: red; color: white; font-family: consolas;' class='text-center'>[Error] Posible columna sin traer -> {$attribute}</div>";
         }
 		
 		return parent::get_attribute($attribute);

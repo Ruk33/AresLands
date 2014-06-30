@@ -26,6 +26,8 @@ Route::group(array("before" => "auth|hasNoCharacter"), function()
 	Authenticated_Orb_Controller::register_routes();
 	Authenticated_Message_Controller::register_routes();
 	Authenticated_Trade_Controller::register_routes();
+	Authenticated_Inventory_Controller::register_routes();
+	Authenticated_Npc_Controller::register_routes();
 	
 	// Los que usan Route::group abajo, ya que modifican los filtros
 	Authenticated_Clan_Controller::register_routes();

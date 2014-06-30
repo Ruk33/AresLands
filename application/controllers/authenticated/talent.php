@@ -28,10 +28,10 @@ class Authenticated_Talent_Controller extends Authenticated_Base
 	
 	public function __construct(Skill $skill, Character $character)
 	{
-		parent::__construct();
-		
 		$this->skill = $skill;
 		$this->character = $character;
+		
+		parent::__construct();
 	}
 	
 	public function get_index()
