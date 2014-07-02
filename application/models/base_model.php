@@ -6,6 +6,11 @@ abstract class Base_Model extends Eloquent
 	protected $messages = array();
 	protected $errors;
 	
+	public function fire_global_event($event, $args)
+	{
+		Event::fire($event, $args);
+	}
+	
 	/**
 	 * 
 	 * @param array $attributes

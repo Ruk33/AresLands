@@ -2,6 +2,52 @@
 
 class Merchant extends Npc
 {
+	public function try_buy(Character $character, Merchandise $merchandise, $amount = 1)
+	{
+		if ( $amount <= 0 )
+		{
+			return "¿Comprar una cantidad igual o menor a cero?";
+		}
+		
+		if ( $this->is_blocked_to($character) )
+		{
+			return "¡No hagas trampa!, el mercader esta bloqueado";
+		}
+		
+		$coins = $character->get_coins();
+		$finalPrice = $merchandise->price_copper * $amount;
+		
+		if ( $coins->count < $finalPrice )
+		{
+			return "No tienes suficientes monedas";
+		}
+		
+		$item = $merchandise->item;
+		
+		if ( $item->type == "mercenary" )
+		{
+			return $character->give_mercenary($item);
+		}
+		
+		if ( $item->class == "consumible" )
+		{
+			if ( ! $character->can_add_to_bag($item, $amount) )
+			{
+				return "Tienes la mochila muy llena, tu limite es " . $character->get_bag_limit();
+			}
+		}
+		
+		if ( ! $character->add_item($item, $amount) )
+		{
+			return "No tienes espacio en el inventario";
+		}
+		
+		$coins->count -= $finalPrice;
+		$coins->save();
+		
+		return true;
+	}
+	
     public function get_tooltip()
     {
         return "<strong>Mercader {$this->name}</strong><p>{$this->dialog}</p>";

@@ -2548,6 +2548,129 @@ class Character extends Unit
 
 		return false;
 	}
+	
+	/**
+	 * Intentamos dar mercenario.
+	 * 
+	 * @param Item $mercenary
+	 * @return string|boolean Se devuelve el mensaje de error o true si todo esta bien
+	 */
+	public function give_mercenary(Item $mercenary)
+	{
+		if ( $mercenary->type != "mercenary" )
+		{
+			return "Ese no es un mercenario";
+		}
+		
+		if ( $mercenary->level > $this->level )
+		{
+			return "El mercenario requiere mas nivel";
+		}
+		
+		if ( $mercenary->zone_to_explore && $mercenary->time_to_appear )
+		{
+			$hasExploredTime = $this->exploring_times()
+									->where_zone_id($mercenary->zone_to_explore)
+									->where("time", ">=", $mercenary->time_to_appear)
+									->take(1)
+									->count();
+
+			if ( ! $hasExploredTime )
+			{
+				return "Aun necesitas explorar mas para poder adquirir ese mercenario";
+			}
+		}
+		
+		$slot = $this->get_mercenary();
+		
+		if ( $slot )
+		{
+			// Vamos a reemplazar, asi que sacamos stats anteriores
+			$this->update_extra_stat($slot->item->to_array(), false);
+		}
+		else
+		{
+			$slot = new CharacterItem(array(
+				"owner_id" => $this->id,
+				"count"    => 1,
+				"location" => "mercenary"
+			));
+		}
+		
+		$slot->item_id = $mercenary->id;
+		$slot->save();
+		
+		$this->update_extra_stat($mercenary->to_array(), true);
+		
+		return true;
+	}
+	
+	/**
+	 * Obtenemos el limite de la mochila
+	 * @return integer
+	 */
+	public function get_bag_limit()
+	{	
+		return (int) ($this->xp_next_level * Config::get('game.bag_size'));
+	}
+	
+	/**
+	 * Verificamos si puede agregar $amount pociones a mochila
+	 * Se recuerda, mochila != inventario
+	 * Mochila es un limitador especifico para pociones
+	 * 
+	 * @param Item $consumible
+	 * @param integer $amount
+	 * @return boolean
+	 */
+	public function can_add_to_bag(Item $consumible, $amount)
+	{
+		if ( $consumible->type != "consumible" )
+		{
+			return false;
+		}
+		
+		if ( $amount <= 0 )
+		{
+			return false;
+		}
+		
+		$skills = $this->get_non_clan_skills()->get();
+		$skillsCount = 0;
+		$time = time();
+
+		foreach ( $skills as $skill )
+		{
+			// Solo se suma si no ha pasado
+			// la mitad de la duracion
+			if ( $skill->end_time - $time > $skill->duration * 60 / 2 )
+			{
+				$skillsCount += $skill->amount;
+			}
+		}
+
+		// Objetos que no se cuentan
+		$invalidItems = array(
+			Config::get('game.coin_id'), 
+			Config::get('game.xp_item_id')
+		);
+
+		$characterItems = $this->items()
+							   ->join('items as item', 'item.id', '=', 'character_items.item_id')
+							   ->where_not_in('item_id', $invalidItems)
+							   ->where_location('inventory')
+							   ->where_class('consumible')
+							   ->select(array('count'))
+							   ->get();
+		$characterItemAmount = 0;
+
+		foreach ( $characterItems as $characterItem )
+		{
+			$characterItemAmount += $characterItem->count;
+		}
+
+		return $characterItemAmount + $skillsCount + $amount < $this->get_bag_limit();
+	}
 
 	/**
 	 *	Agregamos un objeto al personaje.

@@ -6,7 +6,7 @@ abstract class Npc extends Unit
 	public static $timestamps = false;
 	public static $table = 'npcs';
 	public static $key = 'id';
-    
+	
     public function get_image_path()
     {
         return URL::base() . "/img/icons/npcs/{$this->id}.png";
