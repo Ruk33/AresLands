@@ -20,6 +20,11 @@ abstract class Authenticated_Base extends Base_Controller
 	 */
 	protected $character;
 	
+	/**
+	 * Registramos las rutas del controlador
+	 */
+	public static function register_routes(){}
+	
 	public function __construct()
 	{
 		parent::__construct();

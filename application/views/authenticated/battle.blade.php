@@ -42,10 +42,10 @@
 					{{ Form::hidden('search_method', 'random') }}
 
 					{{ Form::label('race_label', 'Raza') }}
-					{{ Form::select('race', array('any' => 'Cualquiera', 'dwarf' => 'Enano', 'human' => 'Humano', 'drow' => 'Drow', 'elf' => 'Elfo')) }}
+					{{ Form::select('race', array('dwarf,human,elf,drow' => 'Cualquiera', 'dwarf' => 'Enano', 'human' => 'Humano', 'drow' => 'Drow', 'elf' => 'Elfo')) }}
 
 					{{ Form::label('level_label', 'Nivel') }}
-					{{ Form::select('operation', array('exactly' => 'Exactamente', 'greaterThan' => 'Mayor que', 'lowerThan' => 'Menor que')) }}
+					{{ Form::select('operation', array('=' => 'Exactamente', '>' => 'Mayor que', '<' => 'Menor que')) }}
 					{{ Form::number('level', $character->level, array('min' => '1')) }}
 
 					<div class="text-center">

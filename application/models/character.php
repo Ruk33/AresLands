@@ -711,6 +711,23 @@ class Character extends Unit
 	}
 	
 	/**
+	 * Ejecutar este metodo cuando un personaje ve a otro
+	 * @param Character $target
+	 */
+	public function sees(Character $target)
+	{
+		if ( $target->has_skill(Config::get("game.trap_skill")) )
+		{
+			$target->cast_random_trap_to($this, true);
+		}
+
+		if ( $this->can_remove_invisibility_of($target) )
+		{
+			$target->remove_invisibility();
+		}
+	}
+	
+	/**
 	 * Obtenemos posible(s) contrincante(s) para un personaje
 	 * @param array $races Razas posibles
 	 * @return Eloquent
@@ -1197,17 +1214,44 @@ class Character extends Unit
 	}
 	
 	/**
-	 * Verificar si dos personajes pueden atacar como pareja a un personaje
+	 * Verificar si dos personajes pueden atacar como pareja
+	 * 
 	 * @param Character $pair
-	 * @return boolean
+	 * @return string|boolean
 	 */
 	public function can_attack_with(Character $pair)
 	{
-		return	$this->can_attack_in_pairs() && 
-				$pair->can_attack_in_pairs() && 
-				$this->clan_id == $pair->clan_id &&
-				$this->id != $pair->id &&
-				$this->zone_id == $pair->zone_id;
+		if ( ! $pair )
+		{
+			return "Intentas atacar en parejas, pero tu compañero parece no existir";
+		}
+		
+		if ( ! $this->can_attack_in_pairs() )
+		{
+			return "Aun no puedes atacar en parejas";
+		}
+		
+		if ( ! $pair->can_attack_in_pairs() )
+		{
+			return "Tu compañero aun no puede atacar en pareja";
+		}
+		
+		if ( $this->clan_id != $pair->clan_id )
+		{
+			return "Para atacar en pareja, debes estar en el mismo grupo que tu compañero";
+		}
+		
+		if ( $this->id == $pair->id )
+		{
+			return "¿Intentas atacar en pareja contigo mismo?";
+		}
+		
+		if ( $this->zone_id != $pair->zone_id )
+		{
+			return "Para atacar en parejas ambos deben estar en la misma zona";
+		}
+		
+		return true;
 	}
 	
 	/**
@@ -1219,19 +1263,22 @@ class Character extends Unit
 	{
 		$pairs = array();
 		
-		$select = (array) $select + array('id', 'clan_id');
-		
-		$characters = static::select($select)
-							->where('zone_id', '=', $this->zone_id)
-							->where('clan_id', '=', $this->clan_id)
-							->where('id', '<>', $this->id)
-							->get();
-		
-		foreach ( $characters as $pair )
+		if ( $this->can_attack_in_pairs() )
 		{
-			if ( $this->can_attack_with($pair) && $this->level + $pair->level < $enemy->level )
+			$select = (array) $select + array('id', 'clan_id');
+
+			$characters = static::select($select)
+								->where('zone_id', '=', $this->zone_id)
+								->where('clan_id', '=', $this->clan_id)
+								->where('id', '<>', $this->id)
+								->get();
+
+			foreach ( $characters as $pair )
 			{
-				$pairs[] = $pair;
+				if ( $this->can_attack_with($pair) && $this->level + $pair->level < $enemy->level )
+				{
+					$pairs[] = $pair;
+				}
 			}
 		}
 		
@@ -2824,19 +2871,34 @@ class Character extends Unit
 		return $this->is_traveling == false && $this->is_exploring == false;
 	}
 
+	/**
+	 * Verificamos si personaje puede batallar
+	 * 
+	 * @return string|boolean
+	 */
 	public function can_fight()
 	{
 		if ( $this->has_skill(Config::get('game.stun_skill')) )
 		{
-			return false;
+			return "No puedes batallar mientras estas aturdido";
 		}
 		
 		if ( $this->has_skill(Config::get('game.confusion_skill')) )
 		{
-			return false;
+			return "No puedes atacar aun, ¡estas confundido!";
 		}
 		
-		return $this->is_traveling == false && $this->activities()->take(1)->count() == 0;
+		if ( $this->is_traveling )
+		{
+			return "No puedes batallar mientras estas viajando";
+		}
+		
+		if ( $this->activities()->take(1)->count() == 1 )
+		{
+			return "No puedes batallar mientras aun estes realizando otras actividades";
+		}
+		
+		return true;
 	}
 
 	public function has_protection(Character $attacker)
@@ -2851,42 +2913,112 @@ class Character extends Unit
 		return $protectionTime->time > time();
 	}
 
-	public function can_be_attacked(Character $attacker)
+	/**
+	 * Verificamos si personaje puede atacar a objetivo
+	 * 
+	 * @param Attackable $target
+	 * @return string|boolean
+	 */
+	public function can_attack(Attackable $target)
 	{
-		if ( Tournament::is_active() )
+		if ( ! $target )
 		{
-			if ( $this->registered_in_tournament != $attacker->registered_in_tournament )
+			return "El objetivo no existe";
+		}
+		
+		if ( $target instanceof Character )
+		{
+			if ( Tournament::is_active() )
 			{
-				return false;
-			}
+				if ( $this->registered_in_tournament != $target->registered_in_tournament )
+				{
+					return "Solamente puedes atacar a personajes que tengan tu mismo estado en el torneo (registrado o no-registrado)";
+				}
 
-			if ( $this->clan_id != 0 && $this->clan_id == $attacker->clan_id )
+				if ( $this->clan_id && $this->registered_in_tournament && $this->clan_id == $target->clan_id )
+				{
+					return "No puedes atacar a miembros de tu grupo cuando hay un torneo activo";
+				}
+			}
+			
+			if ( $target->has_protection($this) )
 			{
-				return false;
+				return "No puedes atacar a ese objetivo mientras tenga proteccion";
+			}
+			
+			if ( $target->is_traveling )
+			{
+				return "No puedes atacar a un objetivo que esta viajando";
+			}
+			
+			if ( $this->id == $target->id )
+			{
+				return "¡No te puedes atacar a ti mismo!";
 			}
 		}
 
-		if ( $this->has_protection($attacker) )
+		if ( $target->zone_id != $this->zone_id )
 		{
-			return false;
-		}
-
-		if ( $attacker->zone_id != $this->zone_id )
-		{
-			return false;
-		}
-
-		if ( $attacker->id == $this->id )
-		{
-			return false;
-		}
-
-		if ( $this->is_traveling )
-		{
-			return false;
+			return "Solamente puedes atacar objetivos que esten en tu misma zona";
 		}
 
 		return true;
+	}
+	
+	/**
+	 * Se intenta batallar contra un objetivo valido. Si la batalla
+	 * no puede ser, se devuelve un mensaje de error, de lo contrario
+	 * se devuelve la batalla (instancia Battle)
+	 * 
+	 * @param Unit $target
+	 * @param Character $pair
+	 * @return string|Battle
+	 */
+	public function battle_or_error(Unit $target, Character $pair = null)
+	{
+		if ( ! $target->is_attackable() )
+		{
+			return "Ese objeto no puede ser atacado";
+		}
+		
+		if ( $pair )
+		{
+			if ( $target instanceof Monster )
+			{
+				return "No puedes atacar en parejas a un monstruo";
+			}
+			
+			if ( ! $this->can_attack_in_pairs() )
+			{
+				return "Aun no puedes atacar en parejas";
+			}
+			
+			$message = $this->can_attack_with($pair);
+			
+			if ( is_string($message) )
+			{
+				return $message;
+			}
+		}
+		
+		$message = $this->can_fight();
+		
+		if ( is_string($message) )
+		{
+			return $message;
+		}
+		
+		if ( $target instanceof Character )
+		{
+			$message = $this->can_attack($target);
+			
+			if ( is_string($message) )
+			{
+				return $message;
+			}
+		}
+		
+		return $this->battle_against($target, $pair);
 	}
 	
 	/**

@@ -80,6 +80,7 @@ Autoloader::map(array(
 	'Authenticated_Trade_Controller'      => path('app').'controllers/authenticated/trade.php',
 	'Authenticated_Inventory_Controller'  => path('app').'controllers/authenticated/inventory.php',
 	'Authenticated_Npc_Controller'        => path('app').'controllers/authenticated/npc.php',
+	'Authenticated_Battle_Controller'     => path('app').'controllers/authenticated/battle.php',
 	
 	'Base_Model'                          => path('app').'models/base_model.php',
 ));
@@ -243,3 +244,4 @@ IoC::instance('Message', new Message());
 IoC::instance('Trade', new Trade());
 IoC::instance('NpcMerchandise', new NpcMerchandise());
 IoC::instance('NpcRandomMerchandise', new NpcRandomMerchandise());
+IoC::instance('Monster', new Monster());
