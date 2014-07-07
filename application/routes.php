@@ -15,7 +15,7 @@ Route::get("home", array(
 | Authenticated
 |--------------------------------------------------------------------------
 */
-Route::group(array("before" => "auth|hasNoCharacter"), function()
+Route::group(array("before" => "auth|hasNoCharacter|csrf"), function()
 {
 	Authenticated_Controller::register_routes();
 	Authenticated_Character_Controller::register_routes();
