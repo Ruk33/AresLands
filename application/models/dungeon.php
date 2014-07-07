@@ -18,27 +18,27 @@ class Dungeon extends Base_Model
 	const NORMAL_LEVEL = 2;
 	const EXPERT_LEVEL = 4;
 	const ELITE_LEVEL  = 6;
-
+	
 	/**
 	 * Verificamos si personaje puede realizar dungeon
 	 * @param  Character $character 
-	 * @return boolean
+	 * @return boolean|string
 	 */
 	public function can_character_do_dungeon(Character $character)
 	{
 		if ( $character->level < $this->min_level )
 		{
-			return false;
+			return "No tienes suficiente nivel";
 		}
 
 		if ( $character->zone_id != $this->zone_id )
 		{
-			return false;
+			return "La mazmorra no esta en la zona donde estas";
 		}
 
 		if ( $character->activities()->take(1)->count() != 0 )
 		{
-			return false;
+			return "Debes terminar tus actividades antes de poder iniciar una mazmorra";
 		}
 
 		return true;

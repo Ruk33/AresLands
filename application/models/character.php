@@ -135,6 +135,17 @@ class Character extends Unit
     }
 	
 	/**
+	 * Hacemos mazmorra con personaje
+	 * 
+	 * @param Dungeon $dungeon
+	 * @return \DungeonBattle
+	 */
+	public function do_dungeon(Dungeon $dungeon)
+	{
+		return new DungeonBattle($this, $dungeon, $dungeon->get_level($this));
+	}
+	
+	/**
 	 * Obtenemos posibles zonas a donde el personaje pueda viajar
 	 * 
 	 * @return array

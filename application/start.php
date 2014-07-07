@@ -82,6 +82,7 @@ Autoloader::map(array(
 	'Authenticated_Npc_Controller'        => path('app').'controllers/authenticated/npc.php',
 	'Authenticated_Battle_Controller'     => path('app').'controllers/authenticated/battle.php',
 	'Authenticated_Action_Controller'     => path('app').'controllers/authenticated/action.php',
+	'Authenticated_Dungeon_Controller'    => path('app').'controllers/authenticated/dungeon.php',
 	
 	'Base_Model'                          => path('app').'models/base_model.php',
 ));
