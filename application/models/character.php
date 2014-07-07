@@ -135,6 +135,19 @@ class Character extends Unit
     }
 	
 	/**
+	 * Obtenemos posibles zonas a donde el personaje pueda viajar
+	 * 
+	 * @return array
+	 */
+	public function get_travel_zones()
+	{
+		return Zone::where_type("city")
+				   ->where("min_level", "<=", $this->level)
+				   ->where("id", "<>", $this->zone_id)
+				   ->get();
+	}
+	
+	/**
 	 * 
 	 * @param CharacterItem $chest
 	 * @return string
@@ -3103,6 +3116,8 @@ class Character extends Unit
 
 			$this->is_traveling = true;
 			$this->save();
+			
+			$this->add_coins(-Config::get('game.travel_cost'));
 
 			$characterActivity = new CharacterActivity();
 
@@ -3141,6 +3156,12 @@ class Character extends Unit
 	 */
 	public function explore($time)
 	{
+		// Si es mas de 30 minutos, entonces llenamos barra de actividad
+		if ( $time / 60 >= 30 )
+		{
+			ActivityBar::add($character, 2);
+		}
+		
 		$this->is_exploring = true;
 		$this->save();
 
@@ -3155,13 +3176,28 @@ class Character extends Unit
 	}
 
 	/**
-	 *	Verificamos si el personaje está habilitado
-	 *	para viajar
+	 * Verificamos si el personaje está habilitado
+	 * para viajar
 	 *
-	 *	@return <mixed> True si puede, de lo contrario el mensaje de error
+	 * @param Zone|null $zone Pasamos instancia de Zone en caso de querer verificar
+	 * tambien si puede viajar a la misma
+	 * @return string|boolean True si puede, de lo contrario el mensaje de error
 	 */
-	public function can_travel()
+	public function can_travel($zone = null)
 	{
+		if ( $zone instanceof Zone )
+		{
+			if ( $this->zone_id == $zone->id )
+			{
+				return 'Ya te encuentras en esa zona';
+			}
+			
+			if ( $this->level < $zone->min_level )
+			{
+				return 'Esa zona requiere que tengas mas nivel';
+			}
+		}
+		
 		if ( $this->is_exploring )
 		{
 			return 'Estás explorando';
@@ -3187,8 +3223,7 @@ class Character extends Unit
 		/*
 		 *	¿Le alcanzan las monedas?
 		 */
-		$coins = $this->get_coins();
-		if ( ! $coins || $coins->count < Config::get('game.travel_cost') )
+		if ( $this->get_coins()->count < Config::get('game.travel_cost') )
 		{
 			return 'No tienes suficientes monedas.';
 		}

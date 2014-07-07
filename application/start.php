@@ -81,6 +81,7 @@ Autoloader::map(array(
 	'Authenticated_Inventory_Controller'  => path('app').'controllers/authenticated/inventory.php',
 	'Authenticated_Npc_Controller'        => path('app').'controllers/authenticated/npc.php',
 	'Authenticated_Battle_Controller'     => path('app').'controllers/authenticated/battle.php',
+	'Authenticated_Action_Controller'     => path('app').'controllers/authenticated/action.php',
 	
 	'Base_Model'                          => path('app').'models/base_model.php',
 ));

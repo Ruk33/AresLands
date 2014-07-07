@@ -113,35 +113,6 @@ class Authenticated_Controller extends Authenticated_Base
 		));
 	}
 
-	public function post_explore()
-	{
-		$character = Character::get_character_of_logged_user(array('id', 'is_traveling', 'is_exploring', 'level', 'xp', 'points_to_change', 'clan_id'));
-		$time = Input::get('time');
-
-		if ( ($time <= Config::get('game.max_explore_time') && $time >= Config::get('game.min_explore_time')) && $character->can_explore() )
-		{
-			/*
-			 *	Damos dos puntos a la barra
-			 *	de actividad si se explora
-			 *	30 minutos o mas
-			 */
-			if ( $time >= 30 )
-			{
-				ActivityBar::add($character, 2);
-			}
-
-			$character->explore($time * 60);
-		}
-
-		return Redirect::to('authenticated/index/');
-	}
-
-	public function get_explore()
-	{
-		$this->layout->title = 'Explorar';
-		$this->layout->content = View::make('authenticated.explore');
-	}
-
 	public function get_ranking($rank = 'kingOfTheHill')
 	{
 		switch ( $rank )
@@ -203,84 +174,7 @@ class Authenticated_Controller extends Authenticated_Base
 
 		$this->layout->title = 'Mazmorras';
 		$this->layout->content = View::make('authenticated.dungeon', compact('character', 'dungeons'));
-	}
-
-	public function get_travel($zoneId = '')
-	{
-		$character = Character::get_character_of_logged_user(array('id', 'is_traveling', 'zone_id', 'name', 'level', 'xp', 'clan_id'));
-
-		/*
-		 *	Si zoneId está definido quiere
-		 *	decir que el personaje ya eligió
-		 *	la zona a la que quiere viajar
-		 */
-		$zone = ( is_numeric($zoneId) ) ? Zone::where('min_level', '<=', $character->level)->find((int) $zoneId) : false;
-
-		$error = false;
-
-		if ( $zone )
-		{
-			// Evitamos que viajen a zonas bloqueadas
-			if ( $zone->type != 'city' )
-			{
-				return Redirect::to('authenticated/travel/');
-			}
-			
-			/*
-			 *	Antes de hacer nada, nos fijamos
-			 *	si el personaje realmente puede viajar
-			 */
-			$canTravel = $character->can_travel();
-
-			if ( $canTravel === true )
-			{
-				if ( $zone->id != $character->zone_id )
-				{
-					/*
-					 *	Cobramos el costo del viaje
-					 */
-					$characterCoins = $character->get_coins();
-					$characterCoins->count -= Config::get('game.travel_cost');
-					$characterCoins->save();
-
-					/*
-					 *	¡Iniciamos el viaje!
-					 */
-					$character->travel_to($zone);
-
-					return Redirect::to('authenticated/index');
-				}
-				else
-				{
-					$error = 'Ya te encuentras en esa zona';
-				}
-			}
-			else
-			{
-				/*
-				 *	El personaje no puede viajar 
-				 *	así que lo notificamos
-				 */
-				$error = $canTravel;
-			}
-		}
-
-		$zones = Zone::where('type', '=', 'city')
-                     ->where('min_level', '<=', $character->level)
-                     ->where('id', '<>', $character->zone_id)
-                     ->select(array('id', 'name', 'description', 'min_level'))
-                     ->get();
-
-		$exploringTime = $character->exploring_times()->lists('time', 'zone_id');
-
-		$this->layout->title = 'Viajar';
-		$this->layout->content = View::make('authenticated.travel')
-		->with('character', $character)
-		->with('zones', $zones)
-		->with('exploringTime', $exploringTime)
-		->with('error', $error);
-	}
-	
+	}	
 
 	public function get_logout()
 	{

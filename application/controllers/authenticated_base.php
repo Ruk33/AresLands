@@ -23,11 +23,8 @@ abstract class Authenticated_Base extends Base_Controller
 	/**
 	 * Registramos las rutas del controlador
 	 */
-	public static function register_routes(){}
-	
-	public function __construct()
+	public static function register_routes()
 	{
-		parent::__construct();
-		$this->filter('before', 'authenticated_layout_variables', array('controller' => $this));
+		
 	}
 }
