@@ -1,0 +1,85 @@
+<?php
+
+use Mockery as m;
+
+class Authenticated_Ranking_Controller_Test extends \Tests\TestHelper
+{
+	protected $character;
+	protected $kingOfTheHill;
+	protected $clanOrbPoint;
+	
+	public function setUp()
+	{
+		parent::setUp();
+		
+		$this->character = m::mock("Character");
+		$this->kingOfTheHill = m::mock("KingOfTheHill");
+		$this->clanOrbPoint = m::mock("ClanOrbPoint");
+		
+		\Laravel\IoC::instance("Character", $this->character);
+		\Laravel\IoC::instance("KingOfTheHill", $this->kingOfTheHill);
+		\Laravel\IoC::instance("ClanOrbPoint", $this->clanOrbPoint);
+	}
+	
+	public function tearDown()
+	{
+		parent::tearDown();
+		
+		\Laravel\IoC::unregister("Character");
+		\Laravel\IoC::unregister("KingOfTheHill");
+		\Laravel\IoC::unregister("ClanOrbPoint");
+	}
+	
+	public function testValorPorDefectoOIncorrectoRedireccionaAKingOfTheHill()
+	{
+		$this->kingOfTheHill->shouldReceive("get_list")->once();
+		
+		$response = $this->get("authenticated/ranking");
+		$this->assertResponseOk($response);
+		
+		$response = $this->get("authenticated/ranking/foo");
+		$this->assertRedirect(URL::to_route("get_authenticated_ranking_index"), $response);
+	}
+	
+	public function testKingOfTheHill()
+	{
+		$this->assertHasFilter("get", "authenticated/ranking/kingOfTheHill", "before", "auth");
+		$this->assertHasFilter("get", "authenticated/ranking/kingOfTheHill", "before", "hasNoCharacter");
+		
+		$this->kingOfTheHill->shouldReceive("get_list")->once()->andReturn(array());
+		
+		$response = $this->get("authenticated/ranking/kingOfTheHill");
+		
+		$this->assertResponseOk($response);
+		$this->assertViewHasAll($response, array(
+			"title" => "Ranking", 
+			"elements" => array()
+		));
+	}
+	
+	public function testPvp()
+	{
+		$this->assertHasFilter("get", "authenticated/ranking/pvp", "before", "auth");
+		$this->assertHasFilter("get", "authenticated/ranking/pvp", "before", "hasNoCharacter");
+		
+		$this->character
+			 ->shouldReceive("with")
+			 ->once()
+			 ->with("clan")
+			 ->andReturnSelf();
+		
+		$this->character
+			 ->shouldReceive("get_characters_for_pvp_ranking->paginate")
+			 ->once()
+			 ->with(50)
+			 ->andReturn(array());
+		
+		$response = $this->get("authenticated/ranking/pvp");
+		
+		$this->assertResponseOk($response);
+		$this->assertViewHasAll($response, array(
+			"title" => "Ranking", 
+			"elements" => array()
+		));
+	}
+}

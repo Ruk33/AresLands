@@ -100,33 +100,6 @@ class Authenticated_Controller extends Authenticated_Base
 		));
 	}
 
-	public function get_ranking($rank = 'kingOfTheHill')
-	{
-		switch ( $rank )
-		{
-			case 'kingOfTheHill':
-				$elements = KingOfTheHill::get_list();
-				break;
-
-			case 'pvp':
-				$select = array('id', 'name', 'gender', 'race', 'pvp_points', 'characteristics');
-				$elements = Character::with('clan')->get_characters_for_pvp_ranking()->select($select)->paginate(50);
-
-				break;
-
-			case 'clan':
-				$elements = ClanOrbPoint::with('clan')->order_by('points', 'desc')->paginate(50);
-				break;
-
-			default:
-				return Redirect::to('authenticated/ranking');
-				break;
-		}
-		
-		$this->layout->title = 'Ranking';
-		$this->layout->content = View::make('authenticated.ranking')->with('rank', $rank)->with('elements', $elements);
-	}
-
 	public function get_logout()
 	{
 		Auth::logout();

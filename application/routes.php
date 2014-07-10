@@ -31,6 +31,7 @@ Route::group(array("before" => "auth|hasNoCharacter|csrf"), function()
 	Authenticated_Battle_Controller::register_routes();
 	Authenticated_Action_Controller::register_routes();
 	Authenticated_Dungeon_Controller::register_routes();
+	Authenticated_Ranking_Controller::register_routes();
 	
 	// Los que usan Route::group abajo, ya que modifican los filtros
 	Authenticated_Clan_Controller::register_routes();
