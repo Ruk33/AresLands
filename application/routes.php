@@ -124,7 +124,6 @@ Route::post('admin/generators/item', array(
 |--------------------------------------------------------------------------
 */
 
-Route::controller('Authenticated');
 Route::controller('Game');
 Route::controller('CharacterCreation');
 Route::controller('Home');

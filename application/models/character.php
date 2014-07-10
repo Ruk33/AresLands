@@ -276,11 +276,16 @@ class Character extends Unit
 
 	/**
 	 * Query para obtener el segundo mercenario del personaje
-	 * @return Eloquent
+	 * @return Eloquent|null
 	 */
 	public function get_second_mercenary()
 	{
-		return Item::where('id', '=', $this->get_attribute('second_mercenary'));
+		if ( ! $this->has_second_mercenary() )
+		{
+			return null;
+		}
+		
+		return Item::where_id($this->get_attribute('second_mercenary'));
 	}
 
 	/**
@@ -2185,8 +2190,19 @@ class Character extends Unit
 		Message::activity_bar_reward($this, $rewards);
 	}
 
-	public function give_logged_of_day_reward()
+	/**
+	 * Damos recompensa del dia al personaje
+	 * 
+	 * @param boolean $checkBefore True para primero verificar si la 
+	 *							   condicion se cumple
+	 */
+	public function give_logged_of_day_reward($checkBefore = false)
 	{
+		if ( $checkBefore && ! $this->check_logged_of_day() )
+		{
+			return;
+		}
+		
 		$this->add_coins(mt_rand($this->level * 10, $this->level * 20));
 		Event::fire('loggedOfDayReward', array($this));
 		$this->last_logged = time();
