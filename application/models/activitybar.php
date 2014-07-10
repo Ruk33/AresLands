@@ -4,12 +4,11 @@ class ActivityBar extends Base_Model
 {
 	public static $softDelete = true;
 	public static $timestamps = false;
-	public static $table = 'activity_bars';
-	public static $key = 'id';
+	public static $table = "activity_bars";
 
 	public function character()
 	{
-		$this->belongs_to('Character', 'character_id');
+		$this->belongs_to("Character", "character_id");
 	}
 
 	/**

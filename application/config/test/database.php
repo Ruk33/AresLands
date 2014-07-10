@@ -62,22 +62,14 @@ return array(
 	'connections' => array(
 
 		'default' => array(
-			'driver'   => 'mysql',
-			'host'     => 'localhost',
-			'database' => 'ironfist_areslands',
-			'username' => 'ironfist_root',
-			'password' => '39ioYAw6k7',
-			'charset'  => 'utf8',
+			'driver'   => 'sqlite',
+			'database' => ':memory:',
 			'prefix'   => '',
 		),
 
 		'ironfist' => array(
-			'driver'   => 'mysql',
-			'host'     => 'localhost',
-			'database' => 'ironfist_ironfist',
-			'username' => 'ironfist_root',
-			'password' => '39ioYAw6k7',
-			'charset'  => 'utf8',
+			'driver'   => 'sqlite',
+			'database' => ':memory:',
 			'prefix'   => '',
 		),
 

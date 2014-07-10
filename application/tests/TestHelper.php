@@ -42,6 +42,7 @@ abstract class TestHelper extends PHPUnit_Framework_TestCase
 	{
 		parent::setUp();
 		
+		$this->migrate();
 		$this->disableFilters();
 		$this->use_sessions();
 	}
@@ -223,7 +224,7 @@ abstract class TestHelper extends PHPUnit_Framework_TestCase
 	 * Run the migrations in the test database
 	 * Thanks to Zizaco from www.forums.laravel.io/viewtopic.php?id=2521
 	 */
-	public static function migrate()
+	public function migrate()
 	{
 		// If there is not a declaration that migrations have been run'd
 		if( ! isset($GLOBALS['migrated_test_database']) )
