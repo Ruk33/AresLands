@@ -176,7 +176,9 @@ class Trade extends Base_Model
 		}
 		
 		$character->add_coins(-$this->price_copper);
-		$this->seller->add_coins($this->price_copper * ($this->get_commission_percentage() / 100));
+		
+		$comission = $this->price_copper * ($this->get_commission_percentage() / 100);
+		$this->seller->add_coins($this->price_copper - $comission);
 		
 		Message::trade_buy($this, $character);
 		
