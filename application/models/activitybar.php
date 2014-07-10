@@ -5,6 +5,11 @@ class ActivityBar extends Base_Model
 	public static $softDelete = true;
 	public static $timestamps = false;
 	public static $table = "activity_bars";
+    
+    public static $factory = array(
+        "character_id" => "factory|Character",
+        "filled_amount" => "0"
+    );
 
 	public function character()
 	{

@@ -1,10 +1,10 @@
-<?php
+<?php namespace AresLands\Tests;
 
-class ActivityBarTest extends PHPUnit_Framework_TestCase
+class ActivityBarTest extends \Tests\TestHelper
 {
     public function testCharacter()
     {
-        $bar = new ActivityBar();
+        $bar = $this->factory->create("ActivityBar");
         $this->assertInstanceOf("Character", $bar->character);
     }
     

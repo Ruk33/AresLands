@@ -17,11 +17,23 @@ class IronFistUser extends Eloquent
 	 */
 	public static $table = 'users';
 	
-	/**
-	 * @var string
-	 */
-	public static $key = 'id';
-	
+    /**
+     * @var array
+     */
+    public static $factory = array(
+        "name" => "string",
+        "password" => "string",
+        "email" => "email",
+        "gender" => "male",
+        "birth_date" => "date",
+        "registration_date" => "date",
+        "language" => "es",
+        "permission" => 0,
+        "last_mark_time" => 0,
+        "coins" => 0,
+        "avatar" => ""
+    );
+    
 	/**
 	 * @return Eloquent
 	 */

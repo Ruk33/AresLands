@@ -11,10 +11,13 @@ use Auth;
 use Filter;
 use Mockery;
 use View;
+use Zizaco\FactoryMuff\FactoryMuff;
 
 abstract class TestHelper extends PHPUnit_Framework_TestCase
 {
 	private $auth;
+    
+    protected $factory;
 	
 	/**
 	 * Habilitamos (iniciamos) las sessiones para su uso
@@ -37,14 +40,21 @@ abstract class TestHelper extends PHPUnit_Framework_TestCase
 	{
 		Filter::$filters = array();
 	}
+    
+    public static function setUpBeforeClass()
+	{
+        parent::setUpBeforeClass();
+		self::migrate();
+	}
 	
 	public function setUp()
 	{
 		parent::setUp();
 		
-		$this->migrate();
 		$this->disableFilters();
 		$this->use_sessions();
+        
+        $this->factory = new FactoryMuff();
 	}
 	
 	public function tearDown()
@@ -222,9 +232,9 @@ abstract class TestHelper extends PHPUnit_Framework_TestCase
 
 	/**
 	 * Run the migrations in the test database
-	 * Thanks to Zizaco from www.forums.laravel.io/viewtopic.php?id=2521
+	 * Thanks to Zizaco from http://www.forums.laravel.io/viewtopic.php?id=2521
 	 */
-	public function migrate()
+	public static function migrate()
 	{
 		// If there is not a declaration that migrations have been run'd
 		if( ! isset($GLOBALS['migrated_test_database']) )
