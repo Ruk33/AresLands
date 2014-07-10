@@ -37,12 +37,6 @@ Route::group(array("before" => "auth|hasNoCharacter|csrf"), function()
 	Authenticated_Clan_Controller::register_routes();
 });
 
-
-Route::get("authenticated/clan/(:num)", array(
-    "uses" => "authenticated.clan@show",
-    "as" => "get_authenticated_clan_show"
-));
-
 Route::get("admin/npcs", array(
 	"uses" => "admin.npc@index",
 	"as" => "get_admin_npc_index",

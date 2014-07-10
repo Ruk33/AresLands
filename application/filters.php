@@ -9,6 +9,11 @@ View::composer("layouts.default", function($view)
 	
 	$character = IoC::resolve("Character")->get_logged();
 	
+	if ( ! $character )
+	{
+		return;
+	}
+	
 	$startedQuests = array_merge(
 		$character->started_quests()->get(), 
 		$character->reward_quests()->get()
