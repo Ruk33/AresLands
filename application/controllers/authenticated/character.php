@@ -21,7 +21,7 @@ class Authenticated_Character_Controller extends Authenticated_Base
 		
 		Route::get("authenticated/character/show/(:any)", array(
 			"uses" => "authenticated.character@show",
-			"as"   => "post_authenticated_character_show"
+			"as"   => "get_authenticated_character_show"
 		));
 	}
 	

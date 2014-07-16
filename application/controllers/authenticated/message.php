@@ -115,7 +115,7 @@ class Authenticated_Message_Controller extends Authenticated_Base
 		
 		$messages->delete();
 		
-		return Laravel\Redirect::to_route("get_authenticated_message_index");
+		return Laravel\Redirect::back();
 	}
 	
 	/**
@@ -139,8 +139,8 @@ class Authenticated_Message_Controller extends Authenticated_Base
 	
 	public function get_send()
 	{
-		$to = Input::get("to", "");
-		$subject = Input::get("subject", "");
+		$to = IoC::resolve('HTMLPurifier')->purify(Input::get("to", ""));
+		$subject = IoC::resolve('HTMLPurifier')->purify(Input::get("subject", ""));
 		
 		$this->layout->title = "Enviar mensaje";
 		$this->layout->content = View::make("authenticated.sendmessage", compact("to", "subject"));
@@ -154,7 +154,7 @@ class Authenticated_Message_Controller extends Authenticated_Base
 		$attributes = array_merge(
 			array(
 				"sender_id"   => $sender->id,
-				"receiver_id" => $receiver->id,
+				"receiver_id" => (int) $receiver->id,
 				"date"        => time(),
 				"unread"      => true
 			), 
@@ -162,10 +162,10 @@ class Authenticated_Message_Controller extends Authenticated_Base
 		);
 		
 		$message = $this->message->create_instance($attributes);
-		
+        
 		if ( ! $message->validate() )
 		{
-			Session::flash("errors", $message->errors->all());
+			Session::flash("errors", $message->errors()->all());
 			return Laravel\Redirect::to_route("get_authenticated_message_send")->with_input();
 		}
 		

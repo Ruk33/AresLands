@@ -135,7 +135,7 @@ class Battle
 	 * @param  Attackable $attackable 
 	 * @return mixed
 	 */
-	protected function get_secure_index(Attackable $attackable)
+	protected function get_secure_index(Unit $attackable)
 	{
 		$index = $attackable->id;
 

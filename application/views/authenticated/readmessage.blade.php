@@ -1,3 +1,4 @@
+<div class="row">
 <table class="table">
 	<thead>
 		<tr>
@@ -18,19 +19,25 @@
 			@endif
 		</td>
 	</thead>
-</table>
+</table>    
+</div>
 
-<div style="width: 730px;">
+<div class="span11">
 	@if ( ! $message->is_special )
-		<a href="{{ URL::to('authenticated/sendMessage/' . $message->sender->name) }}" class="ui-button button pull-left">
-			<i class="button-icon document"></i>
-			<span class="button-content">
-				Responder
-			</span>
-		</a>
+        {{ Form::open(URL::to_route("get_authenticated_message_send"), "get") }}
+            {{ Form::hidden("to", $message->sender->name) }}
+            {{ Form::hidden("subject", "RE: " . $message->subject) }}
+            
+            <span class="ui-button button pull-left">
+                <i class="button-icon document"></i>
+                <span class="button-content">
+                    {{ Form::submit("Responder", array("class" => "ui-button ui-input-button")) }}
+                </span>
+            </span>
+        {{ Form::close() }}
 	@endif
 	
-	{{ Form::open(URL::to('authenticated/deleteMessage')) }}
+	{{ Form::open(URL::to_route("post_authenticated_message_delete")) }}
 		{{ Form::token() }}
 		{{ Form::hidden('messages[]', $message->id) }}
 		<span class="ui-button button pull-right">

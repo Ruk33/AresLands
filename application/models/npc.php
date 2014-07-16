@@ -1,11 +1,10 @@
 <?php
 
-abstract class Npc extends Unit
+class Npc extends Unit
 {
 	public static $softDelete = false;
 	public static $timestamps = false;
 	public static $table = 'npcs';
-	public static $key = 'id';
 	
     public function get_image_path()
     {

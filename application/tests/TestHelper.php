@@ -19,10 +19,16 @@ abstract class TestHelper extends PHPUnit_Framework_TestCase
     
     protected $factory;
 	
+    public static function setUpBeforeClass()
+    {
+        parent::setUpBeforeClass();
+        self::migrate();
+    }
+    
 	/**
 	 * Habilitamos (iniciamos) las sessiones para su uso
 	 */
-	private function use_sessions()
+	private function useSessions()
 	{
 		Session::started() || Session::load();
 	}
@@ -40,19 +46,13 @@ abstract class TestHelper extends PHPUnit_Framework_TestCase
 	{
 		Filter::$filters = array();
 	}
-    
-    public static function setUpBeforeClass()
-	{
-        parent::setUpBeforeClass();
-		self::migrate();
-	}
 	
 	public function setUp()
 	{
 		parent::setUp();
 		
 		$this->disableFilters();
-		$this->use_sessions();
+		$this->useSessions();
         
         $this->factory = new FactoryMuff();
 	}
@@ -237,15 +237,16 @@ abstract class TestHelper extends PHPUnit_Framework_TestCase
 	public static function migrate()
 	{
 		// If there is not a declaration that migrations have been run'd
-		if( ! isset($GLOBALS['migrated_test_database']) )
+		if( ! isset($GLOBALS["testhelper_migrated"]) )
 		{
+            require path('sys').'cli/dependencies'.EXT;
+            
 			// Run migrations
-			require path('sys').'cli/dependencies'.EXT;
 			Command::run(array('migrate:install'));
 			Command::run(array('migrate'));
 
 			// Declare that migrations have been run'd
-			$GLOBALS['migrated_test_database'] = true;
+			$GLOBALS["testhelper_migrated"] = true;
 		}
 	}
 	

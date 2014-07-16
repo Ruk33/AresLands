@@ -11,7 +11,7 @@
 		<meta name="viewport" content="width=device-width">
 
 		<link rel="stylesheet" type="text/css" href="{{ Minifier::make(array('//css/normalize.min.css', '//css/bootstrap.min.css', '//css/main.css')) }}">
-        <!--<link href='http://fonts.googleapis.com/css?family=Roboto+Slab' rel='stylesheet' type='text/css'>-->
+        <link href='http://fonts.googleapis.com/css?family=Roboto+Slab' rel='stylesheet' type='text/css'>
 
 		@if ( Request::env() == 'local' )
 			<script src="{{ URL::base() }}/js/vendor/jquery-1.9.1.min.js"></script>
@@ -211,7 +211,7 @@
 												@if ( $npc->is_blocked_to($character) )
                                                     <img class="grayEffect" data-toggle="tooltip" data-toggle-placement="bottom" data-original-title="Mercader bloqueado, necesitas mas nivel" src="{{ URL::base() }}/img/icons/npcs/{{ $npc->id }}.png" alt="" width="72px" height="82px">
                                                 @else
-                                                    <a href="{{ URL::to('authenticated/npc/' . $npc->id . '/' . Str::slug($npc->name)) }}" data-toggle="tooltip" data-placement="bottom" data-original-title="<div style='color: #FFC200;'>Mercader {{ $npc->name }}</div>{{ $npc->tooltip_dialog }}">
+                                                    <a href="{{ $npc->get_link() }}" data-toggle="tooltip" data-placement="bottom" data-original-title="<div style='color: #FFC200;'>Mercader {{ $npc->name }}</div>{{ $npc->tooltip_dialog }}">
                                                         <img src="{{ URL::base() }}/img/icons/npcs/{{ $npc->id }}.png" alt="" width="72px" height="82px">
                                                     </a>
                                                 @endif
@@ -236,12 +236,12 @@
 				</div>
 				
 				<div class="row-fluid col-wrap">
-					<div class="span2 col menu-column" style="width: 176px;">
+					<div class="pull-left col menu-column" style="width: 176px;">
 						@if ( isset($character) )
 							<div class="mini-player-display">
 								<div class="icon-race-30 icon-race-30-{{ $character->race }}_{{ $character->gender }} pull-left"></div>
 								<div class="pull-left" style="margin-left: 5px;">
-									<a href="{{ URL::to('authenticated/character/' . $character->name) }}" style="font-size: 12px;">
+									<a href="{{ URL::to_route("get_authenticated_character_show", array($character->name)) }}" style="font-size: 12px;">
 										<b>{{ $character->name }}</b>
 									</a>
 									
@@ -301,7 +301,7 @@
 
 									@if ( $character->clan_id != 0 )
 										<li style="padding: 0; vertical-align: top;" data-toggle="tooltip" data-placement="top" data-original-title="Accede a la página de tu grupo">
-											<a href="{{ URL::to('authenticated/clan/' . $character->clan_id) }}"><img src="{{ URL::base() }}/img/shield-icon.png" alt="Grupo" width="16px" height="19px"></a>
+											<a href="{{ URL::to_route("get_authenticated_clan_show", array($character->clan_id)) }}"><img src="{{ URL::base() }}/img/shield-icon.png" alt="Grupo" width="16px" height="19px"></a>
 										</li>
 									@endif
 								</ul>
@@ -311,11 +311,11 @@
 							@if ( Auth::check() && isset($character) )
 								<li>
 									<i class="img-circle menu-icon menu-index"></i>
-									<a href="{{ URL::to('authenticated/index') }}">Tu personaje</a>
+									<a href="{{ URL::to_route("get_authenticated_index") }}">Tu personaje</a>
 								</li>
 								<li>
 									<i class="img-circle menu-icon menu-messages"></i>
-									<a href="{{ URL::to('authenticated/messages') }}">
+									<a href="{{ URL::to_route("get_authenticated_message_index") }}">
 										Mensajes
 										@if ( $character->get_unread_messages_count() > 0 )
 										<div class="pull-right" data-toggle="tooltip" data-placement="top" data-original-title="Mensaje(s) sin leer">
@@ -330,39 +330,39 @@
 								@if ( $character->clan_id == 0 )
 								<li>
 									<i class="img-circle menu-icon menu-ranking"></i>
-									<a href="{{ URL::to('authenticated/createclan') }}">Crear grupo</a>
+									<a href="{{ URL::to_route("get_authenticated_clan_create") }}">Crear grupo</a>
 								</li>
 								@endif
 								
 								@if ( $character->can_travel() === true )
 								<li>
 									<i class="img-circle menu-icon menu-travel"></i>
-									<a href="{{ URL::to('authenticated/travel') }}">Viajar</a>
+									<a href="{{ URL::to_route("get_authenticated_action_travel") }}">Viajar</a>
 								</li>
 								@endif
 								
-								@if ( $character->can_fight() )
+								@if ( $character->can_fight() === true )
 								<li>
 									<i class="img-circle menu-icon menu-battle"></i>
-									<a href="{{ URL::to('authenticated/battle') }}">Batallar</a>
+									<a href="{{ URL::to_route("get_authenticated_battle_index") }}">Batallar</a>
 								</li>
 								<li>
 									<i class="img-circle menu-icon menu-dungeons"></i>
-									<a href="{{ URL::to('authenticated/dungeon') }}">Calabozos</a>
+									<a href="{{ URL::to_route("get_authenticated_dungeon_index") }}">Calabozos</a>
 								</li>
 								@endif
 	
 								@if ( $character->can_explore() )
 								<li>
 									<i class="img-circle menu-icon menu-explore"></i>
-									<a href="{{ URL::to('authenticated/explore') }}">Explorar</a>
+									<a href="{{ URL::to_route("get_authenticated_action_explore") }}">Explorar</a>
 								</li>
 								@endif
 								
 								@if ( $character->characteristics )
 								<li>
 									<i class="img-circle menu-icon menu-talents"></i>
-									<a href="{{ URL::to('authenticated/talents') }}">Talentos</a>
+									<a href="{{ URL::to_route("get_authenticated_talent_index") }}">Talentos</a>
 
 									@if ( $character->talent_points > 0 )
 										<div class="pull-right" data-toggle="tooltip" data-placement="top" data-original-title="Puntos de talentos disponibles">
@@ -376,19 +376,19 @@
 								
 								<li>
 									<i class="img-circle menu-icon menu-trade"></i>
-									<a href="{{ URL::to('authenticated/trades') }}">Comercios</a>
+									<a href="{{ URL::to_route("get_authenticated_trade_index") }}">Comercios</a>
 								</li>
 								<li>
 									<i class="img-circle menu-icon menu-ranking"></i>
-									<a href="{{ URL::to('authenticated/ranking') }}">Ranking</a>
+									<a href="{{ URL::to_route("get_authenticated_ranking_index") }}">Ranking</a>
 								</li>
 								<li>
 									<i class="img-circle menu-icon menu-orbs"></i>
-									<a href="{{ URL::to('authenticated/orbs') }}">Orbes</a>
+									<a href="{{ URL::to_route("get_authenticated_orb_index") }}">Orbes</a>
 								</li>
 								<li>
 									<i class="img-circle menu-icon menu-tournaments"></i>
-									<a href="{{ URL::to('authenticated/tournaments') }}">Torneos</a>
+									<a href="{{ URL::to_route("get_authenticated_tournament_index") }}">Torneos</a>
 
 									@if ( $tournament )
 										@if ( Tournament::is_active() )
@@ -404,7 +404,7 @@
 								</li>
 								<li>
 									<i class="img-circle menu-icon menu-secret-shop"></i>
-									<a href="{{ URL::to('authenticated/secretShop') }}">Mercado secreto</a>
+									<a href="{{ URL::to_route("get_authenticated_secret_shop_index") }}">Mercado secreto</a>
 								</li>
 								<li>
 									<i class="img-circle menu-icon menu-tutorial"></i>
@@ -412,11 +412,11 @@
 								</li>
 								<li>
 									<i class="img-circle menu-icon menu-forum"></i>
-									<a href="http://ironfist.com.ar/forums" target="_blank">Foro</a>
+									<a href="//ironfist.com.ar/forums" target="_blank">Foro</a>
 								</li>
 								<li>
 									<i class="img-circle menu-icon menu-logout"></i>
-									<a href="{{ URL::to('authenticated/logout') }}">Desconectarse</a>
+									<a href="{{ URL::to_route("get_authenticated_logout") }}">Desconectarse</a>
 								</li>
 							@else
 								<li><a href="{{ URL::to('/') }}">Inicio</a></li>
@@ -425,14 +425,14 @@
 						</ul>
 					</div>
 
-					<div class="span10 content col rock-background" style="width: 764px; margin-left: 0; border-left: 1px solid black;">
+					<div class="content col rock-background pull-right" style="width: 763px; border-left: 1px solid black;">
 						<div id="content">
 							{{ $content }}
 						</div> <!-- /content -->
 					</div>
 				</div>
                     
-                <div style="background-image: url({{ URL::base() }}/img/footer-content.png); height: 100px; margin-top: -5px; background-position: 1px 0; background-repeat: no-repeat;"></div>
+                <div style="background-image: url({{ URL::base() }}/img/footer-content.png); height: 100px; margin-top: -20px; background-position: 1px 0; background-repeat: no-repeat; position: relative; z-index: 2; width: 101%;"></div>
 				
 				<div id="footer" style="margin-top: 50px; padding-left: 50px;">
 					<div class="pull-left">

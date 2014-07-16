@@ -245,6 +245,7 @@ IoC::instance('TournamentRegisteredClan', new TournamentRegisteredClan());
 IoC::instance('Quest', new Quest());
 IoC::instance('Message', new Message());
 IoC::instance('Trade', new Trade());
+IoC::instance('Merchant', new Merchant());
 IoC::instance('NpcMerchandise', new NpcMerchandise());
 IoC::instance('NpcRandomMerchandise', new NpcRandomMerchandise());
 IoC::instance('Monster', new Monster());

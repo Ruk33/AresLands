@@ -186,7 +186,8 @@ class CharacterQuest extends Base_Model
 
 		if ( $this->is_completed() )
 		{
-			$this->progress = 'reward';
+			$this->progress = 'finished';
+            $this->quest->give_reward($this->character);
 		}
 
 		$this->save();

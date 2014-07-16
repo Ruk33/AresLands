@@ -1,42 +1,54 @@
+@if ( Session::has("error") )
+<div class="clearfix row">
+    <div class="alert alert-error no-border-radius span12">
+        <h4>¡Alto viajero!</h4>
+        <p>{{ Session::get("error") }}</p>
+    </div>
+</div>
+@endif
+
 <h2>Viajar</h2>
 
-<div class="span11">
-	@if ( $error )
-		<div class="alert alert-error">
-			<strong>¡Alto viajero!</strong>
-			<p>{{ $error }}</p>
-		</div>
-	@endif
+<p>
+    Caminas, caminas y sigues caminando... notas que el suelo comienza a 
+    cambiar, observas detenidamente los alrededores y te das cuenta de que hay 
+    varios caminos para seguir. Todavía consigues ver borrosamente a 
+    {{ $character->zone->name }} a tus espaldas, pero estos caminos ya te 
+    alejarán mucho, ¿decides continuar?.
+</p>
 
-	<p>
-		Te encuentras con varios caminos. Sientes gran intriga, ¿cuál elegir?.
-	</p>
+<p>
+    <b>{{ $character->name }} piensa:</b> 
+    si decido continuar, tendré que gastaré {{ Config::get('game.travel_cost') }} 
+    <i class="coin coin-copper" style="display: inline-block;"></i> monedas en
+    provisiones.
+</p>
 
-	<p>
-		<b>{{ $character->name }}:</b> Si viajo, compraré provisiones. Estimo que gastaré {{ Config::get('game.travel_cost') }} <i class="coin coin-copper" style="display: inline-block;"></i>
-	</p>
+<div class="row">
+    <ul class="thumbnails">
+        @foreach ( $zones as $zone )
+        <li class="thumbnail">
+            <div class="travel-zone-box">                    
+                {{ Form::open(URL::to_route("post_authenticated_action_travel")) }}
+                    <img class="image" src="{{ URL::base() }}/img/zones/32/{{ $zone->id }}.png" alt="">
 
-	<ul class="inline text-center">
-		@foreach ( $zones as $zone )
-		<li class="clan-member-link text-left" style="width: 45%; vertical-align: top;">
-			<a href="{{ URL::to('authenticated/travel/' . $zone->id) }}" onclick="return confirm('¿Seguro que quieres viajar a {{ $zone->name }}?');">
-			<ul class="inline">
-				<li style="vertical-align: top; width: 32px;">
-					<img src="{{ URL::base() }}/img/zones/32/{{ $zone->id }}.png" alt="">
-				</li>
-				<li style="width: 250px;">
-					<strong>{{ $zone->name }}</strong>
-					<p style="font-size: 12px;">{{ $zone->description }}</p>
-					<p><strong>Tiempo explorado:</strong><br>
-					@if ( isset($exploringTime[$zone->id]) && $exploringTime[$zone->id] > 0 )
-					{{ date('z \d\í\a\(\s\) H:i:s', $exploringTime[$zone->id]) }}
-					@else
-					00 días 00:00:00
-					@endif</p>
-				</li>
-			</ul>
-			</a>
-		</li>
-		@endforeach
-	</ul>
+                    {{ Form::token() }}
+                    {{ Form::hidden("id", $zone->id) }}
+                    {{ Form::submit($zone->name, array("class" => "ui-button input-ui-button")) }}
+                {{ Form::close() }}
+
+                <p class="description">{{ $zone->description }}</p>
+
+                <p>
+                    <span class="explored-time">Tiempo explorado</span><br>
+                    @if ( isset($exploringTime[$zone->id]) && $exploringTime[$zone->id] > 0 )
+                        {{ date('z \d\í\a\(\s\) H:i:s', $exploringTime[$zone->id]) }}
+                    @else
+                        Sin explorar
+                    @endif
+                </p>
+            </div>
+        </li>
+        @endforeach
+    </ul>
 </div>

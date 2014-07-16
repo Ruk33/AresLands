@@ -1,48 +1,50 @@
+@if ( Session::has("errors") )
+<div class="clearfix row">
+    <div class="alert alert-error no-border-radius span12">
+        <h4>Oops!</h4>
+        <ul>
+        @foreach (Session::get("errors") as $error)
+            <li>{{ $error }}</li>
+        @endforeach
+        </ul>
+    </div>
+</div>
+@endif
+
 <h2>Enviar mensaje</h2>
 
-<div class="span11">
-	@if ( Session::has('errorMessages') )
-		<div class="alert alert-error">
-			<strong>Oops!</strong>
-
-			<ul>
-			@foreach (Session::get('errorMessages') as $errorMessage)
-				<li>{{ $errorMessage }}</li>
-			@endforeach
-			</ul>
-		</div>
-	@endif
-
-	{{ Form::open() }}
+<div class="span12">
+	{{ Form::open(URL::to_route("post_authenticated_message_send")) }}
 		{{ Form::token() }}
 		<div>
-			<i class="icon-user"></i>
-			{{ Form::label('to', 'Para:', array('style' => 'display: inline;')) }}
+			<i class="icon-user pull-left"></i>
+			{{ Form::label('to', 'Para:') }}
 		</div>
 
-		@if ( $to )
-			{{ Form::text('to', $to, array('class' => 'input', 'style' => 'width: 100%;')) }}
-		@else
-			{{ Form::text('to', Input::old('to'), array('class' => 'input', 'style' => 'width: 100%;')) }}
-		@endif
+		{{ Form::text('to', Input::old('to', $to), array("class" => "span11")) }}
 
 		<div style="margin-top: 15px;">
-			<i class="icon-comment"></i>
-			{{ Form::label('subject', 'Asunto:', array('style' => 'display: inline;')) }}
+			<i class="icon-comment pull-left"></i>
+			{{ Form::label('subject', 'Asunto:') }}
 		</div>
 
-		{{ Form::text('subject', Input::old('subject'), array('class' => 'input', 'style' => 'width: 100%;')) }}
+		{{ Form::text('subject', Input::old('subject', $subject), array("class" => "span11")) }}
 
 
 		<div style="margin-top: 15px;">
-			<i class="icon-pencil"></i>
-			{{ Form::label('content', 'Mensaje', array('style' => 'display: inline;')) }}
+			<i class="icon-pencil pull-left"></i>
+			{{ Form::label('content', 'Mensaje') }}
 		</div>
 
-		{{ Form::textarea('content', Input::old('content'), array('class' => 'input', 'style' => 'width: 100%;')) }}
+		{{ Form::textarea('content', Input::old('content'), array("class" => "span11")) }}
 
 		<div class="text-center">
-		{{ Form::submit('Enviar', array('class' => 'normal-button', 'style' => 'width: 222px;')) }}
+		<span class="ui-button button">
+			<i class="button-icon arrow"></i>
+			<span class="button-content">
+				{{ Form::submit('Enviar mensaje', array('class' => 'ui-button ui-input-button')) }}
+			</span>
+		</span>
 		</div>
 	{{ Form::close() }}
 </div>

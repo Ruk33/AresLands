@@ -16,6 +16,9 @@ class Authenticated_Message_Controller_Test extends Tests\TestHelper
 		
 		$this->message = m::mock("Message");
 		IoC::instance("Message", $this->message);
+        
+        $this->purify = m::mock("HTMLPurifier");
+        IoC::instance("HTMLPurifier", $this->purify);
 	}
 	
 	public function tearDown()
@@ -24,6 +27,7 @@ class Authenticated_Message_Controller_Test extends Tests\TestHelper
 		
 		IoC::unregister("Character");
 		IoC::unregister("Message");
+        IoC::unregister("HTMLPurifier");
 	}
 	
 	public function testIndex()
@@ -96,7 +100,7 @@ class Authenticated_Message_Controller_Test extends Tests\TestHelper
 		$this->message->shouldReceive("delete")->once();
 		
 		$response = $this->post("authenticated/message/delete");
-		$this->assertRedirect(URL::to_route("get_authenticated_message_index"), $response);
+		$this->assertRedirect(URL::base()."/", $response);
 	}
 	
 	public function testBorrarTodos()
@@ -126,6 +130,8 @@ class Authenticated_Message_Controller_Test extends Tests\TestHelper
 		$this->assertHasFilter("get", "authenticated/message/send", "before", "auth");
 		$this->assertHasFilter("get", "authenticated/message/send", "before", "hasNoCharacter");
 		
+        $this->purify->shouldReceive("purify")->atLeast(1);
+        
 		$response = $this->get("authenticated/message/send");
 		
 		$this->assertResponseOk($response);
@@ -146,7 +152,7 @@ class Authenticated_Message_Controller_Test extends Tests\TestHelper
 		
 		$this->message->shouldReceive("create_instance")->twice()->andReturnSelf();
 		$this->message->shouldReceive("validate")->once()->andReturn(false);
-		$this->message->shouldReceive("errors->results->all")->once()->andReturn(array());
+		$this->message->shouldReceive("errors->all")->once()->andReturn(array());
 		
 		$response = $this->post("authenticated/message/send");
 		

@@ -59,7 +59,7 @@ class Authenticated_Tournament_Controller_Test extends Tests\TestHelper
 		$this->tournament->shouldReceive("can_register_clan")->with($this->character)->once()->andReturn(false);
 		$this->tournament->shouldReceive("can_unregister_clan")->with($this->character)->once()->andReturn(false);
 		$this->tournament->shouldReceive("can_reclaim_mvp_reward")->with($this->character)->once()->andReturn(false);
-		$this->tournament->shouldReceive("can_reclaim_clan_lider_reward")->with($this->character)->once()->andReturn(false);
+		$this->tournament->shouldReceive("can_reclaim_leader_reward")->with($this->character)->once()->andReturn(false);
 		
 		$clanA = m::mock("TournamentRegisteredClan");
 		$clanB = m::mock("TournamentRegisteredClan");
@@ -88,9 +88,9 @@ class Authenticated_Tournament_Controller_Test extends Tests\TestHelper
 	
 	public function testRegistrarGrupo()
 	{
-		$this->assertHasFilter("post", "authenticated/tournament/registerClan", "before", "auth");
-		$this->assertHasFilter("post", "authenticated/tournament/registerClan", "before", "hasNoCharacter");
-		$this->assertHasFilter("post", "authenticated/tournament/registerClan", "before", "hasClan");
+		$this->assertHasFilter("post", "authenticated/tournament/register/clan", "before", "auth");
+		$this->assertHasFilter("post", "authenticated/tournament/register/clan", "before", "hasNoCharacter");
+		$this->assertHasFilter("post", "authenticated/tournament/register/clan", "before", "hasClan");
 		
 		Input::replace(array("id" => 1));
 		
@@ -101,7 +101,7 @@ class Authenticated_Tournament_Controller_Test extends Tests\TestHelper
 		
 		$this->tournament->shouldReceive("can_register_clan")->once()->with($this->character)->andReturn(false);
 		
-		$response = $this->post("authenticated/tournament/registerClan");
+		$response = $this->post("authenticated/tournament/register/clan");
 		
 		$this->assertRedirect(URL::to_route("get_authenticated_tournament_show", array(1)), $response);
 		$this->assertSessionHas("error", "No puedes registrar tu grupo en este momento");
@@ -113,7 +113,7 @@ class Authenticated_Tournament_Controller_Test extends Tests\TestHelper
 		$this->character->shouldReceive("clan->results")->once()->andReturn($clan);
 		$this->tournament->shouldReceive("register_clan")->once()->with($clan);
 		
-		$response = $this->post("authenticated/tournament/registerClan");
+		$response = $this->post("authenticated/tournament/register/clan");
 		
 		$this->assertRedirect(URL::to_route("get_authenticated_tournament_show", array(1)), $response);
 		$this->assertSessionHas("success", "Haz registrado tu grupo exitosamente");
@@ -121,9 +121,9 @@ class Authenticated_Tournament_Controller_Test extends Tests\TestHelper
 	
 	public function testSacarGrupo()
 	{
-		$this->assertHasFilter("post", "authenticated/tournament/unregisterClan", "before", "auth");
-		$this->assertHasFilter("post", "authenticated/tournament/unregisterClan", "before", "hasNoCharacter");
-		$this->assertHasFilter("post", "authenticated/tournament/unregisterClan", "before", "hasClan");
+		$this->assertHasFilter("post", "authenticated/tournament/unregister/clan", "before", "auth");
+		$this->assertHasFilter("post", "authenticated/tournament/unregister/clan", "before", "hasNoCharacter");
+		$this->assertHasFilter("post", "authenticated/tournament/unregister/clan", "before", "hasClan");
 		
 		Input::replace(array("id" => 1));
 		
@@ -134,7 +134,7 @@ class Authenticated_Tournament_Controller_Test extends Tests\TestHelper
 		
 		$this->tournament->shouldReceive("can_unregister_clan")->once()->with($this->character)->andReturn(false);
 		
-		$response = $this->post("authenticated/tournament/unregisterClan");
+		$response = $this->post("authenticated/tournament/unregister/clan");
 		
 		$this->assertRedirect(URL::to_route("get_authenticated_tournament_show", array(1)), $response);
 		$this->assertSessionHas("error", "No puedes sacar a tu grupo en este momento");
@@ -146,7 +146,7 @@ class Authenticated_Tournament_Controller_Test extends Tests\TestHelper
 		$this->character->shouldReceive("clan->results")->once()->andReturn($clan);
 		$this->tournament->shouldReceive("unregister_clan")->once()->with($clan);
 		
-		$response = $this->post("authenticated/tournament/unregisterClan");
+		$response = $this->post("authenticated/tournament/unregister/clan");
 		
 		$this->assertRedirect(URL::to_route("get_authenticated_tournament_show", array(1)), $response);
 		$this->assertSessionHas("success", "Haz sacado a tu grupo exitosamente");

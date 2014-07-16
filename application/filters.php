@@ -19,7 +19,7 @@ View::composer("layouts.default", function($view)
 		$character->reward_quests()->get()
 	 );
 
-	$npcs = Merchant::get_from_zone($character->zone, $character)->get();
+	$npcs = IoC::resolve("Merchant")->get_from_zone($character->zone, $character)->get();
 
 	$tournament = null;
 
@@ -57,15 +57,6 @@ Route::filter('before', function() {
 	$time = time();
 	$isAuth = Auth::check();
 	$requestUri = Request::uri();
-
-	$grandOpeningDate = new DateTime("24 hours 28 February", new DateTimeZone("America/Argentina/Buenos_Aires"));
-	if ( $time < $grandOpeningDate->getTimestamp() )
-	{
-		if ( ! $isAuth || Auth::user()->name != 'Ruke' )
-		{
-			return Response::view('chronometer.index', array('grandOpeningDate' => $grandOpeningDate));
-		}
-	}
 	
 	// Evitamos que estas acciones se ejecutan
 	// si solamente necesitamos algo del chat
@@ -145,7 +136,9 @@ Route::filter('before', function() {
 
 Route::filter('csrf', function()
 {
-	if (Request::forged()) return Response::error('500');
+	if (Request::forged()) {
+        return Response::error('500');
+    }
 });
 
 /*
@@ -189,10 +182,10 @@ Route::filter('admin', function()
 /*
  *	Logueado
  */
-Route::filter('logged', function($redirectTo) {
+Route::filter('logged', function() {
 	if ( Auth::check() ) 
 	{
-		return Redirect::to($redirectTo);
+		return Redirect::to_route("get_authenticated_index");
 	}
 });
 

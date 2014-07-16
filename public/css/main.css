@@ -54,6 +54,175 @@ textarea {
    Author's custom styles
    ========================================================================== */
 
+label {
+	font-size: 10px;
+	text-transform: uppercase;
+	font-family: "Verdana";
+	color: rgb(101, 101, 101);
+}
+
+.ranking-box {
+	background-image: url("/img/ranking-background.png");
+	background-repeat: no-repeat;
+	margin-top: -15px;
+	margin-left: -15px;
+	padding-left: 15px;
+	padding-top: 15px;
+}
+
+.monster-box .ui-input-button {
+	margin-top: 6px;
+	margin-left: 7px;
+	font-size: 14px;
+}
+
+.monster-box .level {
+	font-size: 10px;
+	text-transform: uppercase;
+	font-family: "Verdana";
+	float: right;
+	margin-right: 5px;
+	color: rgb(84, 84, 84);
+}
+
+.monster-box .life-text {
+	color: white;
+	font-weight: bold;
+	font-family: arial;
+	font-size: 12px;
+	text-align: center;
+	text-shadow: 0 0 2px black;
+}
+
+.monster-box .life-bar {
+	height: 20px !important;
+	border-radius: 2px;
+	background-color: rgb(115, 204, 31);
+	background-image: none;
+	border: 1px solid black;
+}
+
+.monster-box {
+	width: 340px;
+	border: 1px solid rgb(36, 36, 36) !important;
+	border-radius: 2px;
+	background-color: rgb(17, 17, 17);
+	box-shadow: 0 0 5px black;
+}
+
+.battle-box {
+	background-image: url("/img/battle-background.png");
+	background-repeat: no-repeat;
+	margin-top: -15px;
+	margin-left: -15px;
+	padding-left: 15px;
+	padding-top: 15px;
+}
+
+.battle-search-box {
+	background-image: url("/img/battle-search-box.png");
+	background-repeat: no-repeat;
+	width: 760px;
+	height: 285px;
+	padding-top: 65px;
+	color: white;
+}
+
+.battle-search-box h2 {
+	text-align: center;
+	font-size: 12px;
+	color: white;
+	text-shadow: 0 0 5px black, 0 0 5px black;
+	text-transform: uppercase;
+	background-position: center -20px;
+}
+
+.battle-search-box label {
+	color: white;
+	text-shadow: 0 0 2px black, 0 0 2px black;
+}
+
+.battle-search-box ul {
+	margin-top: -10px;
+}
+
+input[type="number"] {
+	height: 20px;
+}
+
+select {
+	height: 28px;
+}
+
+select, input[type="number"], input[type="text"], textarea {
+	background-color: rgb(48, 33, 28);
+	border: 1px solid black;
+	border-radius: 0;
+	color: rgb(155, 132, 113);
+}
+
+select:focus, input:focus, textarea:focus {
+	border: 1px solid rgb(255, 92, 0) !important;
+	box-shadow: 0 0 5px red !important;
+}
+
+.travel-zone-box .explored-time {
+	font-size: 10px;
+	text-transform: uppercase;
+	color: rgb(56, 59, 65);
+	font-family: "Verdana";
+}
+
+.travel-zone-box .image {
+	margin-right: 10px;
+}
+
+.travel-zone-box .ui-button {
+	color: rgb(255, 183, 50);
+}
+
+.travel-zone-box .description {
+	color: white;
+	margin-top: 10px;
+	margin-bottom: 10px;
+}
+
+.travel-zone-box {
+	background-color: rgb(15, 15, 15);
+	border: 1px solid rgb(37, 34, 34);
+	padding: 15px;
+	width: 310px;
+}
+
+.alert-danger, .alert-error {
+	background-color: rgb(242, 113, 92);
+	border-color: #5D1818;
+	text-shadow: none;
+}
+
+.no-border-radius {
+	border-radius: 0 !important;
+}
+
+.button-golden-mark {
+	background-image: url("/img/button-golden-mark.png");
+	background-repeat: no-repeat;
+	width: 220px;
+	height: 75px;
+	padding-left: 80px;
+	line-height: 70px;
+}
+
+.button-golden-mark .ui-input-button {
+	color: rgb(199, 82, 37);
+	font-size: 12px;
+	font-weight: bold;
+}
+
+.button-golden-mark .ui-input-button:hover {
+	color: rgb(235, 65, 0);
+}
+
 .chat { 
     position: fixed; 
     border: 2px solid #E99337; 
@@ -357,7 +526,7 @@ form {
 }
 
 .box:hover{
-	box-shadow: white 0 0 2px;
+	box-shadow: orange 0 0 2px;
 }
 
 .box-box-16-blue {
@@ -1221,6 +1390,7 @@ h2 {
 	background-repeat: no-repeat;
 	margin: 0;
 	background-position: 0 -20px;
+	text-shadow: 0 0 5px black;
 }
 
 h4 {
@@ -1244,7 +1414,7 @@ h4 {
 	background-color: rgb(20, 20, 20);
 }
 
-#content {
+div#content {
 	margin-left: 15px;
 	margin-top: 15px;
 	position: relative;
@@ -1453,11 +1623,14 @@ h4 {
 }
 
 .table td { 
-     border-top: 1px dashed rgb(39, 39, 39);
+	font-size: 13px;
+	font-family: "Verdana";
+    border-top: 1px solid #090909;
+	padding: 7px !important;
  }
 
 .table tbody tr:hover td, .table tbody tr:hover th {
-    background-color: rgb(25, 25, 25);
+    background-color: #0a0a0a;
 }
 
 #push, #footer {

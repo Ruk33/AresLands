@@ -78,6 +78,57 @@ class Query {
 
 		return (count($results) > 0) ? head($results) : null;
 	}
+    
+    /**
+	 * First or empty (avoiding null) so the instance can be used whether 
+     * it exists or not in the table
+	 * 
+	 * @return mixed
+	 */
+	public function first_or_empty()
+	{
+        $model = $this->first();
+        
+        if (is_null($model)) {
+            $model = $this->model->create_instance();
+        }
+        
+        return $model;
+	}
+	
+	/**
+	 * 
+     * @param  array $columns
+	 * @return mixed
+	 */
+	public function first_or_die(array $columns = array('*'))
+	{
+		if ( ! is_null($model = $this->first($columns)) )
+		{
+			return $model;
+		}
+		
+		$response = \Laravel\Response::error('404');
+		$response->render();
+		$response->send();
+		$response->foundation->finish();
+
+		exit(1);
+	}
+	
+	/**
+	 * 
+	 * @param  integer $id
+	 * @param  array   $columns
+	 * @return mixed
+	 */
+	public function find_or_die($id, array $columns = array('*'))
+	{        
+        $model = $this->model;
+        $this->table->where($model::$key, '=', $id);
+        
+        return $this->first_or_die($columns);
+	}
 
 	/**
 	 * Get all of the model results for the query.

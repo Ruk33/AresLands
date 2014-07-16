@@ -67,10 +67,10 @@ class Quest extends Base_Model
             }
             
             $view .= "<li style='vertical-align: top;'>"
-                    . "<div class='quest-reward-item' data-toggle='tooltip' data-original-title='<h6>{$questNpc->npc->name}</h6><p>Ubicacion: {$questNpc->npc->zone->name}<br>Accion: {$action}</p>'>"
-                    . "<img src='{$questNpc->npc->get_image_path()}' width='30px' height='30px' />"
-                    . "</div>"
-                    . "</li>";
+                  . "<div class='quest-reward-item' data-toggle='tooltip' data-original-title='<b>{$questNpc->npc->name}</b><p class=\"text-left\">Ubicacion: {$questNpc->npc->zone->name}<br>Accion: {$action}</p>'>"
+                  . "<img src='{$questNpc->npc->get_image_path()}' width='30px' height='30px' />"
+                  . "</div>"
+                  . "</li>";
         }
         
         return "<ul class='inline'>{$view}</ul>";
@@ -127,14 +127,13 @@ class Quest extends Base_Model
 		return '<ul class="inline">' . $formatedString . '</ul>';
 	}
 
-	/*
-	 *	Damos la recompensa al personaje
-	 *	que está logueado
-	 */
-	public function give_reward()
+	/**
+     * Damos recompensa de mision al personaje
+     * 
+     * @param Character $character
+     */
+	public function give_reward(Character $character)
 	{
-		$character = Character::get_character_of_logged_user(array('id', 'xp', 'points_to_change', 'level', 'clan_id'));
-
 		ActivityBar::add($character, 3);
 
 		/*

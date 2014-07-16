@@ -19,7 +19,10 @@ class Authenticated_Npc_Controller extends Authenticated_Base
 		));
 	}
 	
-	public function __construct(Npc $npc, NpcMerchandise $npcMerchandise, NpcRandomMerchandise $npcRandomMerchandise, Character $character)
+	public function __construct(Merchant $npc, 
+                                NpcMerchandise $npcMerchandise, 
+                                NpcRandomMerchandise $npcRandomMerchandise, 
+                                Character $character)
 	{
 		$this->npc = $npc;
 		$this->npcMerchandise = $npcMerchandise;

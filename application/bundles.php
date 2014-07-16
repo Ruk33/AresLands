@@ -44,6 +44,8 @@ return array(
 			)
 		),
 		'handles' => 'min'
-	)
+	),
+    
+    'htmlpurifier' => array('auto' => true)
 
 );

@@ -16,7 +16,7 @@
         <tbody>
         @foreach ( $tournaments as $tournament )
             <tr>
-                <td><a href="{{ URL::to('authenticated/tournaments/' . $tournament->id) }}">{{ $tournament->name }}</a></td>
+                <td><a href="{{ URL::to_route("get_authenticated_tournament_show", array($tournament->id)) }}">{{ $tournament->name }}</a></td>
                 <td>
                     @if ( $winner = $tournament->get_clan_winner() )
                         {{ $winner->get_link() }}

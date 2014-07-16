@@ -13,20 +13,21 @@ class ActivityBar extends Base_Model
 
 	public function character()
 	{
-		$this->belongs_to("Character", "character_id");
+		return $this->belongs_to("Character", "character_id");
 	}
 
 	/**
 	 * @param Character $character
+     * @deprecated
 	 */ 
 	public static function get_bar_of_character(Character $character)
 	{
 		return ActivityBar::where_character_id($character->id)->first();
 	}
 
-	public function is_full()
-	{
-		return $this->filled_amount >= Config::get('game.activity_bar_max'); 
+    public function is_full()
+    {
+        return $this->filled_amount >= Config::get('game.activity_bar_max'); 
 	}
 
 	public function reset()
@@ -34,6 +35,24 @@ class ActivityBar extends Base_Model
 		$this->filled_amount = 0;
 		$this->save();
 	}
+    
+    public function give_full_reward()
+    {
+        $this->character->give_full_activity_bar_reward();
+        Event::fire('fullActivityBar', array($this->character));
+    }
+    
+//    public function add($value)
+//    {
+//        $this->filled_amount += $value;
+//        
+//        if ($this->is_full()) {
+//            $this->give_full_reward();
+//            $this->reset();
+//        }
+//        
+//        $this->save();
+//    }
 
 	public static function add(Character $character, $amount)
 	{

@@ -5,16 +5,15 @@ class Message extends Base_Model
 	public static $softDelete = false;
 	public static $timestamps = false;
 	public static $table = 'messages';
-	public static $key = 'id';
 
 	protected $rules = array(
-		//'receiver_id' => 'exists:characters,id',
+		'receiver_id' => 'exists:characters,id',
 		'subject' => 'required|between:3,100',
 		'content' => 'required'
 	);
 
 	protected $messages = array(
-		//'receiver_id_exists' => 'El destinatario no existe',
+		'receiver_id_exists' => 'El destinatario no existe',
 
 		'subject_required' => 'El asunto del mensaje es requerido',
 		'subject_between' => 'El asunto del mensaje debe tener entre 3 y 100 carácteres',
@@ -28,7 +27,7 @@ class Message extends Base_Model
 	 */
 	public function get_link()
 	{
-		return URL::to('authenticated/readMessage/' . $this->id);
+		return URL::to_route("get_authenticated_message_read", array($this->id));
 	}
 
 	public function sender()

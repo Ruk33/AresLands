@@ -4,5 +4,9 @@
 		"phpunit/phpunit": "3.7.*",
 		"mockery/mockery": "0.9.1",
 		"zizaco/factory-muff": "dev-master"
-	}
+	},
+	
+	"require": {
+        "nesbot/Carbon": "*"
+    }
 }

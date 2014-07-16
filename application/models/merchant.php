@@ -2,9 +2,11 @@
 
 class Merchant extends Npc
 {
-	public function try_buy(Character $character, Merchandise $merchandise, $amount = 1)
+	public function try_buy(Character $character, NpcMerchandise $merchandise, $amount = 1)
 	{
-		if ( $amount <= 0 )
+        $item = $merchandise->item;
+        
+		if ( $amount <= 0 && $item->type != "mercenary" )
 		{
 			return "¿Comprar una cantidad igual o menor a cero?";
 		}
@@ -13,6 +15,9 @@ class Merchant extends Npc
 		{
 			return "¡No hagas trampa!, el mercader esta bloqueado";
 		}
+        
+        // Cuando se compra un mercenario, la cantidad no se especifica
+        $amount = max(array($amount, 1));
 		
 		$coins = $character->get_coins();
 		$finalPrice = $merchandise->price_copper * $amount;
@@ -21,26 +26,23 @@ class Merchant extends Npc
 		{
 			return "No tienes suficientes monedas";
 		}
+        
+        if ($item->class == "consumible") {
+            if (! $character->can_add_to_bag($item, $amount)) {
+                return "Tienes la mochila muy llena, tu limite actual es " . 
+                       $character->get_bag_limit();
+            }
+        }
 		
-		$item = $merchandise->item;
-		
-		if ( $item->type == "mercenary" )
-		{
-			return $character->give_mercenary($item);
-		}
-		
-		if ( $item->class == "consumible" )
-		{
-			if ( ! $character->can_add_to_bag($item, $amount) )
-			{
-				return "Tienes la mochila muy llena, tu limite es " . $character->get_bag_limit();
-			}
-		}
-		
-		if ( ! $character->add_item($item, $amount) )
-		{
-			return "No tienes espacio en el inventario";
-		}
+        if ($item->class == "mercenary") {
+            if (is_string($error = $character->give_mercenary($item))) {
+                return $error;
+            }
+        } else {
+            if (! $character->add_item($item, $amount)) {
+                return "No tienes espacio en el inventario";
+            }
+        }
 		
 		$coins->count -= $finalPrice;
 		$coins->save();
@@ -135,12 +137,15 @@ class Merchant extends Npc
      */
     public function quests()
 	{
-		return $this->has_many_and_belongs_to('Quest', 'npc_quests');
+		return $this->has_many_and_belongs_to('Quest', 'npc_quests', 'npc_id');
 	}
     
     public function get_link()
     {
-        return URL::to('authenticated/npc/' . $this->id . '/' . Str::slug($this->name));
+        return URL::to_route("get_authenticated_npc_index", array(
+            $this->id, 
+            Str::slug($this->name)
+        ));
     }
     
     public function is_blocked_to(Character $character)

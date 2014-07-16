@@ -20,57 +20,6 @@ abstract class Base_Model extends Eloquent
 	{
 		return new static($attributes);
 	}
-	
-	/**
-	 * Primero o vacio (se evita el null) asi se puede usar la instancia
-	 * exista o no el registro
-	 * 
-	 * @return Eloquent
-	 */
-	public function first_or_empty()
-	{
-		return ( is_null($model = $this->first) ) ? new static : $model ;
-	}
-	
-	/**
-	 * 
-	 * @return Eloquent|void
-	 */
-	public function first_or_die()
-	{
-		if ( ! is_null($model = $this->first()) )
-		{
-			return $model;
-		}
-		
-		$response = Response::error('404');
-		$response->render();
-		$response->send();
-		$response->foundation->finish();
-
-		exit(1);
-	}
-	
-	/**
-	 * 
-	 * @param integer $id
-	 * @param Array $select
-	 * @return Eloquent|void
-	 */
-	public function find_or_die($id, Array $select = array('*'))
-	{
-		if ( ! is_null($model = $this->find($id, $select)) )
-		{
-			return $model;
-		}
-		
-		$response = Response::error('404');
-		$response->render();
-		$response->send();
-		$response->foundation->finish();
-
-		exit(1);
-	}
     
     protected function inject_query($query)
     {

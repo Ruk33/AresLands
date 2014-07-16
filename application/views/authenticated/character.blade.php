@@ -280,7 +280,7 @@
 			}
 		?>
 		
-		@if ( $characterToSee->can_be_attacked($character) )
+		@if ( $character->can_attack($characterToSee) === true )
 			<h2 style="background-image: none;">¿Te atreves a batallar?</h2>
 			@if ( $character->is_in_clan_of($characterToSee) )
 				    <p class="text-warning">

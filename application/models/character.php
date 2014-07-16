@@ -32,8 +32,8 @@ class Character extends Unit
         "stat_magic_skill_extra" => "integer|4",
         "stat_magic_resistance_extra" => "integer|4",
         "language" => "es",
-        "xp" => "integer|11",
-        "xp_next_level" => "integer|11",
+        "xp" => "integer|5",
+        "xp_next_level" => "integer|5",
         "is_traveling" => 0,
         "created_at" => "date",
         "updated_at" => "date",
@@ -1322,7 +1322,7 @@ class Character extends Unit
 	 */
 	public function can_attack_in_pairs()
 	{
-		return $this->can_fight() && $this->clan_id;
+		return $this->can_fight() === true && $this->clan_id;
 	}
 	
 	/**
@@ -3042,7 +3042,7 @@ class Character extends Unit
 	 * @param Attackable $target
 	 * @return string|boolean
 	 */
-	public function can_attack(Attackable $target)
+	public function can_attack(Unit $target)
 	{
 		if ( ! $target )
 		{

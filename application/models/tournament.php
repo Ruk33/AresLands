@@ -23,12 +23,6 @@ class Tournament extends Base_Model
 	public static $table = 'tournaments';
 
 	/**
-	 * Primery key
-	 * @var string
-	 */
-	public static $key = 'id';
-
-	/**
 	 * Query para obtener el clan ganador
 	 * @return Eloquent
 	 */

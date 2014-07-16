@@ -13,7 +13,7 @@ class Home_Controller extends Base_Controller
 		 *	Si está logueado, enviamos
 		 *	al usuario a la página de autentificados
 		 */
-		$this->filter('before', 'logged', array('authenticated/index'))->only('index');
+		$this->filter('before', 'logged')->only('index');
 	}
 
 	/* Index */

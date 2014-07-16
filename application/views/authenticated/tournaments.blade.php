@@ -4,13 +4,16 @@
 		<p>
 			Ante nosotros una nueva prueba, un nuevo desafío, una nueva oportunidad para demostrar el poder de los nuestros. ¿Quieres ser recordado por siempre? Solo los mejores son recordados, solo quienes pueden demostrar su valia seran los homenajeados.
 		</p>
-		<p><a href="{{ URL::to('authenticated/allTournaments') }}">Ver torneos anteriores</a></p>
+		<p><a href="{{ URL::to_route("get_authenticated_tournament_index") }}">Ver torneos anteriores</a></p>
 	</div>
 
 	@if ( $tournament )
 	@if ( $canRegisterClan )
-		<div class="text-center" style="margin-bottom: 25px;">
-			<a href="{{ URL::to('authenticated/registerClanInTournament/' . $tournament->id) }}" class="normal-button">Anota a tu grupo orgulloso lider</a>
+		<div class="button-golden-mark" style="margin-bottom: 25px;">
+            {{ Form::open(URL::to_route("post_authenticated_tournament_register_clan")) }}
+                {{ Form::hidden("id", $tournament->id) }}
+                {{ Form::submit("Inscribir grupo", array("class" => "ui-button ui-input-button")) }}
+            {{ Form::close() }}
 		</div>
 	@endif
 	@if ( $canUnRegisterClan )

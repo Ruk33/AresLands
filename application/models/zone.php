@@ -4,8 +4,15 @@ class Zone extends Base_Model
 {
 	public static $softDelete = false;
 	public static $timestamps = false;
-	public static $table = 'zones';
-	public static $key = 'id';
+	public static $table = "zones";
+    
+    public static $factory = array(
+        "name" => "string",
+        "description" => "text",
+        "type" => "city",
+        "belongs_to" => 0,
+        "min_level" => "integer|2"
+    );
 
 	public function cities()
 	{

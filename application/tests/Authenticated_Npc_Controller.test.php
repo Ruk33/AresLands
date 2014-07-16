@@ -16,8 +16,8 @@ class Authenticated_Npc_Controller_Test extends Tests\TestHelper
 		$this->character = m::mock("Character");
 		IoC::instance("Character", $this->character);
 		
-		$this->npc = m::mock("Npc");
-		IoC::instance("Npc", $this->npc);
+		$this->npc = m::mock("Merchant");
+		IoC::instance("Merchant", $this->npc);
 		
 		$this->npcMerchandise = m::mock("NpcMerchandise");
 		IoC::instance("NpcMerchandise", $this->npcMerchandise);
@@ -31,7 +31,7 @@ class Authenticated_Npc_Controller_Test extends Tests\TestHelper
 		parent::tearDown();
 		
 		IoC::unregister("Character");
-		IoC::unregister("Npc");
+		IoC::unregister("Merchant");
 		IoC::unregister("NpcMerchandise");
 		IoC::unregister("NpcRandomMerchandise");
 	}

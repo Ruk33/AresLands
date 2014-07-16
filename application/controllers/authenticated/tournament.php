@@ -32,13 +32,13 @@ class Authenticated_Tournament_Controller extends Authenticated_Base
 			"as"   => "get_authenticated_tournament_show"
 		));
 		
-		Route::post("authenticated/tournament/registerClan", array(
+		Route::post("authenticated/tournament/register/clan", array(
 			"uses"   => "authenticated.tournament@registerClan",
 			"as"     => "post_authenticated_tournament_register_clan",
 			"before" => "auth|hasNoCharacter|hasClan"
 		));
 		
-		Route::post("authenticated/tournament/unregisterClan", array(
+		Route::post("authenticated/tournament/unregister/clan", array(
 			"uses"   => "authenticated.tournament@unregisterClan",
 			"as"     => "post_authenticated_tournament_unregister_clan",
 			"before" => "auth|hasNoCharacter|hasClan"
@@ -86,7 +86,7 @@ class Authenticated_Tournament_Controller extends Authenticated_Base
 		$canRegisterClan = $tournament->can_register_clan($character);
 		$canUnRegisterClan = $tournament->can_unregister_clan($character);
 		$canReclaimMvpReward = $tournament->can_reclaim_mvp_reward($character);
-		$canReclaimClanLiderReward = $tournament->can_reclaim_clan_lider_reward($character);
+		$canReclaimClanLiderReward = $tournament->can_reclaim_leader_reward($character);
 		$registeredClans = $tournament->get_registered_clans()->get();
 		
 		// Ordenamos los grupos registrados de acuerdo a su porcentaje de victoria

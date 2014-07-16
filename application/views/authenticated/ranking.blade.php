@@ -1,66 +1,72 @@
-@if ( $rank == 'kingOfTheHill' )
-	<h2>Rey de la colina</h2>
-@elseif ( $rank == 'pvp' )
-	<h2>Ranking Jugador contra Jugador</h2>
-@elseif ( $rank == 'clan' )
-	<h2>Ranking Grupos</h2>
-@endif
+<div class="ranking-box">
 
 <div class="row">
-<ul class="inline text-center span11" style="margin-top: 20px;">
-	<li>
-		<a href="{{ URL::to('authenticated/ranking/pvp') }}" class="ui-button button">
-			<i class="button-icon dagger"></i>
-			<span class="button-content">
-				PVP
-			</span>
-		</a>
-	</li>
-	<li>
-		<a href="{{ URL::to('authenticated/ranking/kingOfTheHill') }}" class="ui-button button">
-			<i class="button-icon axe"></i>
-			<span class="button-content">
-				Rey de la colina
-			</span>
-		</a>
-	</li>
-	<li>
-		<a href="{{ URL::to('authenticated/ranking/clan') }}" class="ui-button button">
-			<i class="button-icon fire"></i>
-			<span class="button-content">
-				Grupos
-			</span>
-		</a>
-	</li>
-</ul>
+    <div class="span12" style="padding: 15px;">
+        <ul class="inline pull-right">
+            <li>
+                <a href="{{ URL::to_route("get_authenticated_ranking_index", array("pvp")) }}" class="ui-button button">
+                    <i class="button-icon dagger"></i>
+                    <span class="button-content">
+                        PVP
+                    </span>
+                </a>
+            </li>
+            <li>
+                <a href="{{ URL::to_route("get_authenticated_ranking_index", array("kingOfTheHill")) }}" class="ui-button button">
+                    <i class="button-icon axe"></i>
+                    <span class="button-content">
+                        Rey de la colina
+                    </span>
+                </a>
+            </li>
+            <li>
+                <a href="{{ URL::to_route("get_authenticated_ranking_index", array("clan")) }}" class="ui-button button">
+                    <i class="button-icon fire"></i>
+                    <span class="button-content">
+                        Grupos
+                    </span>
+                </a>
+            </li>
+        </ul>
 
-@if ( $rank != 'kingOfTheHill' )
-<div class="text-center" style="margin-top: 100px;">
-	{{ $elements->links() }}
-</div>
-@endif
+        @if ( $rank == 'kingOfTheHill' )
+            <h2>Rey de la colina</h2>
+        @elseif ( $rank == 'pvp' )
+            <h2>Ranking Jugador contra Jugador</h2>
+        @elseif ( $rank == 'clan' )
+            <h2>Ranking Grupos</h2>
+        @endif
+        
+        <div class="clearfix"></div>
+
+        @if ( $rank != 'kingOfTheHill' )
+        <div class="pull-right">
+            {{ $elements->links() }}
+        </div>
+        @endif
+    </div>
 
 <table class="table table-striped brown-table">
 	<thead>
 		<tr>
-			<th width="20px">#</th>
+            <th width="20px"><div class="text-center">#</div></th>
 			@if ( $rank != 'clan' )
-			<th width="50px">Raza</th>
+            <th width="50px"><div class="text-center">Raza</div></th>
 			@endif
 			<th>Nombre</th>
 			@if ( $rank != 'clan' )
 			<th>Grupo</th>
 			@endif
 			@if ( $rank == 'pvp' )
-			<th width="150px">Puntos de PVP</th>
+            <th width="150px"><div class="text-center">Puntos de PVP</div></th>
 			@endif
 			@if ( $rank == 'kingOfHill' )
 			<th width="50px">Grupo</th>
-			<th width="100px">Nivel</th>
+            <th width="100px"><div class="text-center">Nivel</div></th>
             <th>Dias invicto</th>
 			@endif
 			@if ( $rank == 'clan' )
-			<th>Puntos</th>
+            <th><div class="text-center">Puntos</div></th>
 			@endif
 		</tr>
 	</thead>
@@ -69,10 +75,10 @@
 		<?php $index = $elements->per_page * ($elements->page - 1); ?>
 		@foreach ( $elements->results as $element )
 		<tr>
-			<td>{{ ++$index }}</td>
+            <td><div class="text-center">{{ ++$index }}</div></td>
 			@if ( $rank != 'clan' )
 			<td>
-				<div class="icon-race-30 icon-race-30-{{ $element->race }}_{{ $element->gender }}"></div>
+                <div style="margin: 0 auto;" class="icon-race-30 icon-race-30-{{ $element->race }}_{{ $element->gender }}"></div>
 			</td>
 			@endif
 
@@ -102,14 +108,14 @@
 			</td>
 			@endif
 			@if ( $rank == 'pvp' )
-			<td>{{ $element->pvp_points }}</td>
+            <td><div class="text-center"><b>{{ $element->pvp_points }}</b></div></td>
 			@endif
 			@if ( $rank == 'xp' )
-			<td>{{ $element->level }}</td>
-			<td>{{ $element->xp }}</td>
+            <td><div class="text-center">{{ $element->level }}</div></td>
+            <td><div class="text-center">{{ $element->xp }}</div></td>
 			@endif
 			@if ( $rank == 'clan' )
-			<td>{{ $element->points }}</td>
+            <td><div class="text-center"><b>{{ $element->points }}</b></div></td>
 			@endif
 		</tr>
 		@endforeach
@@ -119,4 +125,6 @@
 <div class="text-center">
 	{{ $elements->links() }}
 </div>
+</div>
+
 </div>

@@ -15,8 +15,8 @@ class Create_Characters_Table {
             $table->string("ip");
             $table->string("name");
             $table->integer("level");
-            $table->decimal("max_life");
-            $table->decimal("current_life");
+            $table->decimal("max_life", 11, 2);
+            $table->decimal("current_life", 11, 2);
             $table->string("gender");
             $table->integer("pvp_points");
             $table->string("race");
@@ -56,8 +56,8 @@ class Create_Characters_Table {
             $table->float("attack_speed_extra");
             $table->float("magic_defense");
             $table->float("magic_defense_extra");
-            $table->float("physical_damage");
-            $table->float("physical_damage_extra");
+            $table->float("physical_defense");
+            $table->float("physical_defense_extra");
             $table->float("magic_damage");
             $table->float("magic_damage_extra");
             $table->float("physical_damage");
@@ -89,6 +89,9 @@ class Create_Characters_Table {
             $table->integer("talent_points");
             $table->integer("invisible_until");
             $table->integer("second_mercenary");
+            
+            $table->timestamps();
+            $table->timestamp("deleted_at");
         });
 	}
 

@@ -4,8 +4,17 @@ class Clan extends Base_Model
 {
 	public static $softDelete = false;
 	public static $timestamps = false;
-	public static $table = 'clans';
-	public static $key = 'id';
+	public static $table = "clans";
+    
+    public static $factory = array(
+        "leader_id" => "integer|2",
+        "name" => "string",
+        "message" => "text",
+        "xp" => "integer|5",
+        "xp_next_level" => "integer|5",
+        "level" => "integer|2",
+        "points_to_change" => "integer|1"
+    );
 	
 	/**
 	 * @var <integer> Permiso para aceptar peticiones de ingreso
