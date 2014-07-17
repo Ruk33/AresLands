@@ -525,10 +525,6 @@ form {
 	text-align: center;
 }
 
-.box:hover{
-	box-shadow: orange 0 0 2px;
-}
-
 .box-box-16-blue {
     width: 16px;
     height: 16px;
