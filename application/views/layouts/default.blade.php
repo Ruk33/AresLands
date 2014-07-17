@@ -185,6 +185,8 @@
 
 		<div id="wrap">
 			<div class="container">
+                <div class="race-corner {{ $character->race }}-{{ $character->gender }}"></div>
+                
 				<div style="position: absolute; text-shadow: black 0 0 5px; right: 10px; top: -50px; padding: 10px; font-size: 12px; color: white; text-transform: uppercase;">
 					Hora del servidor: <span id='serverTime'>00:00:00</span>
 				</div>
@@ -239,8 +241,7 @@
 					<div class="pull-left col menu-column" style="width: 176px;">
 						@if ( isset($character) )
 							<div class="mini-player-display">
-								<div class="icon-race-30 icon-race-30-{{ $character->race }}_{{ $character->gender }} pull-left"></div>
-								<div class="pull-left" style="margin-left: 5px;">
+								<div class="pull-left" style="margin-left: 32px;">
 									<a href="{{ URL::to_route("get_authenticated_character_show", array($character->name)) }}" style="font-size: 12px;">
 										<b>{{ $character->name }}</b>
 									</a>
@@ -251,9 +252,23 @@
 									Nivel: {{ $character->level }}
 									</span>
 								</div>
-								<ul class="inline pull-right">
-									<li style="padding: 0; vertical-align: top;">
-										<div id="quests_popover" style="display: none;">
+                                
+                                <div>
+                                    <ul class="coins inline pull-right">
+                                        <li>
+                                            <i class='coin coin-gold pull-left'></i> 
+                                            @if ( $coins['gold'] > 100 )
+                                                <span data-toggle="tooltip" data-original-title="{{ $coins['gold'] }}">99+</span>
+                                            @else
+                                                {{ $coins['gold'] }}
+                                            @endif
+                                        </li>
+                                        <li><i class='coin coin-silver pull-left'></i> {{ $coins['silver'] }}</li>
+                                        <li><i class='coin coin-copper pull-left'></i> {{ $coins['copper'] }}</li>
+                                    </ul>
+                                    
+                                    <div class="quests">
+                                        <div id="quests_popover" style="display: none;">
 											<div style="width: 300px; margin-top: -15px;">
 											@if ( count($startedQuests) > 0 )
 												@foreach ( $startedQuests as $startedQuest )
@@ -276,7 +291,7 @@
 											</div>
 										</div>
 
-										<img id="quests" style="cursor: pointer;" src="{{ URL::base() }}/img/quest-icon.png" width="16px" height="19px" data-toggle="tooltip" data-original-title="<center><b>Misiones</b></center>" data-placement="top" data-container="body">
+										<img id="quests" src="{{ URL::base() }}/img/quest-icon.png" width="20px" height="21px" data-toggle="tooltip" data-original-title="<center><b>Misiones</b></center>" data-placement="top" data-container="body">
 										
 										<script>
 											$('#quests').popover({
@@ -287,24 +302,16 @@
 												placement: 'bottom'
 											});
 										</script>
-									</li>
-
-									<li style="padding: 0; vertical-align: top;" data-toggle="tooltip" data-placement="top" data-original-title="
-										<b>Monedas</b>
-										<ul class='inline' style='margin: 0;'>
-											<li><i class='coin coin-gold pull-left'></i> {{ $coins['gold'] }}</li>
-											<li><i class='coin coin-silver pull-left'></i> {{ $coins['silver'] }}</li>
-											<li><i class='coin coin-copper pull-left'></i> {{ $coins['copper'] }}</li>
-										</ul>">
-										<img src="{{ URL::base() }}/img/coin-icon.png" width="16px" height="19px">
-									</li>
-
-									@if ( $character->clan_id != 0 )
-										<li style="padding: 0; vertical-align: top;" data-toggle="tooltip" data-placement="top" data-original-title="Accede a la página de tu grupo">
-											<a href="{{ URL::to_route("get_authenticated_clan_show", array($character->clan_id)) }}"><img src="{{ URL::base() }}/img/shield-icon.png" alt="Grupo" width="16px" height="19px"></a>
-										</li>
-									@endif
-								</ul>
+                                    </div>
+                                    
+                                    @if ( $character->clan_id != 0 )
+                                    <div class="clan" data-toggle="tooltip" data-original-title="Ir a la pagina del grupo">
+                                        <a href="{{ URL::to_route("get_authenticated_clan_show", array($character->clan_id)) }}">
+                                            <img src="{{ URL::base() }}/img/shield-icon.png" alt="Grupo" width="20px" height="21px">
+                                        </a>
+                                    </div>
+                                    @endif
+                                </div>
 							</div>
 						@endif
 						<ul class="unstyled menu" width="150px;">
