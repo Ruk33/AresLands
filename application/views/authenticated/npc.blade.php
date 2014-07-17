@@ -35,11 +35,11 @@
         <table class="table table-striped brown-table">
             <thead>
                 <tr>
-                    <th>Nombre</th>
-                    <th>Requiere</th>
-                    <th><div class="text-center">Objetivos</div></th>
-                    <th><div class="text-center">Recompensas</div></th>
-                    <th>Repetible en</th>
+                    <th class="span2">Nombre</th>
+                    <th class="span2">Requiere</th>
+                    <th class="span3"><div class="text-center">Objetivos</div></th>
+                    <th class="span3"><div class="text-center">Recompensas</div></th>
+                    <th class="span2">Repetible en</th>
                 </tr>
             </thead>
 
