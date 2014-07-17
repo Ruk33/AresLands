@@ -28,7 +28,7 @@
         Por el momento, no tengo nada para ti. Vuelve en otra ocación.
     </h4>
 @else
-	@if ( count($quests) > 0 )
+	@if ( count($quests) > 0 || count($repeatableQuests) > 0 )
 		<h2 style="margin-top: 50px;">Misiones disponibles</h2>
 
         <div class="row">
@@ -65,7 +65,7 @@
                     </td>
                     <td>
                         @if ( $quest->complete_required )
-                            <div data-toggle="tooltip" data-original-title="Mision disponible en nivel {{ $quest->required_quest->min_level }}">
+                            <div data-toggle="tooltip" data-original-title="Mision otorgada por <span class='positive'>{{ $quest->required_quest->npcs()->first_or_empty()->name }}</span> en nivel {{ $quest->required_quest->min_level }}">
                                 {{ $quest->required_quest->name }}
                             </div>
                         @else
