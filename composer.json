@@ -3,10 +3,10 @@
 	{
 		"phpunit/phpunit": "3.7.*",
 		"mockery/mockery": "0.9.1",
-		"zizaco/factory-muff": "dev-master"
+		"zizaco/factory-muff": "1.6.4"
 	},
 	
 	"require": {
-        "nesbot/Carbon": "*"
+        "nesbot/Carbon": "1.9.0"
     }
 }
