@@ -36,7 +36,8 @@ class Authenticated_Tournament_Controller_Test extends Tests\TestHelper
 		$this->assertHasFilter("get", "authenticated/tournament", "before", "auth");
 		$this->assertHasFilter("get", "authenticated/tournament", "before", "hasNoCharacter");
 		
-		$this->tournament->shouldReceive("all")->once()->andReturn(array());
+		$this->tournament->shouldReceive("order_by")->once()->with("starts_at", "desc")->andReturnSelf();
+		$this->tournament->shouldReceive("get")->once()->andReturn(array());
 		
 		$response = $this->get("authenticated/tournament");
 		

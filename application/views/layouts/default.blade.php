@@ -242,9 +242,11 @@
 						@if ( isset($character) )
 							<div class="mini-player-display">
 								<div class="pull-left" style="margin-left: 32px;">
-									<a href="{{ URL::to_route("get_authenticated_character_show", array($character->name)) }}" style="font-size: 12px;">
-										<b>{{ $character->name }}</b>
-									</a>
+                                    <div style="width: 45px; overflow: hidden;">
+                                        <a href="{{ URL::to_route("get_authenticated_character_show", array($character->name)) }}" style="font-size: 12px;">
+                                            <b>{{ $character->name }}</b>
+                                        </a>
+                                    </div>
 									
 									<div class="clear-fix"></div>
 									

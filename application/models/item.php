@@ -394,9 +394,9 @@ class Item extends Base_Model
 		$coins['silver'] = substr($amount, -4, -2) ? substr($amount, -4, -2) : 0;
 		$coins['copper'] = substr($amount, -2) ? substr($amount, -2) : 0;
 		$coins['text'] = "<ul class='inline' style='margin: 0; display: inline'>
-							<li><i class='coin coin-gold pull-left'></i> {$coins['gold']}</li>
-							<li><i class='coin coin-silver pull-left'></i> {$coins['silver']}</li>
-							<li><i class='coin coin-copper pull-left'></i> {$coins['copper']}</li>
+							<li><i class='coin coin-gold pull-left'></i> <div style='margin-top: -2px;'>{$coins['gold']}</div></li>
+							<li><i class='coin coin-silver pull-left'></i> <div style='margin-top: -2px;'>{$coins['silver']}</div></li>
+							<li><i class='coin coin-copper pull-left'></i> <div style='margin-top: -2px;'>{$coins['copper']}</div></li>
 						</ul>";
 
 		return $coins;

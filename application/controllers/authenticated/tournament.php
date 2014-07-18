@@ -51,7 +51,7 @@ class Authenticated_Tournament_Controller extends Authenticated_Base
 		
 		Route::get("authenticated/tournament/(:num)/claim/leader", array(
 			"uses"   => "authenticated.tournament@claimLeaderReward",
-			"as"     => "post_authenticated_tournament_claim_leader_reward",
+			"as"     => "get_authenticated_tournament_claim_leader_reward",
 			"before" => "auth|hasNoCharacter|hasClan"
 		));
 	}
@@ -73,7 +73,7 @@ class Authenticated_Tournament_Controller extends Authenticated_Base
 	
 	public function get_index()
 	{
-		$tournaments = $this->tournament->all();
+		$tournaments = $this->tournament->order_by("starts_at", "desc")->get();
 		
 		$this->layout->title = "Torneos";
 		$this->layout->content = View::make("authenticated.alltournaments", compact("tournaments"));

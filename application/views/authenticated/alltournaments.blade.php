@@ -4,12 +4,8 @@
     <table class="table table-striped brown-table">
         <thead>
             <tr>
-                <th>
-                    <i class="icon-info-sign icon-white" style="vertical-align: -1px;"></i> Nombre del torneo
-                </th>
-                <th>
-                    <i class="icon-info-sign icon-white" style="vertical-align: -1px;"></i> Grupo ganador
-                </th>
+                <th>Nombre del torneo</th>
+                <th>Grupo ganador</th>
             </tr>
         </thead>
 

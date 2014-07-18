@@ -323,6 +323,16 @@ class Tournament extends Base_Model
 	{
 		return TournamentRegisteredClan::unregister($this, $clan);
 	}
+    
+    /**
+     * Verificamos si torneo ha finalizado
+     * 
+     * @return boolean
+     */
+    public function has_finished()
+    {
+        return time() > $this->ends_at;
+    }
 
 	/**
 	 * Obtenemos clan ganador de un torneo
@@ -330,6 +340,11 @@ class Tournament extends Base_Model
 	 */
 	public function get_clan_winner()
 	{
+        if ( ! $this->has_finished() )
+        {
+            return null;
+        }
+        
 		if ( $this->clan_winner_id )
 		{
 			return $this->winner()->first();

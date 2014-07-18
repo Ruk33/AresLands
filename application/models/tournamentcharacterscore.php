@@ -44,7 +44,7 @@ class TournamentCharacterScore extends Base_Model
 	 * @return Eloquent
 	 */
 	public static function get_score($tournament, $character)
-	{
+	{        
 		return self::where('character_id', '=', (int) $character)
 				   ->where('tournament_id', '=', (int) $tournament);
 	}
@@ -98,7 +98,7 @@ class TournamentCharacterScore extends Base_Model
 			return;
 		}
 
-		self::get_score($tournament, $character)->delete();
+		self::get_score($tournament->id, $character->id)->delete();
 
 		$character->registered_in_tournament = false;
 		$character->save();
