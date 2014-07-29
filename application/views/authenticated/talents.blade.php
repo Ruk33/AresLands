@@ -15,30 +15,30 @@
 	<p>Estas son las habilidades que obtienes por tu raza</p>
 
 	<ul class="thumbnails">
-	@foreach ( $talents['racial'] as $skill )
+	@foreach ( $racials as $skill )
 		<li class="span4">
 			<div class="clan-member-link thumbnail" style="height: 250px;">
 				<div class="text-center">
-					<img src="{{ URL::base() }}/img/icons/skills/{{ $skill->id }}.png" />
+					<img src="{{ $skill->get_image_path() }}" />
 				</div>
 				<div class="caption" style="height: 150px;">
 					<div class="text-center" style="margin-bottom: 10px;">
 						<strong style="color: white;">{{ $skill->name }}</strong>
 					</div>
-					<p style="color: gold;">{{ $skill->description }}</p>
+					<p style="color: gold; font-size: 12px;">{{ $skill->description }}</p>
 				</div>
 
 				<div class="text-center">
 					@if ( $character->has_talent($skill) )
 						<?php $talent = $character->talents()->where('skill_id', '=', $skill->id)->first(); ?>
 						@if ( $character->can_use_talent($talent) )
-							Aprendida
+							¡Listo para usar!
 						@else
 							<div class="timer" data-endtime="{{ $talent->usable_at - time() }}"></div>
 						@endif
 					@else
 						@if ( $character->can_learn_talent($skill) )
-							{{ Form::open(URL::to('authenticated/learnTalent')) }}
+							{{ Form::open(URL::to_route("post_authenticated_talent_learn")) }}
 								{{ Form::token() }}
 								{{ Form::hidden('id', $skill->id) }}
 
@@ -56,7 +56,7 @@
 <h2>Caracteristicas</h2>
 <p>Estas son las habilidades que destrabaste al elegir tus caracteristicas</p>
 
-@foreach ( $talents['characteristics'] as $name => $characteristic )
+@foreach ( $talents as $name => $characteristic )
 	<strong>{{ $name }}</strong>
 	<ul class="inline" style="margin-bottom: 180px;">
 	@foreach ( $characteristic as $skill )
@@ -83,7 +83,7 @@
 						@endif
 					@else
 						@if ( $character->can_learn_talent($skill) )
-							{{ Form::open(URL::to('authenticated/learnTalent')) }}
+							{{ Form::open(URL::to_route("post_authenticated_talent_learn")) }}
 								{{ Form::token() }}
 								{{ Form::hidden('id', $skill->id) }}
 

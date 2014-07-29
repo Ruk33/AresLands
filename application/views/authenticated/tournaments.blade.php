@@ -194,7 +194,15 @@
 			@foreach ( $registeredClans as $registeredClan )
 			<tr>
                 <td><div class="text-center">{{ $n++; }}</div></td>
-				<td>{{ ( $registeredClan->disqualified ) ? '<s data-toggle="tooltip" data-original-title="Descalificado">' . $registeredClan->clan->get_link() . '</s>' : $registeredClan->clan->get_link() }}</td>
+				<td>
+                    @if ( $registeredClan->disqualified ) 
+                        <s data-toggle="tooltip" data-original-title="Descalificado">
+                            {{ $registeredClan->clan->get_link() }}
+                        </s>
+                    @else
+                        {{ $registeredClan->clan->get_link() }}
+                    @endif
+                </td>
 				<td>
                     <div class="text-center">
                         {{ TournamentClanScore::get_victory_percentage($tournament->id, $registeredClan->clan->id) }}%

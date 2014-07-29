@@ -212,7 +212,7 @@
 			@endif
 
 			<!-- ORBES -->
-			<div class="box box-box-64-violet" style="position: absolute; left: 225px; top: 250px;">
+			<div class="box box-box-64-violet" style="position: absolute; left: 230px; top: 235px;">
 				@if ( isset($orb) )
 					<img src="{{ $orb->get_image_path() }}" data-toggle="tooltip" data-title="<div style='width: 200px;'><strong>{{ $orb->name }}</strong><p>{{ $orb->description }}</p></div>">
 				@endif
@@ -297,7 +297,7 @@
 			
 			@foreach ( $pairs as $pair )
 				@if ( $pair->id != $characterToSee->id )
-					{{ Form::open(URL::to('authenticated/toBattle')) }}
+					{{ Form::open(URL::to_route("post_authenticated_battle_character")) }}
 						{{ Form::token() }}
 						{{ Form::hidden('pair', $pair->id) }}
 						{{ Form::hidden('name', $characterToSee->name) }}
@@ -306,7 +306,7 @@
 				@endif
 			@endforeach
 			
-			{{ Form::open(URL::to('authenticated/toBattle')) }}
+			{{ Form::open(URL::to_route("post_authenticated_battle_character")) }}
 				{{ Form::token() }}
 				{{ Form::hidden('name', $characterToSee->name) }}
 				{{ Form::submit('Luchar contra ' . $characterToSee->name, array('class' => 'btn btn-link', 'style' => 'color: white; text-shadow: none;')) }}
@@ -316,10 +316,10 @@
 				<div class="negative" style="margin-top: 25px; font-size: 16px;">¡{{ $characterToSee->name }} está en otra zona!</div>
 			@endif
 			@if ( $characterToSee->is_traveling && $character->can_follow($characterToSee) )
-				{{ Form::open(URL::to('authenticated/followCharacter')) }}
-				{{ Form::token() }}
-				{{ Form::hidden('id', $characterToSee->id) }}
-				<div>¡{{ $characterToSee->name }} se escapa!, ¿lo {{ Form::submit('persigues', array('class' => 'ui-input-button ui-button')) }}?</div>
+				{{ Form::open(URL::to_route("post_authenticated_character_follow")) }}
+                    {{ Form::token() }}
+                    {{ Form::hidden('id', $characterToSee->id) }}
+                    <div>¡{{ $characterToSee->name }} se escapa!, ¿lo {{ Form::submit('persigues', array('class' => 'ui-input-button ui-button')) }}?</div>
 				{{ Form::close() }}
 			@endif
 			@if ( $characterToSee->has_protection($character) )

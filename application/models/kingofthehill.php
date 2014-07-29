@@ -42,7 +42,7 @@ class KingOfTheHill extends Eloquent
     {
         $list = array();
         
-        for ( $i = 1; $i < self::MAX_POSITIONS; $i++ )
+        for ( $i = 0; $i < self::MAX_POSITIONS; $i++ )
         {
             $list[$i] = self::where_position($i)->first();
             

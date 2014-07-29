@@ -544,7 +544,7 @@ class Clan extends Base_Model
 
 	public function get_link()
 	{
-		return '<a href="' . URL::to('authenticated/clan/' . $this->id ) . '">' . htmlspecialchars($this->name) . '</a>';
+		return '<a href="' . URL::to_route("get_authenticated_clan_show", array($this->id)) . '">' . htmlspecialchars($this->name) . '</a>';
 	}
 
 	public function lider()

@@ -19,33 +19,36 @@
 
 <p>
     <b>{{ $character->name }} piensa:</b> 
-    si decido continuar, tendré que gastaré {{ Config::get('game.travel_cost') }} 
+    si decido continuar, gastaré {{ Config::get('game.travel_cost') }} 
     <i class="coin coin-copper" style="display: inline-block;"></i> monedas en
     provisiones.
 </p>
 
 <div class="row">
-    <ul class="thumbnails">
+    <ul class="thumbnails" style="margin-left: -10px;">
         @foreach ( $zones as $zone )
         <li class="thumbnail">
-            <div class="travel-zone-box">                    
+            <div class="travel-zone-box">
                 {{ Form::open(URL::to_route("post_authenticated_action_travel")) }}
                     <img class="image" src="{{ URL::base() }}/img/zones/32/{{ $zone->id }}.png" alt="">
 
                     {{ Form::token() }}
                     {{ Form::hidden("id", $zone->id) }}
-                    {{ Form::submit($zone->name, array("class" => "ui-button input-ui-button")) }}
+                    
+                    {{ Form::submit($zone->name, array("class" => "ui-button input-ui-button name")) }}
                 {{ Form::close() }}
 
                 <p class="description">{{ $zone->description }}</p>
 
-                <p>
-                    <span class="explored-time">Tiempo explorado</span><br>
+                <div class="explored-time">
+                    <span class="explored-time-label">Tiempo explorado</span><br>
+                    <span class="explored-time-text">
                     @if ( isset($exploringTime[$zone->id]) && $exploringTime[$zone->id] > 0 )
                         {{ date('z \d\í\a\(\s\) H:i:s', $exploringTime[$zone->id]) }}
                     @else
                         Sin explorar
                     @endif
+                    </span>
                 </p>
             </div>
         </li>

@@ -5,7 +5,8 @@ class Skill extends Base_Model
 	public static $softDelete = false;
 	public static $timestamps = false;
 	public static $table = 'skills';
-	public static $key = 'id';
+    
+    public static $factory = array();
 	
 	/**
 	 * Obtenemos los skills de personalidad en array cuyo key es el nombre de la personalidad

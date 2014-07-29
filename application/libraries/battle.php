@@ -6,12 +6,12 @@
 class Battle
 {
 	/**
-	 * @var Attackable
+	 * @var Unit
 	 */
 	protected $_winner;
 
 	/**
-	 * @var Attackable
+	 * @var Unit
 	 */
 	protected $_loser;
 
@@ -21,17 +21,17 @@ class Battle
 	protected $_attackerNotificationMessage;
 
 	/**
-	 * @var Attackable
+	 * @var Unit
 	 */
 	protected $_attacker;
 
 	/**
-	 * @var Attackable
+	 * @var Unit
 	 */
 	protected $_target;
 
 	/**
-	 * @var Attackable
+	 * @var Unit
 	 */
 	protected $_pair;
 
@@ -43,11 +43,10 @@ class Battle
 	protected $_log = array();
 
 	/**
-	 * Historial de recompensas
 	 *
 	 * @var Array
 	 */
-	protected $_rewardLog = array();
+	protected $_rewards = array();
 
 	/**
 	 * @var Array
@@ -67,7 +66,7 @@ class Battle
 	protected $_stolenOrb;
 
 	/**
-	 * @return Attackable
+	 * @return Unit
 	 */
 	public function get_winner()
 	{
@@ -75,7 +74,7 @@ class Battle
 	}
 
 	/**
-	 * @return Attackable
+	 * @return Unit
 	 */
 	public function get_loser()
 	{
@@ -91,7 +90,7 @@ class Battle
 	}
 
 	/**
-	 * @return Attackable
+	 * @return Unit
 	 */
 	public function get_attacker()
 	{
@@ -99,7 +98,7 @@ class Battle
 	}
 
 	/**
-	 * @return Attackable
+	 * @return Unit
 	 */
 	public function get_target()
 	{
@@ -107,7 +106,7 @@ class Battle
 	}
 
 	/**
-	 * @return Attackable
+	 * @return Unit
 	 */
 	public function get_pair()
 	{
@@ -121,26 +120,53 @@ class Battle
 	{
 		return $this->_log;
 	}
+    
+    public function get_rewards_for_view(Unit $unit)
+    {
+		$formatedString = '';
 
-	/**
-	 * @return Array
-	 */
-	public function get_reward_log()
-	{
-		return $this->_rewardLog;
-	}
+		foreach ( $this->_rewards[$this->get_secure_index($unit)] as $reward )
+		{
+			switch ($reward['item_id']) {
+				case Config::get('game.coin_id'):
+					$coins = Item::get_divided_coins($reward['amount']);
+					
+					$text = '<i class="coin coin-copper"></i>';
+					$text = '<span data-toggle="tooltip" data-original-title="Cantidad: 
+						<ul class=\'inline\' style=\'margin: 0;\'>
+						<li><i class=\'coin coin-gold pull-left\'></i> ' . $coins['gold'] . '</li>
+						<li><i class=\'coin coin-silver pull-left\'></i> ' . $coins['silver'] . '</li>
+						<li><i class=\'coin coin-copper pull-left\'></i> ' . $coins['copper'] . '</li>
+					</ul>">' . $text . '</span>';
+					break;
+				
+				case Config::get('game.xp_item_id'):
+					$text = '<img src="' . URL::base() . '/img/xp.png" width="22px" height="18px" />';
+					$text = '<span data-toggle="tooltip" data-original-title="Cantidad: ' . $reward['amount'] . '">' . $text . '</span>';
+					break;
+
+				default:
+					$text = '<img src="' . URL::base() . '/img/icons/items/'. $reward['item_id'] .'.png" />';
+					$text = '<span data-toggle="tooltip" data-original-title="' . $reward['item']->get_text_for_tooltip() . '<p>Cantidad: ' . $reward['amount'] . '</p>">' . $text . '</span>';
+					break;
+			}
+
+			$formatedString .= '<li style="vertical-align: top;"><div class="quest-reward-item">' . $text . '</div></li>';
+		}
+
+		return '<ul class="inline" style="margin: 0;">' . $formatedString . '</ul>';
+    }
 
 	/**
 	 * Obtenemos un indice seguro (para evitar colisiones)
-	 * @param  Attackable $attackable 
+	 * @param  Unit $unit 
 	 * @return mixed
 	 */
-	protected function get_secure_index(Unit $attackable)
+	protected function get_secure_index(Unit $unit)
 	{
-		$index = $attackable->id;
+		$index = $unit->id;
 
-		if ( $attackable instanceof Monster )
-		{
+		if ($unit instanceof Npc) {
 			$index = "npc-{$index}";
 		}
 
@@ -148,15 +174,15 @@ class Battle
 	}
 
 	/**
-	 * Obtenemos el daño realizado por unidad
+	 * Obtenemos el daÃ±o realizado por unidad
 	 *
-	 * @param Attacker $unit
+	 * @param Unit $unit
 	 * @return float
 	 */
-	public function get_damage_done_by(Attackable $unit)
+	public function get_damage_done_by(Unit $unit)
 	{
 		$index = $this->get_secure_index($unit);
-		return ( isset($this->_damageDone[$index]) ) ? $this->_damageDone[$index] : 0;
+		return (isset($this->_damageDone[$index])) ? $this->_damageDone[$index] : 0;
 	}
 
 	/**
@@ -165,10 +191,10 @@ class Battle
 	 * @param Attacker $unit
 	 * @return float
 	 */
-	public function get_initial_life_of(Attackable $unit)
+	public function get_initial_life_of(Unit $unit)
 	{
 		$index = $this->get_secure_index($unit);
-		return ( isset($this->_initialLife[$index]) ) ? $this->_initialLife[$index] : 0;
+		return (isset($this->_initialLife[$index])) ? $this->_initialLife[$index] : 0;
 	}
 
 	/**
@@ -184,88 +210,86 @@ class Battle
 	 */
 	protected function check_for_orbs()
 	{
-		if ( $this->_attacker instanceof Character && $this->_target instanceof Character )
-		{
-			if ( ! $this->_attacker->has_orb() )
-			{
-				$targetOrb = $this->_target->orbs()->first();
+		if ($this->isPvp() && ! $this->_attacker->has_orb()) {
+            $targetOrb = $this->_target->orbs()->first();
 
-				if ( $targetOrb )
-				{
-					if ( $targetOrb->can_be_stolen_by($this->_attacker) )
-					{
-						// Si gano entonces se lo damos, de lo contrario
-						// se agrega proteccion al dueño del orbe
-						if ( $this->_winner->id == $this->_attacker->id )
-						{
-							$targetOrb->give_to($this->_attacker);
-							$this->_stolenOrb = $targetOrb;
-						}
-						else
-						{
-							$targetOrb->failed_robbery($this->_attacker);
-						}
-					}
-				}
-			}
+            if ($targetOrb && $targetOrb->can_be_stolen_by($this->_attacker)) {
+                // Si gano entonces se lo damos, de lo contrario
+                // se agrega proteccion al dueÃ±o del orbe
+                if ($this->_winner->id == $this->_attacker->id) {
+                    $targetOrb->give_to($this->_attacker);
+                    $this->_stolenOrb = $targetOrb;
+                } else {
+                    $targetOrb->failed_robbery($this->_attacker);
+                }
+            }
 		}
 	}
 
 	/**
 	 * Damos las recompensas al ganador (en caso de ser Character)
-	 * @param  integer $dungeonLevel Nivel del dungeon
 	 */
-	protected function give_rewards($dungeonLevel = 1)
+	protected function give_rewards()
 	{
 		ActivityBar::add($this->_attacker, 2);
 
-		if ( $this->_winner instanceof Character )
-		{
-			if ( $this->_loser instanceof Character )
-			{
-				$this->_winner->pvp_points++;
-			}
+        if ($this->isPvp()) {
+            $this->_winner->pvp_points++;
+        }
+        
+		if ($this->_winner instanceof Character) {
+			if ($this->_winner->level - 2 < $this->_loser->level) {
+                $winnerIndex = $this->get_secure_index($this->_winner);
+				$rewards = $this->_loser->drops();
+				$xpBonus = 
+                    max(0, $this->_loser->level - 2 - $this->_winner->level)/5;
 
-			if ( $this->_winner->level - 2 < $this->_loser->level )
-			{
-				$rewards = $this->_loser->get_rewards($dungeonLevel);
-				$xpBonus = max(0, $this->_loser->level - 2 - $this->_winner->level) / 5;
+				foreach ($rewards as $reward) {
+                    $item = 
+                        \Laravel\IoC::resolve("Item")->find($reward['item_id']);
+                    
+                    if (! $item) {
+                        continue;
+                    }
+                    
+                    if ($reward['item_id'] == Config::get('game.xp_item_id')) {
+                        $reward['amount'] += $reward['amount'] * $xpBonus;
+                    }
 
-				foreach ( $rewards as $reward )
-				{
-					$item = Item::select(array('id', 'name'))->where('id', '=', $reward['item_id'])->first();
-
-					if ( $item )
-					{
-						if ( $item->id == Config::get('game.xp_item_id') )
-						{
-							$reward['amount'] += $reward['amount'] * $xpBonus;
-						}
-
-						if ( $this->_winner->add_item($reward['item_id'], $reward['amount']) )
-						{
-							$this->_rewardLog[] = "{$this->_winner->name} obtiene {$reward['amount']} {$item->name}";
-						}
-						else
-						{
-							$this->_rewardLog[] = "{$this->_winner->name} no tiene espacio para guardar {$item->name}, debe dejarlo.";
-						}
-					}
+                    if ($this->_winner->add_item($item, $reward['amount'])) {
+                        $this->_rewards[$winnerIndex][] = array(
+                            'item_id' => $reward['item_id'],
+                            'amount' => $reward['amount'],
+                            'item' => $item
+                        );
+                    }
 				}
 			}
 		}
 	}
+    
+    /**
+     * Verificamos si la batalla es de jugador contra jugador
+     * @return boolean
+     */
+    public function isPvp()
+    {
+        return $this->_attacker instanceof Character && 
+               $this->_target instanceof Character;
+    }
 
 	/**
 	 * Verificamos si es necesario dar protecciones
 	 */
 	protected function check_for_protection()
 	{
-		if ( $this->_attacker instanceof Character && $this->_target instanceof Character )
-		{
-			if ( $this->_attacker->level > $this->_target->level )
-			{
-				AttackProtection::add($this->_attacker, $this->_target, Config::get('game.protection_time_on_lower_level_pvp'));
+		if ($this->isPvp()) {
+			if ($this->_attacker->level > $this->_target->level) {
+				AttackProtection::add(
+                    $this->_attacker, 
+                    $this->_target, 
+                    Config::get('game.protection_time_on_lower_level_pvp')
+                );
 			}
 		}
 	}
@@ -274,99 +298,154 @@ class Battle
 	 * Comenzamos la batalla
 	 */
 	protected function begin()
-	{
-		// Guardamos los cooldown de las unidades
-		$cds = array(
-			$this->get_secure_index($this->_attacker) => $this->_attacker->get_cd(),
-			$this->get_secure_index($this->_target) => $this->_target->get_cd(),
-		);
+	{        
+        $attackerIndex = $this->get_secure_index($this->_attacker);
+        $targetIndex = $this->get_secure_index($this->_target);
 
-		$source = null;
-		$target = null;
+        // El primer golpe siempre es de quien inicia la batalla
+		$source = $this->_attacker;
+		$target = $this->_target;
 
-		// Maximo de 30 ataques
-		$attacks = 20;
-        $attackWithMagic = false;
+		// Maximo de 20 ataques
+        $maxAttacks = 20;
+		$attacks = $maxAttacks;
+        
+        // La mitad de los ataques sera fisico y la otra mitad magica.
+        $magicalAttack = false;
+        
+        $message = "";
+        
+		while ($attacks > 0 && 
+               $this->_attacker->get_current_life() > 0 && 
+               $this->_target->get_current_life() > 0) {
+                        
+            $attacks--;
+            
+            // Guardamos la cantidad de vida antes de hacer el daÃ±o
+            // para verificar luego si ha burlado a la muerte
+            $prevLife = $target->get_current_life();
 
-		while ( $attacks > 0 && $this->_attacker->get_current_life() > 0 && $this->_target->get_current_life() > 0 )
-		{
-			$attacks--;
-
-			// Si hay una pareja y el ataque previo no fue de ella (evitamos multiples ataques consecutivos de la pareja)
+			$damage = $source->get_combat_behavior()->get_damage();
+            $damage->to($target, $magicalAttack);
+            
+            if ($damage->is_miss()) {
+                $message = "<div class='missed-hit'>¡Falla el ataque!</div>";
+            } elseif ($damage->is_critical()) {
+                $message = "<div class='critical-hit'>¡Acerta un golpe critico, "
+                         . "haciendo {$damage->get_amount()} de daño!</div>";
+            } else {
+                $message = "Inflige {$damage->get_amount()} de daño";
+            }
+            
+            $this->_damageDone[$this->get_secure_index($source)] += 
+                $damage->get_amount();
+            
+            $this->_log[$this->get_secure_index($source)][] = array(
+                'magical' => $magicalAttack,
+                'message' => "<div class='positive'>{$message}</div>"
+            );
+            
+            // Verificamos si burlo a la muerte
+            $cheatedDeath = 
+                $prevLife - $damage->get_amount() <= 0 &&
+                $target->has_buff(Config::get('game.cheat_death_skill'));
+                        
+            if ($cheatedDeath) {
+                $message = "<b>¡{$target->name} burla a la muerte!</b>";
+            } else {
+                $message = "Recibe {$damage->get_amount()} de daño";
+            }
+            
+            $this->_log[$this->get_secure_index($target)][] = array(
+                'magical' => $magicalAttack,
+                'message' => "<div class='negative'>{$message}</div>"
+            );
+                
+            if ($target->get_current_life() == 0 && ! $magicalAttack) {
+                // Si el objetivo actual perdio la mitad del combate
+                // (recordamos que son dos, fisico y magico)
+                // entonces curamos la cantidad de daño que se hayan hecho
+                // para que sea parejo y que ambos combates puedan efectuarse
+                // (de otro modo, podria terminarse solo en el fisico)
+                $target->heal($this->get_damage_done_by($source));
+                $source->heal($this->get_damage_done_by($target));
+                
+                // Y por supuesto, pasamos al siguiente combate
+                $magicalAttack = true;
+            } else {
+                // Cambiamos el tipo de daño a magico si ya se hicieron
+                // la mitad de los ataques
+                if ($maxAttacks/2 == $attacks) {
+                    $magicalAttack = true;
+                }
+            }
+            
+            // Si hay una pareja y el ataque previo no fue de ella 
+            // (evitamos multiples ataques consecutivos de la pareja)
 			// vemos si tiene 33% de chance de golpear
-			if ( $this->_pair && $source && $source->id != $this->_pair->id && mt_rand(0, 100) <= 33 )
-			{
+            $pairAttacks = $this->_pair && 
+                           $source->id != $this->_pair->id && 
+                           mt_rand(1, 100) <= 33;
+            
+			if ($pairAttacks) {
 				$source = $this->_pair;
 				$target = $this->_target;
-			}
-			else
-			{
-				if ( $cds[$this->get_secure_index($this->_attacker)] < $cds[$this->get_secure_index($this->_target)] )
-				{
-					$source = $this->_attacker;
-					$target = $this->_target;
-				}
-				else
-				{
-					$source = $this->_target;
-					$target = $this->_attacker;
-				}
-
-				$cds[$this->get_secure_index($source)] += $source->get_cd();
-			}
-
-			if ( mt_rand(0, 100) <= $target->get_evasion_chance() )
-			{
-				$this->_log[] = "{$target->name} evade el ataque de {$source->name}.";
-			}
-			else
-			{
-				$damage = Damage::normal($source, $target);
-				$this->_damageDone[$this->get_secure_index($source)] += $damage;
-
-				if ( $target->get_current_life() <= 0 && $target->has_skill(Config::get('game.cheat_death_skill')) )
-				{
-					$target->cheat_death();
-					$target->set_current_life(1);
-
-					$this->_log[] = "{$target->name} recibe {$damage} de daño pero, ¡logra burlar a la muerte!.";
-				}
-				else
-				{
-					$this->_log[] = "{$source->name} ataca a {$target->name}, haciendo {$damage} de daño.";
-				}
-
-				// Evitamos reflejar mas del daño que se realizo
-				$reflectedDamage = min($damage, $target->get_reflected_damage($source->attacks_with_magic()));
-
-				// Verificamos si tiene para reflejar y si tiene 33% de chance para hacerlo
-				if ( $reflectedDamage > 0 && mt_rand(0, 100) <= 33 )
-				{
-					$damage = Damage::to_target($target, $source, $reflectedDamage, $source->attacks_with_magic());
-					$this->_damageDone[$this->get_secure_index($target)] += $damage;
-
-					$this->_log[] = "{$target->name} refleja {$damage} de daño a {$source->name}.";
+			} else {
+                $prevSourceIsAttacker = 
+                    $this->get_secure_index($source) == $attackerIndex;
+                
+                $doubleHitChance = 
+                    mt_rand(1, 100) <= $damage->get_double_hit_chance();
+                
+				if ($doubleHitChance && ! $prevSourceIsAttacker) {
+                    
+                } else {
+                    if ($prevSourceIsAttacker) {
+                        $source = $this->_target;
+                        $target = $this->_attacker;
+                    } else {
+                        $source = $this->_attacker;
+                        $target = $this->_target;
+                    }
 				}
 			}
 		}
+        
+        $damageByAttacker = $this->get_damage_done_by($this->_attacker);
+        $damageByTarget = $this->get_damage_done_by($this->_target);
+        $damageByPair = ($this->_pair) ? $this->get_damage_done_by($this->_pair) : 0;
+        
+        // Actualizamos las vidas a los valores reales ya que a mitad
+        // del combate, se realiza una curacion
+        $this->_attacker->set_current_life(
+            $this->get_initial_life_of($this->_attacker) - 
+            $damageByTarget
+        );
+        
+        $this->_target->set_current_life(
+            $this->get_initial_life_of($this->_target) - 
+            $damageByAttacker - 
+            $damageByPair
+        );
         
         $attackerIsAlive = $this->_attacker->get_current_life() > 0;
-        $attackerHasDoneMoreDamage = $this->get_damage_done_by($this->_attacker) > $this->get_damage_done_by($this->_target);
+        $attackerHasDoneMoreDamage = $damageByAttacker > $damageByTarget;
         
         // Gana aquel que haya hecho mas daño y este vivo
-		if ( $attackerIsAlive && $attackerHasDoneMoreDamage )
-		{
-			$this->_winner = $this->_attacker;
-			$this->_loser = $this->_target;
+		if ($attackerIsAlive && $attackerHasDoneMoreDamage) {
+            $this->_winner = $this->_attacker;
+            $this->_loser = $this->_target;
+		} else {
+            $this->_winner = $this->_target;
+            $this->_loser = $this->_attacker;
 		}
-		else
-		{
-			$this->_winner = $this->_target;
-			$this->_loser = $this->_attacker;
-		}
-
-		$this->_log[] = "{$this->_loser->name} ya no puede continuar. ¡{$this->_winner->name} obtiene la victoria!.";
 	}
+    
+    public function get_unit_log(Unit $unit)
+    {
+        $index = $this->get_secure_index($unit);
+        return (isset($this->_log[$index])) ? $this->_log[$index] : array();
+    }
 
 	/**
      * 
@@ -396,6 +475,7 @@ class Battle
 		{
 			$this->_pair->check_skills_time();
 			$this->_damageDone[$this->get_secure_index($pair)] = 0;
+            $this->_log[$this->get_secure_index($pair)] = array();
 		}
         
         $attackerIndex = $this->get_secure_index($attacker);
@@ -407,35 +487,47 @@ class Battle
 		$this->_initialLife[$attackerIndex] = $attacker->get_current_life();
 		$this->_initialLife[$targetIndex] = $target->get_current_life();
 
+        $this->_log[$attackerIndex] = array();
+        $this->_log[$targetIndex] = array();
+        
+        $this->_rewards[$attackerIndex] = array();
+        $this->_rewards[$targetIndex] = array();
+        
 		$this->begin();
 		$this->check_for_protection();
 		$this->give_rewards();
 		$this->check_for_orbs();
 
-		$this->_attackerNotificationMessage = Message::battle_report($this->_attacker, $this->_attacker, $this);
+		$this->_attackerNotificationMessage = Message::battle_report(
+            $this->_attacker, $this->_attacker, $this
+        );
 
-		if ( $this->_target instanceof Character )
-		{
+		if ( $this->_target instanceof Character ) {
 			Message::battle_report($this->_target, $this->_target, $this);
 		}
 
-		if ( $this->_pair )
-		{
+		if ( $this->_pair ) {
 			Message::battle_report($this->_attacker, $this->_pair, $this);
 		}
 
-		if ( $target instanceof Character )
-		{
-			Event::fire('battle', array($this->_attacker, $this->_target, $this->_winner));
+		if ($this->isPvp()) {
+			Event::fire('battle', array(
+                $this->_attacker, $this->_target, $this->_winner
+            ));
+            
 			$attacker->after_pvp_battle();
-		}
-		else
-		{
-			Event::fire('pveBattle', array($this->_attacker, $this->_target, $this->_winner));
+		} else {
+			Event::fire('pveBattle', array(
+                $this->_attacker, $this->_target, $this->_winner
+            ));
+            
 			$attacker->after_battle();
 		}
 
 		$this->_attacker->save();
-		$this->_target->save();
+        
+        if ($this->_target instanceof Character) {
+            $this->_target->save();
+        }
 	}
 }

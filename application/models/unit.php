@@ -13,6 +13,15 @@ abstract class Unit extends Widget
     protected $combatBehavior;
     
     /**
+     * 
+     * @param float $amount
+     */
+    public function heal($amount)
+    {
+        $this->set_current_life($this->get_current_life() + $amount);
+    }
+    
+    /**
      * Verificamos si la unidad puede ser atacada
      * @return boolean
      */

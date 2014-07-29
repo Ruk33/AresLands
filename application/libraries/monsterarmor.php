@@ -14,7 +14,7 @@ class MonsterArmor extends Armor
 
     public function get_defense(Damage $damage)
     {
-        if ( $damage->is_magic() )
+        if ( $damage->is_magical() )
         {
             return ($this->defender->get_final_magic_resistance() / ($damage->get_attacker()->level * 3)) * 0.75;
         }

@@ -13,7 +13,7 @@ Event::listen('loggedOfDayReward', function(Character $character)
 Event::listen('npcTalk', function(Character $character, Npc $npc)
 {
 	$characterQuests = $character->quests_with_action('talk')
-								 ->where('progress', '=', 'started')
+								 ->where_progress('started')
 								 ->get();
 
 	foreach ( $characterQuests as $characterQuest )
@@ -29,64 +29,7 @@ Event::listen('acceptQuest', function(Character $character, Quest $quest)
 
 Event::listen('unequipItem', function(CharacterItem $characterItem)
 {
-	$character = Character::get_character_of_logged_user();
-
-	/*
-	 *	Nos aseguramos de que character
-	 *	y characterItem estén definidos y no
-	 *	sean null
-	 */
-	if ( $character && $characterItem )
-	{
-		$item = $character->items()->select(array('item_id'))->find($characterItem->id);
-		/*
-		 *	Nos aseguramos de que el personaje
-		 *	tenga el objeto
-		 */
-		if ( $item )
-		{
-			$item = $item->item()->select(array('skill'))->first();
-			/*
-			 *	Nos aseguramos de que el objeto
-			 *	en si exista
-			 */
-			if ( $item )
-			{
-				/*
-				 *	Nos fijamos si tiene una habilidad
-				 */
-				if ( $item->skill != '0-0' )
-				{
-					/*
-					 *	Obtenemos las habilidades
-					 */
-					$skills = $item->get_skills();
-
-					/*
-					 *	¿No existen?
-					 */
-					if ( count($skills) > 0 )
-					{
-						$characterSkill = null;
-
-						/*
-						 *	Recorremos todas las habilidades
-						 *	y las removemos del registro
-						 */
-						foreach ( $skills as $skill )
-						{
-							$characterSkill = $character->skills()->where('skill_id', '=', $skill['skill_id'])->where('level', '=', $skill['level'])->select(array('id'))->first();
-
-							if ( $characterSkill )
-							{
-								$characterSkill->delete();
-							}
-						}
-					}
-				}
-			}
-		}
-	}
+	
 });
 
 Event::listen('battle', function($character_one, $character_two, $winner = null)

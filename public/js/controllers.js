@@ -17,6 +17,7 @@ controller('CharacterController', ['$scope', '$http', '$timeout', 'CharacterOfLo
 	{
 		StatPrice.get({stat: 'stat_strength'}, function(price)
 		{
+			console.log("asdasdasd",price);
 			DividedCoin.get({amount: price.price}, function(coins)
 			{
 				$scope.statsPrices.strength = 'Precio: ' + coins.text;
@@ -94,7 +95,7 @@ controller('CharacterController', ['$scope', '$http', '$timeout', 'CharacterOfLo
 
 		$http({
 			method: "POST",
-			url: BASE_PATH + 'authenticated/addStat',
+			url: BASE_PATH + 'authenticated/character/addStat',
 			data: {'stat_name': stat, 'stat_amount': $scope.pointsToChange},
 	   }).success(function(data) {
 			if ( ! data )

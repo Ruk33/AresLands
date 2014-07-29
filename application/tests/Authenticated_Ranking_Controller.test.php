@@ -30,16 +30,16 @@ class Authenticated_Ranking_Controller_Test extends \Tests\TestHelper
 		\Laravel\IoC::unregister("ClanOrbPoint");
 	}
 	
-	public function testValorPorDefectoOIncorrectoRedireccionaAKingOfTheHill()
-	{
-		$this->kingOfTheHill->shouldReceive("get_list")->once();
-		
-		$response = $this->get("authenticated/ranking");
-		$this->assertResponseOk($response);
-		
-		$response = $this->get("authenticated/ranking/foo");
-		$this->assertRedirect(URL::to_route("get_authenticated_ranking_index"), $response);
-	}
+//	public function testValorPorDefectoOIncorrectoRedireccionaAKingOfTheHill()
+//	{
+//		$this->kingOfTheHill->shouldReceive("get_list")->once();
+//		
+//		$response = $this->get("authenticated/ranking");
+//		$this->assertResponseOk($response);
+//		
+//		$response = $this->get("authenticated/ranking/foo");
+//		$this->assertRedirect(URL::to_route("get_authenticated_ranking_index"), $response);
+//	}
 	
 	public function testKingOfTheHill()
 	{
@@ -52,7 +52,8 @@ class Authenticated_Ranking_Controller_Test extends \Tests\TestHelper
 		
 		$this->assertResponseOk($response);
 		$this->assertViewHasAll($response, array(
-			"title" => "Ranking", 
+			"title" => "Ranking",
+            "pagination" => null,
 			"elements" => array()
 		));
 	}
@@ -69,17 +70,66 @@ class Authenticated_Ranking_Controller_Test extends \Tests\TestHelper
 			 ->andReturnSelf();
 		
 		$this->character
-			 ->shouldReceive("get_characters_for_pvp_ranking->paginate")
+			 ->shouldReceive("get_characters_for_pvp_ranking")
 			 ->once()
-			 ->with(50)
-			 ->andReturn(array());
+			 ->andReturnSelf();
+        
+        $this->character
+             ->shouldReceive("paginate")
+             ->once()
+             ->with(50)
+             ->andReturnSelf();
+        
+        $this->character
+             ->shouldReceive("get_results")
+             ->once()
+             ->andReturn(array());
 		
 		$response = $this->get("authenticated/ranking/pvp");
 		
 		$this->assertResponseOk($response);
 		$this->assertViewHasAll($response, array(
 			"title" => "Ranking", 
+            "pagination" => $this->character,
 			"elements" => array()
 		));
 	}
+    
+    public function testClan()
+    {
+        $this->assertHasFilter("get", "authenticated/ranking/clan", "before", "auth");
+		$this->assertHasFilter("get", "authenticated/ranking/clan", "before", "hasNoCharacter");
+        
+        $this->clanOrbPoint
+             ->shouldReceive("with")
+             ->once()
+             ->with("clan")
+             ->andReturnSelf();
+        
+        $this->clanOrbPoint
+             ->shouldReceive("order_by")
+             ->once()
+             ->with("points", "desc")
+             ->andReturnSelf();
+        
+        $this->clanOrbPoint
+             ->shouldReceive("paginate")
+             ->once()
+             ->with(50)
+             ->andReturnSelf();
+        
+        $this->clanOrbPoint
+             ->shouldReceive("get_results")
+             ->once()
+             ->andReturn(array());
+        
+        $response = $this->get("authenticated/ranking/clan");
+		
+		$this->assertResponseOk($response);
+		$this->assertViewHasAll($response, array(
+			"title" => "Ranking", 
+            "pagination" => $this->clanOrbPoint,
+			"elements" => array()
+		));
+    }
 }

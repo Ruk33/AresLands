@@ -115,7 +115,7 @@ class Authenticated_Message_Controller extends Authenticated_Base
 		
 		$messages->delete();
 		
-		return Laravel\Redirect::back();
+		return Laravel\Redirect::to_route("get_authenticated_message_index");
 	}
 	
 	/**

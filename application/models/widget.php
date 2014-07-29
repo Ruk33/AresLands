@@ -23,7 +23,7 @@ abstract class Widget extends Base_Model
      */
     public function get_link()
     {
-        return '';
+        return $this->name;
     }
     
     /**

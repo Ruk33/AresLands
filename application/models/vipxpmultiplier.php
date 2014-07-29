@@ -1,34 +1,42 @@
 <?php
 
-class VipXpMultiplier implements IVipObject
+class VipXpMultiplier extends VipObject
 {
-	public function get_name()
+	public function getName()
 	{
 		return 'Multiplicador de experiencia';
 	}
 	
-	public function get_icon()
+	public function getIcon()
 	{
 		return URL::base() . '/img/icons/vip/xp_multiplier.jpg';
 	}
 	
-	public function get_description()
+	public function getDescription()
 	{
-		return 'Aprovecha mejor los combates, exploraciones y misiones consiguiendo 20% de experiencia extra durante 3 dias.';
+		return 'Aprovecha mejor los combates, exploraciones y misiones ' .
+               'consiguiendo 20% de experiencia extra durante 3 dias.';
 	}
 
-	public function get_price()
+	public function getPrice()
 	{
 		return 20;
 	}
 	
 	public function execute()
 	{
-		$character = Character::get_character_of_logged_user();
-
-		if ( $character )
-		{
-			Skill::find(Config::get('game.vip_multiplier_xp_rate_skill'))->cast($character, $character);
+		if ($this->buyer) {
+            $buffId = Config::get('game.vip_multiplier_xp_rate_skill');
+			$buff = \Laravel\IoC::resolve("Skill")->find($buffId);
+    
+            return $buff->cast($this->buyer, $this->buyer);
 		}
+        
+        return false;
 	}
+    
+    public function getValidator()
+    {
+        return Laravel\Validator::make($this->attributes, array());
+    }
 }

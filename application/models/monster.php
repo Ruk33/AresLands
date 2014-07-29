@@ -7,7 +7,11 @@ class Monster extends Npc
     public function __construct()
     {
         parent::__construct();
-        $this->combatBehavior = new AttackableBehavior($this, new Damage($this), new MonsterArmor($this));
+        
+        $damage = new Damage($this);
+        $armor = new MonsterArmor($this);
+        
+        $this->combatBehavior = new AttackableBehavior($this, $damage, $armor);
     }
 
     protected function inject_query($query)
@@ -95,32 +99,44 @@ class Monster extends Npc
 
 	}
 
-	public function drops()
+    /**
+     * 
+     * @param integer $dungeon Nivel del dungeon
+     * @return array
+     */
+	public function drops($dungeon = 1)
 	{
-		return $this->has_many("MonsterDrop", "monster_id")->get();
+        $list = $this->has_many("MonsterDrop", "monster_id")->get();
+        $drops = array();
+        
+		foreach ($list as $drop) {
+            if (mt_rand(0, 100) <= $drop->chance * $dungeon) {
+				$drops[] = $drop->to_array();
+			}
+        }
+        
+        // Compatibilidad con lo viejo
+        $drops[] = array(
+            'item_id' => Config::get('game.xp_item_id'), 
+            'amount' => $this->xp
+        );
+        
+		$drops[] = array(
+            'item_id' => Config::get('game.coin_id'), 
+            'amount' => $this->level * 50
+        );
+        
+        return $drops;
 	}
 
 	/**
-	 * @param  integer $dungeonLevel Nivel de dungeon
+	 * @param  integer $dungeon Nivel de dungeon
+     * @deprecated
 	 * @return array
 	 */
-	public function get_rewards($dungeonLevel = 1)
+	public function get_rewards($dungeon = 1)
 	{
-		$rewards = array();
-
-		foreach ( $this->drops as $drop )
-		{
-			if ( mt_rand(0, 100) <= $drop->chance * $dungeonLevel )
-			{
-				$drops[] = array('item_id' => $drop->item_id, 'amount' => $drop->amount);
-			}
-		}
-
-		// compatibilidad con el viejo sistema
-		$rewards[] = array('item_id' => Config::get('game.xp_item_id'), 'amount' => $this->xp);
-		$rewards[] = array('item_id' => Config::get('game.coin_id'), 'amount' => $this->level * 50);
-
-		return $rewards;
+		return $this->drops($dungeon);
 	}
 
 	public function save()

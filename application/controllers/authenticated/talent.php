@@ -41,7 +41,9 @@ class Authenticated_Talent_Controller extends Authenticated_Base
 		$talents = $this->skill->get_talents($character->characteristics);
 		
 		$this->layout->title = 'Talentos';
-		$this->layout->content = View::make('authenticated.talents', compact('character', 'racials', 'talents'));
+		$this->layout->content = View::make(
+            'authenticated.talents', compact('character', 'racials', 'talents')
+        );
 	}
 	
 	public function post_learn()

@@ -1,12 +1,56 @@
 <?php
 
+use Laravel\IoC;
+
 class CharacterItem extends Base_Model
 {
 	public static $softDelete = false;
 	public static $timestamps = false;
 	public static $table = 'character_items';
-	public static $key = 'id';
 	
+    /**
+     * Damos los buffs que otorga un objeto al personaje
+     * que lo posea
+     */
+    public function give_skills()
+    {
+        $character = $this->character;
+        $item = $this->item;
+        
+        if ($item->skill != '0-0') {            
+            foreach ((array) $item->get_skills() as $data) {
+                $skill = IoC::resolve("Skill")->where_id($data["id"])
+                                              ->where_level($data["level"])
+                                              ->first();
+                
+                if ($skill) {
+                    $skill->cast($character, $character);
+                }
+            }
+        }
+    }
+    
+    /**
+     * Removemos los buffs que otorga un objeto al personaje
+     * que lo posea
+     */
+    public function remove_skills()
+    {
+        $character = $this->character;
+        $item = $this->item;
+        
+        if ($item->skill != '0-0') {
+            $skills = $item->get_skills();
+
+            foreach ((array) $skills as $skill) {
+                $character->skills()
+                          ->where_skill_id($skill['skill_id'])
+                          ->where_level($skill['level'])
+                          ->delete();
+            }
+        }
+    }
+    
 	public function save()
 	{
 		// Evitamos tener negativos como cantidad

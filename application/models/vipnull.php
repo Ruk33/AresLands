@@ -1,35 +1,33 @@
 <?php
 
-class VipNull implements IVipObject
+class VipNull extends VipObject
 {
-	protected $attributes;
-	
 	public function execute()
 	{
 		
 	}
 
-	public function get_description()
+	public function getDescription()
 	{
 		return "Objeto desconocido del infierno";
 	}
 
-	public function get_icon()
+	public function getIcon()
 	{
 		return "";
 	}
 
-	public function get_name()
+	public function getName()
 	{
 		return "Desconocido";
 	}
 
-	public function get_price()
+	public function getPrice()
 	{
 		return 0;
 	}
 
-	public function get_validator()
+	public function getValidator()
 	{
 		return Validator::make(
 			$this->attributes,
@@ -41,15 +39,4 @@ class VipNull implements IVipObject
 			)
 		);
 	}
-
-	public function set_attributes(array $attributes)
-	{
-		$this->attributes = $attributes;
-	}
-
-	public function set_buyer(Character $buyer)
-	{
-		
-	}
-
 }

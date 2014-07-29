@@ -75,13 +75,15 @@ class Authenticated_Character_Controller extends Authenticated_Base
 	{
 		$character = $this->character->get_logged();
 		
-		$stat = Input::get("stat_name");
-		$amount = Input::get("stat_amount");
-		
+        $json = Input::json(true);
+        
+		$stat = Input::get("stat_name", $json["stat_name"]);
+		$amount = Input::get("stat_amount", $json["stat_amount"]);
+        
 		if ( $character->can_add_stat($stat, $amount) )
 		{
 			$character->add_stat($stat, $amount);
-			return true;
+            return true;
 		}
 		
 		return false;

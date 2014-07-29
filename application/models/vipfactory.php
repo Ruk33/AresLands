@@ -11,12 +11,13 @@ class VipFactory
 	
 	/**
 	 * Obtenemos instancia del objeto vip
-	 * @param integer $vipObject
-	 * @return IVipObject o null
+     * 
+	 * @param integer $id
+	 * @return VipObject
 	 */
-	public function get($vipObject)
+	public function get($id)
 	{
-		switch ( $vipObject )
+		switch ( $id )
 		{
 			case self::COIN_MULTIPLIER:
 				return new VipCoinMultiplier;
@@ -50,17 +51,15 @@ class VipFactory
 	 * Obtenemos todos los objetos vips
 	 * @return array
 	 */
-	public function get_all()
+	public function getAll()
 	{
-		$vipObjects = array();
-		
-		$vipObjects[self::CHANGE_GENDER] = self::get(self::CHANGE_GENDER);
-		$vipObjects[self::CHANGE_NAME] = self::get(self::CHANGE_NAME);
-		$vipObjects[self::CHANGE_RACE] = self::get(self::CHANGE_RACE);
-		$vipObjects[self::COIN_MULTIPLIER] = self::get(self::COIN_MULTIPLIER);
-		$vipObjects[self::REDUCTION_TIME] = self::get(self::REDUCTION_TIME);
-		$vipObjects[self::XP_MULTIPLIER] = self::get(self::XP_MULTIPLIER);
-		
-		return $vipObjects;
+		return array(
+            self::CHANGE_GENDER => self::get(self::CHANGE_GENDER),
+            self::CHANGE_NAME => self::get(self::CHANGE_NAME),
+            self::CHANGE_RACE => self::get(self::CHANGE_RACE),
+            self::COIN_MULTIPLIER => self::get(self::COIN_MULTIPLIER),
+            self::REDUCTION_TIME => self::get(self::REDUCTION_TIME),
+            self::XP_MULTIPLIER => self::get(self::XP_MULTIPLIER),
+		);
 	}
 }

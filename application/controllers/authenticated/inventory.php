@@ -6,12 +6,12 @@ class Authenticated_Inventory_Controller extends Authenticated_Base
 	{
 		Route::post("authenticated/inventory/destroy", array(
 			"uses" => "authenticated.inventory@destroy",
-			"as"   => "get_authenticated_inventory_destroy"
+			"as"   => "post_authenticated_inventory_destroy"
 		));
 		
 		Route::post("authenticated/inventory/use", array(
 			"uses" => "authenticated.inventory@use",
-			"as"   => "get_authenticated_inventory_use"
+			"as"   => "post_authenticated_inventory_use"
 		));
 	}
 	
@@ -40,10 +40,10 @@ class Authenticated_Inventory_Controller extends Authenticated_Base
 		$character = $this->character->get_logged();
 		$characterItem = $character->items()->find_or_die(Input::get("id"));
 		$valid = $character->use_inventory_item($characterItem, Input::get("amount", 1));
-		
-		if ( $valid !== true )
+
+        if ( is_string($valid) )
 		{
-			Session::flash("errors", $valid);
+			Session::flash("error", $valid);
 		}
 		
 		return \Laravel\Redirect::to_route("get_authenticated_index");

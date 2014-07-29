@@ -24,26 +24,35 @@ class Authenticated_Ranking_Controller extends Authenticated_Base
 		parent::__construct();
 	}
 	
-	public function get_index($rank = "kingOfTheHill")
+	public function get_index($rank = "pvp")
 	{
+        $elements = array();
+        $pagination = null;
+        
 		switch ( $rank )
 		{
-			case "kingOfTheHill":
-				$elements = $this->kingOfTheHill->get_list();
-				break;
+//			case "kingOfTheHill":
+//				$elements = $this->kingOfTheHill->get_list();
+//				break;
 
 			case "pvp":
-				$elements = $this->character
-								 ->with("clan")
-								 ->get_characters_for_pvp_ranking()
-								 ->paginate(50);
+				$pagination = $this->character
+                                   ->with("clan")
+                                   ->get_characters_for_pvp_ranking()
+                                   ->paginate(50);
+                
+                $elements = $pagination->results;
+                
 				break;
 
 			case "clan":
-				$elements = $this->clanOrbPoint
-								 ->with("clan")
-								 ->order_by("points", "desc")
-								 ->paginate(50);
+				$pagination = $this->clanOrbPoint
+                                   ->with("clan")
+                                   ->order_by("points", "desc")
+                                   ->paginate(50);
+                
+                $elements = $pagination->results;
+                
 				break;
 
 			default:
@@ -53,7 +62,7 @@ class Authenticated_Ranking_Controller extends Authenticated_Base
 		
 		$this->layout->title = "Ranking";
 		$this->layout->content = View::make('authenticated.ranking', compact(
-			"rank", "elements"
+			"rank", "pagination", "elements"
 		));
 	}
 }

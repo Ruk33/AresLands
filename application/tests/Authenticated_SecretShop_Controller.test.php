@@ -31,7 +31,7 @@ class Authenticated_SecretShop_Controller_Test extends Tests\TestHelper
 		$this->assertHasFilter("get", "authenticated/secretShop", "before", "auth");
 		$this->assertHasFilter("get", "authenticated/secretShop", "before", "hasNoCharacter");
 		
-		$this->vipFactory->shouldReceive("get_all")->once()->andReturn(array());
+		$this->vipFactory->shouldReceive("getAll")->once()->andReturn(array());
 		
 		$response = $this->get("authenticated/secretShop");
 		
@@ -45,48 +45,94 @@ class Authenticated_SecretShop_Controller_Test extends Tests\TestHelper
 	
 	public function testComprar()
 	{
-		$this->assertHasFilter("post", "authenticated/secretShop/buy", "before", "auth");
-		$this->assertHasFilter("post", "authenticated/secretShop/buy", "before", "hasNoCharacter");
+		$this->assertHasFilter(
+            "post", "authenticated/secretShop/buy", "before", "auth"
+        );
+        
+		$this->assertHasFilter(
+            "post", "authenticated/secretShop/buy", "before", "hasNoCharacter"
+        );
 		
-		$attributes = array("id" => 7);
+        $buyer = m::mock("Character");
+        
+        $this->character
+             ->shouldReceive("get_logged")
+             ->times(4)
+             ->andReturn($buyer);
+        
+        $attributes = array("id" => 7);
+        
+        $validator = m::mock("Validator");
+        $validator->shouldReceive("fails")->times(4)->andReturn(true, false);
+        $validator->errors = $validator;
+        $validator->shouldReceive("all")->once()->andReturn(array());
+        
+        $price = 5;
+        
+        $vip = m::mock("VipObject");
+        $vip->shouldReceive("setBuyer")->times(4)->with($buyer);
+        $vip->shouldReceive("setAttributes")->times(4)->with($attributes);
+        $vip->shouldReceive("getValidator")->times(4)->andReturn($validator);
+        $vip->shouldReceive("getPrice")->times(3)->andReturn($price);
+        $vip->shouldReceive("execute")->twice()->andReturn(false, true);
+        
+        $this->vipFactory
+             ->shouldReceive("get")
+             ->times(4)
+             ->with($attributes["id"])
+             ->andReturn($vip);
+        
+        $user = m::mock("IronFistUser");
+        $user->shouldReceive("consume_coins")
+             ->times(3)
+             ->with($price)
+             ->andReturn(false, true);
+        
+        $this->logIn($user);
+        
+        // Cuando se consumen las ironcoins pero execute falla, entonces
+        // se hace un log del error, el cual requiere lo siguiente
+        $buyer->shouldReceive("get_name")->once();
+        $vip->shouldReceive("getName")->once();
+        
 		Input::replace($attributes);
 		
-		$vipObject = m::mock("IVipObject");
-		
-		$this->character->shouldReceive("get_logged")->times(3)->andReturnSelf();
-		$this->vipFactory->shouldReceive("get")->times(3)->with($attributes["id"])->andReturn($vipObject);
-		
-		$validator = m::mock("Validator");
-		
-		$vipObject->shouldReceive("set_attributes")->times(3)->with($this->character, $attributes);
-		$vipObject->shouldReceive("get_validator")->times(3)->andReturn($validator);
-		
-		$validator->shouldReceive("fails")->once()->andReturn(true);
-		$validator->errors = $validator;
-		$validator->shouldReceive("all")->once()->andReturn(array());
-		
-		$response = $this->post("authenticated/secretShop/buy");
+		// El validador falla
+		$response = $this->post("authenticated/secretShop/buy");        
 		
 		$this->assertSessionHas("errors", array());
-		$this->assertRedirect(URL::to_route("get_authenticated_secret_shop_index"), $response);
+		$this->assertRedirect(
+            URL::to_route("get_authenticated_secret_shop_index"), $response
+        );
+        
+        // Consumir las IronCoins falla
+        $response = $this->post("authenticated/secretShop/buy");        
 		
-		$validator->shouldReceive("fails")->twice()->andReturn(false);
+		$this->assertSessionHas("errors", array(
+            "No tienes suficientes IronCoins para comprar este objeto"
+        ));
+		$this->assertRedirect(
+            URL::to_route("get_authenticated_secret_shop_index"), $response
+        );
+        
+        // $vip->execute falla
+        $response = $this->post("authenticated/secretShop/buy");        
 		
-		$vipObject->shouldReceive("execute")->once()->andReturn(false);
+		$this->assertSessionHas("errors", array(
+            "Hubo un error al procesar la peticion, por favor notifica a " . 
+            "los administradores en el foro."
+        ));
+		$this->assertRedirect(
+            URL::to_route("get_authenticated_secret_shop_index"), $response
+        );
 		
-		$response = $this->post("authenticated/secretShop/buy");
-		
-		$this->assertSessionHas("errors", array("No tienes suficientes IronCoins o hubo un error al procesar la peticion"));
-		$this->assertRedirect(URL::to_route("get_authenticated_secret_shop_index"), $response);
-		
-		$vipObject->shouldReceive("execute")->once()->andReturn(true);
-		
+		// Todo va bien
 		$response = $this->post("authenticated/secretShop/buy");
 		
 		$this->assertResponseOk($response);
 		$this->assertViewHasAll($response, array(
 			"title" => "¡Compra exitosa!",
-			"vipObject" => $vipObject
+			"vipObject" => $vip
 		));
 	}
 }

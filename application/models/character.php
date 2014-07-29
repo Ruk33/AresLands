@@ -211,10 +211,35 @@ class Character extends Unit
      */
     public static $COLUMNS_OTHER = array('pvp_points','language','points_to_change','talent_points','second_mercenary');
     
-    public function __construct($attributes = array(), $exists = false)
+    public function get_combat_behavior()
     {
-        parent::__construct($attributes, $exists);
-        $this->combatBehavior = new AttackableBehavior($this, new Damage($this), new MonsterArmor($this));
+        if (! $this->combatBehavior) {
+            switch ($this->get_attribute("race")) {
+                case "dwarf":
+                    $damage = new DwarfCharacterDamage($this);
+                    $armor = new DwarfCharacterArmor($this);
+                    break;
+                
+                case "human":
+                    $damage = new HumanCharacterDamage($this);
+                    $armor = new HumanCharacterArmor($this);
+                    break;
+                
+                case "elf":
+                    $damage = new ElfCharacterDamage($this);
+                    $armor = new ElfCharacterArmor($this);
+                    break;
+                
+                case "drow":
+                    $damage = new DrowCharacterDamage($this);
+                    $armor = new DrowCharacterArmor($this);
+                    break;
+            }
+            
+            $this->combatBehavior = new AttackableBehavior($this, $damage, $armor);
+        }
+        
+        return parent::get_combat_behavior();
     }
 	
 	/**
@@ -244,7 +269,7 @@ class Character extends Unit
 	/**
 	 * 
 	 * @param CharacterItem $chest
-	 * @return string
+	 * @return string|bool
 	 */
 	public function open_chest(CharacterItem $chest)
 	{
@@ -268,7 +293,7 @@ class Character extends Unit
 		$chest->count--;
 		$chest->save();
 		
-		return "";
+		return true;
 	}
 	
 	/**
@@ -286,11 +311,6 @@ class Character extends Unit
 		
 		$item = $characterItem->item;
 		
-		if ( $item->class == "none" )
-		{
-			return "Ese objeto no puede ser usado";
-		}
-		
 		if ( $item->class == "consumible" )
 		{
 			return $this->use_consumable_of_inventory($characterItem, $amount);
@@ -299,6 +319,11 @@ class Character extends Unit
 		if ( $item->id == Config::get('game.chest_item_id') )
 		{
 			return $this->open_chest($characterItem);
+		}
+        
+        if ( $item->class == "none" )
+		{
+			return "Ese objeto no puede ser usado";
 		}
 		
 		if ( $characterItem->location == "inventory" )
@@ -359,7 +384,7 @@ class Character extends Unit
 
 	/**
 	 * Query para obtener el segundo mercenario del personaje
-	 * @return Eloquent|null
+	 * @return Item|null
 	 */
 	public function get_second_mercenary()
 	{
@@ -368,7 +393,7 @@ class Character extends Unit
 			return null;
 		}
 		
-		return Item::where_id($this->get_attribute('second_mercenary'));
+		return Item::find($this->get_attribute('second_mercenary'));
 	}
 
 	/**
@@ -438,8 +463,14 @@ class Character extends Unit
     public function drops()
     {
         return array(
-			array('item_id' => Config::get('game.xp_item_id'), 'amount' => 1),
-			array('item_id' => Config::get('game.coin_id'), 'amount' => mt_rand(20 * $this->level, 60 * $this->level))
+			array(
+                'item_id' => Config::get('game.xp_item_id'), 
+                'amount' => 1,
+            ),
+			array(
+                'item_id' => Config::get('game.coin_id'), 
+                'amount' => mt_rand(20 * $this->level, 60 * $this->level),
+            )
 		);
     }
     
@@ -485,6 +516,11 @@ class Character extends Unit
 		return ( $magical ) ? $this->reflect_magic_damage + $this->reflect_magic_damage_extra : $this->reflect_physical_damage + $this->reflect_physical_damage_extra;
 	}
 
+    /**
+     * 
+     * @deprecated
+     * @return float
+     */
 	public function get_cd()
 	{
 		if ( $this->attacks_with_magic() )
@@ -2053,16 +2089,18 @@ class Character extends Unit
 	// Evitamos vida por debajo de 0 o mayor a max_life
 	public function set_current_life($value)
 	{		
-		if ( $value < 0 )
-		{
-			$value = 0;
-		}
-		else
-		{
+		if ( $value <= 0 ) {
+            // Verificamos si debe burlar a la muerte
+            if ($this->has_buff(Config::get('game.cheat_death_skill'))) {
+                $this->cheat_death();
+                $value = 1;
+            } else {
+                $value = 0;
+            }
+		} else {
 			$maxLife = $this->max_life;
 
-			if ( $maxLife < $value )
-			{
+			if ( $maxLife < $value ) {
 				$value = $maxLife;
 			}
 		}
@@ -2365,30 +2403,41 @@ class Character extends Unit
 		return $this->items()->where('location', '=', $body_part)->first();
 	}
 
-	public function unequip_item(CharacterItem $characterItem)
+    /**
+     * 
+     * @param CharacterItem $characterItem
+     * @param integer $slot Slot servido para dejar el objeto (util cuando se
+     * quiere equipar y debe desequiparse automaticamente primero, se usa
+     * el slot de lo que se quiere equipar)
+     * @return boolean
+     */
+	public function unequip_item(CharacterItem $characterItem, $slot = 0)
 	{
-		if ( ! $this || ! $characterItem )
-		{
+		if (! $this || ! $characterItem) {
 			return false;
 		}
 
-		$emptySlot = $this->empty_slot();
+        if ($slot) {
+            $emptySlot = $slot;
+        } else {
+            $emptySlot = $this->empty_slot();
+        }
 
-		if ( $emptySlot )
-		{
-			$characterItem->location = 'inventory';
-			$characterItem->slot = $emptySlot;
-			
-			$this->update_extra_stat($characterItem->item->to_array(), false);
+		if (! $emptySlot) {
+            return false;
+        }
+        
+        $characterItem->location = 'inventory';
+        $characterItem->slot = $emptySlot;
 
-			$characterItem->save();
-			
-			Event::fire('unequipItem', array($characterItem));
+        $this->update_extra_stat($characterItem->item->to_array(), false);
+        $characterItem->remove_skills();
+        
+        $characterItem->save();
 
-			return true;
-		}
+        Event::fire('unequipItem', array($characterItem));
 
-		return false;
+		return true;
 	}
 
 	public function equip_item(CharacterItem $characterItem)
@@ -2419,7 +2468,7 @@ class Character extends Unit
 
 				if ( $lrhand )
 				{
-					if ( ! $this->unequip_item($lrhand) )
+					if ( ! $this->unequip_item($lrhand, $characterItem->slot) )
 					{
 						return 'No tienes espacio en el inventario para desequiparte el objeto de dos manos que ya tienes equipado.';
 					}
@@ -2432,7 +2481,7 @@ class Character extends Unit
 
 				if ( $lhand )
 				{
-					if ( ! $this->unequip_item($lhand) )
+					if ( ! $this->unequip_item($lhand, $characterItem->slot) )
 					{
 						return 'No tienes espacio en el inventario para desequiparte el objeto que ya tienes en la mano izquierda.';
 					}
@@ -2440,7 +2489,7 @@ class Character extends Unit
 
 				if ( $rhand )
 				{
-					if ( ! $this->unequip_item($rhand) )
+					if ( ! $this->unequip_item($rhand, $characterItem->slot) )
 					{
 						return 'No tienes espacio en el inventario para desequiparte el objeto que ya tienes en la mano derecha.';
 					}
@@ -2452,7 +2501,7 @@ class Character extends Unit
 
 		if ( $equippedItem )
 		{
-			if ( ! $this->unequip_item($equippedItem) )
+			if ( ! $this->unequip_item($equippedItem, $characterItem->slot) )
 			{
 				return 'No tienes espacio en el inventario para desequiparte el objeto que ya tienes equipado.';
 			}
@@ -2466,7 +2515,7 @@ class Character extends Unit
 		
 		Event::fire('equipItem', array($characterItem));
 
-		return '';
+		return true;
 	}
 	
 	/**
@@ -2519,6 +2568,11 @@ class Character extends Unit
 		return $user->character;
 	}
 	
+    /**
+     * 
+     * @param array $select
+     * @return Character
+     */
 	public function get_logged($select = array())
 	{
 		return static::get_character_of_logged_user($select);

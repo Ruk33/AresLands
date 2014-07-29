@@ -61,7 +61,7 @@ class Authenticated_Inventory_Controller_Test extends Tests\TestHelper
 		
 		$response = $this->post("authenticated/inventory/use");
 		$this->assertRedirect(URL::to_route("get_authenticated_index"), $response);
-		$this->assertSessionHas("errors", "foo");
+		$this->assertSessionHas("error", "foo");
 		
 		$this->character->shouldReceive("use_inventory_item")->once()->with($this->characterItem, 333)->andReturn(true);
 		$response = $this->post("authenticated/inventory/use");

@@ -19,6 +19,16 @@ abstract class Armor
      * @param Damage $damage
      * @return real
      */
+    public function get_block_amount(Damage $damage)
+    {
+        return 0.00;
+    }
+    
+    /**
+     * 
+     * @param Damage $damage
+     * @return real
+     */
     public function get_block_chance(Damage $damage)
     {
         return 0.00;

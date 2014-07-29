@@ -26,6 +26,7 @@ class Api_Controller extends Base_Controller implements Api_Interface
 	{
 		$character = Character::get_character_of_logged_user(array(
 			'id', 
+            'race',
 			'level', 
 			'stat_strength',
 			'stat_dexterity',

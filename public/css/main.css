@@ -54,6 +54,22 @@ textarea {
    Author's custom styles
    ========================================================================== */
 
+.magical-attack {
+	color: #4B7DA8;
+}
+
+.physical-attack {
+	color: #BF6D37;
+}
+
+.critical-hit {
+	color: #B15FEA;
+}
+
+.missed-hit {
+	color: rgb(243, 222, 190);
+}
+
 .carousel-control {
 	font-size: 24px;
 	line-height: 35px;
@@ -248,37 +264,65 @@ select:focus, input:focus, textarea:focus {
 }
 
 .travel-zone-box .explored-time {
-	font-size: 10px;
+	position: absolute;
+	bottom: 10px;
+	width: 93%;
+	text-align: center;
+}
+
+.travel-zone-box .explored-time-label {
 	text-transform: uppercase;
-	color: rgb(56, 59, 65);
-	font-family: "Verdana";
+	font-size: 10px;
+	font-family: Verdana;
+	color: #73685e;
 }
 
+.travel-zone-box .explored-time-text {
+	color: #3b1e06;
+	font-size: 24px;
+	font-family: Georgia;
+}
+	
 .travel-zone-box .image {
-	margin-right: 10px;
+	margin-left: 10px;
+	margin-right: 5px;
+	margin-top: 13px;
 }
 
-.travel-zone-box .ui-button {
-	color: rgb(255, 183, 50);
+.travel-zone-box .name {
+	color: #2f220e;
+	font-family: Georgia;
+	font-size: 14px;
+	margin-top: 15px;
+	font-weight: bold;
+	text-shadow: 0 0 5px white;
 }
 
 .travel-zone-box .description {
-	color: white;
-	margin-top: 10px;
-	margin-bottom: 10px;
+	color: #463b2b;
+	font-size: 13px;
+	line-height: 17px;
+	font-family: Verdana;
+	margin-top: 7px;
+	margin-left: 5px;
+	width: 320px;
+	text-shadow: 0px 0px 5px #FFF;
 }
 
 .travel-zone-box {
-	background-color: rgb(15, 15, 15);
-	border: 1px solid rgb(37, 34, 34);
-	padding: 15px;
-	width: 310px;
+	background-image: url("/img/travel-box.png");
+	background-repeat: no-repeat;
+	padding: 12px;
+	width: 328px;
+	height: 163px;
+	position: relative;
 }
 
 .alert-danger, .alert-error {
 	background-color: rgb(242, 113, 92);
 	border-color: #5D1818;
 	text-shadow: none;
+	color: rgb(155, 21, 18);
 }
 
 .no-border-radius {
@@ -1690,11 +1734,11 @@ div#content {
 }
 
 .positive {
-	color: rgb(123, 223, 56);
+	color: rgb(133, 239, 19);
 }
 
 .negative {
-	color: rgb(216, 66, 66);
+	color: rgb(224, 57, 38);
 }
 
 .thumbnail {

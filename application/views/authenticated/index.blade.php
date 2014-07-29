@@ -32,14 +32,14 @@
 		<ul class="inline">
 			@foreach ( $talents as $skillId )
 			<li class="clan-member-link text-center" skill-tooltip skill-id="{{ $skillId }}" skill-level="1">
-				{{ Form::open(URL::to('authenticated/castTalent')) }}
-				{{ Form::token() }}
-				{{ Form::hidden('skill_id', $skillId) }}
-				{{ Form::hidden('id', $character->id) }}
-				<img src="{{ URL::base() }}/img/icons/skills/{{ $skillId }}.png" alt="" width="48px" height="48px">
-				<div>
-					{{ Form::submit('Lanzar', array('class' => 'ui-button ui-input-button')) }}
-				</div>
+				{{ Form::open(URL::to_route("post_authenticated_talent_cast")) }}
+                    {{ Form::token() }}
+                    {{ Form::hidden('skill_id', $skillId) }}
+                    {{ Form::hidden('id', $character->id) }}
+                    <img src="{{ URL::base() }}/img/icons/skills/{{ $skillId }}.png" alt="" width="48px" height="48px">
+                    <div>
+                        {{ Form::submit('Lanzar', array('class' => 'ui-button ui-input-button')) }}
+                    </div>
 				{{ Form::close() }}
 			</li>
 			@endforeach
@@ -96,9 +96,13 @@
 			<div style="position: absolute; left: 40px; top: 150px;">
 				<div class="box box-box-64-gold">
 					@if ( $weapon )
-						<a href="{{ URL::to('authenticated/manipulateItem/' . $weapon->id) }}">
-							<img style="cursor: pointer;" src="{{ $weapon->item->get_image_path() }}" alt="" width="80px" height="80px" data-toggle="tooltip" data-placement="top" data-original-title="{{ $weapon->item->get_text_for_tooltip() }}">
-						</a>
+                        {{ Form::open(URL::to_route("post_authenticated_inventory_use")) }}
+                            {{ Form::hidden("id", $weapon->id) }}
+                            {{ Form::hidden("amount", 1) }}
+                            <div data-toggle="tooltip" data-placement="top" data-original-title="{{ $weapon->item->get_text_for_tooltip() }}">
+                                {{ Form::image($weapon->item->get_image_path(), $weapon->item->name, array("width" => "64px", "height" => "64px")) }}
+                            </div>
+                        {{ Form::close() }}
 					@endif
 				</div>
 			</div>
@@ -109,9 +113,13 @@
 				<div style="position: absolute; left: 230px; top: 150px;">
 					<div class="box box-box-64-gold">
 						@if ( $shield && $shield->item )
-							<a href="{{ URL::to('authenticated/manipulateItem/' . $shield->id) }}">
-								<img style="cursor: pointer;" src="{{ $shield->item->get_image_path() }}" alt="" width="80px" height="80px" data-toggle="tooltip" data-placement="top" data-original-title="{{ $shield->item->get_text_for_tooltip() }}">
-							</a>
+							{{ Form::open(URL::to_route("post_authenticated_inventory_use")) }}
+                                {{ Form::hidden("id", $shield->id) }}
+                                {{ Form::hidden("amount", 1) }}
+                                <div data-toggle="tooltip" data-placement="top" data-original-title="{{ $shield->item->get_text_for_tooltip() }}">
+                                    {{ Form::image($shield->item->get_image_path(), $shield->item->name, array("width" => "64px", "height" => "64px")) }}
+                                </div>
+                            {{ Form::close() }}
 						@endif
 					</div>
 				</div>
@@ -170,7 +178,18 @@
 							<li style="vertical-align: top;">
 								<div class="box box-box-64-gray">
 									@if ( isset($inventoryItems[$i]) && $inventoryItems[$i]->item )
-										<img inventory-button item-id="{{ $inventoryItems[$i]->item->id }}" character-item-id="{{ $inventoryItems[$i]->id }}" token="{{ Session::token() }}" type="{{ $inventoryItems[$i]->item->type }}" amount="{{ $inventoryItems[$i]->count }}" item-tooltip="{{ $inventoryItems[$i]->item->get_text_for_tooltip() }}" style="cursor: pointer;" src="{{ $inventoryItems[$i]->item->get_image_path() }}" alt="" width="80px" height="80px">
+										<img inventory-button item-id="{{ $inventoryItems[$i]->item->id }}" 
+                                             character-item-id="{{ $inventoryItems[$i]->id }}" 
+                                             token="{{ Session::token() }}" 
+                                             type="{{ $inventoryItems[$i]->item->type }}" 
+                                             amount="{{ $inventoryItems[$i]->count }}" 
+                                             item-tooltip="{{ $inventoryItems[$i]->item->get_text_for_tooltip() }}" 
+                                             style="cursor: pointer;" 
+                                             src="{{ $inventoryItems[$i]->item->get_image_path() }}" 
+                                             alt="" 
+                                             width="80px" 
+                                             height="80px"
+                                        >
 										<div class="inventory-item-amount" data-toggle="tooltip" data-placement="top" data-original-title="Cantidad">{{ $inventoryItems[$i]->count }}</div>
 									@endif
 								</div>
@@ -249,7 +268,7 @@
 					<p><b>Puntos restantes para cambiar:</b> <span ng-bind="character.points_to_change || '?'">?</span></p>
 					<p style="margin: 0;">
 						Puntos a cambiar: 
-						<select class="input select" ng-model="pointsToChange" ng-options="n for n in [] | range:1:character.points_to_change">
+						<select class="span3" style="margin: 0;" ng-model="pointsToChange" ng-options="n for n in [] | range:1:character.points_to_change">
 						</select>
 					</p>
 				</div>

@@ -1,35 +1,48 @@
 <?php
 
-class VipChangeGender implements IVipObject
+class VipChangeGender extends VipObject
 {
-	public function get_name()
+	public function getName()
 	{
 		return 'Cambio de genero';
 	}
 	
-	public function get_icon()
+	public function getIcon()
 	{
 		return URL::base() . '/img/icons/vip/change_gender.jpg';
 	}
 	
-	public function get_description()
+	public function getDescription()
 	{
 		return 'Cambias el genero de tu personaje.';
 	}
 
-	public function get_price()
+	public function getPrice()
 	{
 		return 80;
 	}
 	
 	public function execute()
 	{
-		$character = Character::get_character_of_logged_user(array('id', 'gender'));
-
-		if ( $character )
-		{
-			$character->gender = ( $character->gender == 'male' ) ? 'female' : 'male';
-			$character->save();
+		if ($this->buyer) {
+            if ($this->buyer->gender == "male") {
+                $this->buyer->gender = "female";
+            } else {
+                $this->buyer->gender = "male";
+            }
+            
+			return $this->buyer->save();
 		}
+        
+        return false;
 	}
+
+    public function getValidator()
+    {
+        return \Laravel\Validator::make(
+            $this->attributes, 
+            array(),
+            array()
+        );
+    }
 }

@@ -28,13 +28,13 @@ class Damage
     
     /**
      *
-     * @var real
+     * @var float
      */
     protected $blocked;
     
     /**
      *
-     * @var real
+     * @var float
      */
     protected $amount;
     
@@ -46,7 +46,7 @@ class Damage
         $this->critical = false;
         $this->magical = false;
         $this->miss = false;
-        $this->blocked = false;
+        $this->blocked = 0.00;
         $this->amount = 0.00;
     }
     
@@ -88,7 +88,7 @@ class Damage
     
     /**
      * Obtenemos la cantidad del daño que ha sido bloqueada
-     * @return real
+     * @return float
      */
     public function get_blocked()
     {
@@ -97,7 +97,7 @@ class Damage
     
     /**
      * 
-     * @return real
+     * @return float
      */
     public function get_amount()
     {
@@ -105,12 +105,43 @@ class Damage
     }
     
     /**
+     * Obtenemos chance de critico
      * 
-     * @return real
+     * @param Unit $target
+     * @return float
+     */
+    public function get_critical_chance(Unit $target)
+    {
+        return 5;
+    }
+    
+    /**
+     * Obtenemos multiplicador de critico
+     * 
+     * @param Unit $target
+     * @return float
+     */
+    public function get_critical_multiplier(Unit $target)
+    {
+        return 1.66;
+    }
+    
+    /**
+     * 
+     * @return float
      */
     protected function get_damage()
     {
         return 0.00;
+    }
+    
+    /**
+     * 
+     * @return float
+     */
+    public function get_double_hit_chance()
+    {
+        return 33.00;
     }
     
     /**
@@ -123,14 +154,35 @@ class Damage
     {
         $this->reset();
         
-        if ( $target->get_combat_behavior() instanceof NonAttackableBehavior )
-        {
+        if ($target->get_combat_behavior() instanceof NonAttackableBehavior) {
             return false;
         }
         
+        $armor = $target->get_combat_behavior()->get_armor();
+        
         $this->magical = $magical;
-        $this->critical = mt_rand(1, 2) == 1;
-        $this->miss = mt_rand(1, 2) == 1;
+        $this->miss = mt_rand(1, 100) <= $armor->get_miss_chance($this);
+        
+        if (! $this->miss) {
+            if (mt_rand(1, 100) <= $armor->get_block_chance($this)) {
+                $this->blocked = $armor->get_block_amount($this);
+            }
+            
+            $criticalChance = $this->get_critical_chance($target);
+            $this->critical = mt_rand(1, 100) <= $criticalChance;
+
+            $this->amount = (int) max(
+                0,
+                $this->get_damage() - $armor->get_defense($this) - $this->blocked
+            );
+
+            if ($this->critical) {
+                $this->amount *= $this->get_critical_multiplier($target);
+            }
+
+            $life = $target->get_current_life() - $this->amount;
+            $target->set_current_life($life);
+        }
         
         return true;
     }

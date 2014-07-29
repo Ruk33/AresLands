@@ -38,37 +38,31 @@
 				<div class="alert-top"></div>
 
 				<div class="alert-content" style="height: 175px;">
-					{{ Form::open(URL::to('authenticated/buyFromSecretShop')) }}
+					{{ Form::open(URL::to_route("post_authenticated_secret_shop_buy")) }}
 
 					{{ Form::token() }}
 					{{ Form::hidden('id', $id) }}
 
-					<strong style="color: white;">{{ $vipObject->get_name() }}</strong>
+					<strong style="color: white;">{{ $vipObject->getName() }}</strong>
 					<div class="pull-left" style="margin-right: 10px;">
-						<img src="{{ $vipObject->get_icon() }}" />
+						<img src="{{ $vipObject->getIcon() }}" />
 					</div>
-					<p>{{ $vipObject->get_description() }}</p>
+					<p>{{ $vipObject->getDescription() }}</p>
 
 					<div class="clearfix"></div>
 
 					<div style="margin-top: 10px;">
-					@if ( $vipObject instanceof VipChangeName )
-						Nombre
-						{{ Form::text('name', '', array('class' => 'span12')) }}
-					@elseif ( $vipObject instanceof VipChangeRace )
-						Raza
-						{{ Form::select('race', array('dwarf' => 'Enano', 'human' => 'Humano', 'elf' => 'Elfo', 'drow' => 'Drow'), '', array('class' => 'span12')) }}
-					@endif
+                        {{ $vipObject->getInput() }}
 					</div>
 
 					<div class="clearfix"></div>
 
 					<div style="position: absolute; bottom: 10px; left: 10px; font-size: 11px; text-transform: uppercase;">
-						IronCoins: {{ $vipObject->get_price() }}
+						IronCoins: {{ $vipObject->getPrice() }}
 					</div>
 
 					<div style="position: absolute; bottom: 10px; right: 10px;">
-						{{ Form::submit('Comprar', array('class' => 'ui-button ui-input-button', 'onclick' => 'return confirm("¿Seguro que quieres comprar ' . $vipObject->get_name() . ' por ' . $vipObject->get_price() . ' IronCoins?");')) }}
+						{{ Form::submit('Comprar', array('class' => 'ui-button ui-input-button', 'onclick' => 'return confirm("¿Seguro que quieres comprar ' . $vipObject->getName() . ' por ' . $vipObject->getPrice() . ' IronCoins?");')) }}
 					</div>
 
 					{{ Form::close() }}

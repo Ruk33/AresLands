@@ -100,7 +100,7 @@ class Authenticated_Message_Controller_Test extends Tests\TestHelper
 		$this->message->shouldReceive("delete")->once();
 		
 		$response = $this->post("authenticated/message/delete");
-		$this->assertRedirect(URL::base()."/", $response);
+		$this->assertRedirect(URL::to_route("get_authenticated_message_index"), $response);
 	}
 	
 	public function testBorrarTodos()

@@ -8,33 +8,50 @@ directive('inventoryButton', [
 	{
 		function link(scope, element, attrs)
 		{
-			var equipButton = '<a class="pull-right" href="' + BASE_PATH + 'authenticated/manipulateItem/' + attrs.characterItemId + '">';
-            
+			var submitText = "Equipar";
+			
             // Verificamos si es cofre
-            if ( attrs.itemId == 136 )
-            {
-                equipButton += 'Abrir';
-            }
-            else
-            {
-                equipButton += 'Equipar';
+            if (attrs.itemId == 136) {
+                submitText = 'Abrir';
             }
             
-            equipButton += '</a>';
+			var url = BASE_PATH + 'authenticated/inventory/use';
+            var equipButton = 
+					'<div class="pull-right">' +
+					'<form method="POST" action="' + url + '" accept-charset="UTF-8">' +
+					'<input type="hidden" name="csrf_token" value="' + attrs.token + '">' +
+					'<input type="hidden" name="id" value="' + attrs.characterItemId + '">';
             
-			if ( attrs.type == 'potion' )
-			{
-				equipButton = '<div class="input-append pull-right span4">'+
-							  '<form method="POST" action="' + BASE_PATH + 'authenticated/manipulateItem' + '" accept-charset="UTF-8">'+
-							  '<input type="hidden" name="csrf_token" value="' + attrs.token + '">'+
-							  '<input type="hidden" name="id" value="' + attrs.characterItemId + '">'+
-							  '<input type="number" name="amount" placeholder="Cantidad" value="1" class="span7">'+
-							  '<input type="submit" class="btn btn-primary" value="Usar">'+
-							  '</form>'+
-							  '</div>';
+			if (attrs.type == 'potion') {
+				submitText = "Usar";
+				equipButton += 
+					'<input type="number" style="margin-top: 2px; margin-left: 5px;" name="amount" placeholder="Cantidad" value="1" class="span4 pull-right">';
 			}
+			
+			equipButton += 
+				'<span class="ui-button button pull-right">' +
+				'<i class="button-icon check"></i>' +
+				'<span class="button-content">' +
+				'<input type="submit" class="ui-input-button ui-button" value="' + submitText + '">' +
+				'</span>' +
+				'</span>' +
+				'</form>' +
+				'</div>';
 
-			var destroyButton = '<a class="pull-left" href="' + BASE_PATH + 'authenticated/destroyItem/' + attrs.characterItemId + '" onclick="return confirm(\'¿Seguro que quieres destruir el objeto?\');">Destruir</a>';
+			url = BASE_PATH + 'authenticated/inventory/destroy';
+			var destroyButton = 
+					'<div class="pull-left">' +
+					'<form method="POST" action="' + url + '" accept-charset="UTF-8>' +
+					'<input type="hidden" name="csrf_token" value="' + attrs.token + '">' +
+					'<input type="hidden" name="id" value="' + attrs.characterItemId + '">' +
+					'<span class="ui-button button">' +
+					'<i class="button-icon cross"></i>' +
+					'<span class="button-content">' +
+					'<input type="submit" class="ui-input-button ui-button" value="Destruir" onclick="return confirm(\'¿Seguro que quieres destruir el objeto?\');">' +
+					'</span>' +
+					'</span>' +
+					'</form>' +
+					'</div>';
 
 			$(element).popover({
 				title: attrs.itemTooltip + '<div style="margin-top: 25px;">' + equipButton + destroyButton + '</div>',

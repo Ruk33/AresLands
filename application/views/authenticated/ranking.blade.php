@@ -12,12 +12,12 @@
                 </a>
             </li>
             <li>
-                <a href="{{ URL::to_route("get_authenticated_ranking_index", array("kingOfTheHill")) }}" class="ui-button button">
+                <span data-toggle="tooltip" data-original-title="¡En camino!" class="ui-button button">
                     <i class="button-icon axe"></i>
                     <span class="button-content">
                         Rey de la colina
                     </span>
-                </a>
+                </span>
             </li>
             <li>
                 <a href="{{ URL::to_route("get_authenticated_ranking_index", array("clan")) }}" class="ui-button button">
@@ -35,14 +35,6 @@
             <h2>Ranking Jugador contra Jugador</h2>
         @elseif ( $rank == 'clan' )
             <h2>Ranking Grupos</h2>
-        @endif
-        
-        <div class="clearfix"></div>
-
-        @if ( $rank != 'kingOfTheHill' )
-        <div class="pull-right">
-            {{ $elements->links() }}
-        </div>
         @endif
     </div>
 
@@ -72,8 +64,16 @@
 	</thead>
 
 	<tbody>
-		<?php $index = $elements->per_page * ($elements->page - 1); ?>
-		@foreach ( $elements->results as $element )
+		<?php 
+        
+        $index = 0;
+        
+        if ($pagination) {
+            $index = $pagination->per_page * ($pagination->page - 1); 
+        }
+        
+        ?>
+		@foreach ( $elements as $element )
 		<tr>
             <td><div class="text-center">{{ ++$index }}</div></td>
 			@if ( $rank != 'clan' )
@@ -122,9 +122,12 @@
 	</tbody>
 </table>
 
+@if ($pagination)
 <div class="text-center">
-	{{ $elements->links() }}
+	{{ $pagination->links() }}
 </div>
+@endif
+
 </div>
 
 </div>

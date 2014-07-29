@@ -1,34 +1,42 @@
 <?php
 
-class VipCoinMultiplier implements IVipObject
+class VipCoinMultiplier extends VipObject
 {
-	public function get_name()
+	public function getName()
 	{
 		return 'Multiplicador de monedas';
 	}
 	
-	public function get_icon()
+	public function getIcon()
 	{
 		return URL::base() . '/img/icons/vip/coin_multiplier.jpg';
 	}
 	
-	public function get_description()
+	public function getDescription()
 	{
-		return 'Aprovecha mejor los combates, exploraciones y misiones consiguiendo un 30% de oro extra durante 3 dias.';
+		return 'Aprovecha mejor los combates, exploraciones y misiones ' .
+               'consiguiendo un 30% de oro extra durante 3 dias.';
 	}
 
-	public function get_price()
+	public function getPrice()
 	{
 		return 40;
 	}
 	
 	public function execute()
 	{
-		$character = Character::get_character_of_logged_user();
-
-		if ( $character )
-		{
-			Skill::find(Config::get('game.vip_multiplier_coin_rate_skill'))->cast($character, $character);
+		if ($this->buyer) {
+            $buffId = Config::get('game.vip_multiplier_coin_rate_skill');
+            $buff = \Laravel\IoC::resolve("Skill")->find($buffId);
+            
+			return $buff->cast($this->buyer, $this->buyer);
 		}
+        
+        return false;
 	}
+    
+    public function getValidator()
+    {
+        return Laravel\Validator::make($this->attributes, array());
+    }
 }
