@@ -222,6 +222,10 @@ class AttackableBehavior implements CombatBehavior
         return $this->weapon;
     }
     
+    /**
+     * @deprecated
+     * @return float
+     */
     public function get_attack_speed()
     {
         return 800 / ($this->get_final_dexterity() + $this->get_final_magic_skill() + 1);

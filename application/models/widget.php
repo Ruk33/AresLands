@@ -16,8 +16,7 @@ abstract class Widget extends Base_Model
     public abstract function get_tooltip();
     
     /**
-     * Devolvemos una cadena vacia en algunos casos... de momento
-     * (por ejemplo para los monstruos nos falta el bestiario)
+     * Por defecto, solamente devolvemos el nombre (sin enlace)
      * 
      * @return string Link
      */

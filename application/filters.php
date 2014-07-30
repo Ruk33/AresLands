@@ -72,12 +72,7 @@ Route::filter('before', function() {
 			/*
 			 *	Obtenemos al personaje logueado
 			 */
-			$character = Character::get_character_of_logged_user(array_merge(
-                Character::$COLUMNS_BASIC,
-                Character::$COLUMNS_LIFE,
-                Character::$COLUMNS_LOG_TIMES,
-                Character::$COLUMNS_OTHER
-            ));
+			$character = Character::get_character_of_logged_user();
 
 			if ( $character )
 			{

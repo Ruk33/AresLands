@@ -109,108 +109,6 @@ class Character extends Unit
 		'gender_match' => 'El género es incorrecto',
 	);
     
-    /**
-     * No cambiar su contenido
-     * 
-     * Array con las columnas basicas
-     * 
-     * @var array
-     */
-    public static $COLUMNS_BASIC = array('id','user_id','ip','name','level','gender','race','clan_id','clan_permission','zone_id','characteristics','xp','xp_next_level');
-    
-    /**
-     * No cambiar su contenido
-     * 
-     * Array con las columnas que tengan que ver con la vida del personaje
-     * 
-     * @var array
-     */
-    public static $COLUMNS_LIFE = array('max_life','current_life','regeneration_per_second','regeneration_per_second_extra');
-    
-    /**
-     * No cambiar su contenido
-     * 
-     * Array con las columnas que tengan que ver con las estadisticas fisicas del personaje
-     * 
-     * @var array
-     */
-    public static $COLUMNS_PHYSICAL_STATS = array('reflect_physical_damage','reflect_physical_damage_extra','physical_defense','physical_defense_extra','physical_damage','physical_damage_extra');
-    
-    /**
-     * No cambiar su contenido
-     * 
-     * Array con las columnas que tengan que ver con las estadisticas magicas del personaje
-     * 
-     * @var array
-     */
-    public static $COLUMNS_MAGIC_STATS = array('reflect_magic_damage','reflect_magic_damage_extra','magic_defense','magic_defense_extra','magic_damage','magic_damage_extra');
-    
-    /**
-     * No cambiar su contenido
-     * 
-     * Array con las columnas que tengan que ver con las estadisticas del personaje
-     * 
-     * @var array
-     */
-    public static $COLUMNS_STATS = array('luck','attack_speed','critical_chance','evasion','stat_strength','stat_dexterity','stat_resistance','stat_magic','stat_magic_skill','stat_magic_resistance');
-    
-    /**
-     * No cambiar su contenido
-     * 
-     * Array con las columnas que tengan que ver con las estadisticas extras del personaje
-     * 
-     * @var array
-     */
-    public static $COLUMNS_STATS_EXTRA = array('luck_extra','attack_speed_extra','critical_chance_extra','evasion_extra','stat_strength_extra','stat_dexterity_extra','stat_resistance_extra','stat_magic_extra','stat_magic_skill_extra','stat_magic_resistance_extra');
-    
-    /**
-     * No cambiar su contenido
-     * 
-     * Array con las columnas que tengan que ver con los rates propios del personaje
-     * 
-     * @var array
-     */
-    public static $COLUMNS_RATES = array('xp_rate','xp_rate_extra','quest_xp_rate','quest_xp_rate_extra','drop_rate','drop_rate_extra','explore_reward_rate','explore_reward_rate_extra','coin_rate','coin_rate_extra','quest_coin_rate','quest_coin_rate_extra');
-    
-    /**
-     * No cambiar su contenido
-     * 
-     * Array con las columnas que tengan que ver con registros (fechas) del personaje
-     * 
-     * @var array
-     */
-    public static $COLUMNS_LOG_TIMES = array('created_at','updated_at','deleted_at','last_regeneration_time','last_activity_time','last_logged','invisible_until');
-    
-    /**
-     * No cambiar su contenido
-     * 
-     * Array con columnas que contienen valores boleanos del personaje 
-     * (por ejemplo si esta explorando)
-     * 
-     * @var array
-     */
-    public static $COLUMNS_BOOLEANS = array('is_traveling','is_exploring','registered_in_tournament');
-    
-    /**
-     * No cambiar su contenido
-     * 
-     * Array con las columnas que contengan los tiempos que el personaje 
-     * requiere para realizar ciertas acciones (por ejemplo viajar)
-     * 
-     * @var array
-     */
-    public static $COLUMNS_TIMES = array('travel_time','travel_time_extra','battle_rest_time','battle_rest_time_extra','skill_cd_time','skill_cd_time_extra');
-    
-    /**
-     * No cambiar su contenido
-     * 
-     * Array con las columnas que contengan otros valores no encontrados en las
-     * otras variables "COLUMNS"
-     * 
-     * @var array
-     */
-    public static $COLUMNS_OTHER = array('pvp_points','language','points_to_change','talent_points','second_mercenary');
-    
     public function get_combat_behavior()
     {
         if (! $this->combatBehavior) {
@@ -2590,7 +2488,10 @@ class Character extends Unit
 
 	public function get_link()
 	{
-		return '<a href="' . URL::to('authenticated/character/' . $this->name ) . '">' . $this->name . '</a>';
+        $href = 
+            URL::to_route("get_authenticated_character_show", array($this->name));
+        
+		return "<a href='{$href}'>{$this->name}</a>";
 	}
 
 	public function get_stats()
