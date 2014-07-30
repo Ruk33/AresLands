@@ -8,7 +8,7 @@ class Monster extends Npc
     {
         parent::__construct();
         
-        $damage = new Damage($this);
+        $damage = new MonsterDamage($this);
         $armor = new MonsterArmor($this);
         
         $this->combatBehavior = new AttackableBehavior($this, $damage, $armor);
