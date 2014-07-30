@@ -5,6 +5,67 @@ class Character extends Unit
 	public static $softDelete = true;
 	public static $timestamps = false;
 	public static $table = "characters";
+    
+    /**
+     * Cache para el segundo mercenario
+     * @var Item
+     */
+    protected $secondMercenary;
+    
+    /**
+     * Cache para cuando se calcula la fuerza final
+     * @var float
+     */
+    protected $finalStrength;
+    
+    /**
+     * Cache para cuando se calcula la destreza final
+     * @var float
+     */
+    protected $finalDexterity;
+    
+    /**
+     * Cache para cuando se calcula la resistencia final
+     * @var float
+     */
+    protected $finalResistance;
+    
+    /**
+     * Cache para cuando se calcula la magia final
+     * @var float
+     */
+    protected $finalMagic;
+    
+    /**
+     * Cache para cuando se calcula la habilidad magica final
+     * @var float
+     */
+    protected $finalMagicSkill;
+    
+    /**
+     * Cache para cuando se calcula la resistencia magica final
+     * @var float
+     */
+    protected $finalMagicResistance;
+    
+    protected $rules = array(
+		'name' => 'required|unique:characters|between:3,10|alpha_num',
+		'race' => array('required', 'match:/^(dwarf|human|drow|elf)$/'),
+		'gender' => array('required', 'match:/^(male|female)$/'),
+	);
+
+	protected $messages = array(
+		'name_required' => 'El nombre del personaje es requerido',
+		'name_unique' => 'Ya existe otro personaje con ese nombre',
+		'name_between' => 'El nombre del personaje debe tener entre 3 y 10 carácteres',
+		'name_alpha_num' => 'El nombre solamente debe contener letras y números',
+
+		'race_required' => 'La raza es requerida',
+		'race_match' => 'La raza es incorrecta',
+
+		'gender_required' => 'El género es requerido',
+		'gender_match' => 'El género es incorrecto',
+	);
 
     public static $factory = array(
         "user_id" => "integer|2",
@@ -89,25 +150,6 @@ class Character extends Unit
         "invisible_until" => 0,
         "second_mercenary" => 0,
     );
-    
-	protected $rules = array(
-		'name' => 'required|unique:characters|between:3,10|alpha_num',
-		'race' => array('required', 'match:/^(dwarf|human|drow|elf)$/'),
-		'gender' => array('required', 'match:/^(male|female)$/'),
-	);
-
-	protected $messages = array(
-		'name_required' => 'El nombre del personaje es requerido',
-		'name_unique' => 'Ya existe otro personaje con ese nombre',
-		'name_between' => 'El nombre del personaje debe tener entre 3 y 10 carácteres',
-		'name_alpha_num' => 'El nombre solamente debe contener letras y números',
-
-		'race_required' => 'La raza es requerida',
-		'race_match' => 'La raza es incorrecta',
-
-		'gender_required' => 'El género es requerido',
-		'gender_match' => 'El género es incorrecto',
-	);
     
     public function get_combat_behavior()
     {
@@ -290,8 +332,13 @@ class Character extends Unit
 		{
 			return null;
 		}
+        
+        if (! $this->secondMercenary) {
+            $this->secondMercenary = 
+                Item::find($this->get_attribute('second_mercenary'));
+        }
 		
-		return Item::find($this->get_attribute('second_mercenary'));
+		return $this->secondMercenary;
 	}
 
 	/**
@@ -2488,12 +2535,115 @@ class Character extends Unit
 
 	public function get_link()
 	{
-        $href = 
-            URL::to_route("get_authenticated_character_show", array($this->name));
+        $href = URL::to_route("get_authenticated_character_show", array(
+            $this->name
+        ));
         
 		return "<a href='{$href}'>{$this->name}</a>";
 	}
+    
+    public function get_final_strength()
+    {
+        if (! $this->finalStrength) {
+            $extra = 0;
 
+            if ($this->has_second_mercenary()) {
+                $extra = $this->get_second_mercenary()->stat_strength;
+            }
+            
+            $this->finalStrength = 
+                $this->stat_strength + $this->stat_strength_extra + $extra;
+        }
+        
+        return $this->finalStrength;
+    }
+    
+    public function get_final_dexterity()
+    {
+        if (! $this->finalDexterity) {
+            $extra = 0;
+
+            if ($this->has_second_mercenary()) {
+                $extra = $this->get_second_mercenary()->stat_dexterity;
+            }
+            
+            $this->finalDexterity = 
+                $this->stat_dexterity + $this->stat_dexterity_extra + $extra;
+        }
+        
+        return $this->finalDexterity;
+    }
+    
+    public function get_final_resistance()
+    {
+        if (! $this->finalResistance) {
+            $extra = 0;
+
+            if ($this->has_second_mercenary()) {
+                $extra = $this->get_second_mercenary()->stat_resistance;
+            }
+            
+            $this->finalResistance = 
+                $this->stat_resistance + $this->stat_resistance_extra + $extra;
+        }
+        
+        return $this->finalResistance;
+    }
+    
+    public function get_final_magic()
+    {
+        if (! $this->finalMagic) {
+            $extra = 0;
+
+            if ($this->has_second_mercenary()) {
+                $extra = $this->get_second_mercenary()->stat_magic;
+            }
+            
+            $this->finalMagic = 
+                $this->stat_magic + $this->stat_magic_extra + $extra;
+        }
+        
+        return $this->finalMagic;
+    }
+    
+    public function get_final_magic_skill()
+    {
+        if (! $this->finalMagicSkill) {
+            $extra = 0;
+
+            if ($this->has_second_mercenary()) {
+                $extra = $this->get_second_mercenary()->stat_magic_skill;
+            }
+            
+            $this->finalMagicSkill = 
+                $this->stat_magic_skill + $this->stat_magic_skill_extra + $extra;
+        }
+        
+        return $this->finalMagicSkill;
+    }
+    
+    public function get_final_magic_resistance()
+    {
+        if (! $this->finalMagicResistance) {
+            $extra = 0;
+
+            if ($this->has_second_mercenary()) {
+                $extra = $this->get_second_mercenary()->stat_magic_resistance;
+            }
+            
+            $this->finalMagicResistance = 
+                $this->stat_magic_resistance + 
+                $this->stat_magic_resistance_extra + 
+                $extra;
+        }
+        
+        return $this->finalMagicResistance;
+    }
+
+    /**
+     * @deprecated
+     * @return array
+     */
 	public function get_stats()
 	{
 		$stats = array();
