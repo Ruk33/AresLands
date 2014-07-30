@@ -57,10 +57,12 @@ class Authenticated_Character_Controller extends Authenticated_Base
 	public function post_characteristics()
 	{
 		$character = $this->character->get_logged();
-		
+        
 		if ( ! $character->characteristics )
 		{
-			$character->set_characteristics_from_array(Input::get("characteristics"));
+			$character->set_characteristics_from_array(
+                (array) Input::get("characteristics")
+            );
 		}
 		
 		return \Laravel\Redirect::to_route("get_authenticated_index");

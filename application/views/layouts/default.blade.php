@@ -29,65 +29,6 @@
 		<!--[if lt IE 7]>
 			<p class="chromeframe">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> or <a href="http://www.google.com/chromeframe/?redirect=true">activate Google Chrome Frame</a> to improve your experience.</p>
 		<![endif]-->
-
-		@if ( Session::has('modalMessage') )
-			<?php 
-			$modalMessage = Session::get('modalMessage');
-			Session::forget('modalMessage');
-			?>
-			<div id="modalMessage" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-				<div class="modal-body">
-					<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-					<span class="ui-button button" style="margin-left: 120px;">
-						<i class="button-icon check"></i>
-						<span class="button-content" style="color: orange;">
-							<?php
-							switch ( $modalMessage )
-							{
-								case 'activityBar':
-									echo '¡Completaste la barra de actividad!';
-									break;
-
-								case 'loggedOfDay':
-									echo '¡Recompensa por ingreso del día!';
-									break;
-
-								case 'chest':
-									echo '¡Has recibido la recompensa del cofre!';
-									break;
-							}
-							?>
-						</span>
-					</span>
-					<p style="margin-top: 20px; margin-left: 120px;">
-						<?php
-						switch ( $modalMessage )
-						{
-							case 'activityBar':
-								echo '¡Bien hecho!, haz completado la barra de actividades. Revisa tus mensajes para conocer tus <b>recompensas</b>.';
-								break;
-
-							case 'loggedOfDay':
-								echo '<b>Logged of day</b> es la <b>recompensa</b> que se otorga todos los días a los jugadores que se atreven a ingresar, ¡bien hecho!.';
-								break;
-
-							case 'chest':
-								$itemId = (int) Session::get('chest');
-								echo '<div class="inventory-item pull-left" style="margin-left: 25px;">
-										<img src="' . Item::find($itemId)->get_image_path() . '" width="80px" height="80px">
-									</div>
-									<div style="margin-left: 125px;">Has abierto el cofre y dentro del mismo, se encontraba esto. ¡Felicitaciones!</div>';
-								break;
-						}
-						?>
-					</p>
-				</div>
-			</div>
-
-			<script>
-				$('#modalMessage').modal();
-			</script>
-		@endif
 		
 		@if ( isset($character) && ! $character->characteristics )
 			<div id="characteristicsModal" class="modal hide fade">
@@ -95,7 +36,7 @@
 					<ul id="characteristicsTabs">
 					</ul>
 					
-					{{ Form::open(URL::to('authenticated/setCharacteristics')) }}
+					{{ Form::open(URL::to_route("post_authenticated_character_characteristics")) }}
 					
 					{{ Form::token() }}
 					
@@ -181,6 +122,65 @@
 					backdrop: 'static'
 				});
 			</script>
+        @else
+            @if ( Session::has('modalMessage') )
+                <?php 
+                $modalMessage = Session::get('modalMessage');
+                Session::forget('modalMessage');
+                ?>
+                <div id="modalMessage" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                    <div class="modal-body">
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                        <span class="ui-button button" style="margin-left: 120px;">
+                            <i class="button-icon check"></i>
+                            <span class="button-content" style="color: orange;">
+                                <?php
+                                switch ( $modalMessage )
+                                {
+                                    case 'activityBar':
+                                        echo '¡Completaste la barra de actividad!';
+                                        break;
+
+                                    case 'loggedOfDay':
+                                        echo '¡Recompensa por ingreso del día!';
+                                        break;
+
+                                    case 'chest':
+                                        echo '¡Has recibido la recompensa del cofre!';
+                                        break;
+                                }
+                                ?>
+                            </span>
+                        </span>
+                        <p style="margin-top: 20px; margin-left: 120px;">
+                            <?php
+                            switch ( $modalMessage )
+                            {
+                                case 'activityBar':
+                                    echo '¡Bien hecho!, haz completado la barra de actividades. Revisa tus mensajes para conocer tus <b>recompensas</b>.';
+                                    break;
+
+                                case 'loggedOfDay':
+                                    echo '<b>Logged of day</b> es la <b>recompensa</b> que se otorga todos los días a los jugadores que se atreven a ingresar, ¡bien hecho!.';
+                                    break;
+
+                                case 'chest':
+                                    $itemId = (int) Session::get('chest');
+                                    echo '<div class="inventory-item pull-left" style="margin-left: 25px;">
+                                            <img src="' . Item::find($itemId)->get_image_path() . '" width="80px" height="80px">
+                                        </div>
+                                        <div style="margin-left: 125px;">Has abierto el cofre y dentro del mismo, se encontraba esto. ¡Felicitaciones!</div>';
+                                    break;
+                            }
+                            ?>
+                        </p>
+                    </div>
+                </div>
+
+                <script>
+                    $('#modalMessage').modal();
+                </script>
+            @endif
 		@endif
 
 		<div id="wrap">

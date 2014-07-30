@@ -8,6 +8,11 @@ class Authenticated_Controller extends Authenticated_Base
 			"uses" => "authenticated@index",
 			"as"   => "get_authenticated_index"
 		));
+        
+        Route::get("authenticated/index", array(
+			"uses" => "authenticated@index",
+			"as"   => "get_authenticated_index"
+		));
 		
 		Route::get("authenticated/logout", array(
 			"uses" => "authenticated@logout",
