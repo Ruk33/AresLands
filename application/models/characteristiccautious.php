@@ -2,6 +2,11 @@
 
 class CharacteristicCautious implements ICharacteristic
 {
+    public static function get_id()
+    {
+        return "cauto";
+    }
+    
 	public function get_bonusses() {
 		return array(
 			'Aumenta tu defensa',

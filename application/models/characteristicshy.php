@@ -2,6 +2,11 @@
 
 class CharacteristicShy implements ICharacteristic
 {
+    public static function get_id()
+    {
+        return "timido";
+    }
+    
 	public function get_bonusses() {
 		return array(
 			'Aumentas tu evasión',

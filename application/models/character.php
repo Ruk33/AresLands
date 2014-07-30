@@ -3519,7 +3519,7 @@ class Character extends Unit
 	 * Asignamos caracteristicas del personaje desde array
 	 * @param array $characteristics
 	 */
-	public function set_characteristics_from_array(Array $characteristics)
+	public function set_characteristics_from_array(array $characteristics)
 	{
 		// todo
 		

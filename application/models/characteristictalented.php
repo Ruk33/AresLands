@@ -2,6 +2,11 @@
 
 class CharacteristicTalented implements ICharacteristic
 {
+    public static function get_id()
+    {
+        return "talentoso";
+    }
+    
 	public function get_bonusses() {
 		return array(
 			'Tu ataque aumenta reducidamente',

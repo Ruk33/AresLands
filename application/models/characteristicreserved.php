@@ -2,6 +2,11 @@
 
 class CharacteristicReserved implements ICharacteristic
 {
+    public static function get_id()
+    {
+        return "reservado";
+    }
+    
 	public function get_bonusses() {
 		return array(
 			'No muestras tus atributos'

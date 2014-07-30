@@ -292,12 +292,16 @@ select:focus, input:focus, textarea:focus {
 .travel-zone-box .name {
 	color: #2f220e;
 	font-family: Georgia;
-	font-size: 14px;
+	font-size: 16px;
 	margin-top: 15px;
 	font-weight: bold;
 	text-shadow: 0 0 5px white;
 }
 
+.travel-zone-box .name:hover {
+	text-decoration: underline;
+}
+	
 .travel-zone-box .description {
 	color: #463b2b;
 	font-size: 13px;

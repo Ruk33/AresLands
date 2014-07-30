@@ -2,6 +2,11 @@
 
 class CharacteristicBrave implements ICharacteristic
 {
+    public static function get_id()
+    {
+        return "valiente";
+    }
+    
 	public function get_bonusses() {
 		return array(
 			'Tus ataques hacen mas daño',

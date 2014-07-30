@@ -11,7 +11,6 @@
 		<meta name="viewport" content="width=device-width">
 
 		<link rel="stylesheet" type="text/css" href="{{ Minifier::make(array('//css/normalize.min.css', '//css/bootstrap.min.css', '//css/main.css')) }}">
-        <link href='http://fonts.googleapis.com/css?family=Roboto+Slab' rel='stylesheet' type='text/css'>
 
 		@if ( Request::env() == 'local' )
 			<script src="{{ URL::base() }}/js/vendor/jquery-1.9.1.min.js"></script>
@@ -19,6 +18,7 @@
 			<script src="{{ URL::base() }}/js/vendor/angular.min.js"></script>
 			<script src="{{ URL::base() }}/js/vendor/angular-resource.min.js"></script>
 		@else
+            <link href='http://fonts.googleapis.com/css?family=Roboto+Slab' rel='stylesheet' type='text/css'>
 			<script type="text/javascript" src="{{ Minifier::make(array('//js/vendor/jquery-1.9.1.min.js', '//js/vendor/bootstrap.min.js', '//js/vendor/angular.min.js', '//js/vendor/angular-resource.min.js')) }}"></script>
 		@endif
 	</head>

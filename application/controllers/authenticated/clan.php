@@ -149,12 +149,24 @@ class Authenticated_Clan_Controller extends Authenticated_Base
 		
 		if ( ! $character->clan_id )
 		{
-			$clan = $this->clan->create_instance(Input::only(array("name", "message", "leader_id")));
+			$clan = $this->clan->create_instance(
+                array_merge(
+                    array(
+                        "leader_id" => $character->id
+                    ),
+                    Input::only(array("name", "message"))
+                )
+            );
 			
 			if ( $clan->validate() )
 			{
-				$clan->join($character);
-				return Laravel\Redirect::to_route("get_authenticated_clan_show", array($clan->id));
+				$clan->save();
+                $clan->join($character);
+                
+				return Laravel\Redirect::to_route(
+                    "get_authenticated_clan_show", 
+                    array($clan->id)
+                );
 			}
 			else
 			{

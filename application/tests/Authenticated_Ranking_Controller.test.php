@@ -41,22 +41,22 @@ class Authenticated_Ranking_Controller_Test extends \Tests\TestHelper
 //		$this->assertRedirect(URL::to_route("get_authenticated_ranking_index"), $response);
 //	}
 	
-	public function testKingOfTheHill()
-	{
-		$this->assertHasFilter("get", "authenticated/ranking/kingOfTheHill", "before", "auth");
-		$this->assertHasFilter("get", "authenticated/ranking/kingOfTheHill", "before", "hasNoCharacter");
-		
-		$this->kingOfTheHill->shouldReceive("get_list")->once()->andReturn(array());
-		
-		$response = $this->get("authenticated/ranking/kingOfTheHill");
-		
-		$this->assertResponseOk($response);
-		$this->assertViewHasAll($response, array(
-			"title" => "Ranking",
-            "pagination" => null,
-			"elements" => array()
-		));
-	}
+//	public function testKingOfTheHill()
+//	{
+//		$this->assertHasFilter("get", "authenticated/ranking/kingOfTheHill", "before", "auth");
+//		$this->assertHasFilter("get", "authenticated/ranking/kingOfTheHill", "before", "hasNoCharacter");
+//		
+//		$this->kingOfTheHill->shouldReceive("get_list")->once()->andReturn(array());
+//		
+//		$response = $this->get("authenticated/ranking/kingOfTheHill");
+//		
+//		$this->assertResponseOk($response);
+//		$this->assertViewHasAll($response, array(
+//			"title" => "Ranking",
+//            "pagination" => null,
+//			"elements" => array()
+//		));
+//	}
 	
 	public function testPvp()
 	{

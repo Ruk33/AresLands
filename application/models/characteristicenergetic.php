@@ -2,6 +2,11 @@
 
 class CharacteristicEnergetic implements ICharacteristic
 {
+    public static function get_id()
+    {
+        return "energico";
+    }
+    
 	public function get_bonusses() {
 		return array(
 			'Tus puntos de vida se regeneran mas rápido',

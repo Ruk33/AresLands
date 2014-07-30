@@ -120,15 +120,18 @@ class Clan extends Base_Model
     /**
      * Verificamos si un clan tiene una habilidad
      * @param Skill $skill
+     * @param boolean $strict ¿Queremos verificar tambien que el nivel sea el mismo?
      * @return boolean
      */
-    public function has_skill(Skill $skill)
+    public function has_skill(Skill $skill, $strict = false)
     {
-        return $this->learned_skills()
-					->where('skill_id', '=', $skill->id)
-					->where('level', '=', $skill->level)
-					->take(1)
-					->count() == 1;
+        $query = $this->learned_skills()->where_skill_id($skill->id);
+        
+        if ($strict) {
+            $query->where_level($skill->level);
+        }
+        
+        return $query->take(1)->count() == 1;
     }
 
 	public function add_xp($amount)
@@ -167,7 +170,7 @@ class Clan extends Base_Model
 
 	public function remove_clan_skills_from_member(Character $member)
 	{
-		$clanSkills = $this->skills()->select(array('id', 'skill_id', 'level'))->get();
+		$clanSkills = $this->learned_skills()->select(array('id', 'skill_id', 'level'))->get();
 
 		foreach ( $clanSkills as $clanSkill )
 		{
@@ -186,7 +189,7 @@ class Clan extends Base_Model
 
 	public function give_clan_skills_to_member(Character $member)
 	{
-		$clanSkills = $this->skills()->select(array('skill_id', 'level'))->get();
+		$clanSkills = $this->learned_skills()->select(array('skill_id', 'level'))->get();
 
 		foreach ( $clanSkills as $clanSkill )
 		{

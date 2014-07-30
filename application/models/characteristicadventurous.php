@@ -2,6 +2,11 @@
 
 class CharacteristicAdventurous implements ICharacteristic
 {
+    public static function get_id()
+    {
+        return "aventurero";
+    }
+    
 	public function get_bonusses() {
 		return array(
 			'Ganas mas recompensas',

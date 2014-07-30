@@ -2,6 +2,11 @@
 
 class CharacteristicClumsy implements ICharacteristic
 {
+    public static function get_id()
+    {
+        return "torpe";
+    }
+    
 	public function get_bonusses() {
 		return array(
 			'Tu suerte aumenta drásticamente'

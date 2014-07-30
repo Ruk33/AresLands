@@ -63,7 +63,9 @@
 		<div class="alert alert-error" style="margin-top: 20px;">
 			<strong>Borrar grupo</strong>
 			<p>Una vez borrado el grupo no será posible restaurarlo</p>
-			<a href="{{ URL::to('authenticated/deleteClan') }}" onclick="return confirm('¿Seguro que quieres borrar el grupo?');" class="btn btn-danger">Borrar grupo</a>
+            {{ Form::open(URL::to_route("post_authenticated_clan_delete")) }}
+                {{ Form::submit("Borrar", array("class" => "btn btn-danger", "onclick" => "return confirm('¿Seguro que quieres borrar el grupo?');")) }}
+            {{ Form::close() }}
 		</div>
 		@endif
 	@endif
@@ -113,12 +115,22 @@
 				<img src="{{ $skill->get_image_path() }}" alt="" skill-tooltip skill-id="{{ $skill->id }}" skill-level="{{ $skill->level }}" skill-show-next-level="true" width="64px" height="64px">
 				<?php $nextLevel = $skill->get_next_level()->first(); ?>
 				@if ( $nextLevel && $clan->can_learn_skill($nextLevel) && $clan->has_permission($character, Clan::PERMISSION_LEARN_SPELL) )
-					<p><a href="{{ URL::to('authenticated/learnClanSkill/' . $nextLevel->id . '/' . $nextLevel->level) }}">Subir de nivel</a></p>
+                    {{ Form::open(URL::to_route("post_authenticated_clan_learn_skill")) }}
+                        {{ Form::hidden("skill_id", $nextLevel->id) }}
+                        {{ Form::hidden("skill_level", $nextLevel->level) }}
+                        
+                        {{ Form::submit("Subir nivel", array("class" => "ui-button ui-input-button")) }}
+                    {{ Form::close() }}
 				@endif
 			@else
 				<img class="grayEffect" src="{{ $skill->get_image_path() }}" alt="" skill-tooltip skill-id="{{ $skill->id }}" skill-level="1" width="64px" height="64px">
 				@if ( $clan->can_learn_skill($skill) && $clan->has_permission($character, Clan::PERMISSION_LEARN_SPELL) )
-					<p><a href="{{ URL::to('authenticated/learnClanSkill/' . $skill->id) }}">Aprender</a></p>
+					{{ Form::open(URL::to_route("post_authenticated_clan_learn_skill")) }}
+                        {{ Form::hidden("skill_id", $skill->id) }}
+                        {{ Form::hidden("skill_level", 1) }}
+                        
+                        {{ Form::submit("Aprender", array("class" => "ui-button ui-input-button")) }}
+                    {{ Form::close() }}
 				@endif
 			@endif
 		</li>

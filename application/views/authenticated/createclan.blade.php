@@ -12,7 +12,7 @@
 		</div>
 	@endif
 
-	{{ Form::open() }}
+	{{ Form::open(URL::to_route("post_authenticated_clan_create")) }}
 		{{ Form::token() }}
 	
 		<div>

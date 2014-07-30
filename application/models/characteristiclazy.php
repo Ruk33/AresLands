@@ -2,6 +2,11 @@
 
 class CharacteristicLazy implements ICharacteristic
 {
+    public static function get_id()
+    {
+        return "perezoso";
+    }
+    
 	public function get_bonusses() {
 		return array(
 			'Golpeas mas fuerte... zZz',

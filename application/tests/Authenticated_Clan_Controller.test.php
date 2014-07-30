@@ -119,6 +119,7 @@ class Authenticated_Clan_Controller_Test extends \Tests\TestHelper
 		$this->assertHasFilter("post", "authenticated/clan/create", "before", "hasNoCharacter");
 				
 		$this->character->shouldReceive("get_logged")->times(3)->andReturnSelf();
+        $this->character->shouldReceive("get_id")->times(2)->andReturn(5);
 		$this->character->shouldReceive("get_clan_id")->once()->andReturn(1);
 		
 		$response = $this->post("authenticated/clan/create");
@@ -126,11 +127,11 @@ class Authenticated_Clan_Controller_Test extends \Tests\TestHelper
 		
 		$this->character->shouldReceive("get_clan_id")->twice()->andReturn(0);
 		
-		$attributes = array("name" => "foo", "message" => "bar", "leader_id" => 5);
+		$attributes = array("name" => "foo", "message" => "bar");
 		
 		Input::replace($attributes);
 		
-		$this->clan->shouldReceive("create_instance")->with($attributes)->twice()->andReturnSelf();
+		$this->clan->shouldReceive("create_instance")->with(array_merge($attributes, array("leader_id" => 5)))->twice()->andReturnSelf();
 		$this->clan->shouldReceive("validate")->once()->andReturn(false);
 		$this->clan->shouldReceive("errors->all")->once()->andReturn(array("lorem ipsum dolor amet"));
 		
@@ -140,6 +141,7 @@ class Authenticated_Clan_Controller_Test extends \Tests\TestHelper
 		$this->assertSessionHas("error", array("lorem ipsum dolor amet"));
 		
 		$this->clan->shouldReceive("validate")->once()->andReturn(true);
+		$this->clan->shouldReceive("save")->once();
 		$this->clan->shouldReceive("join")->once()->with($this->character);
 		$this->clan->shouldReceive("get_id")->once()->andReturn(9);
 		

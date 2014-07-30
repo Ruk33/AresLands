@@ -2,6 +2,11 @@
 
 class CharacteristicReliant implements ICharacteristic
 {
+    public static function get_id()
+    {
+        return "confiado";
+    }
+    
 	public function get_bonusses() {
 		return array(
 			'Muestras tus atributos',

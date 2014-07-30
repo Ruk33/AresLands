@@ -2,6 +2,12 @@
 
 interface ICharacteristic
 {
+    /**
+     * Obtenemos el "id" de la caracteristica
+     * @return string
+     */
+    public static function get_id();
+    
 	/**
 	 * Obtenemos el nombre de la caracteristica
 	 * @return string
