@@ -133,6 +133,8 @@
                         <div data-toggle="tooltip" data-original-title="Podes comprar {{ number_format($characterCoinsCount / $merchandise->price_copper, 0, ',', '.') }}">
                         {{ Form::number('amount', 0, array('max' => number_format($characterCoinsCount / $merchandise->price_copper, 0, '', ''), 'style' => 'width: 50px;')) }}
                         </div>
+                    @else
+                        {{ Form::hidden("amount", 1) }}
 					@endif
 					</div>
 
