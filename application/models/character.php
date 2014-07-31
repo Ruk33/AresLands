@@ -3254,11 +3254,17 @@ class Character extends Unit
 	 */
 	public function after_battle()
 	{
+        $baseTime = Config::get('game.battle_rest_time');
+        $restTime = min(
+            $baseTime,
+            $baseTime * (($this->level + $this->xp) / 100) + 5
+        );
+        
 		$characterActivity = new CharacterActivity();
 
 		$characterActivity->character_id = $this->id;
 		$characterActivity->name = 'battlerest';
-		$characterActivity->end_time = time() + Config::get('game.battle_rest_time');
+		$characterActivity->end_time = time() + $restTime;
 
 		$characterActivity->save();
 	}
