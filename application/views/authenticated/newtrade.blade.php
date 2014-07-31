@@ -17,10 +17,10 @@
 		</div>
 	@endif
 
-	{{ Form::open() }}
+	{{ Form::open(URL::to_route("post_authenticated_trade_new")) }}
 		{{ Form::token() }}
 		
-		Objeto y cantidad a comerciar
+        <label>Objeto y cantidad a comerciar</label>
 		<ul class="inline">
 		@foreach ( $characterItems as $characterItem )
 			<li style="padding: 10px;" class="text-center clan-member-link">

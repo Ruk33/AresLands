@@ -168,14 +168,14 @@
 				</div>
 
 				<div class="alert-content">
-					<div style="text-transform: uppercase; color: #D0D2D0; font-size: 11px;">
+					<div class="inventario-label">
 						inventario
-						<hr style="border: none; border-top: 1px solid #572d00;">
+						<hr>
 					</div>
 
-					<ul class="inline">
+					<ul class="inline inventory-list">
 						@for ( $i = 1, $max = 6; $i <= $max; $i++ )
-							<li style="vertical-align: top;">
+							<li>
 								<div class="box box-box-64-gray">
 									@if ( isset($inventoryItems[$i]) && $inventoryItems[$i]->item )
 										<img inventory-button item-id="{{ $inventoryItems[$i]->item->id }}" 
@@ -268,7 +268,7 @@
 					<p><b>Puntos restantes para cambiar:</b> <span ng-bind="character.points_to_change || '?'">?</span></p>
 					<p style="margin: 0;">
 						Puntos a cambiar: 
-						<select class="span3" style="margin: 0;" ng-model="pointsToChange" ng-options="n for n in [] | range:1:character.points_to_change">
+						<select class="span3" ng-model="pointsToChange" ng-options="n for n in [] | range:1:character.points_to_change">
 						</select>
 					</p>
 				</div>

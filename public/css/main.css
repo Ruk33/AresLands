@@ -54,6 +54,32 @@ textarea {
    Author's custom styles
    ========================================================================== */
 
+.inventario-label {
+	font-size: 10px;
+	font-family: Georgia;
+	color: white;
+	text-transform: uppercase;
+	text-align: center;
+	margin-top: 2px;
+}
+
+.inventario-label hr {
+	border-color: rgb(65, 35, 16);
+}
+
+.inventory-list {
+	margin: 0;
+	margin-bottom: 9px;
+	margin-left: 8px !important;
+}
+
+.inventory-list > li {
+	vertical-align: top;
+	padding-left: 0 !important;
+	padding-right: 10px !important;
+	padding-bottom: 10px;
+}
+
 .magical-attack {
 	color: #4B7DA8;
 }
@@ -775,6 +801,13 @@ form {
 	text-shadow: black 0 0 5px;
 	border: 1px solid #333;
 	box-shadow: black 0 0 5px;
+}
+
+.remaining-points-content select {
+	margin: 0px !important;
+	padding: 0px !important;
+	height: 25px !important;
+	min-height: 25px !important;
 }
 
 #characteristicsModal {

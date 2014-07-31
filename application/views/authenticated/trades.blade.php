@@ -1,4 +1,4 @@
-<a href="{{ URL::to('authenticated/newTrade') }}" class="ui-button button pull-right">
+<a href="{{ URL::to_route("get_authenticated_trade_new") }}" class="ui-button button pull-right">
 	<i class="button-icon check"></i>
 	<span class="button-content">
 		Crear comercio
@@ -10,7 +10,7 @@
 
 <ul class="inline text-center" style="margin-top: 40px; margin-bottom: 20px;">
 	<li>
-		<a href="{{ URL::to('authenticated/trades') }}" class="ui-button button">
+		<a href="{{ URL::to_route("get_authenticated_trade_index") }}" class="ui-button button">
 			<i class="button-icon arrow"></i>
 			<span class="button-content">
 				Todo
@@ -19,7 +19,7 @@
 	</li>
 
 	<li>
-		<a href="{{ URL::to('authenticated/trades/self') }}" class="ui-button button">
+		<a href="{{ URL::to_route("get_authenticated_trade_index", array("self")) }}" class="ui-button button">
 			<i class="button-icon arrow"></i>
 			<span class="button-content">
 				Mis comercios
@@ -28,7 +28,7 @@
 	</li>
 	
 	<li>
-		<a href="{{ URL::to('authenticated/trades/weapon') }}" class="ui-button button">
+		<a href="{{ URL::to_route("get_authenticated_trade_index", array("weapon")) }}" class="ui-button button">
 			<i class="button-icon axe"></i>
 			<span class="button-content">
 				Armas
@@ -37,7 +37,7 @@
 	</li>
 	
 	<li>
-		<a href="{{ URL::to('authenticated/trades/armor') }}" class="ui-button button">
+		<a href="{{ URL::to_route("get_authenticated_trade_index", array("armor")) }}" class="ui-button button">
 			<i class="button-icon boot"></i>
 			<span class="button-content">
 				Armaduras
@@ -46,7 +46,7 @@
 	</li>
 	
 	<li>
-		<a href="{{ URL::to('authenticated/trades/consumible') }}" class="ui-button button">
+		<a href="{{ URL::to_route("get_authenticated_trade_index", array("consumible")) }}" class="ui-button button">
 			<i class="button-icon hearth"></i>
 			<span class="button-content">
 				Consumibles
@@ -86,7 +86,7 @@
 				<ul class="inline" style="margin: 0; padding: 0;">
 					@if ( $trade->has_expired() && $trade->can_be_cancelled_by($character) )
 						<li>
-							{{ Form::open(URL::to('authenticated/cancelTrade')) }}
+							{{ Form::open(URL::to_route("post_authenticated_trade_cancel")) }}
 							{{ Form::token() }}
 							{{ Form::hidden('id', $trade->id) }}
 
@@ -96,7 +96,7 @@
 					@else
 						@if ( $trade->can_be_buyed_by($character) )
 						<li>
-							{{ Form::open(URL::to('authenticated/buyTrade')) }}
+							{{ Form::open(URL::to_route("post_authenticated_trade_buy")) }}
 								{{ Form::token() }}
 								{{ Form::hidden('id', $trade->id) }}
 
@@ -107,7 +107,7 @@
 
 						@if ( $trade->can_be_cancelled_by($character) )
 						<li>
-							{{ Form::open(URL::to('authenticated/cancelTrade')) }}
+							{{ Form::open(URL::to("post_authenticated_trade_cancel")) }}
 								{{ Form::token() }}
 								{{ Form::hidden('id', $trade->id) }}
 
