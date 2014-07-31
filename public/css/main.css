@@ -322,6 +322,13 @@ select:focus, input:focus, textarea:focus {
 	position: relative;
 }
 
+.alert-success {
+	background-color: rgb(122, 192, 56);
+	border-color: rgb(74, 128, 47);
+	text-shadow: none;
+	color: rgb(40, 122, 40);
+}
+
 .alert-danger, .alert-error {
 	background-color: rgb(242, 113, 92);
 	border-color: #5D1818;

@@ -8,10 +8,12 @@
 @endif
 
 @if ( Session::has('success') )
-	<div class="alert alert-success span11" style="margin-top: 20px;">
-        <b>{{ $npc->name }}</b>:
-		{{ Session::get('success') }}
-	</div>
+<div class="clearfix row">
+    <div class="alert alert-success no-border-radius span12">
+        <h4>{{ $npc->name }}</h4>
+        {{ Session::get('success') }}
+    </div>
+</div>
 @endif
 
 <h2>
