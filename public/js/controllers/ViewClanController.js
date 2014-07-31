@@ -2,7 +2,7 @@ var ViewClanController = function($scope, $http) {
 	$scope.errorDiv = false;
 
 	var editClanMessage = function(message) {
-		$http.post($scope.basePath + '/authenticated/editClanMessage', {'message':message});
+		$http.post($scope.basePath + '/authenticated/clan/editMessage', {'message':message});
 	};
 
 	CKEDITOR.on('instanceReady', function(instance)

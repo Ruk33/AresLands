@@ -134,7 +134,9 @@ class Authenticated_Clan_Controller extends Authenticated_Base
 		
 		if ( $clan->has_permission($character, Clan::PERMISSION_EDIT_MESSAGE) )
 		{
-			$clan->message = Input::get('message');
+            $json = Input::json(true);
+            
+			$clan->message = Input::get("message", $json["message"]);
 			$clan->save();
 		}
 	}
