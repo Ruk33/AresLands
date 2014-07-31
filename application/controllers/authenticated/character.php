@@ -60,9 +60,20 @@ class Authenticated_Character_Controller extends Authenticated_Base
         
 		if ( ! $character->characteristics )
 		{
-			$character->set_characteristics_from_array(
-                (array) Input::get("characteristics")
-            );
+            $characteristics = array();
+            $input = (array) Input::get("characteristics");
+            
+            foreach (Characteristic::get_all() as $pack) {
+                foreach ($pack as $characteristic) {
+                    // Si el indice existe, significa que el usuario eligio
+                    // esa caracteristica
+                    if (isset($input[$characteristic->get_name()])) {
+                        $characteristics[] = $characteristic;
+                    }
+                }
+            }
+            
+			$character->set_characteristics_from_array($characteristics);
 		}
 		
 		return \Laravel\Redirect::to_route("get_authenticated_index");

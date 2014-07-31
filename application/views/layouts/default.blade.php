@@ -69,7 +69,7 @@
 									<div class="thumbnail span6">
 										<div class="caption">
 											<div class="pull-left" style="margin-top: 45px; margin-left: 15px;">
-												{{ Form::radio($i, $characteristic->get_name()) }}
+												{{ Form::radio("characteristics[{$characteristic->get_name()}]", $characteristic->get_name()) }}
 											</div>
 											<div style="margin-left: 50px;">
 												<h3>{{ $characteristic->get_name() }}</h3>

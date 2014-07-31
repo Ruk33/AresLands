@@ -3570,12 +3570,40 @@ class Character extends Unit
 	 * Asignamos caracteristicas del personaje desde array
 	 * @param array $characteristics
 	 */
-	public function set_characteristics_from_array(array $characteristics)
+	public function set_characteristics_from_array(array $newCharacteristics)
 	{
-		// todo
-		
-		if ( $this->has_characteristic(Characteristic::CLUMSY) )
-		{
+        $finalCharacteristics = array();
+        $characteristics = Characteristic::get_all();
+        
+        foreach ($newCharacteristics as $characteristic) {
+            // Todas las caracteristicas vienen en grupos
+            // (por ejemplo energetico y perezoso estan juntos)
+            foreach ($characteristics as $key => $pack) {
+                // Iteramos sobre las caracteristicas de un grupo
+                foreach ($pack as $instance) {
+                    // Si una de las nuevas caracteristicas coincide con uno 
+                    // de los elementos del grupo, entonces quitamos el mismo
+                    // del array de todas las caracteristicas para que se eviten
+                    // combinaciones invalidas (por ejemplo, asignar energetico
+                    // y perezoso no es valido, los dos estan en el mismo grupo)
+                    if ($characteristic->get_name() == $instance->get_name()) {
+                        $finalCharacteristics[] = $instance->get_name();
+                        unset($characteristics[$key]);
+                        
+                        break;
+                    }
+                }
+            }
+        }
+        
+        // Solamente se aceptan 5 caracteristicas
+        if (count($finalCharacteristics) != 5) {
+            return;
+        }
+        
+        $this->characteristics = strtolower(implode(",", $finalCharacteristics));
+        
+		if ($this->has_characteristic(Characteristic::CLUMSY)) {
 			$this->luck += 6;
 		}
 		
