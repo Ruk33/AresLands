@@ -5,25 +5,40 @@ class Trade extends Base_Model
 	public static $softDelete = false;
 	public static $timestamps = false;
 	public static $table = 'trades';
-	public static $key = 'id';
 
 	protected $rules = array(
-        'seller_id' => 'exists:characters',
-		'trade_item_id' => 'required|exists:character_items|tradeitem|tradeowner:seller_id',
-		'amount' => 'required|numeric|min:1|tradeitemamount:trade_item_id',
+        'seller_id' => 'required|exists:characters,id',
+		'item_id' => 'required|exists:character_items,item_id|tradeitem|tradeowner:seller_id',
+		'amount' => 'required|numeric|min:1|tradeitemamount:item_id',
 		'price_copper' => 'required|numeric|min:1',
 		'duration' => 'in:8,16,24'
 	);
 
 	protected $messages = array(
+        'seller_id_required' => 'El vendedor es requerido',
+        'seller_id_exists' => '¡El vendedor no existe!',
+        
+        'item_id_required' => 'El objeto a comerciar es requerido',
+        'item_id_exists' => '¡El objeto a comerciar no existe!',
+        'tradeitem' => 'El objeto a comerciar no es valido',
+        'tradeowner' => '¡No eres dueño de ese objeto!',
+        
 		'amount_required' => 'El monto es requerido',
 		'amount_numeric' => 'El monto es incorrecto (solo números)',
 		'amount_min' => 'La cantidad mínima debe ser 1',
+        'tradeitemamount' => 'No posees esa cantidad para comerciar',
 
 		'price_copper_required' => 'El precio es requerido',
 		'price_copper_numeric' => 'El precio es incorrecto (solo números)',
-		'price_copper_min' => 'El precio mínimo debe ser 1'
+		'price_copper_min' => 'El precio mínimo debe ser 1',
+        
+        'duration_in' => 'La duracion es incorrecta',
 	);
+    
+    public function get_validator($attributes, $rules, $messages = array())
+    {
+        return TradeItemValidation::make($attributes, $rules, $messages);
+    }
 
 	/**
 	 * Query para obtener los trades que son validos.
@@ -56,8 +71,7 @@ class Trade extends Base_Model
 		}
 		
 		return static::get_valid()
-					 ->join('trade_items', 'trade_items.id', '=', 'trade_item_id')
-					 ->join('items', 'items.id', '=', 'trade_items.item_id')
+					 ->join('items', 'items.id', '=', 'trades.item_id')
 					 ->where('items.class', '=', $class);
 	}
 
@@ -66,9 +80,9 @@ class Trade extends Base_Model
 		return $this->belongs_to('Character', 'seller_id');
 	}
 
-	public function trade_item()
+	public function item()
 	{
-		return $this->belongs_to('TradeItem', 'trade_item_id');
+		return $this->belongs_to('Item', 'item_id');
 	}
 	
 	/**
@@ -171,7 +185,7 @@ class Trade extends Base_Model
 			return false;
 		}
 		
-		if ( ! $character->add_item($this->trade_item->item, $this->amount) )
+		if ( ! $character->add_item($this->item, $this->amount) )
 		{
 			return false;
 		}
@@ -195,7 +209,7 @@ class Trade extends Base_Model
 	public function cancel()
 	{
 		// Verificamos que podamos devolver el objeto
-		if ( ! $this->seller->add_item($this->trade_item->item, $this->amount) )
+		if ( ! $this->seller->add_item($this->item, $this->amount) )
 		{
 			return false;
 		}
@@ -203,21 +217,5 @@ class Trade extends Base_Model
 		$this->delete();
 		
 		return true;
-	}
-	
-	/**
-	 * 
-	 * @return boolean
-	 */
-	public function delete()
-	{
-		$tradeItem = $this->trade_item;
-		
-		if ( $tradeItem )
-		{
-			$tradeItem->delete();
-		}
-		
-		return parent::delete();
 	}
 }

@@ -1,5 +1,8 @@
 <?php
 
+/**
+ * @deprecated
+ */
 class TradeItem extends Base_Model
 {
 	public static $softDelete = false;

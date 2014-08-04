@@ -32,10 +32,15 @@ abstract class Base_Model extends Eloquent
         
         return $this->inject_query($query);
     }
+    
+    public function get_validator($attributes, $rules, $messages = array())
+    {
+        return Validator::make($attributes, $rules, $messages);
+    }
 
 	public function validate()
 	{
-		$validator = Validator::make($this->attributes, $this->rules, $this->messages);
+		$validator = $this->get_validator($this->attributes, $this->rules, $this->messages);
 
 		if ($validator->fails()) {
 			$this->errors = $validator->errors;

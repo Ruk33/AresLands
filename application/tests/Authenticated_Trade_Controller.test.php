@@ -5,7 +5,6 @@ use Mockery as m;
 class Authenticated_Trade_Controller_Test extends Tests\TestHelper
 {
 	protected $trade;
-	protected $tradeItem;
 	protected $character;
 
 	public function setUp()
@@ -14,9 +13,6 @@ class Authenticated_Trade_Controller_Test extends Tests\TestHelper
 		
 		$this->trade = m::mock("Trade");
 		IoC::instance("Trade", $this->trade);
-		
-		$this->tradeItem = m::mock("TradeItem");
-		IoC::instance("TradeItem", $this->tradeItem);
 		
 		$this->character = m::mock("Character");
 		IoC::instance("Character", $this->character);
@@ -27,7 +23,6 @@ class Authenticated_Trade_Controller_Test extends Tests\TestHelper
 		parent::tearDown();
 		
 		IoC::unregister("Trade");
-		IoC::unregister("TradeItem");
 		IoC::unregister("Character");
 	}
 	
@@ -49,7 +44,7 @@ class Authenticated_Trade_Controller_Test extends Tests\TestHelper
 		
 		// no importa que la categoria sea cualquier cosa, ya que si no es valida
 		// siempre sera "all"
-		$this->trade->shouldReceive("with")->once()->with(array("trade_item", "trade_item.item"))->andReturnSelf();
+		$this->trade->shouldReceive("with")->once()->with(array("item"))->andReturnSelf();
 		$this->trade->shouldReceive("get_valid->get")->once()->andReturn(array());
 		
 		$response = $this->get("authenticated/trade/category/foo");
@@ -62,7 +57,7 @@ class Authenticated_Trade_Controller_Test extends Tests\TestHelper
 		));
 		
 		$this->character->shouldReceive("trades")->once()->andReturn($this->trade);
-		$this->trade->shouldReceive("with")->once()->with(array("trade_item", "trade_item.item"))->andReturnSelf();
+		$this->trade->shouldReceive("with")->once()->with(array("item"))->andReturnSelf();
 		$this->trade->shouldReceive("get")->once()->andReturn(array());
 		
 		$response = $this->get("authenticated/trade/category/self");
@@ -125,15 +120,23 @@ class Authenticated_Trade_Controller_Test extends Tests\TestHelper
 		$this->assertRedirect(URL::to_route("get_authenticated_index"), $response);
 		
 		$attributes = array(
-			"gold"      => 1,
-			"silver"    => 2,
-			"copper"    => 0,
-			"duration"  => 8,
-			"only_clan" => 0,
-			"amount"    => 1,
-			"item_id"   => 9,
+			"gold"          => 1,
+			"silver"        => 2,
+			"copper"        => 0,
+			"duration"      => 8,
+			"only_clan"     => 0,
+			"amount"        => array(9 => 1),
+			"trade_item_id" => 9,
 		);
 		
+        $characterItem = m::mock("CharacterItem");
+        
+        $this->character->shouldReceive("items->where_id")->twice()->with($attributes['trade_item_id'])->andReturn($characterItem);
+        
+        $characterItem->shouldReceive("first_or_empty")->twice()->andReturn($characterItem);
+        $characterItem->shouldReceive("get_item_id")->twice()->andReturn($attributes['trade_item_id']);
+        $characterItem->shouldReceive("get_attribute")->twice()->with("data")->andReturn("foo");
+        
 		$this->character->shouldReceive("can_trade")->twice()->andReturn(true);
 		
 		Input::replace($attributes);
@@ -143,7 +146,7 @@ class Authenticated_Trade_Controller_Test extends Tests\TestHelper
 		$this->character->shouldReceive("get_id")->twice()->andReturn(1);
 		
 		$this->trade->shouldReceive("validate")->once()->andReturn(false);
-		$this->trade->shouldReceive("errors->results->all")->once()->andReturn(array());
+		$this->trade->shouldReceive("errors->all")->once()->andReturn(array());
 		
 		$response = $this->post("authenticated/trade/new");
 		
@@ -152,30 +155,16 @@ class Authenticated_Trade_Controller_Test extends Tests\TestHelper
 		$this->assertSessionHas("errors", array());
 		
 		$this->trade->shouldReceive("validate")->once()->andReturn(true);
-		
-		$characterItem = m::mock("CharacterItem");
-		$this->character->shouldReceive("items->find")->with($attributes["item_id"])->once()->andReturn($characterItem);
-		
-		$this->trade->shouldReceive("trade_item->insert")->once()->with($this->tradeItem);
-		
-		$this->tradeItem->shouldReceive("create_instance")->once()->with(array(
-			"item_id" => $attributes["item_id"],
-			"data"    => "foo"
-		))->andReturnSelf();
-		
-		$characterItem->shouldReceive("get_item_id")->once()->andReturn($attributes["item_id"]);
-		$characterItem->shouldReceive("get_attribute")->once()->with("data")->andReturn("foo");
-		
 		$this->trade->shouldReceive("save")->once();
 		
 		$characterItem->shouldReceive("get_count")->once()->andReturn(5);
-		$characterItem->shouldReceive("set_count")->once()->with(5 - $attributes["amount"]);
+		$characterItem->shouldReceive("set_count")->once()->with(4);
 		$characterItem->shouldReceive("save")->once();
 		
 		$response = $this->post("authenticated/trade/new");
 		
 		$this->assertRedirect(URL::to_route("get_authenticated_trade_index"), $response);
-		$this->assertSessionHas("success", "Comercio creado con éxito");
+		$this->assertSessionHas("success", "Comercio creado con exito");
 	}
 	
 	public function testCancelar()

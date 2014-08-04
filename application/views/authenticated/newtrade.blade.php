@@ -1,3 +1,16 @@
+@if ( Session::has("errors") )
+<div class="clearfix row">
+    <div class="alert alert-error no-border-radius span12">
+        <h4>Oops!</h4>
+        <ul>
+            @foreach (Session::get("errors") as $error)
+            <li>{{ $error }}</li>
+            @endforeach
+        </ul>
+    </div>
+</div>
+@endif
+
 <h2>Nuevo comercio</h2>
 
 <div class="span11">
@@ -24,7 +37,7 @@
 		<ul class="inline">
 		@foreach ( $characterItems as $characterItem )
 			<li style="padding: 10px;" class="text-center clan-member-link">
-				{{ Form::radio('item', $characterItem->id, false, array('id' => $characterItem->id)) }}
+				{{ Form::radio('trade_item_id', $characterItem->id, false) }}
 				<label for="{{ $characterItem->id }}" data-toggle="tooltip" data-placement="top" data-original-title="{{ $characterItem->item->get_text_for_tooltip() }}">
 					<div class="box box-box-64-blue">
 						<img src="{{ URL::base() }}/img/icons/items/{{ $characterItem->item_id }}.png" alt="" width="80px" height="80px">
@@ -51,8 +64,8 @@
 		</ul>
 		
 		<div style="margin-top: 25px;">
-			{{ Form::label('time', 'Tiempo hasta que el comercio se cancele') }}
-			{{ Form::select('time', array(8 => '8 horas (5% de comisión)', 16 => '16 horas  (9% de comisión)', 24 => '24 horas  (14% de comisión)'), null, array('class' => 'input-block-level')) }}
+			{{ Form::label('duration', 'Tiempo hasta que el comercio se cancele') }}
+			{{ Form::select('duration', array(8 => '8 horas (5% de comisión)', 16 => '16 horas  (9% de comisión)', 24 => '24 horas  (14% de comisión)'), null, array('class' => 'input-block-level')) }}
 		</div>
 
 		<div style="margin-top: 25px;">

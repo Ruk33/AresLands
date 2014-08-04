@@ -19,7 +19,7 @@
 	</li>
 
 	<li>
-		<a href="{{ URL::to_route("get_authenticated_trade_index", array("self")) }}" class="ui-button button">
+		<a href="{{ URL::to_route("get_authenticated_trade_category", array("self")) }}" class="ui-button button">
 			<i class="button-icon arrow"></i>
 			<span class="button-content">
 				Mis comercios
@@ -28,7 +28,7 @@
 	</li>
 	
 	<li>
-		<a href="{{ URL::to_route("get_authenticated_trade_index", array("weapon")) }}" class="ui-button button">
+		<a href="{{ URL::to_route("get_authenticated_trade_category", array("weapon")) }}" class="ui-button button">
 			<i class="button-icon axe"></i>
 			<span class="button-content">
 				Armas
@@ -37,7 +37,7 @@
 	</li>
 	
 	<li>
-		<a href="{{ URL::to_route("get_authenticated_trade_index", array("armor")) }}" class="ui-button button">
+		<a href="{{ URL::to_route("get_authenticated_trade_category", array("armor")) }}" class="ui-button button">
 			<i class="button-icon boot"></i>
 			<span class="button-content">
 				Armaduras
@@ -46,7 +46,7 @@
 	</li>
 	
 	<li>
-		<a href="{{ URL::to_route("get_authenticated_trade_index", array("consumible")) }}" class="ui-button button">
+		<a href="{{ URL::to_route("get_authenticated_trade_category", array("consumible")) }}" class="ui-button button">
 			<i class="button-icon hearth"></i>
 			<span class="button-content">
 				Consumibles
@@ -76,7 +76,7 @@
 		<tr>
 			<td>
 				<div class="box box-box-32-gold" style="margin: 0 auto;">
-                    <img src="{{ $trade->trade_item->item->get_image_path() }}" data-toggle="tooltip" data-original-title="{{ $trade->trade_item->item->get_text_for_tooltip() }}" />
+                    <img src="{{ $trade->item->get_image_path() }}" data-toggle="tooltip" data-original-title="{{ $trade->item->get_text_for_tooltip() }}" />
 				</div>
 			</td>
 			<td style="text-align: center;">{{ $trade->amount }}</td>
@@ -107,7 +107,7 @@
 
 						@if ( $trade->can_be_cancelled_by($character) )
 						<li>
-							{{ Form::open(URL::to("post_authenticated_trade_cancel")) }}
+							{{ Form::open(URL::to_route("post_authenticated_trade_cancel")) }}
 								{{ Form::token() }}
 								{{ Form::hidden('id', $trade->id) }}
 

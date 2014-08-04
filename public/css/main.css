@@ -54,6 +54,16 @@ textarea {
    Author's custom styles
    ========================================================================== */
 
+.coin-list {
+    display: inline;
+    margin: 0;
+}
+
+.coin-list li i {
+    margin-top: 2px;
+    margin-right: 1px;
+}
+
 .inventario-label {
 	font-size: 10px;
 	font-family: Georgia;
@@ -170,11 +180,14 @@ textarea {
 }
 
 .mini-player-display .coins {
-	margin-top: -2px;
+	position: absolute;
+        top: 2px;
+        right: 3px;
 }
 
 .mini-player-display .coins li {
 	padding: 0;
+        float: left;
 }
 
 label {

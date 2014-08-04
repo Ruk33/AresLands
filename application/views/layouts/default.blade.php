@@ -245,29 +245,26 @@
                                     <div style="width: 45px; overflow: hidden;">
                                         <a href="{{ URL::to_route("get_authenticated_character_show", array($character->name)) }}" style="font-size: 12px;">
                                             <b>{{ $character->name }}</b>
-                                        </a>
+                                        </a>                                        
                                     </div>
-									
-									<div class="clear-fix"></div>
-									
-									<span>
-									Nivel: {{ $character->level }}
-									</span>
+                                    Nivel: {{ $character->level }}
 								</div>
                                 
                                 <div>
-                                    <ul class="coins inline pull-right">
-                                        <li>
-                                            <i class='coin coin-gold pull-left'></i> 
-                                            @if ( $coins['gold'] > 100 )
-                                                <span data-toggle="tooltip" data-original-title="{{ $coins['gold'] }}">99+</span>
-                                            @else
-                                                {{ $coins['gold'] }}
-                                            @endif
-                                        </li>
-                                        <li><i class='coin coin-silver pull-left'></i> {{ $coins['silver'] }}</li>
-                                        <li><i class='coin coin-copper pull-left'></i> {{ $coins['copper'] }}</li>
-                                    </ul>
+                                    <div class="coins">
+                                        <ul class="inline coin-list">
+                                            <li>
+                                                <i class='coin coin-gold pull-left'></i>
+                                                @if ( $coins['gold'] > 100 )
+                                                    <span data-toggle="tooltip" data-original-title="{{ $coins['gold'] }}">99+</span>
+                                                @else
+                                                    {{ $coins['gold'] }}
+                                                @endif
+                                            </li>
+                                            <li><i class='coin coin-silver pull-left'></i> {{ $coins['silver'] }}</li>
+                                            <li><i class='coin coin-copper pull-left'></i> {{ $coins['copper'] }}</li>
+                                        </ul>
+                                    </div>
                                     
                                     <div class="quests">
                                         <div id="quests_popover" style="display: none;">

@@ -65,29 +65,37 @@ class Authenticated_Trade_Controller extends Authenticated_Base
 	{
 		$availableFilters = array("self", "weapon", "armor", "consumible", "all");
 		
-		if ( ! in_array($filter, $availableFilters))
-		{
+		if ( ! in_array($filter, $availableFilters)) {
 			$filter = "all";
 		}
 		
 		$character = $this->character->get_logged();
 		
-		switch ( $filter )
-		{
+		switch ($filter) {
 			case "all":
-				$trades = $this->trade->with(array("trade_item", "trade_item.item"))->get_valid()->get();
+				$trades = $this->trade
+                               ->with(array("item"))
+                               ->get_valid()
+                               ->get();
 				break;
 			
 			case "self":
-				$trades = $character->trades()->with(array("trade_item", "trade_item.item"))->get();
+				$trades = $character->trades()
+                                    ->with(array("item"))
+                                    ->get();
 				break;
 			
 			default:
-				$trades = $this->trade->filter_by_item_class($filter)->select(array("trades.*"))->get();
+				$trades = $this->trade
+                               ->filter_by_item_class($filter)
+                               ->select(array("trades.*"))
+                               ->get();
 		}
 
 		$this->layout->title = "Comercios";
-		$this->layout->content = View::make('authenticated.trades', compact("trades", "character"));
+		$this->layout->content = View::make('authenticated.trades', compact(
+                "trades", "character"
+        ));
 	}
 	
 	public function get_new()
@@ -110,8 +118,7 @@ class Authenticated_Trade_Controller extends Authenticated_Base
 	{
 		$seller = $this->character->get_logged();
 		
-		if ( ! $seller->can_trade() )
-		{
+		if (! $seller->can_trade()) {
 			return Laravel\Redirect::to_route("get_authenticated_index");
 		}
 		
@@ -123,38 +130,36 @@ class Authenticated_Trade_Controller extends Authenticated_Base
 			str_pad(preg_replace($nonNumericReg, "", Input::get("gold")),   2, "0", STR_PAD_LEFT) .
 			str_pad(preg_replace($nonNumericReg, "", Input::get("silver")), 2, "0", STR_PAD_LEFT) .
 			str_pad(preg_replace($nonNumericReg, "", Input::get("copper")), 2, "0", STR_PAD_LEFT);
-				
-		$trade = $this->trade->create_instance(array_merge(
-			array(
-				"seller_id"    => $seller->id,
-				"price_copper" => $price,
-				"until"        => time() + Input::get("duration") * 60 * 60,
-				"clan_id"      => Input::get("only_clan") ? $seller->clan_id : 0
-			),
-			Input::only("duration", "amount", "item_id")
+		
+        $tradeItemId = Input::get("trade_item_id");
+        $amounts = (array) Input::get("amount");
+        $amount = (isset($amounts[$tradeItemId])) ? $amounts[$tradeItemId] : 0;
+        
+        $characterItem = 
+            $seller->items()->where_id($tradeItemId)->first_or_empty();
+        
+		$trade = $this->trade->create_instance(array(
+            "seller_id"    => $seller->id,
+            "price_copper" => $price,
+            "until"        => time() + Input::get("duration") * 60 * 60,
+            "clan_id"      => Input::get("only_clan") ? $seller->clan_id : 0,
+            "item_id"      => $characterItem->item_id,
+            "data"         => $characterItem->get_attribute("data"),
+            "amount"       => $amount,
+            "duration"     => Input::get("duration")
 		));
 
-		if ( $trade->validate() )
-		{
-			$characterItem = $seller->items()->find(Input::get("item_id"));
-			
-			$trade->trade_item()->insert(
-				$this->tradeItem->create_instance(array(
-					"item_id" => $characterItem->item_id,
-					"data"    => $characterItem->get_attribute("data")
-				))
-			);
-			
-			$trade->save();
+		if ($trade->validate()) {            
+            $trade->save();
 
-			$characterItem->count -= Input::get("amount");
+			$characterItem->count -= $amount;
 			$characterItem->save();
 
-			Session::flash("success", "Comercio creado con éxito");
+			Session::flash("success", "Comercio creado con exito");
 			return Laravel\Redirect::to_route("get_authenticated_trade_index");
 		}
 		
-		Session::flash("errors", $trade->errors->all());
+		Session::flash("errors", $trade->errors()->all());
 		return Laravel\Redirect::to_route("get_authenticated_trade_new")->with_input();
 	}
 	
