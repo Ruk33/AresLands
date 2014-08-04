@@ -40,7 +40,7 @@
 				{{ Form::radio('trade_item_id', $characterItem->id, false) }}
 				<label for="{{ $characterItem->id }}" data-toggle="tooltip" data-placement="top" data-original-title="{{ $characterItem->item->get_text_for_tooltip() }}">
 					<div class="box box-box-64-blue">
-						<img src="{{ URL::base() }}/img/icons/items/{{ $characterItem->item_id }}.png" alt="" width="80px" height="80px">
+						<img src="{{ $characterItem->item->get_image_path() }}" alt="" width="80px" height="80px">
 					</div>
 				</label>
 
