@@ -80,7 +80,7 @@ textarea {
 .inventory-list {
 	margin: 0;
 	margin-bottom: 9px;
-	margin-left: 8px !important;
+	margin-left: 7px !important;
 }
 
 .inventory-list > li {
@@ -816,11 +816,15 @@ form {
 	box-shadow: black 0 0 5px;
 }
 
-.remaining-points-content select {
+.remaining-points-content input {
 	margin: 0px !important;
 	padding: 0px !important;
-	height: 25px !important;
-	min-height: 25px !important;
+	height: 28px !important;
+	min-height: 28px !important;
+        width: 60px !important;
+        margin-left: 5px !important;
+        margin-top: -4px !important;
+        text-align: center;
 }
 
 #characteristicsModal {

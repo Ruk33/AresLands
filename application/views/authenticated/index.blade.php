@@ -268,8 +268,7 @@
 					<p><b>Puntos restantes para cambiar:</b> <span ng-bind="character.points_to_change || '?'">?</span></p>
 					<p style="margin: 0;">
 						Puntos a cambiar: 
-						<select class="span3" ng-model="pointsToChange" ng-options="n for n in [] | range:1:character.points_to_change">
-						</select>
+                        <input type="number" class="span3" ng-model="pointsToChange" />
 					</p>
 				</div>
 			</li>
