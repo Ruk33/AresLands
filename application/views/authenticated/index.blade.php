@@ -138,7 +138,13 @@
 			<div style="position: absolute; left: 230px; top: 65px;">
                 <div class="box box-box-64-blue">
                     @if ( $mercenary )
-                        <img src="{{ $mercenary->get_image_path() }}" alt="" width="64px" height="64px" data-toggle="tooltip" data-placement="top" data-original-title="{{ $mercenary->get_text_for_tooltip() }}">
+                        {{ Form::open(URL::to_route("post_authenticated_inventory_use")) }}
+                            {{ Form::hidden("id", $mercenary->id) }}
+                            {{ Form::hidden("amount", 1) }}
+                            <div data-toggle="tooltip" data-placement="top" data-original-title="{{ $mercenary->item->get_text_for_tooltip() }}">
+                                {{ Form::image($mercenary->item->get_image_path(), $mercenary->item->name, array("width" => "64px", "height" => "64px")) }}
+                            </div>
+                        {{ Form::close() }}
                     @endif
                 </div>
 			</div>
