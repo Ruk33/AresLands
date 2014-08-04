@@ -241,10 +241,10 @@
 		<ul class="inline">
 			@foreach ( $castableSkills as $castableSkill )
 			<li class="clan-member-link">
-				{{ Form::open(URL::to('authenticated/castTalent')) }}
+				{{ Form::open(URL::to_route("post_authenticated_talent_cast")) }}
 					{{ Form::token() }}
-					{{ Form::hidden('skill_id', $castableSkill) }}
-					{{ Form::hidden('id', $characterToSee->id) }}
+					{{ Form::hidden("skill_id", $castableSkill) }}
+					{{ Form::hidden("id", $characterToSee->id) }}
 					<img src="{{ URL::base() }}/img/icons/skills/{{ $castableSkill }}.png" alt="" skill-tooltip skill-id="{{ $castableSkill }}" skill-level="1">
 					<div>
 							{{ Form::submit('Lanzar', array('class' => 'ui-button ui-input-button')) }}

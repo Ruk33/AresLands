@@ -65,23 +65,20 @@ class Authenticated_Talent_Controller extends Authenticated_Base
 	public function post_cast()
 	{
 		$character = $this->character->get_logged();
-		$talent = $character->talents()->where_skill_id(Input::get('skill_id'))->first_or_die();
+		$talent = $character->talents()
+                            ->where_skill_id(Input::get("skill_id"))
+                            ->first_or_die();
 		
-		if ( $character->can_use_talent($talent) )
-		{
-			$target = $this->character->find_or_die(Input::get('id'));
-			$hasReflect = $target->has_skill(Config::get('game.reflect_skill'));
+		if ($character->can_use_talent($talent)) {
+			$target = $this->character->find_or_die(Input::get("id"));
+			$hasReflect = $target->has_skill(Config::get("game.reflect_skill"));
 
-			if ( $character->use_talent($talent, $target) )
-			{
+			if ($character->use_talent($talent, $target)) {
 				$skill = $talent->skill;
 				
-				if ( $hasReflect && $skill->type == 'debuff' )
-				{
+				if ($hasReflect && $skill->type == "debuff") {
 					Session::flash("error", "¡Oh no!, {$target->name} te ha reflejado el hechizo {$skill->name}");
-				}
-				else
-				{
+				} else {
 					Session::flash("message", "Lanzaste la habilidad {$skill->name} a {$target->name}");
 				}
 			}
