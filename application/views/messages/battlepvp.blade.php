@@ -16,7 +16,7 @@
 	<li style="width: 250px;">
 		<div class="thumbnail text-center">
 			<img src="{{ URL::base() }}/img/characters/{{ $winner->race }}_{{ $winner->gender }}_win.png" alt="" width="180px" height="181px">
-			<h1>{{ $winner->name }}</h1>
+            <h1>{{ $winner->get_link() }}</h1>
 		</div>
 	</li>
 
@@ -27,7 +27,7 @@
 	<li style="width: 250px;">
 		<div class="thumbnail text-center">
 			<img src="{{ URL::base() }}/img/characters/{{ $loser->race }}_{{ $loser->gender }}_lose.png" alt="" width="180px" height="181px">
-			<h1>{{ $loser->name }}</h1>
+            <h1>{{ $loser->get_link() }}</h1>
 		</div>
 	</li>
 </ul>
