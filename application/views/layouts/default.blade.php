@@ -352,9 +352,9 @@
 									<i class="img-circle menu-icon menu-battle"></i>
 									<a href="{{ URL::to_route("get_authenticated_battle_index") }}">Batallar</a>
 								</li>
-								<li>
+								<li data-toggle="tooltip" data-original-title="Calabozos en mantenimiento, ¡pronto seran activados nuevamente!">
 									<i class="img-circle menu-icon menu-dungeons"></i>
-									<a href="{{ URL::to_route("get_authenticated_dungeon_index") }}">Calabozos</a>
+									<span class="negative" style="margin-left: 5px;">Calabozos</span>
 								</li>
 								@endif
 	
