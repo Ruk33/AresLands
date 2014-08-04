@@ -2,7 +2,7 @@
 
 use Mockery as m;
 
-class Authenticated_Dungeon_Controller_Test extends Tests\TestHelper
+abstract class Authenticated_Dungeon_Controller_Test extends Tests\TestHelper
 {
 	protected $character;
 	protected $dungeon;
