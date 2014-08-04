@@ -149,8 +149,15 @@
 	<div class="row" style="margin-bottom: 25px;">
 	<ul class="inline text-center span12">
 	@foreach ( $members as $member )
-		<li style="width: 45%;">
+		<li style="width: 45%; vertical-align: top;">
 			<div class="clan-member-link">
+                <div class="pull-right">
+                    @if ( $character->id != $member->id && $member->id != $clan->leader_id && ($character->id == $clan->leader_id || $clan->has_permission($character, Clan::PERMISSION_KICK_MEMBER)) )
+					<span data-toggle="tooltip" data-original-title="Expulsar miembro del grupo">
+						<a class="close" onclick="return confirm('¿Seguro que quieres eliminar a {{ $member->name }} del grupo?');" href="{{ URL::to('authenticated/clanRemoveMember/' . $member->name) }}">&times;</a>
+                    </span>
+					@endif
+                </div>
 				<ul class="inline">
 					<li style="vertical-align: top;">
 						<div class="icon-race-30 icon-race-30-{{ $member->race }}_{{ $member->gender }} pull-left"></div>
@@ -234,12 +241,6 @@
 							{{ Form::close() }}
 						</div>
 						<i class="icon icon-chevron-up" name="link_permissions" data-placement="top" data-target="{{ $member->id }}_permissions" style="cursor: pointer;"></i>
-					</li>
-					@endif
-					
-					@if ( $character->id != $member->id && $member->id != $clan->leader_id && ($character->id == $clan->leader_id || $clan->has_permission($character, Clan::PERMISSION_KICK_MEMBER)) )
-					<li class="pull-right" style="vertical-align: top;" data-toggle="tooltip" data-original-title="Expulsar miembro del grupo">
-						<a class="close" onclick="return confirm('¿Seguro que quieres eliminar a {{ $member->name }} del grupo?');" href="{{ URL::to('authenticated/clanRemoveMember/' . $member->name) }}">&times;</a>
 					</li>
 					@endif
 				</ul>
