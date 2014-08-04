@@ -2703,18 +2703,24 @@ class Character extends Unit
 	 */
 	public function can_add_stat($stat, $amount)
 	{
-		if ( !in_array($stat, array('stat_strength', 'stat_dexterity', 'stat_resistance', 'stat_magic', 'stat_magic_skill', 'stat_magic_resistance')) )
-		{
+        $validStats = array(
+            'stat_strength', 
+            'stat_dexterity', 
+            'stat_resistance', 
+            'stat_magic', 
+            'stat_magic_skill', 
+            'stat_magic_resistance'
+        );
+        
+		if (! in_array($stat, $validStats)) {
 			return false;
 		}
 		
-		if ( $this->points_to_change <= 0 )
-		{
+		if ($this->points_to_change < $amount) {
 			return false;
 		}
 		
-		if ( $this->get_coins()->count < $this->get_stat_price($stat) * $amount )
-		{
+		if ($this->get_coins()->count < $this->get_stat_price($stat) * $amount) {
 			return false;
 		}
 		
@@ -2728,9 +2734,17 @@ class Character extends Unit
 	 */
 	public function add_stat($stat, $amount)
 	{
-		if ( !in_array($stat, array('stat_strength', 'stat_dexterity', 'stat_resistance', 'stat_magic', 'stat_magic_skill', 'stat_magic_resistance')) )
-		{
-			return;
+		$validStats = array(
+            'stat_strength', 
+            'stat_dexterity', 
+            'stat_resistance', 
+            'stat_magic', 
+            'stat_magic_skill', 
+            'stat_magic_resistance'
+        );
+        
+		if (! in_array($stat, $validStats)) {
+			return false;
 		}
 		
 		$this->{$stat} += $amount;
