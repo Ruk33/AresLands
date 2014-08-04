@@ -91,7 +91,7 @@ solid rgb(23, 23, 23)}.clan-member-link
 a{color:white}.clan-member-link a:hover{text-decoration:none;color:white;background-color:rgb(10,10,10)}.positive{color:rgb(133,239,19)}.negative{color:rgb(224,57,38)}.thumbnail{border:none}.table
 td{font-size:13px;font-family:"Verdana";border-top:1px solid #090909;padding:7px
 !important}.table tbody tr:hover td, .table tbody tr:hover
-th{background-color:#0a0a0a}#push,#footer{height:250px}#footer{text-transform:uppercase;font-family:verdana;color:#4b443e;font-size:10px}#footer
+th{background-color:#0a0a0a}#push,#footer{height:250px}#footer{text-transform:uppercase;font-family:verdana;color:#4b443e;font-size:10px;margin-top:50px;padding-left:50px}#footer
 a{color:#6d6763}#footer a:hover{color:#818181}@media only screen and (min-width: 35em){}@media print,
 (-o-min-device-pixel-ratio: 5/4),
 (-webkit-min-device-pixel-ratio: 1.25),

@@ -440,10 +440,10 @@
                     
                 <div style="background-image: url({{ URL::base() }}/img/footer-content.png); height: 100px; margin-top: -20px; background-position: 1px 0; background-repeat: no-repeat; position: relative; z-index: 2; width: 101%;"></div>
 				
-				<div id="footer" style="margin-top: 50px; padding-left: 50px;">
+				<div id="footer">
 					<div class="pull-left">
 						<a href="//ironfist.com.ar" target="_blank">
-							<img src="{{ URL::base() }}/img/ironfist-logo.png" width="106px" height="129.5px">
+							<img src="{{ URL::base() }}/img/ironfist-logo.png" style="width: 106px; height: 129.5px;">
 						</a>
 					</div>
 					<div style="padding-top: 50px; margin-left: 130px;">
