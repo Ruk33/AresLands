@@ -24,7 +24,7 @@
 $environments = array(
 
 	'local' => array('areslands.ironfist.com'),
-    'test' => array(''),
+    //'test' => array(''),
 
 );
 
