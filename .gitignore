@@ -36,7 +36,6 @@ intermediate
 publish
 .idea
 storage
-vendor
 
 # htaccess
 public/.htaccess
