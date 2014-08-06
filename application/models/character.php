@@ -5,7 +5,7 @@ class Character extends Unit
 	public static $softDelete = true;
 	public static $timestamps = false;
 	public static $table = "characters";
-    
+        
     /**
      * Cache para el segundo mercenario
      * @var Item
@@ -150,6 +150,21 @@ class Character extends Unit
         "invisible_until" => 0,
         "second_mercenary" => 0,
     );
+    
+    /**
+     * Verificamos y actualizamos ip del personaje
+     * @param string $ip
+     */
+    public function check_ip($ip)
+    {
+        if (! $this->ip) {
+            $this->ip = $ip;
+        } else {
+            if ($this->ip != $ip) {
+                self::update_ip($this->ip, $ip);
+            }
+        }
+    }
     
     public function get_combat_behavior()
     {
@@ -1267,6 +1282,20 @@ class Character extends Unit
 			$skill->update_time();
 		}
 	}
+    
+    /**
+     * Verificamos las actividades del personaje (actualizamos los tiempos)
+     */
+    public function check_activities()
+    {
+        $activities = $this->activities()
+                           ->where('end_time', '<=', time())
+                           ->get();
+
+        foreach ($activities as $activity) {
+            $activity->update_time();
+        }
+    }
 	
 	/**
 	 * @param mixed $skill Puede ser el id del skill o instancia de Skill
@@ -2496,7 +2525,7 @@ class Character extends Unit
 	 *
 	 *	@return <Character>
 	 */
-	public static function get_character_of_logged_user($select = array())
+	public static function get_character_of_logged_user($select = array('*'))
 	{
 		if ( Auth::guest() )
 		{
@@ -2505,12 +2534,7 @@ class Character extends Unit
 
 		$user = Auth::user();
 
-		if ( count($select) > 0 )
-		{
-			return $user->character()->select($select)->first();
-		}
-		
-		return $user->character;
+		return $user->character()->select($select)->first();
 	}
 	
     /**
@@ -2518,7 +2542,7 @@ class Character extends Unit
      * @param array $select
      * @return Character
      */
-	public function get_logged($select = array())
+	public function get_logged($select = array('*'))
 	{
 		return static::get_character_of_logged_user($select);
 	}

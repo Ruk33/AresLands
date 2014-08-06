@@ -24,13 +24,8 @@ class CharacterActivity extends Base_Model
 
 	public function update_time()
 	{
-		$character = $this->character()->select(array('id', 'zone_id', 'is_traveling', 'is_exploring', 'xp', 'zone_id', 'points_to_change'))->first();
-
-		if ( ! $character )
-		{
-			return;
-		}
-
+        $character = $this->character;
+        
 		if ( $this->end_time <= time() )
 		{
 			switch ( $this->name ) 
@@ -91,14 +86,7 @@ class CharacterActivity extends Base_Model
 	
 	public function save()
 	{
-		$character = Character::select(array(
-			'id', 
-			'travel_time', 
-			'travel_time_extra',
-			'battle_rest_time',
-			'battle_rest_time_extra',
-			'luck'
-		))->where('id', '=', $this->character_id)->first();
+		$character = $this->character;
 		
 		// Verificamos si el personaje es afortunado y recarga uno de sus talentos
 		if ( $character->has_skill(Config::get('game.ready_for_new_adventure_skill')) )
