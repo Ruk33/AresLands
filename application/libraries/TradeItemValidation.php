@@ -51,7 +51,7 @@ class TradeItemValidation extends Laravel\Validator
 			return false;
 		}
 		
-		if (! $characterItem->item->selleable) {
+		if (! $characterItem->item->tradeable) {
 			return false;
 		}
 		
