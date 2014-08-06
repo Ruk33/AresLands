@@ -47,6 +47,10 @@ abstract class Authenticated_Base extends Base_Controller
     public function after($response)
     {
         $character = $this->character->get_logged();
+        
+        if (! $character) {
+            return;
+        }
 
         $startedQuests = array_merge(
             $character->started_quests()->get(), 
