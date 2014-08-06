@@ -424,7 +424,7 @@
                                 <li class="nav-header">Ayuda</li>
 								<li>
 									<i class="img-circle menu-icon menu-tutorial"></i>
-									<a href="{{ URL::to('game/index') }}" target="_blank">Guia</a>
+									<a href="//ironfist.com.ar/forums/topic/175/guia-inicial" target="_blank">Guia</a>
 								</li>
 								<li>
 									<i class="img-circle menu-icon menu-forum"></i>
