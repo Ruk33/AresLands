@@ -417,6 +417,28 @@ select:focus, input:focus, textarea:focus {
     background-color: #181818;
 }
 
+.chat-container {
+    height: 300px; 
+    width: 500px;
+}
+
+.chat-list-container {
+    height: 270px; 
+    background-color: #0F0F0F; 
+    overflow: auto; 
+    border: 1px solid rgb(47, 39, 30);
+}
+
+.chat-list {
+    font-family: Verdana;
+}
+
+.chat-list li {
+    padding: 5px; 
+    border-bottom: 1px solid #292929; 
+    font-size: 13px;
+}
+
 .king_of_the_hill_aura_first {
     background-image: url(/img/king_of_the_hill_aura_first.png);
     background-repeat: no-repeat;

@@ -481,10 +481,10 @@
 					@endif
 				</ul>
 				
-				<div ng-show="chat.show" style="height: 300px; width: 500px;">
-					<div style="width: 50; height: 270px; background-color: #0F0F0F; overflow: auto; border: 1px solid #4F4843;">
-						<ul class="unstyled" style="font-family: Verdana;" name="messages">
-							<li ng-repeat="message in chat.messages[chat.channel]" style="padding: 5px; border-bottom: 1px solid #292929; font-size: 13px;">
+				<div class="chat-container" ng-show="chat.show">
+					<div class="chat-list-container">
+						<ul class="chat-list unstyled" name="messages">
+							<li ng-repeat="message in chat.messages[chat.channel]">
 								<div class="pull-right" style="color: rgb(77, 77, 77);">[[ formatMessageTime(message.time) ]]</div>
 								<a href="{{ URL::base() }}/authenticated/character/show/[[ message.name ]]">[[ message.name ]]</a>: [[ message.message ]]
 							</li>
