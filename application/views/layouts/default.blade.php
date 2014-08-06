@@ -315,6 +315,7 @@
 						@endif
 						<ul class="unstyled menu" width="150px;">
 							@if ( Auth::check() && isset($character) )
+                                <li class="nav-header">Inicio</li>
 								<li>
 									<i class="img-circle menu-icon menu-index"></i>
 									<a href="{{ URL::to_route("get_authenticated_index") }}">Tu personaje</a>
@@ -332,40 +333,7 @@
 										@endif
 									</a>
 								</li>
-
-								@if ( $character->clan_id == 0 )
-								<li>
-									<i class="img-circle menu-icon menu-ranking"></i>
-									<a href="{{ URL::to_route("get_authenticated_clan_create") }}">Crear grupo</a>
-								</li>
-								@endif
-								
-								@if ( $character->can_travel() === true )
-								<li>
-									<i class="img-circle menu-icon menu-travel"></i>
-									<a href="{{ URL::to_route("get_authenticated_action_travel") }}">Viajar</a>
-								</li>
-								@endif
-								
-								@if ( $character->can_fight() === true )
-								<li>
-									<i class="img-circle menu-icon menu-battle"></i>
-									<a href="{{ URL::to_route("get_authenticated_battle_index") }}">Batallar</a>
-								</li>
-								<li data-toggle="tooltip" data-original-title="Calabozos en mantenimiento, ¡pronto seran activados nuevamente!">
-									<i class="img-circle menu-icon menu-dungeons"></i>
-									<span class="negative" style="margin-left: 5px;">Calabozos</span>
-								</li>
-								@endif
-	
-								@if ( $character->can_explore() )
-								<li>
-									<i class="img-circle menu-icon menu-explore"></i>
-									<a href="{{ URL::to_route("get_authenticated_action_explore") }}">Explorar</a>
-								</li>
-								@endif
-								
-								@if ( $character->characteristics )
+                                @if ( $character->characteristics )
 								<li>
 									<i class="img-circle menu-icon menu-talents"></i>
 									<a href="{{ URL::to_route("get_authenticated_talent_index") }}">Talentos</a>
@@ -379,12 +347,52 @@
 									@endif
 								</li>
 								@endif
+
+								@if ( $character->clan_id == 0 )
+								<li>
+									<i class="img-circle menu-icon menu-ranking"></i>
+									<a href="{{ URL::to_route("get_authenticated_clan_create") }}">Crear grupo</a>
+								</li>
+								@endif
+                                
+                                @if ( $character->can_travel() === true || $character->can_fight() || $character->can_explore() )
+                                <li class="nav-header">Acciones</li>
+                                @endif
+                                
+								@if ( $character->can_travel() === true )
+								<li>
+									<i class="img-circle menu-icon menu-travel"></i>
+									<a href="{{ URL::to_route("get_authenticated_action_travel") }}">Viajar</a>
+								</li>
+								@endif
+								
+								@if ( $character->can_fight() === true )
+								<li>
+									<i class="img-circle menu-icon menu-battle"></i>
+									<a href="{{ URL::to_route("get_authenticated_battle_index") }}">Batallar</a>
+								</li>
+                                @endif
+                                
+                                @if ( $character->can_explore() )
+								<li>
+									<i class="img-circle menu-icon menu-explore"></i>
+									<a href="{{ URL::to_route("get_authenticated_action_explore") }}">Explorar</a>
+								</li>
+								@endif
+                                
+                                @if ( $character->can_fight() === true )
+								<li data-toggle="tooltip" data-original-title="Calabozos en mantenimiento, ¡pronto seran activados nuevamente!">
+									<i class="img-circle menu-icon menu-dungeons"></i>
+									<span class="negative" style="margin-left: 5px;">Calabozos</span>
+								</li>
+								@endif
 								
 								<li>
 									<i class="img-circle menu-icon menu-trade"></i>
 									<a href="{{ URL::to_route("get_authenticated_trade_index") }}">Comercios</a>
 								</li>
-								<li>
+                                <li class="nav-header">Eventos</li>
+                                <li>
 									<i class="img-circle menu-icon menu-ranking"></i>
 									<a href="{{ URL::to_route("get_authenticated_ranking_index") }}">Ranking</a>
 								</li>
@@ -408,10 +416,12 @@
 											</div>
 									@endif
 								</li>
+                                <li class="nav-header">VIP</li>
 								<li>
 									<i class="img-circle menu-icon menu-secret-shop"></i>
 									<a href="{{ URL::to_route("get_authenticated_secret_shop_index") }}">Mercado secreto</a>
 								</li>
+                                <li class="nav-header">Ayuda</li>
 								<li>
 									<i class="img-circle menu-icon menu-tutorial"></i>
 									<a href="{{ URL::to('game/index') }}" target="_blank">Guia</a>
@@ -420,6 +430,7 @@
 									<i class="img-circle menu-icon menu-forum"></i>
 									<a href="//ironfist.com.ar/forums" target="_blank">Foro</a>
 								</li>
+                                <li class="nav-header">otro</li>
 								<li>
 									<i class="img-circle menu-icon menu-logout"></i>
 									<a href="{{ URL::to_route("get_authenticated_logout") }}">Desconectarse</a>
