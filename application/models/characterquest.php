@@ -12,7 +12,7 @@ class CharacterQuest extends Base_Model
 	 */
 	public function finish()
 	{
-		$this->quest->give_reward();
+		$this->quest->give_reward($this->character);
 		
 		if ( $this->quest->repeatable )
 		{
