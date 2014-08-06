@@ -3394,7 +3394,7 @@ class Character extends Unit
 		// Si es mas de 30 minutos, entonces llenamos barra de actividad
 		if ( $time / 60 >= 30 )
 		{
-			ActivityBar::add($character, 2);
+			ActivityBar::add($this, 2);
 		}
 		
 		$this->is_exploring = true;
