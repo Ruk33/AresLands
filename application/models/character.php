@@ -1848,7 +1848,7 @@ class Character extends Unit
 	 * 
 	 * @param CharacterItem $consumable
 	 * @param integer $amount
-	 * @return string
+	 * @return string|boolean
 	 */
 	public function use_consumable_of_inventory(CharacterItem $consumable, $amount)
 	{
@@ -1894,7 +1894,7 @@ class Character extends Unit
 		$consumable->count -= $amount;
 		$consumable->save();
 		
-		return '';
+		return true;
 	}
 	
 	/**

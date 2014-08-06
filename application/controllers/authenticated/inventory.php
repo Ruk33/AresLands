@@ -41,8 +41,7 @@ class Authenticated_Inventory_Controller extends Authenticated_Base
 		$characterItem = $character->items()->find_or_die(Input::get("id"));
 		$valid = $character->use_inventory_item($characterItem, Input::get("amount", 1));
 
-        if ( is_string($valid) )
-		{
+        if (is_string($valid)) {
 			Session::flash("error", $valid);
 		}
 		
