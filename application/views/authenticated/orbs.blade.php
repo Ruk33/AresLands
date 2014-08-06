@@ -32,7 +32,7 @@
                         Nadie
                         
                         @if ( $orb->can_be_stolen_by($character) )
-							<div><a href="{{ URL::to('authenticated/claimOrb/' . $orb->id) }}">¡Reclamar orbe!</a></div>
+							<div><a href="{{ URL::to_route("get_authenticated_orb_claim", array($orb->id)) }}">¡Reclamar orbe!</a></div>
 						@endif
                     @endif
                 </td>
