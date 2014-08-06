@@ -223,7 +223,7 @@
 			<div style="position: absolute; left: 230px; top: 65px;">
                 <div class="box box-box-64-blue">
                     @if ( $mercenary )
-                        <img src="{{ $mercenary->get_image_path() }}" alt="" width="64px" height="64px" data-toggle="tooltip" data-placement="top" data-original-title="{{ $mercenary->get_text_for_tooltip() }}">
+                        <img src="{{ $mercenary->item->get_image_path() }}" alt="" width="64px" height="64px" data-toggle="tooltip" data-placement="top" data-original-title="{{ $mercenary->item->get_text_for_tooltip() }}">
                     @endif
                 </div>
 			</div>
