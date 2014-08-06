@@ -54,6 +54,10 @@ textarea {
    Author's custom styles
    ========================================================================== */
 
+.buff-list li {
+    vertical-align: top;
+}
+
 .coin-list {
     display: inline;
     margin: 0;

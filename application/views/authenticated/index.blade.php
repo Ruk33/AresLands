@@ -418,7 +418,7 @@
             <!-- BUFFS -->
             <h2>Efectos activos</h2>
             @if ( count($skills) > 0 )
-                <ul class="unstyled inline">
+                <ul class="unstyled inline buff-list">
                     @foreach ( $skills as $skill )
                         <li>
                             <div class="box box-box-32-gray">
