@@ -2938,7 +2938,7 @@ class Character extends Unit
 	 */
 	public function can_add_to_bag(Item $consumible, $amount)
 	{
-		if ( $consumible->type != "consumible" )
+		if ( $consumible->class != "consumible" )
 		{
 			return false;
 		}
