@@ -23,8 +23,9 @@
 
 $environments = array(
 
-	'local' => array('areslands.ironfist.com'),
-    //'test' => array(''),
+	'local'      => array('areslands.ironfist.com'),
+    'production' => array('areslands.ironfist.com.ar'),
+    'test'       => array(''),
 
 );
 

@@ -29,7 +29,11 @@ abstract class Authenticated_Base extends Base_Controller
 	}
     
     public function before()
-    {        
+    {
+        if (\Laravel\Request::env() == 'test') {
+            return;
+        }
+        
         Tournament::check_for_started();
 		Tournament::check_for_finished();
 		Tournament::check_for_potions();
@@ -46,6 +50,10 @@ abstract class Authenticated_Base extends Base_Controller
     
     public function after($response)
     {
+        if (\Laravel\Request::env() == 'test') {
+            return;
+        }
+        
         $character = $this->character->get_logged();
         
         if (! $character) {
