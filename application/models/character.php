@@ -3325,7 +3325,7 @@ class Character extends Unit
 	 */
 	public function after_pvp_battle()
 	{
-		$characters = static::get_sharing_ip($this->ip)->select(array('id'))->get();
+		$characters = static::get_sharing_ip($this->ip)->get();
 		
 		foreach ( $characters as $character )
 		{
