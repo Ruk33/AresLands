@@ -148,6 +148,17 @@ class CharacterQuest extends Base_Model
 
 		return true;
 	}
+    
+    /**
+     * Damos recompensa al personaje
+     */
+    public function give_reward()
+    {
+        $this->quest->give_reward($this->character);
+        $this->progress = 'finished';
+        
+        $this->save();
+    }
 
 	/**
 	 * Actualizamos progreso en mision de personaje
@@ -186,8 +197,7 @@ class CharacterQuest extends Base_Model
 
 		if ( $this->is_completed() )
 		{
-			$this->progress = 'finished';
-            $this->quest->give_reward($this->character);
+			$this->give_reward();
 		}
 
 		$this->save();

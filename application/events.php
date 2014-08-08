@@ -20,6 +20,17 @@ Event::listen('npcTalk', function(Character $character, Npc $npc)
 	{
 		$characterQuest->talk_to_npc($npc);
 	}
+    
+    // Damos la recompensa a aquellos que tenian completada la mision
+    // antes de subir la actualizacion
+    $characterQuests = $character->quests()
+								 ->where_progress('reward')
+								 ->get();
+    
+    foreach ( $characterQuests as $characterQuest )
+	{
+		$characterQuest->give_reward();
+	}
 });
 
 Event::listen('acceptQuest', function(Character $character, Quest $quest)
