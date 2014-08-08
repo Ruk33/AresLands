@@ -61,17 +61,8 @@ class Authenticated_Npc_Controller_Test extends Tests\TestHelper
 		$this->npc->shouldReceive("with")->once()->with("item")->andReturnSelf();
 		$this->npc->shouldReceive("get")->once()->andReturn(array());
 		
-		$this->npc->shouldReceive("available_quests_of")->once()->with($this->character)->andReturnSelf();
-		$this->npc->shouldReceive("order_by")->once()->with("max_level", "asc")->andReturnSelf();
-		$this->npc->shouldReceive("get")->once()->andReturn(array());
-		
-		$this->npc->shouldReceive("repeatable_quests_of")->once()->with($this->character)->andReturnSelf();
-		$this->npc->shouldReceive("get")->once()->andReturn(array());
-		
-		$this->npc->shouldReceive("started_quests_of")->once()->with($this->character)->andReturnSelf();
-		$this->npc->shouldReceive("get")->once()->andReturn(array());
-		
-		$this->npc->shouldReceive("reward_quests_of")->once()->with($this->character)->andReturnSelf();
+		$this->npc->shouldReceive("quests")->once()->andReturnSelf();
+		$this->npc->shouldReceive("order_by")->once()->with("min_level", "asc")->andReturnSelf();
 		$this->npc->shouldReceive("get")->once()->andReturn(array());
 		
 		$coins = m::mock("Item");
@@ -88,9 +79,6 @@ class Authenticated_Npc_Controller_Test extends Tests\TestHelper
 			"character" => $this->character,
 			"characterCoinsCount" => 0,
 			"merchandises" => array(),
-			"rewardQuests" => array(),
-			"startedQuests" => array(),
-			"repeatableQuests" => array(),
 			"quests" => array()
 		));
 	}

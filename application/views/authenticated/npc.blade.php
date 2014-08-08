@@ -25,12 +25,12 @@
 
 <div class="clearfix"></div>
 
-@if ( count($repeatableQuests) == 0 && count($rewardQuests) == 0 && count($startedQuests) == 0 && count($quests) == 0 && count($merchandises) == 0 )
+@if ( count($quests) == 0 && count($merchandises) == 0 )
 	<h4 class="text-center" style="margin-top: 100px;">
         Por el momento, no tengo nada para ti. Vuelve en otra ocación.
     </h4>
 @else
-	@if ( count($quests) > 0 || count($repeatableQuests) > 0 )
+	@if ( count($quests) )
 		<h2 style="margin-top: 50px;">Misiones disponibles</h2>
 
         <div class="row">
@@ -46,7 +46,7 @@
             </thead>
 
             <tbody>
-                @foreach ( array_merge($quests, $repeatableQuests) as $quest )
+                @foreach ( $quests as $quest )
                 <tr>
                     <td>
                         @if ( $quest->daily )

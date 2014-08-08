@@ -46,17 +46,13 @@ class Authenticated_Npc_Controller extends Authenticated_Base
 
 		$merchandises = $npc->get_merchandises_for($character)->with('item')->get();
 		
-		$quests = $npc->available_quests_of($character)->order_by('max_level', 'asc')->get();
-		$repeatableQuests = $npc->repeatable_quests_of($character)->get();
-		$startedQuests = $npc->started_quests_of($character)->get();
-		$rewardQuests = $npc->reward_quests_of($character)->get();
+		$quests = $npc->quests()->order_by('min_level', 'asc')->get();
 
 		$characterCoinsCount = $character->get_coins()->count;
 
 		$this->layout->title = $npc->name;
 		$this->layout->content = View::make('authenticated.npc', compact(
-			"npc", "characterCoinsCount", "merchandises", "rewardQuests",
-			"startedQuests", "repeatableQuests", "quests", "character"
+			"npc", "characterCoinsCount", "merchandises",  "quests", "character"
 		));
 	}
 	
