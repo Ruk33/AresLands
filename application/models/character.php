@@ -1710,9 +1710,10 @@ class Character extends Unit
 	{
 		if ( $value >= $this->xp_next_level )
 		{
+            $value = 0;
+            
 			$this->level++;
 			$this->xp_next_level = (int) (5 * $this->level);
-			$value = 0;
 			
 			if ( $this->level % 5 == 0 && $this->can_learn_more_talents() )
 			{
@@ -1724,15 +1725,12 @@ class Character extends Unit
 			 *	con los requerimientos de sus orbes
 			 *	(en caso de tener alguno)
 			 */
-			if ( $this->has_orb() )
-			{
+			if ($this->has_orb()) {
 				$orbs = $this->orbs;
 
-				foreach ( $orbs as $orb )
-				{
+				foreach ($orbs as $orb) {
 					// Si no cumple con los requerimientos...
-					if ( $this->level < $orb->min_level || $this->level > $orb->max_level )
-					{
+					if ($this->level < $orb->min_level || $this->level > $orb->max_level) {
 						$orb->reset();
 					}
 				}
@@ -1745,6 +1743,8 @@ class Character extends Unit
 			$this->current_life = $this->max_life;
 			
 			$this->points_to_change += Config::get('game.points_per_level');
+            
+            $this->save();
 		}
 		
 		return parent::set_xp($value);
