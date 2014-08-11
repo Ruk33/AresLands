@@ -87,7 +87,7 @@
                             @if ( isset($characterQuests[$quest->id]) )
                                 {{ Carbon\Carbon::createFromTimestamp($characterQuests[$quest->id] - time())->toTimeString() }}
                             @else
-                                {{ Carbon\Carbon::createFromTime(0, 0, 0)->addSeconds($quest->repeatable_after-1)->toTimeString() }}
+                                {{ $quest->get_repeatable_after_as_text() }}
                             @endif
                         @else
                             --

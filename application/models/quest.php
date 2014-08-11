@@ -269,4 +269,38 @@ class Quest extends Base_Model
     {
         return $this->belongs_to("Quest", "complete_required");
     }
+    
+    /**
+     * Devolvemos un string con formato hh:mm:ss que nos indica
+     * luego de cuanto tiempo podemos volver a repetir la mision
+     * 
+     * Notese que las horas, no estan limitadas a 24 (pueden pasarlas)
+     * 
+     * Ante cualquier error, denunciar a Maximiliano Bertran, aunque se 
+     * recomienda altamente realizar torturas como:
+     * 
+     *      - robo de su pc
+     *      - robo de sus (supuestos) juegos originales
+     *      - depilar ceja
+     *      - orinar su auto
+     * 
+     * @return string
+     */
+    public function get_repeatable_after_as_text()
+    {   
+        $data = array(
+            "seconds" => floor($this->repeatable_after % 60),
+            "minutes" => floor($this->repeatable_after / 60 % 60),
+            "hours"   => floor($this->repeatable_after / 60 / 60)
+        );
+        
+        // Agregamos 0 en caso de faltar
+        foreach ($data as $key => $value) {
+            if (strlen($value) == 1) {
+                $data[$key] = "0".$value;
+            }
+        }
+        
+        return "{$data['hours']}:{$data['minutes']}:{$data['seconds']}";
+    }
 }
