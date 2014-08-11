@@ -3305,18 +3305,26 @@ class Character extends Unit
 	}
 	
 	/**
-	 * Si la batalla fue contra otro personaje
-	 * entonces DEBEMOS compartir el cd despues
-	 * de la batalla para evitar ataques consecutivos
-	 */
-	public function after_pvp_battle()
+     * Al finalizar batalla contra otro personaje, buscamos aquellos
+     * personajes que compartan ip del atacante y aplicamos una proteccion
+     * al objetivo (para evitar que ataquen masivamente con varias cuentas)
+     * 
+     * @param Character $target
+     */
+	public function after_pvp_battle(Character $target)
 	{
 		$characters = static::get_sharing_ip($this->ip)->get();
-		
-		foreach ( $characters as $character )
-		{
-			$character->after_battle();
+		$protection = Config::get('game.battle_rest_time');
+        
+		foreach ($characters as $character) {
+            if ($character->id == $this->id) {
+                continue;
+            }
+            
+            AttackProtection::add($character, $target, $protection);
 		}
+        
+        $this->after_battle();
 	}
 	
 	/**

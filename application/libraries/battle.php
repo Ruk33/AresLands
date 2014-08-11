@@ -520,7 +520,7 @@ class Battle
                 $this->_attacker, $this->_target, $this->_winner
             ));
             
-			$attacker->after_pvp_battle();
+			$attacker->after_pvp_battle($target);
 		} else {
 			Event::fire('pveBattle', array(
                 $this->_attacker, $this->_target, $this->_winner
