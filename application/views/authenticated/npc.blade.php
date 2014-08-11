@@ -41,7 +41,7 @@
                     <th class="span2">Requiere</th>
                     <th class="span3"><div class="text-center">Objetivos</div></th>
                     <th class="span2"><div class="text-center">Recompensas</div></th>
-                    <th class="span2">Repetible en</th>
+                    <th class="span2"><div class="text-center">Repetible en</div></th>
                 </tr>
             </thead>
 
@@ -49,10 +49,7 @@
                 @foreach ( $quests as $quest )
                 <tr>
                     <td>
-                        @if ( $quest->daily )
-                            <div class="pull-left label label-info" data-toggle="tooltip" data-original-title="Mision diaria" style="margin-right: 5px;">D</div>
-                        @endif
-                        <div data-toggle="tooltip" data-original-title="{{ $quest->description }}">
+                        <div data-toggle="tooltip" data-original-title="<h6>{{ $quest->name }}</h6>{{ $quest->description }}">
                             @if ( $quest->can_character_accept_quest($character) )
                                 {{ Form::open(URL::to_route("post_authenticated_quest_accept")) }}
                                     {{ Form::token() }}
@@ -85,15 +82,17 @@
                         </div>
                     </td>
                     <td>
+                        <div class="text-center">
                         @if ( $quest->repeatable )
-                            @if ( isset($quest->repeatable_at) )
-                                {{ Carbon\Carbon::createFromTimestamp($quest->repeatable_at)->toTimeString() }}
+                            @if ( isset($characterQuests[$quest->id]) )
+                                {{ Carbon\Carbon::createFromTimestamp($characterQuests[$quest->id] - time())->toTimeString() }}
                             @else
-                                {{ Carbon\Carbon::now()->setTime(0, 0, $quest->repeatable_after)->toTimeString() }}
+                                {{ Carbon\Carbon::createFromTime(0, 0, 0)->addSeconds($quest->repeatable_after-1)->toTimeString() }}
                             @endif
                         @else
                             --
                         @endif
+                        </div>
                     </td>
                 </tr>
                 @endforeach

@@ -5,14 +5,13 @@ class CharacterQuest extends Base_Model
 	public static $softDelete = false;
 	public static $timestamps = false;
 	public static $table = 'character_quests';
-	public static $key = 'id';
 
 	/**
 	 * Finalizamos progreso y damos recompensa al personaje
 	 */
 	public function finish()
 	{
-		$this->quest->give_reward($this->character);
+		$this->give_reward();
 		
 		if ( $this->quest->repeatable )
 		{
@@ -155,9 +154,6 @@ class CharacterQuest extends Base_Model
     public function give_reward()
     {
         $this->quest->give_reward($this->character);
-        $this->progress = 'finished';
-        
-        $this->save();
     }
 
 	/**
@@ -197,7 +193,7 @@ class CharacterQuest extends Base_Model
 
 		if ( $this->is_completed() )
 		{
-			$this->give_reward();
+			$this->finish();
 		}
 
 		$this->save();

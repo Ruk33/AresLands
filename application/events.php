@@ -29,7 +29,7 @@ Event::listen('npcTalk', function(Character $character, Npc $npc)
     
     foreach ( $characterQuests as $characterQuest )
 	{
-		$characterQuest->give_reward();
+		$characterQuest->finish();
 	}
 });
 

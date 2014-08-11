@@ -2103,14 +2103,11 @@ class Character extends Unit
 	 */
 	public function has_quest_completed(Quest $quest)
 	{
-		$characterQuest = $this->quests()->where('quest_id', '=', $quest->id)->first();
-
-		if ( ! $characterQuest )
-		{
-			return false;
-		}
-
-		return $characterQuest->progress == 'finished';
+        return $this->quests()
+                    ->where_quest_id($quest->id)
+                    ->where_progress("finished")
+                    ->take(1)
+                    ->count() == 1;
 	}
 
 	/**
@@ -2141,27 +2138,16 @@ class Character extends Unit
 	 *	no la ha finalizado (es decir, su progreso
 	 *	no es finished)
 	 *
-	 *	@param <mixed> $quest
+	 *	@param Quest $quest
 	 *	@return <bool> true en caso de tener mision sin completar, false de lo contrario
 	 */
-	public function has_unfinished_quest($quest)
+	public function has_unfinished_quest(Quest $quest)
 	{
-		$questId;
-
-		if ( $quest instanceof Quest )
-		{
-			$questId = $quest->id;
-		}
-		else
-		{
-			$questId = (int) $quest;
-		}
-
-		return $this
-		->quests()
-		->where('quest_id', '=', $questId)
-		->where('progress', '<>', 'finished')
-		->count() > 0;
+		return $this->quests()
+                    ->where_quest_id($quest->id)
+                    ->where("progress", "<>", "finished")
+                    ->take(1)
+                    ->count() == 1;
 	}
 
 	public function get_progress_for_view(Quest $quest)

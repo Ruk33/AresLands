@@ -166,38 +166,30 @@ class Quest extends Base_Model
      */
     public function can_character_accept_quest(Character $character)
     {
-        if ( $this->complete_required )
-		{
-			if ( ! $character->has_quest_completed($this->required_quest) )
-			{
+        if ($this->complete_required) {
+			if (! $character->has_quest_completed($this->required_quest)) {
 				return false;
 			}
 		}
 
 		// Nos fijamos si ya no tiene pedida la mision
 		// y no la ha completado
-		if ( $character->has_unfinished_quest($this) )
-		{
+		if ($character->has_unfinished_quest($this)) {
 			return false;
 		}
         
-        if ( $character->has_quest_completed($this) )
-		{
-			if ( $this->repeatable )
-			{
+        if ($character->has_quest_completed($this)) {
+			if ($this->repeatable) {
                 $characterQuest = $character->quests()
-                                            ->where('quest_id', '=', $this->id)
+                                            ->where_quest_id($this->id)
                                             ->first();
                 
                 // Verificamos si ha pasado el tiempo requerido
 				// para volver a pedir nuevamente la misión
-				if ( $this->repeatable_after > time() - $characterQuest->time )
-				{
+				if (time() < $characterQuest->repeatable_at) {
 					return false;
 				}
-            }
-            else
-            {
+            } else {
                 return false;
             }
         }

@@ -45,14 +45,18 @@ class Authenticated_Npc_Controller extends Authenticated_Base
 		$npc->fire_global_event('npcTalk', array($character, $npc));
 
 		$merchandises = $npc->get_merchandises_for($character)->with('item')->get();
-		
 		$quests = $npc->quests()->order_by('min_level', 'asc')->get();
-
+        $characterQuests = $character->quests()->lists("repeatable_at", "quest_id");
 		$characterCoinsCount = $character->get_coins()->count;
 
 		$this->layout->title = $npc->name;
 		$this->layout->content = View::make('authenticated.npc', compact(
-			"npc", "characterCoinsCount", "merchandises",  "quests", "character"
+			"npc", 
+            "characterCoinsCount", 
+            "merchandises", 
+            "characterQuests",
+            "quests", 
+            "character"
 		));
 	}
 	
