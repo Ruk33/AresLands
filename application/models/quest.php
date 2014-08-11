@@ -166,6 +166,10 @@ class Quest extends Base_Model
      */
     public function can_character_accept_quest(Character $character)
     {
+        if ($this->min_level > $character->level) {
+            return false;
+        }
+        
         if ($this->complete_required) {
 			if (! $character->has_quest_completed($this->required_quest)) {
 				return false;

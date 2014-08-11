@@ -238,33 +238,38 @@ class Battle
         }
         
 		if ($this->_winner instanceof Character) {
-			if ($this->_winner->level - 2 < $this->_loser->level) {
-                $winnerIndex = $this->get_secure_index($this->_winner);
-				$rewards = $this->_loser->drops();
-				$xpBonus = 
-                    max(0, $this->_loser->level - 2 - $this->_winner->level)/5;
+            // Si la condicion no se cumple, entonces solo damos oro como recompensa
+            $onlyCoins = $this->_winner->level - 2 > $this->_loser->level;
+            
+            $winnerIndex = $this->get_secure_index($this->_winner);
+            $rewards = $this->_loser->drops();
+            $xpBonus = 
+                max(0, $this->_loser->level - 2 - $this->_winner->level)/5;
 
-				foreach ($rewards as $reward) {
-                    $item = 
-                        \Laravel\IoC::resolve("Item")->find($reward['item_id']);
-                    
-                    if (! $item) {
-                        continue;
-                    }
-                    
-                    if ($reward['item_id'] == Config::get('game.xp_item_id')) {
-                        $reward['amount'] += $reward['amount'] * $xpBonus;
-                    }
+            foreach ($rewards as $reward) {
+                if ($onlyCoins && $reward['item_id'] != Config::get('game.coin_id')) {
+                    continue;
+                }
+                
+                $item = 
+                    \Laravel\IoC::resolve("Item")->find($reward['item_id']);
 
-                    if ($this->_winner->add_item($item, $reward['amount'])) {
-                        $this->_rewards[$winnerIndex][] = array(
-                            'item_id' => $reward['item_id'],
-                            'amount' => $reward['amount'],
-                            'item' => $item
-                        );
-                    }
-				}
-			}
+                if (! $item) {
+                    continue;
+                }
+
+                if ($reward['item_id'] == Config::get('game.xp_item_id')) {
+                    $reward['amount'] += $reward['amount'] * $xpBonus;
+                }
+
+                if ($this->_winner->add_item($item, $reward['amount'])) {
+                    $this->_rewards[$winnerIndex][] = array(
+                        'item_id' => $reward['item_id'],
+                        'amount' => $reward['amount'],
+                        'item' => $item
+                    );
+                }
+            }
 		}
 	}
     
