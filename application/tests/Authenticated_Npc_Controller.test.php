@@ -65,6 +65,8 @@ class Authenticated_Npc_Controller_Test extends Tests\TestHelper
 		$this->npc->shouldReceive("order_by")->once()->with("min_level", "asc")->andReturnSelf();
 		$this->npc->shouldReceive("get")->once()->andReturn(array());
 		
+        $this->character->shouldReceive("quests->lists")->once()->with("repeatable_at", "quest_id")->andReturn(array());
+        
 		$coins = m::mock("Item");
 		$this->character->shouldReceive("get_coins")->once()->andReturn($coins);
 		$coins->shouldReceive("get_count")->once()->andReturn(0);
@@ -79,7 +81,8 @@ class Authenticated_Npc_Controller_Test extends Tests\TestHelper
 			"character" => $this->character,
 			"characterCoinsCount" => 0,
 			"merchandises" => array(),
-			"quests" => array()
+			"quests" => array(),
+            "characterQuests" => array()
 		));
 	}
 	
