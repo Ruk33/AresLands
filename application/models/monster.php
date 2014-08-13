@@ -7,13 +7,8 @@ class Monster extends Npc
     public function get_combat_behavior()
     {
         if (! $this->combatBehavior) {
-            $this->set_combat_behavior(
-                new AttackableBehavior(
-                    $this, 
-                    new MonsterDamage($this), 
-                    new MonsterArmor($this)
-                )
-            );
+            $factory = new MonsterCombatBehaviorFactory;
+            $this->set_combat_behavior($factory->get($this));
         }
         
         return $this->combatBehavior;

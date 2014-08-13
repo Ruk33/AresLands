@@ -10,16 +10,6 @@ abstract class Base_Model extends Eloquent
 	{
 		Event::fire($event, $args);
 	}
-	
-	/**
-	 * 
-	 * @param array $attributes
-	 * @return Eloquent
-	 */
-	public static function create_instance(Array $attributes = array())
-	{
-		return new static($attributes);
-	}
     
     protected function inject_query($query)
     {

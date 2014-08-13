@@ -230,4 +230,14 @@ class AttackableBehavior implements CombatBehavior
     {
         return 800 / ($this->get_final_dexterity() + $this->get_final_magic_skill() + 1);
     }
+    
+    public function before_turn(Battle $battle)
+    {
+        
+    }
+    
+    public function after_turn(Battle $battle)
+    {
+        
+    }
 }

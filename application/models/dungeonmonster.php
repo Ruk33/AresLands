@@ -52,24 +52,6 @@ class DungeonMonster extends Monster
         return $this->combatBehavior;
     }
     
-    /**
-     * 
-     * @param Battle $battle
-     */
-    public function beforeTurn(Battle $battle)
-    {
-        
-    }
-    
-    /**
-     * 
-     * @param Battle $battle
-     */
-    public function afterTurn(Battle $battle)
-    {
-        
-    }
-    
 	/**
 	 * Query para obtener mounstruo
 	 * @return Eloquent

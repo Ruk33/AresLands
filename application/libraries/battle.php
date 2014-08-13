@@ -187,6 +187,9 @@ class Battle
      */
     protected function beforeTurn()
     {
+        $this->getAttacker()->get_combat_behavior()->before_turn($this);
+        $this->getTarget()->get_combat_behavior()->before_turn($this);
+        
         $attacker = $this->getNextAttacker();
         $target   = $this->getNextTarget($attacker);
         $damage   = $attacker->get_combat_behavior()->get_damage();
@@ -205,6 +208,9 @@ class Battle
      */
     protected function afterTurn()
     {
+        $this->getAttacker()->get_combat_behavior()->after_turn($this);
+        $this->getTarget()->get_combat_behavior()->after_turn($this);
+        
         $this->turn++;
     }
     

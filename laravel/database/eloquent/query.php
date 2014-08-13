@@ -171,8 +171,6 @@ class Query {
 	 */
 	public function hydrate($model, $results)
 	{
-		$class = get_class($model);
-
 		$models = array();
 
 		// We'll spin through the array of database results and hydrate a model
@@ -180,16 +178,10 @@ class Query {
 		// "true" so that the model will be updated when it is saved.
 		foreach ((array) $results as $result)
 		{
-			$result = (array) $result;
-
-			$new = new $class(array(), true);
-
 			// We need to set the attributes manually in case the accessible property is
 			// set on the array which will prevent the mass assignemnt of attributes if
 			// we were to pass them in using the constructor or fill methods.
-			$new->fill_raw($result);
-
-			$models[] = $new;
+			$models[] = $model->create_instance((array) $result, true, true);
 		}
 
 		if (count($results) > 0)

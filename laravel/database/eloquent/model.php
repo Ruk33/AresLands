@@ -105,11 +105,25 @@ abstract class Model {
 	 * @param  bool   $exists
 	 * @return void
 	 */
-	public function __construct($attributes = array(), $exists = false)
+	public function __construct($attributes = array(), 
+                                $exists = false, 
+                                $raw = false)
 	{
 		$this->exists = $exists;
-
-		$this->fill($attributes);
+		$this->fill($attributes, $raw);
+	}
+    
+    /**
+	 * 
+	 * @param array $attributes
+     * @param boolean $exists
+	 * @return Model
+	 */
+	public function create_instance($attributes = array(), 
+                                    $exists = false,
+                                    $raw = false)
+	{
+		return new static($attributes, $exists, $raw);
 	}
 
 	/**

@@ -16,4 +16,20 @@ class NonAttackableBehavior implements CombatBehavior
     {
         return null;
     }
+
+    public function after_turn(Battle $battle)
+    {
+        
+    }
+
+    public function before_turn(Battle $battle)
+    {
+        
+    }
+
+    public function get_attack_speed()
+    {
+        
+    }
+
 }
