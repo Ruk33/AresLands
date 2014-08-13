@@ -4,14 +4,19 @@ class Monster extends Npc
 {
 	public $current_life = null;
     
-    public function __construct()
+    public function get_combat_behavior()
     {
-        parent::__construct();
+        if (! $this->combatBehavior) {
+            $this->set_combat_behavior(
+                new AttackableBehavior(
+                    $this, 
+                    new MonsterDamage($this), 
+                    new MonsterArmor($this)
+                )
+            );
+        }
         
-        $damage = new MonsterDamage($this);
-        $armor = new MonsterArmor($this);
-        
-        $this->combatBehavior = new AttackableBehavior($this, $damage, $armor);
+        return $this->combatBehavior;
     }
 
     protected function inject_query($query)

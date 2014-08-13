@@ -2535,7 +2535,15 @@ class Character extends Unit
 
 	public function battle_against($target, $pair = null)
 	{
-		return new Battle($this, $target, $pair);
+        $battle = null;
+        
+        if ($target instanceof Character) {
+            $battle = new PvpBattle($this, $target, $pair);
+        } elseif ($target instanceof Monster) {
+            $battle = new PveBattle($this, $target);
+        }
+		
+        return $battle;
 	}
 
 	public function give_explore_reward($reward)

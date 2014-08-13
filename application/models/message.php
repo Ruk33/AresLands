@@ -364,26 +364,39 @@ class Message extends Base_Model
 		$message->sender_id = $sender->id;
 		$message->receiver_id = $receiver->id;
 
-		if ( $battle->get_attacker()->id == $sender->id )
-		{
-			$message->subject = 'Has atacado a ' . $battle->get_target()->name;
+		if ($battle->getAttacker()->id == $sender->id) {
+			$message->subject = 'Has atacado a ' . $battle->getTarget()->name;
 			$message->type = 'attack';
-		}
-		else
-		{
-			$message->subject = $battle->get_attacker()->name . ' te ha atacado';
+		} else {
+			$message->subject = $battle->getAttacker()->name . ' te ha atacado';
 			$message->type = 'defense';
 		}
+        
+        $data = array(
+            "battle" => $battle,
+            "winner" => $battle->getWinner(),
+            "loser" => $battle->getLoser(),
+            "attacker" => array(
+                "damageDone" => $battle->getAttackerReport()->getDamageDone(),
+                "damageTaken" => $battle->getAttackerReport()->getDamageTaken(),
+                "damageMessages" => $battle->getAttackerReport()->getDamageMessages(),
+                "initialLife" => $battle->getAttackerReport()->getInitialLife(),
+            ),
+            "target" => array(
+                "damageDone" => $battle->getTargetReport()->getDamageDone(),
+                "damageTaken" => $battle->getTargetReport()->getDamageTaken(),
+                "damageMessages" => $battle->getTargetReport()->getDamageMessages(),
+                "initialLife" => $battle->getTargetReport()->getInitialLife(),
+            ),
+        );
 
-		if ( $battle->get_target() instanceof Character )
-		{
-			$message->content = View::make('messages.battlepvp')->with('battle', $battle)->render();
-		}
-		else
-		{
-			$message->content = View::make('messages.battlepve')->with('battle', $battle)->render();
+		if ($battle instanceof PvpBattle) {
+			$view = 'messages.battlepvp';
+		} else {
+			$view = 'messages.battlepve';
 		}
 
+        $message->content = View::make($view, $data)->render();
 		$message->is_special = true;
 		$message->unread = true;
 		$message->date = time();

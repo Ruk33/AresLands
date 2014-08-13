@@ -69,7 +69,7 @@ class Authenticated_Battle_Controller extends Authenticated_Base
 			return \Laravel\Redirect::to_route("get_authenticated_battle_index");
 		}
 		
-		$reportMessage = $battle->get_attacker_notification_message();
+		$reportMessage = $battle->getAttackerReport()->getMessage();
 		
 		return \Laravel\Redirect::to_route("get_authenticated_message_read", array(
 			$reportMessage->id
@@ -94,7 +94,7 @@ class Authenticated_Battle_Controller extends Authenticated_Base
 			return \Laravel\Redirect::to_route("get_authenticated_battle_index");
 		}
 		
-		$reportMessage = $battle->get_attacker_notification_message();
+		$reportMessage = $battle->getAttackerReport()->getMessage();
 		
 		return \Laravel\Redirect::to_route("get_authenticated_message_read", array(
 			$reportMessage->id

@@ -145,6 +145,31 @@ class Damage
     }
     
     /**
+     * Antes de recibir daño
+     * Este metodo sera llamado tanto en el atacante como en el objetivo
+     * Es posible cambiar el daño directamente
+     * 
+     * @param Unit $target
+     * @param Damage $damage
+     */
+    protected function before(Unit $target, Damage $damage)
+    {
+        
+    }
+    
+    /**
+     * Despues de recibir daño
+     * Este metodo sera llamado tanto en el atacante como en el objetivo
+     * 
+     * @param Unit $target
+     * @param Damage $damage
+     */
+    protected function after(Unit $target, Damage $damage)
+    {
+        
+    }
+    
+    /**
      * 
      * @param Unit $target
      * @param boolean $magical
@@ -179,9 +204,15 @@ class Damage
             if ($this->critical) {
                 $this->amount *= $this->get_critical_multiplier($target);
             }
+            
+            $this->before($target, $this);
+            $target->get_combat_behavior()->get_damage()->before($target, $this);
 
             $life = $target->get_current_life() - $this->amount;
             $target->set_current_life($life);
+            
+            $this->after($target, $this);
+            $target->get_combat_behavior()->get_damage()->after($target, $this);
         }
         
         return true;

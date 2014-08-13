@@ -32,6 +32,15 @@ abstract class Unit extends Widget
     
     /**
      * 
+     * @param CombatBehavior $combatBehavior
+     */
+    public function set_combat_behavior(CombatBehavior $combatBehavior)
+    {
+        $this->combatBehavior = $combatBehavior;
+    }
+    
+    /**
+     * 
      * @return CombatBehavior
      */
     public function get_combat_behavior()

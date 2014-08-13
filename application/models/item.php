@@ -10,7 +10,7 @@ class Item extends Base_Model
 	const WARRIOR = 1;
 	const WIZARD  = 2;
 	const MIXED   = 3;
-
+    
 	/**
 	 * Obtenemos la ruta de la imagen del objeto
 	 * @return string
