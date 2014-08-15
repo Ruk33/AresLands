@@ -112,6 +112,7 @@ class PvpBattle extends Battle
     {
         return $attacker->get_final_magic() > $attacker->get_final_strength();
     }
+    
     /**
      * Verificamos si el ganador debe o no recibir recompensas
      * Recordar que el oro sera otorgado de igual forma
@@ -130,15 +131,7 @@ class PvpBattle extends Battle
         $this->getWinner()->pvp_points++;
         ActivityBar::add($this->getAttacker(), self::REWARD_ACTIVITY_BAR);
         
-        $onlyCoins = $this->winnerShouldReceiveRewards() == false;
-        
-        foreach ($this->getLoser()->drops() as $reward) {
-            // Si no merece recompensas y justamente la recompensa no es moneda
-            // entonces la saltamos
-            if ($onlyCoins && $reward['item_id'] != Config::get('game.coin_id')) {
-                continue;
-            }
-            
+        foreach ($this->getLoser()->drops() as $reward) {            
             $item = Laravel\IoC::resolve('Item')->find($reward['item_id']);
             
             if (! $item) {

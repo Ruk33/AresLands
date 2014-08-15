@@ -4,6 +4,48 @@ class PveBattle extends Battle
 {
     const MAX_ATTACKS = 50;
     
+    /**
+     * Verificamos si el ganador debe o no recibir recompensas
+     * Recordar que el oro sera otorgado de igual forma
+     * @return boolean
+     */
+    protected function winnerShouldReceiveRewards()
+    {
+        return $this->getWinner()->level - 2 < $this->getLoser()->level;
+    }
+    
+    /**
+     * Otorgamos recompensas al ganador
+     */
+    protected function giveRewards()
+    {
+        // Somos ortivas y no damos recompensa a los monstruos >:v
+        if ($this->getWinner() instanceof Monster) {
+            return;
+        }
+        
+        $onlyCoins = $this->winnerShouldReceiveRewards() == false;
+        
+        foreach ($this->getLoser()->drops() as $reward) {
+            // Si no merece recompensas y justamente la recompensa no es moneda
+            // entonces la saltamos
+            if ($onlyCoins && $reward['item_id'] != Config::get('game.coin_id')) {
+                continue;
+            }
+            
+            $item = Laravel\IoC::resolve('Item')->find($reward['item_id']);
+            
+            if (! $item) {
+                continue;
+            }
+            
+            if ($this->getWinner()->add_item($item, $reward['amount'])) {
+                $this->getReportOf($this->getWinner())
+                     ->registerReward($item, $reward['amount']);
+            }
+        }
+    }
+    
     protected function onStart() {
         $this->getAttacker()->regenerate_life(true);
         $this->getAttacker()->check_buffs_time();
@@ -14,6 +56,8 @@ class PveBattle extends Battle
     protected function onFinish() {
         $this->getAttacker()->after_battle();
         $this->getAttacker()->save();
+        
+        $this->giveRewards();
         
         \Laravel\Event::fire("pveBattle", array(
             $this->getAttacker(), 
