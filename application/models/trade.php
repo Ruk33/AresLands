@@ -10,7 +10,7 @@ class Trade extends Base_Model
         'seller_id' => 'required|exists:characters,id',
         
         // id del objeto del personaje (NO del item)
-		'item_id' => 'required|exists:character_items,item_id|tradeitem|tradeowner:seller_id',
+		'item_id' => 'required|exists:character_items,id|tradeitem|tradeowner:seller_id',
 		'amount' => 'required|numeric|min:1|tradeitemamount:item_id',
 		'price_copper' => 'required|numeric|min:1',
 		'duration' => 'in:8,16,24'
