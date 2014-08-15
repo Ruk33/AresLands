@@ -55,7 +55,7 @@ class VipChangeRace extends VipObject
             "drow" => "Drow"
         );
         
-        return "Raza " . 
+        return "<label>Raza</label>" . 
                Form::select("race", $races, "", array("class" => "span12"));
     }
 }

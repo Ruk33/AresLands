@@ -50,6 +50,6 @@ class VipChangeName extends VipObject
     
     public function getInput()
     {
-        return "Nombre " . Form::text("name", "", array("class" => "span12"));
+        return "<label>Nombre</label>" . Form::text("name", "", array("class" => "span12"));
     }
 }
