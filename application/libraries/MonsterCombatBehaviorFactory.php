@@ -8,6 +8,7 @@ class MonsterCombatBehaviorFactory
     const DUNGEON_BOSS_ONIX = 595959;
     
     /**
+     * Obtenemos el comportamiento de batalla segun el monstruo
      * 
      * @param Monster $monster
      * @return CombatBehavior
@@ -18,18 +19,18 @@ class MonsterCombatBehaviorFactory
         
         switch ($monster->id) {
             case self::DUNGEON_BOSS_NESSY:
-                $combatBehavior = new AttackableBehavior(
+                $combatBehavior = new NessyCombatBehavior(
                     $monster, 
-                    new MonsterDamage($monster),
-                    new MonsterArmor($monster)
+                    new NessyDamage($monster),
+                    new NessyArmor($monster)
                 );
                 break;
             
             case self::DUNGEON_BOSS_LOHG:
-                $combatBehavior = new AttackableBehavior(
+                $combatBehavior = new LohgCombatBehavior(
                     $monster, 
-                    new MonsterDamage($monster),
-                    new MonsterArmor($monster)
+                    new LohgDamage($monster),
+                    new LohgArmor($monster)
                 );
                 break;
             

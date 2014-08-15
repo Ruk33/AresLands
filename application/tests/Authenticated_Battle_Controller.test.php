@@ -263,7 +263,7 @@ class Authenticated_Battle_Controller_Test extends Tests\TestHelper
 		$this->assertSessionHas("error", "bar");
 		
 		$message = m::mock("Message");
-		$battle->shouldReceive("get_attacker_notification_message")->once()->andReturn($message);
+		$battle->shouldReceive("getAttackerReport->getMessage")->once()->andReturn($message);
 		
 		$message->shouldReceive("get_id")->once()->andReturn(1);
 		
@@ -290,7 +290,7 @@ class Authenticated_Battle_Controller_Test extends Tests\TestHelper
 		$this->assertSessionHas("error", "bar");
 		
 		$message = m::mock("Message");
-		$battle->shouldReceive("get_attacker_notification_message")->once()->andReturn($message);
+		$battle->shouldReceive("getAttackerReport->getMessage")->once()->andReturn($message);
 		
 		$message->shouldReceive("get_id")->once()->andReturn(1);
 		

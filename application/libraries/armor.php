@@ -5,6 +5,17 @@ abstract class Armor
     protected $defender;
     
     /**
+     * Metodo que se ejecuta antes de recibir daño
+     * 
+     * @param Damage $damage
+     * @param Battle $battle
+     */
+    public function before(Damage $damage, Battle $battle)
+    {
+        
+    }
+    
+    /**
      * 
      * @param Damage $damage
      * @return real
@@ -40,6 +51,15 @@ abstract class Armor
      * @return real
      */
     public abstract function get_defense(Damage $damage);
+    
+    /**
+     * 
+     * @return Unit
+     */
+    public function get_defender()
+    {
+        return $this->defender;
+    }
     
     /**
      * 

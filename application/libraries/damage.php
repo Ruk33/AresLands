@@ -145,26 +145,23 @@ class Damage
     }
     
     /**
-     * Antes de recibir daño
-     * Este metodo sera llamado tanto en el atacante como en el objetivo
-     * Es posible cambiar el daño directamente
+     * Antes de hacer daño
      * 
      * @param Unit $target
-     * @param Damage $damage
+     * @param Battle $battle
      */
-    protected function before(Unit $target, Damage $damage)
+    protected function before(Unit $target, Battle $battle)
     {
         
     }
     
     /**
-     * Despues de recibir daño
-     * Este metodo sera llamado tanto en el atacante como en el objetivo
+     * Despues de hacer daño
      * 
      * @param Unit $target
-     * @param Damage $damage
+     * @param Battle $battle
      */
-    protected function after(Unit $target, Damage $damage)
+    protected function after(Unit $target, Battle $battle)
     {
         
     }
@@ -172,10 +169,23 @@ class Damage
     /**
      * 
      * @param Unit $target
+     * @param float $amount
      * @param boolean $magical
+     * @param boolean $canMiss
+     * @param boolean $canBlock
+     * @param boolean $canCritical
+     * @param boolean $ignoreDefense
+     * @param Battle $battle
      * @return boolean
      */
-    public function to(Unit $target, $magical)
+    public function to(Unit $target, 
+                       $amount, 
+                       $magical,
+                       $canMiss,
+                       $canBlock,
+                       $canCritical,
+                       $ignoreDefense, 
+                       Battle $battle = null)
     {
         $this->reset();
         
@@ -186,36 +196,84 @@ class Damage
         $armor = $target->get_combat_behavior()->get_armor();
         
         $this->magical = $magical;
-        $this->miss = mt_rand(1, 100) <= $armor->get_miss_chance($this);
+        $this->miss = $canMiss && mt_rand(1, 100) <= $armor->get_miss_chance($this);
         
         if (! $this->miss) {
-            if (mt_rand(1, 100) <= $armor->get_block_chance($this)) {
-                $this->blocked = $armor->get_block_amount($this);
+            if ($canBlock) {
+                if (mt_rand(1, 100) <= $armor->get_block_chance($this)) {
+                    $this->blocked = $armor->get_block_amount($this);
+                }
             }
             
-            $criticalChance = $this->get_critical_chance($target);
-            $this->critical = mt_rand(1, 100) <= $criticalChance;
+            if ($ignoreDefense) {
+                $this->amount = $amount;
+            } else {
+                if ($canCritical) {
+                    $criticalChance = $this->get_critical_chance($target);
+                    $this->critical = mt_rand(1, 100) <= $criticalChance;
+                }
+                
+                $this->amount = (int) max(
+                    0,
+                    $amount - $armor->get_defense($this) - $this->blocked
+                );
+                
+                if ($this->critical) {
+                    $this->amount *= $this->get_critical_multiplier($target);
+                }
+                
+                $this->before($target, $battle);
+                $armor->before($this, $battle);
 
-            $this->amount = (int) max(
-                0,
-                $this->get_damage() - $armor->get_defense($this) - $this->blocked
-            );
+                $life = $target->get_current_life() - $this->amount;
+                $target->set_current_life($life);
 
-            if ($this->critical) {
-                $this->amount *= $this->get_critical_multiplier($target);
+                $this->after($target, $battle);
             }
-            
-            $this->before($target, $this);
-            $target->get_combat_behavior()->get_damage()->before($target, $this);
-
-            $life = $target->get_current_life() - $this->amount;
-            $target->set_current_life($life);
-            
-            $this->after($target, $this);
-            $target->get_combat_behavior()->get_damage()->after($target, $this);
         }
         
         return true;
+    }
+    
+    /**
+     * 
+     * @param Unit $target
+     * @param boolean $magical
+     * @param float $amount
+     * @param Battle $battle
+     */
+    public function normal_with_amount(Unit $target, 
+                                       $magical, 
+                                       $amount, 
+                                       Battle $battle = null)
+    {
+        return $this->to(
+            $target, 
+            $amount, 
+            $magical, 
+            true, 
+            true, 
+            true, 
+            false, 
+            $battle
+        );
+    }
+    
+    /**
+     * 
+     * @param Unit $target
+     * @param boolean $magical
+     * @param Battle $battle
+     * @return boolean
+     */
+    public function normal(Unit $target, $magical, Battle $battle = null)
+    {
+        return $this->normal_with_amount(
+            $target, 
+            $magical, 
+            $this->get_damage(),
+            $battle
+        );
     }
     
     /**

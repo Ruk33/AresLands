@@ -13,6 +13,24 @@ abstract class Unit extends Widget
     protected $combatBehavior;
     
     /**
+     * Lanzamos habilidad a objetivo
+     * 
+     * @param Unit $target
+     * @param integer $skillId
+     * @param integer $level
+     * @param integer $times ¿Cuantas veces?
+     * @return boolean
+     */
+    public function cast(Unit $target, $skillId, $level, $times = 1)
+    {
+        if ($skill = Skill::where_id($skillId)->where_level($level)->first()) {
+            return $skill->cast($this, $target, $times);
+        }
+        
+        return false;
+    }
+    
+    /**
      * 
      * @param float $amount
      */
@@ -120,13 +138,37 @@ abstract class Unit extends Widget
     /**
      * Verificamos el tiempo de los buffs activos de la unidad
      */
-    public function check_buffs_time() {}
+    public function check_buffs_time()
+    {
+        
+    }
     
     /**
      * Regeneramos vida por segundo
      * @param boolean $save
      */
-    public function regenerate_life($save = false) {}
+    public function regenerate_life($save = false)
+    {
+        
+    }
+    
+    /**
+     * 
+     * @return Item|null
+     */
+    public function get_weapon()
+    {
+        return null;
+    }
+    
+    /**
+     * 
+     * @return Item|null
+     */
+    public function get_shield()
+    {
+        return null;
+    }
     
     /**
      * Query para obtener zone en donde esta la unidad

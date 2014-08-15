@@ -24,7 +24,7 @@ class TradeItemValidation extends Laravel\Validator
 		$sellerId = $this->attributes[$parameters[0]];
         $count = $this->character_item()
                       ->where_owner_id($sellerId)
-                      ->where_item_id($value)
+                      ->where_id($value)
                       ->count();
         
 		return $count > 0;
@@ -41,7 +41,7 @@ class TradeItemValidation extends Laravel\Validator
 	 */
 	public function validate_tradeitem($attribute, $value, $parameters)
 	{
-		$characterItem = $this->character_item()->where_item_id($value)->first();
+		$characterItem = $this->character_item()->find($value);
 		
         if (! $characterItem) {
             return false;
@@ -69,9 +69,7 @@ class TradeItemValidation extends Laravel\Validator
 	public function validate_tradeitemamount($attribute, $value, $parameters)
 	{
         $characterItemId = $this->attributes[$parameters[0]];
-		$characterItem = $this->character_item()
-                              ->where_item_id($characterItemId)
-                              ->first();
+		$characterItem = $this->character_item()->find($characterItemId);
 		
         if (! $characterItem) {
             return false;

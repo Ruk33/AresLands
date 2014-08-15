@@ -195,7 +195,7 @@ class Battle
         $damage   = $attacker->get_combat_behavior()->get_damage();
         
         if ($this->beforeAttack($attacker, $target)) {
-            $damage->to($target, $this->getTurn() < 10);
+            $damage->normal($target, $this->getTurn() < 10, $this);
             $this->afterAttack($attacker, $target, $damage);
         }
         
@@ -218,7 +218,7 @@ class Battle
      * ¿En que turno estamos?
      * @return integer
      */
-    protected function getTurn()
+    public function getTurn()
     {
         return $this->turn;
     }

@@ -8,6 +8,8 @@ class Trade extends Base_Model
 
 	protected $rules = array(
         'seller_id' => 'required|exists:characters,id',
+        
+        // id del objeto del personaje (NO del item)
 		'item_id' => 'required|exists:character_items,item_id|tradeitem|tradeowner:seller_id',
 		'amount' => 'required|numeric|min:1|tradeitemamount:item_id',
 		'price_copper' => 'required|numeric|min:1',
@@ -34,6 +36,20 @@ class Trade extends Base_Model
         
         'duration_in' => 'La duracion es incorrecta',
 	);
+    
+    public function save()
+    {
+        // Inicialmente el campo 'item_id' guarda el id del objeto del personaje
+        // (no el id del objeto en si), esto para que el validador pueda funcionar
+        // de forma correcta. Sabiendo esto, antes de guardar y si el row NO
+        // existe, entonces actualizamos 'item_id' con el id del objeto en si
+        if (! $this->exists) {
+            $characterItem = $this->seller()->items()->find_or_empty($this->item_id);
+            $this->item_id = $characterItem->item_id;
+        }
+        
+        return parent::save();
+    }
     
     public function get_validator($attributes, $rules, $messages = array())
     {

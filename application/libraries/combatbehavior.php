@@ -24,7 +24,6 @@ interface CombatBehavior
      */
     public function before_turn(Battle $battle);
     
-    
     /**
      * Metodo que se ejecuta despues del turno en las batallas
      * 

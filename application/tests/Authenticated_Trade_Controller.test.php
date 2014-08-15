@@ -134,7 +134,7 @@ class Authenticated_Trade_Controller_Test extends Tests\TestHelper
         $this->character->shouldReceive("items->where_id")->twice()->with($attributes['trade_item_id'])->andReturn($characterItem);
         
         $characterItem->shouldReceive("first_or_empty")->twice()->andReturn($characterItem);
-        $characterItem->shouldReceive("get_item_id")->twice()->andReturn($attributes['trade_item_id']);
+        $characterItem->shouldReceive("get_id")->twice()->andReturn($attributes['trade_item_id']);
         $characterItem->shouldReceive("get_attribute")->twice()->with("data")->andReturn("foo");
         
 		$this->character->shouldReceive("can_trade")->twice()->andReturn(true);

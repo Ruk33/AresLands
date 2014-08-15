@@ -143,7 +143,7 @@ class Authenticated_Trade_Controller extends Authenticated_Base
             "price_copper" => $price,
             "until"        => time() + Input::get("duration") * 60 * 60,
             "clan_id"      => Input::get("only_clan") ? $seller->clan_id : 0,
-            "item_id"      => $characterItem->item_id,
+            "item_id"      => $characterItem->id,
             "data"         => $characterItem->get_attribute("data"),
             "amount"       => $amount,
             "duration"     => Input::get("duration")
