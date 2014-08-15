@@ -44,7 +44,7 @@ class Trade extends Base_Model
         // de forma correcta. Sabiendo esto, antes de guardar y si el row NO
         // existe, entonces actualizamos 'item_id' con el id del objeto en si
         if (! $this->exists) {
-            $characterItem = $this->seller()->items()->find_or_empty($this->item_id);
+            $characterItem = $this->seller->items()->find($this->item_id);
             $this->item_id = $characterItem->item_id;
         }
         
