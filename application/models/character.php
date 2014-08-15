@@ -3290,7 +3290,7 @@ class Character extends Unit
 	}
 	
 	/**
-	 * @deprecated
+	 * 
 	 */
 	public function after_battle()
 	{

@@ -14,6 +14,12 @@ class PveBattle extends Battle
     protected function onFinish() {
         $this->getAttacker()->after_battle();
         $this->getAttacker()->save();
+        
+        \Laravel\Event::fire("pveBattle", array(
+            $this->getAttacker(), 
+            $this->getTarget(), 
+            $this->getWinner()
+        ));
     }
     
     protected function damageShouldBeMagic(Unit $attacker, Unit $target)

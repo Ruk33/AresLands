@@ -162,7 +162,7 @@ Event::listen('equipItem', function(CharacterItem $characterItem, $amount = 1)
 
 Event::listen('pveBattle', function(Character $character, Monster $monster, $winner)
 {
-	if ( $winner && $winner->id == $character->id )
+	if ( $winner == $character )
 	{
 		$characterQuests = $character->quests_with_action('kill')
 									 ->where('progress', '=', 'started')
