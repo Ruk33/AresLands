@@ -3152,8 +3152,12 @@ class Character extends Unit
 		{
 			return "No puedes batallar mientras estas viajando";
 		}
+        
+        if ($this->is_exploring) {
+            return "No puedes batallar cuando estas explorando";
+        }
 		
-		if ( $this->activities()->take(1)->count() == 1 )
+		if ( $this->activities()->count() > 0 )
 		{
 			return "No puedes batallar mientras aun estes realizando otras actividades";
 		}
