@@ -9,7 +9,7 @@
 	</li>
 
 	<li style="vertical-align: 100px; width: 175px;">
-		<p class="text-center" style="font-family: georgia; font-size: 32px;">vs</p>
+		<p class="text-center" style="font-family: georgia; font-size: 32px;">contra</p>
 	</li>
 
 	<li style="width: 250px;">
@@ -77,20 +77,25 @@
             </td>
             <td><div class="text-center">{{ (int) $target["damageDone"] }}</div></td>
         </tr>
+        
+        <tr>
+            <td><b>Daño recibido</b></td>
+            <td><div class="text-center">{{ (int) $attacker["damageTaken"] }}</div></td>
+            <td><div class="text-center">{{ (int) $target["damageTaken"] }}</div></td>
+        </tr>
     </tbody>
+</table>
+
+<table class="table table-striped brown-table">
     <thead>
         <tr>
-            <th class="span3">Desarrollo</th>
-            <th class="span4"><div class="text-center">{{ $battle->getAttacker()->name }}</div></th>
-            <th class="span4"><div class="text-center">{{ $battle->getTarget()->name }}</div></th>
+            <th class="span6"><div class="text-center">{{ $battle->getAttacker()->name }}</div></th>
+            <th class="span6"><div class="text-center">{{ $battle->getTarget()->name }}</div></th>
         </tr>
     </thead>
     <tbody>
         @for ($i = 0, $max = count($attacker["damageMessages"]); $i < $max; $i++) 
         <tr>
-            <td>
-                <div class="attack">Golpe</div>
-            </td>
             <td><div class="text-center">{{ $attacker["damageMessages"][$i] }}</div></td>
             <td><div class="text-center">{{ $target["damageMessages"][$i] }}</div></td>
         </tr>

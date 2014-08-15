@@ -1,6 +1,6 @@
 <?php
 
-class Battle
+abstract class Battle
 {
     /**
      *
@@ -183,6 +183,15 @@ class Battle
     }
     
     /**
+     * Determinamos si el ataque debe ser magico o fisico
+     * 
+     * @param Unit $attacker
+     * @param Unit $target
+     * @return boolean
+     */
+    protected abstract function damageShouldBeMagic(Unit $attacker, Unit $target);
+    
+    /**
      * Este metodo sera ejecutado antes del turno
      */
     protected function beforeTurn()
@@ -195,7 +204,9 @@ class Battle
         $damage   = $attacker->get_combat_behavior()->get_damage();
         
         if ($this->beforeAttack($attacker, $target)) {
-            $damage->normal($target, $this->getTurn() < 10, $this);
+            $damage->normal(
+                $target, $this->damageShouldBeMagic($attacker, $target), $this
+            );
             $this->afterAttack($attacker, $target, $damage);
         }
         

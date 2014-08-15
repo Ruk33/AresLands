@@ -62,8 +62,8 @@ class BattleReport
         if ($damage->is_miss()) {
             $message = "<div class='missed-hit'>¡Falla el ataque!</div>";
         } elseif ($damage->is_critical()) {
-            $message = "<div class='critical-hit'>¡Acerta un golpe critico, "
-                     . "haciendo {$damage->get_amount()} de daño!</div>";
+            $message = "<div class='critical-hit'>¡Golpe critico, "
+                     . "inflige {$damage->get_amount()} de daño!</div>";
         } else {
             $message = "Inflige {$damage->get_amount()} de daño";
         }

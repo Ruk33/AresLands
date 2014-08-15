@@ -3236,6 +3236,10 @@ class Character extends Unit
 	 */
 	public function battle_or_error(Unit $target, Character $pair = null)
 	{
+        if (! $target) {
+            return "Sin television y sin objetivo, {$this->name} pierde la cabeza";
+        }
+        
 		if ( ! $target->is_attackable() )
 		{
 			return "Ese objeto no puede ser atacado";

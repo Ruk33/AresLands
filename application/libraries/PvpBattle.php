@@ -108,6 +108,10 @@ class PvpBattle extends Battle
         return parent::shouldContinue() && $this->getTurn() < self::MAXIMUM_TURNS;
     }
     
+    protected function damageShouldBeMagic(Unit $attacker, Unit $target)
+    {
+        return $attacker->get_final_magic() > $attacker->get_final_strength();
+    }
     /**
      * Verificamos si el ganador debe o no recibir recompensas
      * Recordar que el oro sera otorgado de igual forma
