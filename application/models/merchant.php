@@ -272,14 +272,14 @@ class Merchant extends Npc
 		
 		foreach ( $items as $item )
 		{
-            $min = 11800;
-            $max = 15700;
+            $min = 1770;
+            $max = 2355;
             
             // Si es una pocion, evitamos que su precio sea muy elevado
             if ( $item->type == 'potion' )
             {
-                $min = 663;
-                $max = 779;
+                $min = 99;
+                $max = 115;
             }
             
 			$this->random_merchandises()->insert(new NpcRandomMerchandise(array(
