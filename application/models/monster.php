@@ -107,9 +107,11 @@ class Monster extends Npc
     public function drops_for(Character $character) {
         $drops = parent::drops_for($character);
         
+        $xp = $this->xp + (0.13 * ($this->level + 2 - $character->level));
+        
         $drops[] = array(
             'item_id' => Config::get('game.xp_item_id'), 
-            'amount' => $this->xp * $character->get_xp_rate()
+            'amount' => $xp * $character->get_xp_rate()
         );
         
         return $drops;
