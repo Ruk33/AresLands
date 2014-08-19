@@ -107,6 +107,12 @@ class Monster extends Npc
     public function drops_for(Character $character) {
         $drops = parent::drops_for($character);
         
+        foreach ($this->drops()->get() as $drop) {
+            if (mt_rand(0, 100) <= $drop->chance * $character->get_drop_rate()) {
+				$drops[] = $drop->to_array();
+			}
+        }
+        
         $xp = $this->xp + (0.13 * ($this->level + 2 - $character->level));
         
         $drops[] = array(

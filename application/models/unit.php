@@ -125,12 +125,6 @@ abstract class Unit extends Widget
     {
         $drops = array();
         
-        foreach ($this->drops as $drop) {
-            if (mt_rand(0, 100) <= $drop->chance * $character->get_drop_rate()) {
-				$drops[] = $drop->to_array();
-			}
-        }
-        
         // Compatibilidad con lo viejo        
 		$drops[] = array(
             'item_id' => Config::get('game.coin_id'), 
