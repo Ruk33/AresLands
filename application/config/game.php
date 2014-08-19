@@ -1,6 +1,11 @@
 <?php
 
 return array(
+    /**
+     * Nivel maximo
+     */
+    'max_level' => 150,
+    
 	'dungeon_time_per_monster' => 300,
 
 	'cheat_death_skill' => 65,

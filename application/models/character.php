@@ -1705,50 +1705,82 @@ class Character extends Unit
 		
 		$this->save();
 	}
+    
+    /**
+     * Verificamos si personaje puede subir de nivel
+     * @return boolean
+     */
+    protected function can_level_up()
+    {
+        return $this->level + 1 <= Config::get("game.max_level");
+    }
+    
+    /**
+     * Verificamos que personaje siga cumpliendo con
+     * los requisitos de los orbes que posea
+     */
+    public function check_orbs()
+    {
+        foreach ($this->orbs as $orb) {
+            if ($this->level < $orb->min_level || $this->level > $orb->max_level) {
+                $orb->reset();
+            }
+        }
+    }
+    
+    /**
+     * Subimos de nivel al personaje
+     */
+    public function level_up()
+    {
+        $this->level++;
+
+        if ($this->level % 5 == 0 && $this->can_learn_more_talents()) {
+            $this->talent_points++;
+        }
+        
+        $this->xp = 0;
+        $this->xp_next_level = (int) (5 * $this->level);
+        $this->max_life = $this->max_life + $this->level * 40;
+        $this->current_life = $this->max_life;
+
+        $this->points_to_change += Config::get('game.points_per_level');
+
+        $this->check_orbs();
+        $this->save();
+    }
 	
 	public function set_xp($value)
 	{
-		if ( $value >= $this->xp_next_level )
-		{
-            $value = 0;
-            
-			$this->level++;
-			$this->xp_next_level = (int) (5 * $this->level);
-			
-			if ( $this->level % 5 == 0 && $this->can_learn_more_talents() )
-			{
-				$this->talent_points++;
-			}
-
-			/*
-			 *	Verificamos que siga cumpliendo
-			 *	con los requerimientos de sus orbes
-			 *	(en caso de tener alguno)
-			 */
-			if ($this->has_orb()) {
-				$orbs = $this->orbs;
-
-				foreach ($orbs as $orb) {
-					// Si no cumple con los requerimientos...
-					if ($this->level < $orb->min_level || $this->level > $orb->max_level) {
-						$orb->reset();
-					}
-				}
-			}
-
-			/* 
-			 *	Aumentamos la vida y restauramos
-			 */
-			$this->max_life = $this->max_life + $this->level * 40;
-			$this->current_life = $this->max_life;
-			
-			$this->points_to_change += Config::get('game.points_per_level');
-            
-            $this->save();
+		if ($value >= $this->xp_next_level) {            
+            if ($this->can_level_up()) {
+                $this->level_up();
+                $value = 0;
+            } else {
+                $value = $this->xp_next_level;
+            }
 		}
 		
 		return parent::set_xp($value);
 	}
+    
+    /**
+     * 
+     * @param integer $value
+     */
+    public function set_points_to_change($value)
+    {
+        $isAtMaxLevel = $this->level == Config::get("game.max_level");
+        $isAtMaxXp = $this->xp == $this->xp_next_level;
+        
+        if ($isAtMaxLevel && $isAtMaxXp) {
+            if ($this->get_attribute("points_to_change") < $value) {
+                $value = $this->get_attribute("points_to_change");
+            }
+        }
+        
+        return parent::set_points_to_change($value);
+    }
 	
 	/**
 	 * Usar consumible (pocion, etc.)
