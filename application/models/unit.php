@@ -106,13 +106,43 @@ abstract class Unit extends Widget
     }
     
     /**
-     * Obtenemos los objetos que la unidad puede dropear
+     * Obtenemos los drops de la unidad
      * 
      * @return array
      */
     public function drops()
     {
         return array();
+    }
+    
+    /**
+     * Obtenemos los objetos que una unidad puede arrojar para
+     * un personaje en especifico
+     * 
+     * @return array
+     */
+    public function drops_for(Character $character)
+    {
+        $drops = array();
+        
+        foreach ($this->drops as $drop) {
+            if (mt_rand(0, 100) <= $drop->chance * $character->get_drop_rate()) {
+				$drops[] = $drop->to_array();
+			}
+        }
+        
+        // Compatibilidad con lo viejo
+        $drops[] = array(
+            'item_id' => Config::get('game.xp_item_id'), 
+            'amount' => $this->xp * $character->get_xp_rate()
+        );
+        
+		$drops[] = array(
+            'item_id' => Config::get('game.coin_id'), 
+            'amount' => $this->level * 15 * $character->get_coins_rate()
+        );
+        
+        return $drops;
     }
     
     /**

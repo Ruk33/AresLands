@@ -29,7 +29,7 @@ class PveBattle extends Battle
 
         $onlyCoins = $this->winnerShouldReceiveRewards() == false;
 
-        foreach ($this->getLoser()->drops() as $reward) {
+        foreach ($this->getLoser()->drops_for($this->getWinner()) as $reward) {
             // Si no merece recompensas y justamente la recompensa no es moneda
             // entonces la saltamos
             if ($onlyCoins && $reward['item_id'] != Config::get('game.coin_id')) {

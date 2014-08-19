@@ -99,34 +99,9 @@ class Monster extends Npc
 
 	}
 
-    /**
-     * 
-     * @param integer $dungeon Nivel del dungeon
-     * @return array
-     */
-	public function drops($dungeon = 1)
+	public function drops()
 	{
-        $list = $this->has_many("MonsterDrop", "monster_id")->get();
-        $drops = array();
-        
-		foreach ($list as $drop) {
-            if (mt_rand(0, 100) <= $drop->chance * $dungeon) {
-				$drops[] = $drop->to_array();
-			}
-        }
-        
-        // Compatibilidad con lo viejo
-        $drops[] = array(
-            'item_id' => Config::get('game.xp_item_id'), 
-            'amount' => $this->xp
-        );
-        
-		$drops[] = array(
-            'item_id' => Config::get('game.coin_id'), 
-            'amount' => $this->level * 50
-        );
-        
-        return $drops;
+        return $this->has_many("MonsterDrop", "monster_id");
 	}
 
 	/**

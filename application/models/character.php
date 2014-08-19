@@ -419,20 +419,6 @@ class Character extends Unit
 			}
 		}
 	}
-
-    public function drops()
-    {
-        return array(
-			array(
-                'item_id' => Config::get('game.xp_item_id'), 
-                'amount' => 1,
-            ),
-			array(
-                'item_id' => Config::get('game.coin_id'), 
-                'amount' => mt_rand(20 * $this->level, 60 * $this->level),
-            )
-		);
-    }
     
 	public function get_rewards()
 	{
@@ -1173,14 +1159,16 @@ class Character extends Unit
 	 */
 	public function get_xp_rate()
 	{
-		$rate = Config::get('game.xp_rate');
+        $characterXpRate = $this->get_attribute("xp_rate");
+        $characterXpExtraRate = $this->get_attribute("xp_rate_extra");
+        $gameXpRate = Config::get('game.xp_rate');
+		$xpRate = $gameXpRate + $characterXpRate + $characterXpExtraRate;
 		
-		if ( $this->has_skill(Config::get('game.vip_multiplier_xp_rate_skill')) )
-		{
-			$rate *= 1.2;
+		if ($this->has_skill(Config::get('game.vip_multiplier_xp_rate_skill'))) {
+			$xpRate *= 1.2;
 		}
 		
-		return $rate;
+		return $xpRate;
 	}
 	
 	/**
@@ -1203,7 +1191,11 @@ class Character extends Unit
 	 */
 	public function get_drop_rate()
 	{
-		return Config::get('game.drop_rate');
+        $characterDropRate = $this->get_attribute("drop_rate");
+        $characterDropRateExtra = $this->get_attribute("drop_rate_extra");
+        $gameDropRate = Config::get('game.drop_rate');
+        
+		return $gameDropRate + $characterDropRate + $characterDropRateExtra;
 	}
 	
 	/**
@@ -1226,14 +1218,17 @@ class Character extends Unit
 	 */
 	public function get_coins_rate()
 	{
-		$rate = Config::get('game.coins_rate');
+        $characterCoinsRate = $this->get_attribute("coin_rate");
+        $characterCoinsExtraRate = $this->get_attribute("coin_rate_extra");
+        $gameCoinsRate = Config::get('game.coins_rate');
+		$coinsRate = $gameCoinsRate + $characterCoinsRate + $characterCoinsExtraRate;
 		
 		if ( $this->has_skill(Config::get('game.vip_multiplier_coin_rate_skill')) )
 		{
-			$rate *= 1.3;
+			$coinsRate *= 1.3;
 		}
 		
-		return $rate;
+		return $coinsRate;
 	}
 	
 	/**

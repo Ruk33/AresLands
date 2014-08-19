@@ -150,7 +150,7 @@ class PvpBattle extends Battle
         $this->getWinner()->pvp_points++;
         ActivityBar::add($this->getAttacker(), self::REWARD_ACTIVITY_BAR);
         
-        foreach ($this->getLoser()->drops() as $reward) {            
+        foreach ($this->getLoser()->drops_for($this->getWinner()) as $reward) {            
             $item = Laravel\IoC::resolve('Item')->find($reward['item_id']);
             
             if (! $item) {
