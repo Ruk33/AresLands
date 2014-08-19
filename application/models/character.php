@@ -2828,11 +2828,13 @@ class Character extends Unit
 			Config::get('game.coin_id'),
 			Config::get('game.xp_item_id')
 		);
-
-		return Item::where('level', '>=', $this->level - 5)
-                   ->where('level', '<=', $this->level + 5)
-				   ->where('class', '<>', 'mercenary')
-				   ->where('class', '<>', 'consumible')
+        
+        $minLevel = DB::raw("LEAST((select max(level) from items), {$this->level}-3)");
+        $maxLevel = DB::raw("GREATEST((select min(level) from items), {$this->level}+3)");
+        
+		return Item::where('level', '>=', $minLevel)
+                   ->where('level', '<=', $maxLevel)
+				   ->where_not_in('class', array('mercenary', 'consumible'))
 				   ->where_not_in('id', $invalidItems)
 				   ->order_by(DB::raw('RAND()'));
 	}
