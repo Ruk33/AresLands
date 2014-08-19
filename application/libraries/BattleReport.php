@@ -120,6 +120,15 @@ class BattleReport
     {
         $this->rewards[] = array("item" => $reward, "amount" => $amount);
     }
+
+    /**
+     *
+     * @param Orb $orb
+     */
+    public function registerOrb(Orb $orb)
+    {
+        $this->rewards[] = array("item" => $orb, "amount" => 1);
+    }
     
     /**
      * 

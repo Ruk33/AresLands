@@ -41,6 +41,11 @@ class Orb extends Base_Model
 		return $tooltip;
 	}
 
+    public function get_text_for_tooltip()
+    {
+        return $this->get_tooltip();
+    }
+
 	public function owner()
 	{
 		return $this->belongs_to('Character', 'owner_character');

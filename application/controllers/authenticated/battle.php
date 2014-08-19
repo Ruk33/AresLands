@@ -161,12 +161,12 @@ class Authenticated_Battle_Controller extends Authenticated_Base
 		$weapon = $characterToSee->get_weapon();
 		$shield = $characterToSee->get_shield();
 		$mercenary = $characterToSee->get_mercenary();
+        $orb = $characterToSee->orbs()->first();
 
-		$castableSkills = $character->get_castable_talents($characterToSee);
+        $castableSkills = $character->get_castable_talents($characterToSee);
 
-		$orbs = $characterToSee->orbs()->get();
-		
-		$skills = array();
+
+        $skills = array();
 
 		// Parejas con las que puede atacar el personaje
 		$pairs = $character->get_pairs_to($characterToSee);
@@ -175,7 +175,7 @@ class Authenticated_Battle_Controller extends Authenticated_Base
 
 		$this->layout->title = $result->name;
 		$this->layout->content = View::make("authenticated.character", compact(
-			"character", "weapon", "shield", "mercenary", "orbs", "skills",
+			"character", "weapon", "shield", "mercenary", "orb", "skills",
 			"characterToSee", "hideStats", "castableSkills", "pairs"
 		));
 	}

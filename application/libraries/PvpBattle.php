@@ -122,12 +122,31 @@ class PvpBattle extends Battle
     {
         return $this->getWinner()->level - 2 < $this->getLoser()->level;
     }
+
+    /**
+     * Verificamos orbe (damos o aplicamos proteccion segun sea el caso)
+     */
+    protected function checkOrb()
+    {
+        $targetOrb = $this->getTarget()->orbs()->first();
+
+        if ($targetOrb) {
+            if ($targetOrb->can_be_stolen_by($this->getAttacker())) {
+                if ($this->getWinner() == $this->getAttacker()) {
+                    $targetOrb->give_to($this->getAttacker());
+                    $this->getAttackerReport()->registerOrb($targetOrb);
+                } else {
+                    $targetOrb->failed_robbery($this->getAttacker());
+                }
+            }
+        }
+    }
     
     /**
      * Otorgamos recompensas al ganador
      */
     protected function giveRewards()
-    {        
+    {
         $this->getWinner()->pvp_points++;
         ActivityBar::add($this->getAttacker(), self::REWARD_ACTIVITY_BAR);
         
@@ -179,6 +198,7 @@ class PvpBattle extends Battle
     
     protected function onFinish() {
         $this->giveRewards();
+        $this->checkOrb();
         $this->checkProtections();
         
         $this->getAttacker()->after_pvp_battle($this->getTarget());
