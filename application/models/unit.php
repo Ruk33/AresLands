@@ -131,12 +131,7 @@ abstract class Unit extends Widget
 			}
         }
         
-        // Compatibilidad con lo viejo
-        $drops[] = array(
-            'item_id' => Config::get('game.xp_item_id'), 
-            'amount' => $this->xp * $character->get_xp_rate()
-        );
-        
+        // Compatibilidad con lo viejo        
 		$drops[] = array(
             'item_id' => Config::get('game.coin_id'), 
             'amount' => $this->level * 15 * $character->get_coins_rate()

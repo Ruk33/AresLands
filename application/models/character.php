@@ -151,6 +151,17 @@ class Character extends Unit
         "second_mercenary" => 0,
     );
     
+    public function drops_for(Character $character) {
+        $drops = parent::drops_for($character);
+        
+        $drops[] = array(
+            'item_id' => Config::get('game.xp_item_id'), 
+            'amount' => 1 * $character->get_xp_rate()
+        );
+        
+        return $drops;
+    }
+    
     /**
      * Verificamos y actualizamos ip del personaje
      * @param string $ip

@@ -103,6 +103,17 @@ class Monster extends Npc
 	{
         return $this->has_many("MonsterDrop", "monster_id");
 	}
+    
+    public function drops_for(Character $character) {
+        $drops = parent::drops_for($character);
+        
+        $drops[] = array(
+            'item_id' => Config::get('game.xp_item_id'), 
+            'amount' => $this->xp * $character->get_xp_rate()
+        );
+        
+        return $drops;
+    }
 
 	/**
 	 * @param  integer $dungeon Nivel de dungeon
