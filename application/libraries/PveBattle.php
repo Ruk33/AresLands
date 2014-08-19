@@ -2,6 +2,7 @@
 
 class PveBattle extends Battle
 {
+    const REWARD_ACTIVITY_BAR = 1;
     const MAX_ATTACKS = 50;
 
     /**
@@ -19,6 +20,8 @@ class PveBattle extends Battle
      */
     protected function giveRewards()
     {
+        ActivityBar::add($this->getAttacker(), self::REWARD_ACTIVITY_BAR);
+        
         // Somos ortivas y no damos recompensa a los monstruos >:v
         if ($this->getWinner() instanceof Monster) {
             return;
