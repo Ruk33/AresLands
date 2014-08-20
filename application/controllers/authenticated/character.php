@@ -114,6 +114,7 @@ class Authenticated_Character_Controller extends Authenticated_Base
 		$orb = $characterToSee->orbs()->first();
 		$skills = array();
 		
+        $characterToSee->check_buffs_time();
 		$characterToSee->update_activities_time();
 		
 		$character = $this->character->get_logged();

@@ -156,6 +156,7 @@ class Authenticated_Battle_Controller extends Authenticated_Base
 		
 		$characterToSee = $result;
 		
+        $characterToSee->check_buffs_time();
 		$character->sees($characterToSee);
 
 		$weapon = $characterToSee->get_weapon();
@@ -164,7 +165,6 @@ class Authenticated_Battle_Controller extends Authenticated_Base
         $orb = $characterToSee->orbs()->first();
 
         $castableSkills = $character->get_castable_talents($characterToSee);
-
 
         $skills = array();
 

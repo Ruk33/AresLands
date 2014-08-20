@@ -99,6 +99,7 @@ class Authenticated_Character_Controller_Test extends \Tests\TestHelper
 		$orb = m::mock("Orb");
 		$target->shouldReceive("orbs->first")->twice()->andReturn($orb);
 		
+        $target->shouldReceive("check_buffs_time")->twice();
 		$target->shouldReceive("update_activities_time")->twice();
 		
 		$this->character->shouldReceive("get_logged")->twice()->andReturnSelf();

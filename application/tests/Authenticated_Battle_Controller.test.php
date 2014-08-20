@@ -91,6 +91,7 @@ class Authenticated_Battle_Controller_Test extends Tests\TestHelper
 
 		$this->character->shouldReceive("sees")->once()->with($target);
 
+        $target->shouldReceive("check_buffs_time")->once();
 		$target->shouldReceive("get_weapon")->once()->andReturn($weapon);
 		$target->shouldReceive("get_shield")->once()->andReturn($shield);
 		$target->shouldReceive("get_mercenary")->once()->andReturn($mercenary);
@@ -150,6 +151,7 @@ class Authenticated_Battle_Controller_Test extends Tests\TestHelper
 
 		$this->character->shouldReceive("sees")->once()->with($target);
 
+		$target->shouldReceive("check_buffs_time")->once();
 		$target->shouldReceive("get_weapon")->once()->andReturn($weapon);
 		$target->shouldReceive("get_shield")->once()->andReturn($shield);
 		$target->shouldReceive("get_mercenary")->once()->andReturn($mercenary);
@@ -207,6 +209,7 @@ class Authenticated_Battle_Controller_Test extends Tests\TestHelper
 
 		$this->character->shouldReceive("sees")->once()->with($target);
 
+		$target->shouldReceive("check_buffs_time")->once();
 		$target->shouldReceive("get_weapon")->once()->andReturn($weapon);
 		$target->shouldReceive("get_shield")->once()->andReturn($shield);
 		$target->shouldReceive("get_mercenary")->once()->andReturn($mercenary);
