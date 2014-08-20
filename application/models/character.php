@@ -151,6 +151,11 @@ class Character extends Unit
         "second_mercenary" => 0,
     );
     
+    public function check_buffs_time()
+    {
+        $this->check_skills_time();
+    }
+    
     public function drops_for(Character $character) {
         $drops = parent::drops_for($character);
         
