@@ -97,7 +97,7 @@ class Authenticated_Battle_Controller_Test extends Tests\TestHelper
 
 		$this->character->shouldReceive("get_castable_talents")->once()->with($target)->andReturn(array());
 
-		$target->shouldReceive("orbs->get")->once()->andReturn(array());
+		$target->shouldReceive("orbs->first")->once()->andReturn(null);
 
 		$this->character->shouldReceive("get_pairs_to")->once()->with($target)->andReturn(array());
 
@@ -113,7 +113,7 @@ class Authenticated_Battle_Controller_Test extends Tests\TestHelper
 			"weapon" => $weapon, 
 			"shield" => $shield, 
 			"mercenary" => $mercenary,
-			"orbs" => array(), 
+			"orb" => null, 
 			"skills" => array(),
 			"characterToSee" => $target, 
 			"hideStats" => false, 
@@ -156,7 +156,7 @@ class Authenticated_Battle_Controller_Test extends Tests\TestHelper
 
 		$this->character->shouldReceive("get_castable_talents")->once()->with($target)->andReturn(array());
 
-		$target->shouldReceive("orbs->get")->once()->andReturn(array());
+		$target->shouldReceive("orbs->first")->once()->andReturn(null);
 
 		$this->character->shouldReceive("get_pairs_to")->once()->with($target)->andReturn(array());
 
@@ -172,7 +172,7 @@ class Authenticated_Battle_Controller_Test extends Tests\TestHelper
 			"weapon" => $weapon, 
 			"shield" => $shield, 
 			"mercenary" => $mercenary,
-			"orbs" => array(), 
+			"orb" => null, 
 			"skills" => array(),
 			"characterToSee" => $target, 
 			"hideStats" => false, 
@@ -213,7 +213,7 @@ class Authenticated_Battle_Controller_Test extends Tests\TestHelper
 
 		$this->character->shouldReceive("get_castable_talents")->once()->with($target)->andReturn(array());
 
-		$target->shouldReceive("orbs->get")->once()->andReturn(array());
+		$target->shouldReceive("orbs->first")->once()->andReturn(null);
 
 		$this->character->shouldReceive("get_pairs_to")->once()->with($target)->andReturn(array());
 
@@ -229,7 +229,7 @@ class Authenticated_Battle_Controller_Test extends Tests\TestHelper
 			"weapon" => $weapon, 
 			"shield" => $shield, 
 			"mercenary" => $mercenary,
-			"orbs" => array(), 
+			"orb" => null, 
 			"skills" => array(),
 			"characterToSee" => $target, 
 			"hideStats" => false, 

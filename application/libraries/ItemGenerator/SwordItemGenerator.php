@@ -1,4 +1,4 @@
-<?php
+<?php namespace Libraries\ItemGenerator;
 
 class SwordItemGenerator extends WeaponItemGenerator
 {

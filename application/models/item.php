@@ -1,5 +1,7 @@
 <?php
 
+use Libraries\ItemGenerator\ItemGenerator;
+
 class Item extends Base_Model
 {
 	public static $softDelete = false;
@@ -45,7 +47,7 @@ class Item extends Base_Model
                                            $target = ItemGenerator::TARGET_MIXED,
                                            $quality = Item::QUALITY_COMMON)
 	{
-        $generator = new ItemGeneratorFactory();
+        $generator = new Libraries\ItemGenerator\ItemGeneratorFactory();
 		return $generator->get($type)->generate($min_level, $max_level, $adjetive, $target, $quality);
 	}
 

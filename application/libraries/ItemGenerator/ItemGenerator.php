@@ -1,4 +1,7 @@
-<?php
+<?php namespace Libraries\ItemGenerator;
+
+use Item;
+use Skill;
 
 abstract class ItemGenerator
 {

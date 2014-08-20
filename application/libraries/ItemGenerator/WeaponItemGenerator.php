@@ -1,4 +1,6 @@
-<?php
+<?php namespace Libraries\ItemGenerator;
+
+use Item;
 
 /**
  * @todo
@@ -22,7 +24,7 @@ abstract class WeaponItemGenerator extends ItemGenerator
      */
     protected function getStatsForWarrior(Item $item, $target)
     {
-        
+        return array();
     }
     
     /**
@@ -32,7 +34,7 @@ abstract class WeaponItemGenerator extends ItemGenerator
      */
     protected function getStatsForWizard(Item $item, $target)
     {
-        
+        return array();
     }
     
     /**
@@ -42,7 +44,7 @@ abstract class WeaponItemGenerator extends ItemGenerator
      */
     protected function getStatsForMixed(Item $item, $target)
     {
-        
+        return array();
     }
     
     protected function getStats(Item $item, $target)
