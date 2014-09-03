@@ -85,6 +85,8 @@ class Dungeon extends Base_Model
      */
     public function convert_into_king(Character $character)
     {
+        Message::king_of_dungeon($character);
+        
         Laravel\IoC::resolve("Skill")
                    ->find(Config::get("game.vip_reduction_time_skill"))
                    ->cast($character, $character);
