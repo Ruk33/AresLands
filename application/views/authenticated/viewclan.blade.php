@@ -178,7 +178,7 @@
 								<li><b>Ultima actividad:</b> {{ date("d/m/Y", $member->last_activity_time) }}</li>
 								@if ( $character->id == $clan->leader_id && $character->id != $member->id )
 								<li>
-									{{ Form::open(URL::to('authenticated/giveLeaderShip')) }}
+									{{ Form::open(URL::to_route("post_authenticated_clan_give_leader")) }}
 										{{ Form::token() }}
 										{{ Form::hidden('id', $member->id) }}
 
