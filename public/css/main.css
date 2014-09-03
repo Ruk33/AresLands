@@ -79,6 +79,7 @@ textarea {
 .dungeon-king-congratulations-box-content {
     margin-left: 150px;
     padding-top: 50px;
+    text-shadow: 0 0 5px black;
 }
 
 h2.dungeon-name {
