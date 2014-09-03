@@ -29,7 +29,11 @@ class Authenticated_Dungeon_Controller extends Authenticated_Base
 	{
 		$character = $this->character->get_logged();
 		$dungeon = $character->zone->dungeon;
-        $actualDungeonLevel = $dungeon->get_character_level($character);
+        $actualDungeonLevel = null;
+        
+        if ($dungeon) {
+            $actualDungeonLevel = $dungeon->get_character_level($character);
+        }
 
 		$this->layout->title = "Mazmorra";
 		$this->layout->content = View::make("authenticated.dungeon", compact(

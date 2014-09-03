@@ -94,5 +94,9 @@
     </div>
 </div>
 @else
-<h1>El calabozo para esta zona aún no ha sido contruído. Vuelve en otra ocación.</h1>
+<div class="dungeon-level-container" style="margin-top: 200px;">
+    <h5 class="text-center" style="padding-top: 32px; color: white; text-shadow: 0 0 5px black;">
+        El calabozo para esta zona aún no ha sido contruído. Vuelve en otra ocación.
+    </h5>
+</div>
 @endif
