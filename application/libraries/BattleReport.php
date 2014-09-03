@@ -68,6 +68,10 @@ class BattleReport
             $message = "Inflige {$damage->get_amount()} de daño";
         }
         
+        if ($damage->get_amount() == 0) {
+            $message = "Daño nulo (0)";
+        }
+        
         $this->damageMessages[] = "<div class='positive'>{$message}</div>";
     }
     

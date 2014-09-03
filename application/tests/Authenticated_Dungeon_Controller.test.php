@@ -2,7 +2,7 @@
 
 use Mockery as m;
 
-abstract class Authenticated_Dungeon_Controller_Test extends Tests\TestHelper
+class Authenticated_Dungeon_Controller_Test extends Tests\TestHelper
 {
 	protected $character;
 	protected $dungeon;
@@ -31,84 +31,58 @@ abstract class Authenticated_Dungeon_Controller_Test extends Tests\TestHelper
 		$this->assertHasFilter("get", "authenticated/dungeon", "before", "auth");
 		$this->assertHasFilter("get", "authenticated/dungeon", "before", "hasNoCharacter");
 		
+        $zone = m::mock("Zone");
+        
 		$this->character->shouldReceive("get_logged")->once()->andReturnSelf();
-		$this->dungeon->shouldReceive("available_for")->once()->with($this->character)->andReturnSelf();
-		$this->dungeon->shouldReceive("get")->once()->andReturn(array());
-		
-		$response = $this->get("authenticated/dungeon");
-		
-		$this->assertResponseOk($response);
-		$this->assertViewHasAll($response, array(
-			"title" => "Mazmorras",
-			"character" => $this->character,
-			"dungeons" => array()
-		));
+        $this->character->shouldReceive("zone->results")->once()->andReturn($zone);
+        
+        $zone->shouldReceive("dungeon->results")->once()->andreturn($this->dungeon);
+        
+        $this->dungeon->shouldReceive("get_character_level")->once()->with($this->character)->andReturn(null);
+        
+        $response = $this->get("authenticated/dungeon");
+        
+        $this->assertResponseOk($response);
+        $this->assertViewHasAll($response, array(
+            "title" => "Mazmorra",
+            "dungeon" => $this->dungeon,
+            "character" => $this->character,
+            "actualDungeonLevel" => null
+        ));
 	}
 	
 	public function testPostIndex()
 	{
 		$this->assertHasFilter("post", "authenticated/dungeon", "before", "auth");
 		$this->assertHasFilter("post", "authenticated/dungeon", "before", "hasNoCharacter");
-		
-		Input::replace(array("id" => 1));
-		
-		$this->dungeon
-			 ->shouldReceive("find_or_die")
-			 ->times(3)
-			 ->with(1)
-			 ->andReturnSelf();
-		
-		$this->character
-			 ->shouldReceive("get_logged")
-			 ->times(3)
-			 ->andReturnSelf();
-		
-		$this->dungeon
-			 ->shouldReceive("can_character_do_dungeon")
-			 ->times(3)
-			 ->with($this->character)
-			 ->andReturn("foo", true);
-		
-		$response = $this->post("authenticated/dungeon");
-		
-		$this->assertRedirect(
-			URL::to_route("get_authenticated_index"), 
-			$response
-		);
-		
-		$this->assertSessionHas("error", "foo");
-		
-		$dungeonBattle = m::mock("DungeonBattle");
-		
-		$this->character
-			 ->shouldReceive("do_dungeon")
-			 ->twice()
-			 ->with($this->dungeon)
-			 ->andReturn($dungeonBattle);
-		
-		$dungeonBattle->shouldReceive("get_completed")
-					  ->twice()
-					  ->andReturn(false, true);
-		
-		$response = $this->post("authenticated/dungeon");
-		
-		$this->assertRedirect(
-			URL::to_route("get_authenticated_index"), 
-			$response
-		);
-		
-		$this->assertSessionHas(
-			"error", 
-			"Uno de los monstruos de la mazmorra te ha derrotado"
-		);
-		
-		$response = $this->post("authenticated/dungeon");
-		
-		$this->assertRedirect(
-			URL::to_route("get_authenticated_index"), 
-			$response
-		);
-		
-		$this->assertSessionHas("success", "¡Haz completado la mazmorra!");
+        
+        $dungeonId = 5;
+        $dungeonLevel = m::mock("DungeonLevel");
+        $dungeonBattle = m::mock("DungeonBattle");
+        $reportMessage = m::mock("Message");
+        $reportMessageId = 6;
+        
+        Input::replace(array("dungeon_id" => $dungeonId));
+        
+        $this->dungeon->shouldReceive("find_or_die")->twice()->with($dungeonId)->andReturnSelf();
+        
+        $this->character->shouldReceive("get_logged")->twice()->andReturnSelf();
+        
+        $this->dungeon->shouldReceive("get_character_level")->twice()->with($this->character)->andReturn($dungeonLevel);
+        
+        $this->dungeon->shouldReceive("do_level_or_error")->twice()->with($this->character, $dungeonLevel)->andReturn("sponge bob knows", $dungeonBattle);
+        
+        $response = $this->post("authenticated/dungeon");
+        
+        $this->assertSessionHas("error", "sponge bob knows");
+        $this->assertRedirectToRoute("get_authenticated_dungeon_index", $response);
+        
+        $dungeonBattle->shouldReceive("getAttackerReport->getMessage")->once()->andReturn($reportMessage);
+        
+        $reportMessage->shouldReceive("get_id")->once()->andReturn($reportMessageId);
+        
+        $response = $this->post("authenticated/dungeon");
+        
+        $this->assertRedirectTo(URL::to_route("get_authenticated_message_read", array($reportMessageId)), $response);
 	}
 }

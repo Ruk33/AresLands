@@ -381,9 +381,9 @@
 								@endif
                                 
                                 @if ( $character->can_fight() === true )
-								<li data-toggle="tooltip" data-original-title="Calabozos en mantenimiento, ¡pronto seran activados nuevamente!">
+								<li>
 									<i class="img-circle menu-icon menu-dungeons"></i>
-									<span class="negative" style="margin-left: 5px;">Calabozos</span>
+									<a href="{{ URL::to_route("get_authenticated_dungeon_index") }}">Calabozo</a>
 								</li>
 								@endif
 								

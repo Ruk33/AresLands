@@ -16,6 +16,7 @@ class Create_Character_Dungeons_Table
             $table->integer("character_id");
             $table->integer("dungeon_id");
             $table->integer("dungeon_level");
+            $table->integer("last_attempt");
         });
 	}
 

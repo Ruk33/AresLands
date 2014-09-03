@@ -5,155 +5,347 @@ class Dungeon extends Base_Model
 	public static $softDelete = false;
 	public static $timestamps = false;
 	public static $table = 'dungeons';
-	public static $key = 'id';
-
-	/**
-	 * Niveles de dungeon
-	 * En cada nivel, los atributos de los bichos se multiplicaran
-	 * asi como las chances de drop.
-	 * El multiplicador sera el nivel (por ejemplo en nivel elite
-	 * se multiplica por 6)
-	 */
-	const NOOB_LEVEL   = 1;
-	const NORMAL_LEVEL = 2;
-	const EXPERT_LEVEL = 4;
-	const ELITE_LEVEL  = 6;
-	
-	/**
-	 * Verificamos si personaje puede realizar dungeon
-	 * @param  Character $character 
-	 * @return boolean|string
-	 */
-	public function can_character_do_dungeon(Character $character)
-	{
-		if ( $character->level < $this->min_level )
-		{
-			return "No tienes suficiente nivel";
-		}
-
-		if ( $character->zone_id != $this->zone_id )
-		{
-			return "La mazmorra no esta en la zona donde estas";
-		}
-
-		if ( $character->activities()->take(1)->count() != 0 )
-		{
-			return "Debes terminar tus actividades antes de poder iniciar una mazmorra";
-		}
-
-		return true;
-	}
-
-	/**
-	 * Obtenemos el porcentaje (1-100) de progreso
-	 * @param  Character $character 
-	 * @param  integer   $level      Nivel del dungeon
-	 * @return integer
-	 */
-	public function get_progress_percent_of(Character $character, $level)
-	{
-		$monstersKilled = $character->dungeons()
-									->where('dungeon_id', '=', $this->id)
-									->where('dungeon_level', '=', $level)
-									->count();
-		$totalMonsters = $this->monsters()->count();
-
-		return (int) ($monstersKilled * 100 / $totalMonsters);
-	}
-
-	/**
-	 * Obtenemos el nivel de dungeon del personaje
-	 * @param  Character $character 
-	 * @return integer
-	 */
-	public function get_level(Character $character)
-	{
-		$levels = array(self::NOOB_LEVEL, self::NORMAL_LEVEL, self::EXPERT_LEVEL, self::ELITE_LEVEL);
-
-		foreach ( $levels as $level )
-		{
-			if ( $this->get_progress_percent_of($character, $level) != 100 )
-			{
-				return $level;
-			}
-		}
-
-		return self::ELITE_LEVEL;
-	}
-
-	/**
-	 * Query para obtener dungeons disponibles para personaje
-	 * @param  Character
-	 * @return Eloquent
-	 */
-	public static function available_for(Character $character)
-	{
-		return self::where('zone_id', '=', $character->zone_id)
-				   ->where('min_level', '<=', $character->level);
-	}
-
-	/**
-	 * Obtenemos nivel promedio de dungeon
-	 * @return integer
-	 */
-	public function get_average_level()
-	{
-		$monsters = $this->monsters()->select(array('level'))->get();
-		$levelSum = 0;
-
-		foreach ( $monsters as $monster )
-		{
-			$levelSum += $monster->level;
-		}
-
-		return (int) ($levelSum / max(count($monsters), 1));
-	}
-
-	/**
-	 * Verificamos si personaje ha derrotado a mounstruo en dungeon
-	 * @param  Character $character 
-	 * @param  Monster   $monster   
-	 * @return boolean
-	 */
-	public function character_has_defeated_monster(Character $character, Monster $monster)
-	{
-		return $character->dungeons()
-						 ->where('dungeon_id', '=', $this->id)
-						 ->where('monster_id', '=', $monster->id)
-						 ->take(1)
-						 ->count() > 0;
-	}
-
-	/**
-	 * Verificamos si personaje puede ver el stat de un mounstruo
-	 * @param  Character $character 
-	 * @return boolean
-	 */
-	public function can_character_see_stats_of_monster(Character $character, Monster $monster)
-	{
-		if ( (bool) $this->show_monsters_stats )
-		{
-			return true;
-		}
-
-		return $this->character_has_defeated_monster($character, $monster);
-	}
-
-	/**
-	 * Query para obtener mounstruos de dungeon
-	 * @return Eloquent
-	 */
-	public function monsters()
-	{
-		return $this->has_many_and_belongs_to("Monster", "dungeon_monsters");
-	}
-
-	/**
-	 * Query para obtener recompensas de mazmorra
-	 * @return Eloquent
-	 */
-	public function rewards()
-	{
-		return $this->has_many("DungeonReward", "dungeon_id");
-	}
+    
+    /**
+     * Precio de monedas vip que tiene que gastar para evitar el CD
+     */
+    const VIP_PRICE = 10;
+    
+    /**
+     * 
+     * @param Character $character
+     * @return CharacterDungeon
+     */
+    public function get_character_progress(Character $character)
+    {
+        return $character->dungeons()->where_dungeon_id($this->id)->first();
+    }
+    
+    /**
+     * 
+     * @param Character $character
+     * @return \CharacterDungeon
+     */
+    protected function get_character_progress_or_create(Character $character)
+    {
+        $progress = $this->get_character_progress($character);
+        
+        if (! $progress) {
+            $progress = new CharacterDungeon(array(
+                "character_id" => $character->id,
+                "dungeon_id" => $this->id,
+                "dungeon_level" => 1,
+                "last_attempt" => time(),
+            ));
+            
+            $progress->save();
+        }
+        
+        return $progress;
+    }
+    
+    /**
+     * 
+     * @param Character $character
+     * @param DungeonLevel $dungeonLevel
+     */
+    public function after_battle(Character $character, DungeonLevel $dungeonLevel)
+    {
+        $progress = $this->get_character_progress_or_create($character);
+        
+        $progress->last_attempt = time() + 15 * 60 * 60;
+        $progress->save();
+    }
+    
+    /**
+     * Verificamos si personaje es rey
+     * 
+     * @param Character $character
+     * @return boolean
+     */
+    public function is_character_king(Character $character)
+    {
+        return $character->id == $this->king_id;
+    }
+    
+    /**
+     * Reiniciamos el progreso de la mazmorra al personaje
+     * 
+     * @param Character $character
+     */
+    public function reset_progress(Character $character)
+    {
+        $character->dungeons()->where_dungeon_id($this->id)->delete();
+    }
+    
+    /**
+     * Convertimos personaje a rey
+     * 
+     * @param Character $character
+     */
+    public function convert_into_king(Character $character)
+    {
+        Laravel\IoC::resolve("Skill")
+                   ->find(Config::get("game.vip_reduction_time_skill"))
+                   ->cast($character, $character);
+        
+        $this->king_id = $character->id;
+        $this->king_since = time();
+        
+        $this->save();
+    }
+    
+    /**
+     * Verificamos si personaje puede ser rey
+     * 
+     * @param Character $character
+     * @return boolean
+     */
+    public function can_be_king(Character $character)
+    {
+        $characterIsAlreadyKing = $this->where_king_id($character->id)
+                                       ->take(1)
+                                       ->count() == 1;
+        
+        if ($characterIsAlreadyKing) {
+            return false;
+        }
+        
+        $progress = $this->get_character_progress($character);
+        
+        if (! $progress) {
+            return false;
+        }
+        
+        if ($progress->dungeon_level < $this->get_last_level()->dungeon_level) {
+            return false;
+        }
+        
+        return true;
+    }    
+    
+    /**
+     * Llamar este metodo cuando el personaje logra pasar un nivel del dungeon
+     * 
+     * @param Character $character
+     * @param DungeonLevel $dungeonLevel Nivel del dungeon que logro pasar
+     */
+    public function do_progress(Character $character, DungeonLevel $dungeonLevel)
+    {
+        $progress = $this->get_character_progress_or_create($character);
+        
+        $progress->dungeon_level++;
+        $progress->save();
+        
+        if ($this->can_be_king($character)) {
+            $this->convert_into_king($character);
+        }
+    }
+    
+    /**
+     * 
+     * @param Character $character
+     * @param DungeonLevel $dungeonLevel
+     * @return boolean
+     */
+    public function has_character_completed_level(Character $character, 
+                                                  DungeonLevel $dungeonLevel)
+    {
+        $progress = $this->get_character_progress($character);
+        
+        if ($progress) {
+            return $progress->dungeon_level > $dungeonLevel->dungeon_level;
+        }
+        
+        return false;
+    }
+    
+    /**
+     * 
+     * @param Character $character
+     * @param boolean $formatted
+     * @return integer|string
+     */
+    public function get_character_cd(Character $character, $formatted = false) {
+        $cd = 0;
+        
+        if ($progress = $this->get_character_progress($character)) {
+            $cd = max(0, $progress->last_attempt - time());
+        }
+        
+        if ($formatted) {
+            $cd = Carbon\Carbon::createFromTime(0, 0, 0)
+                               ->addSeconds($cd)
+                               ->toTimeString();
+        }
+        
+        return $cd;
+    }
+    
+    /**
+     * 
+     * @params Character $character
+     * @return boolean
+     */
+    public function has_character_cd(Character $character)
+    {
+        return $this->get_character_cd($character) > 0;
+    }
+    
+    /**
+     * Verificamos si personaje puede hacer nivel
+     * 
+     * @param Character $character
+     * @param DungeonLevel $dungeonLevel
+     * @return boolean
+     */
+    public function can_character_do_level(Character $character, DungeonLevel $dungeonLevel)
+    {
+        if ($this->has_character_cd($character)) {
+            return false;
+        }
+        
+        if ($this->is_character_king($character)) {
+            return false;
+        }
+        
+        $prev = $dungeonLevel->prev();
+        
+        if ($prev && ! $this->has_character_completed_level($character, $prev)) {
+            return false;
+        }
+        
+        return true;
+    }
+    
+    /**
+     * 
+     * @param Character $character
+     * @param DungeonLevel $dungeonLevel
+     * @return Battle
+     */
+    public function do_level(Character $character, DungeonLevel $dungeonLevel)
+    {
+        $dungeonLevel->consume_required_item($character);
+        
+        return new DungeonBattle(
+            $character, 
+            $dungeonLevel->target()->first(), 
+            $dungeonLevel
+        );
+    }
+    
+    /**
+     * 
+     * @param Character $character
+     * @return null|DungeonLevel
+     */
+    public function get_character_level(Character $character)
+    {
+        $progress = $this->get_character_progress($character);
+        $dungeonLevel = null;
+        
+        if (! $progress) {
+            $dungeonLevel = $this->levels()->first();
+        } else {
+            $dungeonLevel = $this->levels()
+                                 ->where_dungeon_level($progress->dungeon_level)
+                                 ->first();
+            
+            // Si el nivel no existe, o el personaje ya es rey
+            // entonces pasamos directamente el nivel del rey
+            if (! $dungeonLevel || $this->is_character_king($character)) {
+                $dungeonLevel = $this->get_last_level()->next();
+            }
+        }
+        
+        return $dungeonLevel;
+    }
+    
+    /**
+     * 
+     * @param Character $character
+     * @param DungeonLevel $dungeonLevel
+     * @return string|DungeonBattle
+     */
+    public function do_level_or_error(Character $character, 
+                                      DungeonLevel $dungeonLevel)
+    {
+        if ($character->zone_id != $this->zone_id) {
+            return "¡Las trampas no son bienvenidas en las mazmorras!";
+        }
+        
+        if ($character->level < $dungeonLevel->required_level) {
+            return "No tienes suficiente nivel";
+        }
+        
+        if ($this->has_character_completed_level($character, $dungeonLevel)) {
+            return "Ya tienes ese nivel completo";
+        }
+        
+        // El nivel previo puede ser null
+        $prevDungeonLevel = $dungeonLevel->prev();
+        
+        if ($prevDungeonLevel) {            
+            if (! $this->has_character_completed_level($character, $prevDungeonLevel)) {
+                return "Debes completar el nivel previo";
+            }
+        }
+        
+        if ($this->has_character_cd($character)) {
+            if (! $character->user->consume_coins(self::VIP_PRICE)) {
+                return "No tienes suficientes IronCoins";
+            }
+        }
+        
+        if ($item = $dungeonLevel->required_item) {
+            $hasItem = $character->items()
+                                 ->where_item_id($item->id)
+                                 ->take(1)
+                                 ->count() == 1;
+            
+            if (! $hasItem) {
+                return "No tienes el objeto requerido";
+            }
+        }
+        
+        return $this->do_level($character, $dungeonLevel);
+    }
+    
+    /**
+     * Obtenemos el ultimo nivel de la mazmorra
+     * 
+     * @return DungeonLevel
+     */
+    public function get_last_level()
+    {
+        return $this->levels()->order_by("dungeon_level", "desc")->first();
+    }
+    
+    /**
+     * 
+     * @return Relationship
+     */
+    public function levels()
+    {
+        return $this->has_many("DungeonLevel", "dungeon_id");
+    }
+    
+    /**
+     * 
+     * @return Relationship
+     */
+	public function king()
+    {
+        return $this->belongs_to("Character", "king_id");
+    }
+    
+    /**
+     * 
+     * @return Relationship
+     */
+    public function zone()
+    {
+        return $this->belongs_to("Zone", "zone_id");
+    }
 }

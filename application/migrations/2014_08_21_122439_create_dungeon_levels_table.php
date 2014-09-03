@@ -13,13 +13,13 @@ class Create_Dungeon_Levels_Table
 		\Laravel\Database\Schema::create('dungeon_levels', function($table)
         {
             $table->increments("id");
+            $table->integer("dungeon_id");
             $table->integer("dungeon_level");
             $table->integer("monster_id");
+            $table->string("big_image_path");
             $table->integer("required_item_id");
             $table->integer("required_level");
-            
-            // Tipo de monstruo (normal, jefe, final)
-            $table->integer("type");
+            $table->integer("type"); // Tipo de monstruo (normal, jefe, final)
         });
 	}
 

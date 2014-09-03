@@ -28,38 +28,31 @@ class Authenticated_Dungeon_Controller extends Authenticated_Base
 	public function get_index()
 	{
 		$character = $this->character->get_logged();
-		$dungeons = $this->dungeon->available_for($character)->get();
+		$dungeon = $character->zone->dungeon;
+        $actualDungeonLevel = $dungeon->get_character_level($character);
 
-		$this->layout->title = "Mazmorras";
+		$this->layout->title = "Mazmorra";
 		$this->layout->content = View::make("authenticated.dungeon", compact(
-			"character", "dungeons"
+			"character", "dungeon", "actualDungeonLevel"
 		));
 	}
 	
 	public function post_index()
 	{
-		$dungeon = $this->dungeon->find_or_die(Input::get("id"));
+		$dungeon = $this->dungeon->find_or_die(Input::get("dungeon_id"));
 		$character = $this->character->get_logged();
-		$canDungeon = $dungeon->can_character_do_dungeon($character);
+        $dungeonLevel = $dungeon->get_character_level($character);
+		$dungeonBattle = $dungeon->do_level_or_error($character, $dungeonLevel);
 		
-		if ( $canDungeon === true )
-		{
-			$dungeonBattle = $character->do_dungeon($dungeon);
-			
-			if ( $dungeonBattle->get_completed() )
-			{
-				Session::flash("success", "¡Haz completado la mazmorra!");
-			}
-			else
-			{
-				Session::flash("error", "Uno de los monstruos de la mazmorra te ha derrotado");
-			}
-		}
-		else
-		{
-			Session::flash("error", $canDungeon);
-		}
+        if (is_string($dungeonBattle)) {
+            Session::flash("error", $dungeonBattle);
+            return Laravel\Redirect::to_route("get_authenticated_dungeon_index");
+        }
+        
+		$reportMessage = $dungeonBattle->getAttackerReport()->getMessage();
 		
-		return Laravel\Redirect::to_route("get_authenticated_index");
+		return \Laravel\Redirect::to_route("get_authenticated_message_read", array(
+			$reportMessage->id
+		));
 	}
 }

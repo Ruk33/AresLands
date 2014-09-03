@@ -105,6 +105,15 @@ class Damage
     }
     
     /**
+     * 
+     * @param float $value
+     */
+    public function set_amount($value)
+    {
+        $this->amount = $value;
+    }
+    
+    /**
      * Obtenemos chance de critico
      * 
      * @param Unit $target

@@ -35,6 +35,11 @@ class Message extends Base_Model
 		return $this->belongs_to('Character', 'sender_id');
 	}
     
+    public static function king_of_dungeon(Character $character)
+    {
+        
+    }
+    
     public static function orb_chest_reward(Character $character, $amount)
     {
         $message = new Message();

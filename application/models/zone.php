@@ -33,4 +33,9 @@ class Zone extends Base_Model
 	{
 		return $this->has_many('Npc', 'zone_id');
 	}
+    
+    public function dungeon()
+    {
+        return $this->has_one('Dungeon', 'zone_id');
+    }
 }

@@ -13,7 +13,7 @@ class CharacterDamage extends Damage
             $this->get_attacker()->critical_chance + 
             $this->get_attacker()->critical_chance_extra;
         
-        return max(50, ($dex + $msk) / $lvl / 5 + $crt);
+        return min(50, ($dex + $msk) / $lvl / 5 + $crt);
     }
     
     protected function get_damage()

@@ -115,12 +115,21 @@ abstract class Battle
     public function getWinner()
     {
         $attackerIsAlive = $this->getAttacker()->get_current_life() > 0;
+        $targetIsAlive = $this->getTarget()->get_current_life() > 0;
         $damageByAttacker = $this->getAttackerReport()->getDamageDone();
         $damageByTarget = $this->getTargetReport()->getDamageDone();
         $attackerHasDoneMoreDamage = $damageByAttacker > $damageByTarget;
         
-        if ($attackerIsAlive && $attackerHasDoneMoreDamage) {
-            $this->winner = $this->getAttacker();
+        if ($attackerIsAlive) {
+            if ($targetIsAlive) {
+                if ($attackerHasDoneMoreDamage) {
+                    $this->winner = $this->getAttacker();
+                } else {
+                    $this->winner = $this->getTarget();
+                }
+            } else {
+                $this->winner = $this->getAttacker();
+            }
         } else {
             $this->winner = $this->getTarget();
         }

@@ -91,7 +91,7 @@ class Monster extends Npc
 
 	public function set_current_life($value)
 	{
-		$this->current_life = min($value, $this->life);
+		$this->current_life = min(max(0, $value), $this->life);
 	}
 
 	public function check_skills_time()

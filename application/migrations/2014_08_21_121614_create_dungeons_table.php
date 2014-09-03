@@ -1,7 +1,5 @@
 <?php
 
-use Laravel\Database\Schema;
-
 class Create_Dungeons_Table
 {
 
@@ -12,7 +10,7 @@ class Create_Dungeons_Table
 	 */
 	public function up()
 	{
-		Schema::create('dungeons', function(Table $table)
+		\Laravel\Database\Schema::create('dungeons', function($table)
         {
             $table->increments("id");
             $table->integer("zone_id");
@@ -28,7 +26,7 @@ class Create_Dungeons_Table
 	 */
 	public function down()
 	{
-		Schema::drop('dungeons');
+		\Laravel\Database\Schema::drop('dungeons');
 	}
 
 }

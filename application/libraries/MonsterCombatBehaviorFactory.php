@@ -7,6 +7,13 @@ class MonsterCombatBehaviorFactory
     const DUNGEON_BOSS_SETH = 535958;
     const DUNGEON_BOSS_ONIX = 595959;
     
+    // Monstruos mazmorra Lago Subterraneo
+    const DUNGEON_MONSTER_MAGO_OSCURO = 195;
+    const DUNGEON_MONSTER_ESPECTRO = 196;
+    const DUNGEON_MONSTER_MAESTRO_ELEMENAL = 197;
+    const DUNGEON_MONSTER_GUERRERO_ANTIGUO = 198;
+    const DUNGEON_MONSTER_MAGA_EMPERATRIZ = 199;
+    
     /**
      * Obtenemos el comportamiento de batalla segun el monstruo
      * 
@@ -18,6 +25,18 @@ class MonsterCombatBehaviorFactory
         $combatBehavior = null;
         
         switch ($monster->id) {
+            case self::DUNGEON_MONSTER_MAGO_OSCURO:
+            case self::DUNGEON_MONSTER_ESPECTRO:
+            case self::DUNGEON_MONSTER_MAESTRO_ELEMENAL:
+            case self::DUNGEON_MONSTER_GUERRERO_ANTIGUO:
+            case self::DUNGEON_MONSTER_MAGA_EMPERATRIZ:
+                $combatBehavior = new AttackableBehavior(
+                    $monster, 
+                    new DungeonMonsterDamage($monster),
+                    new DungeonMonsterArmor($monster)
+                );
+                break;
+            
             case self::DUNGEON_BOSS_NESSY:
                 $combatBehavior = new NessyCombatBehavior(
                     $monster, 

@@ -20,6 +20,25 @@ class Item extends Base_Model
     const WIZARD  = 2;
     const MIXED   = 3;
     
+    /**
+     * 
+     * @param string $tooltip
+     * @return string
+     */
+    public function get_tiny_box_for_view($tooltip = "")
+    {
+        $tooltipAttributes = "";
+        
+        if ($tooltip) {
+            $tooltipAttributes = 
+                'data-toggle="tooltip" data-original-title="' . $tooltip . '"';
+        }
+        
+        return '<div class="quest-reward-item" ' . $tooltipAttributes . '>' . 
+               '<img src="' . $this->get_image_path() . '" />' .
+               '</div>';
+    }
+    
 	/**
 	 * Obtenemos la ruta de la imagen del objeto
 	 * @return string
