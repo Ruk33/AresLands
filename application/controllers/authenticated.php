@@ -30,6 +30,8 @@ class Authenticated_Controller extends Authenticated_Base
 	public function get_index()
 	{        
         $character = $this->character->get_logged();
+        
+        Message::king_of_dungeon($character);
                 
 		$character->give_logged_of_day_reward(true);
 

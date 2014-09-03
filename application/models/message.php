@@ -37,7 +37,19 @@ class Message extends Base_Model
     
     public static function king_of_dungeon(Character $character)
     {
+        $message = new Message();
+
+		$message->sender_id = $character->id;
+		$message->receiver_id = $character->id;
         
+        $message->subject = "¡Felicidades, te haz convertido en rey de una mazmorra!";
+        $message->content = View::make('messages.kingofdungeon')->render();
+        $message->unread = true;
+		$message->date = time();
+		$message->type = 'received';
+		$message->is_special = true;
+
+		$message->save();
     }
     
     public static function orb_chest_reward(Character $character, $amount)

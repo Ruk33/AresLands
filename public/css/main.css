@@ -57,6 +57,30 @@ textarea {
 /*
  * Dungeons
  */
+.dungeon-king-congratulations-box {
+    background-image: url("/img/rock-background.png");
+    background-repeat: no-repeat;
+    width: 725px;
+    height: 198px;
+    font-size: 14px;
+    font-family: Georgia;
+    margin: 0 auto;
+}
+
+.dungeon-king-congratulations-box h4 {
+    color: #e9c73f;
+    font-size: 14px;
+}
+
+.dungeon-king-congratulations-box p {
+    color: white;
+}
+
+.dungeon-king-congratulations-box-content {
+    margin-left: 150px;
+    padding-top: 50px;
+}
+
 h2.dungeon-name {
     background-position: 50% 100%;
     color: rgb(189, 88, 49);
