@@ -24,7 +24,7 @@ class Authenticated_Dungeon_Controller extends Authenticated_Base
 		
 		parent::__construct();
 	}
-
+    /*
 	public function get_index()
 	{
 		$character = $this->character->get_logged();
@@ -59,4 +59,6 @@ class Authenticated_Dungeon_Controller extends Authenticated_Base
 			$reportMessage->id
 		));
 	}
+     * 
+     */
 }
