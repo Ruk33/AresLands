@@ -36,7 +36,7 @@
 		
 		<ul class="inline" style="margin-top: 40px; margin-bottom: 25px;">
 			<li>
-				<span data-toggle="tooltip" data-placement="top" data-original-title="<b>Fuerza física:</b> Aumenta la potencia de tus ataques físicos.">
+                <span data-toggle="tooltip" data-placement="top" data-original-title="<b>Fuerza:</b> Aumenta tu daño en ataques físicos y tu posibilidad de bloquear daño. Además, reduce la posibilidad del enemigo de bloquear tu daño.">
 					<span class="ui-button button" style="cursor: default;">
 						<i class="button-icon axe"></i>
 						<span class="button-content">
@@ -50,7 +50,7 @@
 				</span>
 			</li>
 			<li>
-				<span data-toggle="tooltip" data-placement="top" data-original-title="<b>Destreza física:</b> Aumenta tu velocidad de golpeo en las batallas, pudiendo lograr así múltiples ataques consecutivos.">
+                <span data-toggle="tooltip" data-placement="top" data-original-title="<b>Destreza física:</b> Aumenta tu chance de ataques críticos (tanto mágicos como físicos) y tu posibilidad de esquivar ataques. Reduce además, la chance del enemigo de que esquive tus ataques.">
 					<span class="ui-button button" style="cursor: default;">
 						<i class="button-icon boot"></i>
 						<span class="button-content">
@@ -64,7 +64,7 @@
 				</span>
 			</li>
 			<li>
-				<span data-toggle="tooltip" data-placement="top" data-original-title="<b>Resistencia:</b> Aumenta tu defensa contra ataques físicos.">
+                <span data-toggle="tooltip" data-placement="top" data-original-title="<b>Resistencia física:</b> Aumenta tu resistencia contra ataques físicos.">
 					<span class="ui-button button" style="cursor: default;">
 						<i class="button-icon hearth"></i>
 						<span class="button-content">
@@ -78,7 +78,7 @@
 				</span>
 			</li>
 			<li>
-				<span data-toggle="tooltip" data-placement="top" data-original-title="<b>Poder mágico:</b> Aumenta el poder de los ataques mágicos.">
+                <span data-toggle="tooltip" data-placement="top" data-original-title="<b>Poder mágico:</b> Aumenta tu daño en ataques mágicos y reduce la chance de bloqueo del enemigo.">
 					<span class="ui-button button" style="cursor: default;">
 						<i class="button-icon fire"></i>
 						<span class="button-content">
@@ -92,7 +92,7 @@
 				</span>
 			</li>
 			<li>
-				<span data-toggle="tooltip" data-placement="top" data-original-title="<b>Habilidad mágica:</b> Aumenta tu velocidad de golpeo en las batallas, pudiendo lograr así múltiples ataques consecutivos.">
+                <span data-toggle="tooltip" data-placement="top" data-original-title="<b>Habilidad mágica:</b> Aumenta tu chance de golpe crítico mágico.">
 					<span class="ui-button button" style="cursor: default;">
 						<i class="button-icon arrow"></i>
 						<span class="button-content">
@@ -106,7 +106,7 @@
 				</span>
 			</li>
 			<li>
-				<span data-toggle="tooltip" data-placement="top" data-original-title="<b>Contraconjuro:</b> Aumenta tu defensa contra ataques mágicos.">
+                <span data-toggle="tooltip" data-placement="top" data-original-title="<b>Contraconjuro:</b> Aumenta tu resistencia contra ataques mágicos.">
 					<span class="ui-button button" style="cursor: default;">
 						<i class="button-icon thunder"></i>
 						<span class="button-content">
@@ -126,7 +126,7 @@
 			
 			<ul class="inline" style="margin-top: 40px; margin-bottom: 25px;">
 				<li>
-					<span data-toggle="tooltip" data-placement="top" data-original-title="<b>Fuerza física:</b> Aumenta la potencia de tus ataques físicos.">
+					<span data-toggle="tooltip" data-placement="top" data-original-title="Fuerza física">
 						<span class="ui-button button" style="cursor: default;">
 							<i class="button-icon axe"></i>
 							<span class="button-content">
@@ -136,7 +136,7 @@
 					</span>
 				</li>
 				<li>
-					<span data-toggle="tooltip" data-placement="top" data-original-title="<b>Destreza física:</b> Aumenta tu velocidad de golpeo en las batallas, pudiendo lograr así múltiples ataques consecutivos.">
+					<span data-toggle="tooltip" data-placement="top" data-original-title="Destreza física">
 						<span class="ui-button button" style="cursor: default;">
 							<i class="button-icon boot"></i>
 							<span class="button-content">
@@ -146,7 +146,7 @@
 					</span>
 				</li>
 				<li>
-					<span data-toggle="tooltip" data-placement="top" data-original-title="<b>Resistencia:</b> Aumenta tu defensa contra ataques físicos.">
+					<span data-toggle="tooltip" data-placement="top" data-original-title="Resistencia física">
 						<span class="ui-button button" style="cursor: default;">
 							<i class="button-icon hearth"></i>
 							<span class="button-content">
@@ -156,7 +156,7 @@
 					</span>
 				</li>
 				<li>
-					<span data-toggle="tooltip" data-placement="top" data-original-title="<b>Poder mágico:</b> Aumenta el poder de los ataques mágicos.">
+					<span data-toggle="tooltip" data-placement="top" data-original-title="Poder mágico">
 						<span class="ui-button button" style="cursor: default;">
 							<i class="button-icon fire"></i>
 							<span class="button-content">
@@ -166,7 +166,7 @@
 					</span>
 				</li>
 				<li>
-					<span data-toggle="tooltip" data-placement="top" data-original-title="<b>Habilidad mágica:</b> Aumenta tu velocidad de golpeo en las batallas, pudiendo lograr así múltiples ataques consecutivos.">
+					<span data-toggle="tooltip" data-placement="top" data-original-title="Habilidad mágica">
 						<span class="ui-button button" style="cursor: default;">
 							<i class="button-icon arrow"></i>
 							<span class="button-content">
@@ -176,7 +176,7 @@
 					</span>
 				</li>
 				<li>
-					<span data-toggle="tooltip" data-placement="top" data-original-title="<b>Contraconjuro:</b> Aumenta tu defensa contra ataques mágicos.">
+					<span data-toggle="tooltip" data-placement="top" data-original-title="Contraconjuro">
 						<span class="ui-button button" style="cursor: default;">
 							<i class="button-icon thunder"></i>
 							<span class="button-content">
