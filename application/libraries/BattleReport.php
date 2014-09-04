@@ -57,15 +57,16 @@ class BattleReport
      */
     public function registerDoneDamage(Unit $target, Damage $damage)
     {
-        $this->damageDone += $damage->get_amount();
-                
+        $amount = (int) $damage->get_amount();
+        $this->damageDone += $amount;
+        
         if ($damage->is_miss()) {
             $message = "<div class='missed-hit'>¡Falla el ataque!</div>";
         } elseif ($damage->is_critical()) {
             $message = "<div class='critical-hit'>¡Golpe critico, "
-                     . "inflige {$damage->get_amount()} de daño!</div>";
+                     . "inflige {$amount} de daño!</div>";
         } else {
-            $message = "Inflige {$damage->get_amount()} de daño";
+            $message = "Inflige {$amount} de daño";
         }
         
         if ($damage->get_amount() == 0) {
@@ -91,9 +92,10 @@ class BattleReport
      */
     public function registerTakenDamage(Unit $attacker, Damage $damage)
     {
-        $this->damageTaken += $damage->get_amount();
+        $amount = (int) $damage->get_amount();
+        $this->damageTaken += $amount;
         
-        $message = "Recibe {$damage->get_amount()} de daño";
+        $message = "Recibe {$amount} de daño";
         $this->damageMessages[] = "<div class='negative'>{$message}</div>";
     }
     

@@ -55,6 +55,72 @@ textarea {
    ========================================================================== */
 
 /*
+ * Atributos secundarios
+ */
+.secondary-attributes-li {
+    margin-top: 15px;
+    margin-bottom: 15px;
+}
+
+.secondary-attribute {
+    background-image: url("/img/secondary-attributes-sprite.png");
+    background-repeat: no-repeat;
+    width: 34px;
+    height: 34px;
+}
+
+.secondary-attribute.block-chance {
+    background-position: 0 0;
+}
+
+.secondary-attribute.block {
+    background-position: -44px 0;
+}
+
+.secondary-attribute.critical-chance {
+    background-position: -92px 0;
+}
+
+.secondary-attribute.critical-multiplier {
+    background-position: -139px 0;
+}
+
+.secondary-attribute.evasion {
+    background-position: -183px 0;
+}
+
+.secondary-attribute.double-hit {
+    background-position: -228px 0;
+}
+
+/*
+ * Calidad de los objetos
+ */
+.item-poor-quality {
+    color: gray;
+}
+
+.item-common-quality {
+    color: white;
+}
+
+.item-uncommon-quality {
+    color: yellow;
+}
+
+.item-rare-quality {
+    color: greenyellow;
+}
+
+.item-epic-quality {
+    color: orange;
+}
+
+.item-legendary-quality {
+    color: purple;
+}
+
+/*
  * Dungeons
  */
 .dungeon-king-congratulations-box {

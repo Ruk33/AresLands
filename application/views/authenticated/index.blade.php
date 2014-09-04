@@ -278,13 +278,23 @@
 					</p>
 				</div>
 			</li>
+            
+            <li class="secondary-attributes-li">
+                <ul class="inline">
+                    <li data-toggle="tooltip" data-original-title="<b>Chance de bloqueo:</b> Aumenta la chance de bloquear cantidades de daño (ya sea físico o mágico).<div class='positive'>Tu chance de bloqueo es: {{ $character->get_combat_behavior()->get_armor()->get_block_chance($character->get_combat_behavior()->get_damage()) }}%</div>"><div class="secondary-attribute block-chance"></div></li>
+                    <li data-toggle="tooltip" data-original-title="<b>Bloqueo:</b> Aumenta la cantidad de daño a bloquear."><div class="secondary-attribute block"></div></li>
+                    <li data-toggle="tooltip" data-original-title="<b>Chance de crítico:</b> Aumenta la chance de infligir un golpe crítico. Chance máxima, 50%.<div class='positive'>Tu chance de crítico es: {{ number_format($character->get_combat_behavior()->get_damage()->get_critical_chance($character), 2, ',', '.') }}%</div>"><div class="secondary-attribute critical-chance"></div></li>
+                    <li data-toggle="tooltip" data-original-title="<b>Multiplicador de crítico:</b> Aumenta el daño que realizan tus ataques críticos."><div class="secondary-attribute critical-multiplier"></div></li>
+                    <li data-toggle="tooltip" data-original-title="<b>Evasión:</b> Aumenta la chance de eludir completamente un ataque físico o mágico.<div class='positive'>Tu chance de eludir ataques es: {{ number_format($character->get_combat_behavior()->get_armor()->get_miss_chance($character->get_combat_behavior()->get_damage()), 2, ',', '.') }}%</div>"><div class="secondary-attribute evasion"></div></li>
+                    <li data-toggle="tooltip" data-original-title="<b>Doble golpe:</b> Aumenta la chance de efectuar un doble golpe.<div class='positive'>Tu chance de efectuar doble golpe es: {{ number_format($character->get_combat_behavior()->get_damage()->get_double_hit_chance($character), 2, ',', '.') }}%</div>"><div class="secondary-attribute double-hit"></div></li>
+                </ul>
+            </li>
 			
-			<?php $physicalDamage = $character->stat_strength + $character->stat_strength_extra; ?>
 			<li style="margin-bottom: 10px;">
 				<span class="ui-button button" style="cursor: default; width: 250px;">
 					<a ng-click="addStat('stat_strength')" class="button-icon" ng-show="character.points_to_change > 0" style="cursor: pointer;" dynamic-tooltip="statsPrices.strength">+</a>
 					<i class="button-icon axe" ng-show="character.points_to_change <= 0"></i>
-					<span class="button-content" style="width: 200px;" data-toggle="tooltip" data-placement="top" data-original-title="<p><b>Fuerza:</b> Aumenta el poder de los ataques físicos.</p><p>Si posees mas Fuerza que Magia, tu personaje golpeará únicamente con ataques físicos.</p><p class='positive'>Poder de ataque físico: {{ $physicalDamage * 0.25 }}-{{ $physicalDamage * 0.75 }}</p>">
+                    <span class="button-content" style="width: 200px;" data-toggle="tooltip" data-placement="top" data-original-title="<b>Fuerza:</b> Aumenta tu daño en ataques físicos y tu posibilidad de bloquear daño. Además, reduce la posibilidad del enemigo de bloquear tu daño.<div class='positive'>Tu poder físico es: {{ number_format($character->get_combat_behavior()->get_damage()->get_damage($character), 2, ',', '.') }}</div>">
 						<b class="pull-left">Fuerza física:</b>
 
 						<div class="pull-right">
@@ -305,7 +315,7 @@
 				<span class="ui-button button" style="cursor: default; width: 250px;">
 					<a ng-click="addStat('stat_dexterity')" class="button-icon" ng-show="character.points_to_change > 0" style="cursor: pointer;" dynamic-tooltip="statsPrices.dexterity">+</a>
 					<i class="button-icon boot" ng-show="character.points_to_change <= 0"></i>
-					<span class="button-content" style="width: 200px;" data-toggle="tooltip" data-placement="top" data-original-title="<p><b>Destreza:</b> Aumenta tu velocidad de golpeo en las batallas, pudiendo lograr así múltiples ataques consecutivos si tienes mucha mas velocidad que tu adversario.</p><p>Tu tiempo de golpeo se reduce por cada punto de destreza (cuanto menos tiempo de golpeo mejor).</p><p class='positive'>Tiempo de golpeo (menor es mejor): {{ number_format(1000 / ($character->stat_dexterity + $character->stat_dexterity_extra + 1), 2) }}</p>">
+                    <span class="button-content" style="width: 200px;" data-toggle="tooltip" data-placement="top" data-original-title="<b>Destreza física:</b> Aumenta tu chance de ataques críticos (tanto mágicos como físicos) y tu posibilidad de esquivar ataques. Reduce además, la chance del enemigo de que esquive tus ataques.">
 						<b class="pull-left">Destreza física:</b>
 
 						<div class="pull-right">
@@ -326,7 +336,7 @@
 				<span class="ui-button button" style="cursor: default; width: 250px;">
 					<a ng-click="addStat('stat_resistance')" class="button-icon" ng-show="character.points_to_change > 0" style="cursor: pointer;" dynamic-tooltip="statsPrices.resistance">+</a>
 					<i class="button-icon hearth" ng-show="character.points_to_change <= 0"></i>
-					<span class="button-content" style="width: 200px;" data-toggle="tooltip" data-placement="top" data-original-title="<p><b>Resistencia física:</b> Aumenta tu defensa contra ataques físicos.</p>">
+                    <span class="button-content" style="width: 200px;" data-toggle="tooltip" data-placement="top" data-original-title="<b>Resistencia física:</b> Aumenta tu resistencia contra ataques físicos.">
 						<b class="pull-left">Resistencia:</b>
 
 						<div class="pull-right">
@@ -348,7 +358,7 @@
 				<span class="ui-button button" style="cursor: default; width: 250px;">
 					<a ng-click="addStat('stat_magic')" class="button-icon" ng-show="character.points_to_change > 0" style="cursor: pointer;" dynamic-tooltip="statsPrices.magic">+</a>
 					<i class="button-icon fire" ng-show="character.points_to_change <= 0"></i>
-					<span class="button-content" style="width: 200px;" data-toggle="tooltip" data-placement="top" data-original-title="<p><b>Magia:</b> Aumenta el poder de los ataques mágicos.</p><p>Si posees mas Magia que Fuerza, tu personaje golpeará únicamente con ataques mágicos.</p><p class='positive'>Poder de ataque mágico: {{ $magicDamage * 0.25 }}-{{ $magicDamage * 0.75 }}</p>">
+                    <span class="button-content" style="width: 200px;" data-toggle="tooltip" data-placement="top" data-original-title="<b>Poder mágico:</b> Aumenta tu daño en ataques mágicos y reduce la chance de bloqueo del enemigo.<div class='positive'>Tu poder mágico es: {{ number_format($character->get_combat_behavior()->get_damage()->get_magical_damage($character), 2, ',', '.') }}</div>">
 						<b class="pull-left">Poder mágico:</b>
 
 						<div class="pull-right">
@@ -369,7 +379,7 @@
 				<span class="ui-button button" style="cursor: default; width: 250px;">
 					<a ng-click="addStat('stat_magic_skill')" class="button-icon" ng-show="character.points_to_change > 0" style="cursor: pointer;" dynamic-tooltip="statsPrices.magic_skill">+</a>
 					<i class="button-icon arrow" ng-show="character.points_to_change <= 0"></i>
-					<span class="button-content" style="width: 200px;" data-toggle="tooltip" data-placement="top" data-original-title="<p><b>Habilidad mágica:</b> Aumenta tu velocidad al lanzar magias, pudiendo lograr así, múltiples ataques consecutivos.</p>">
+                    <span class="button-content" style="width: 200px;" data-toggle="tooltip" data-placement="top" data-original-title="<b>Habilidad mágica:</b> Aumenta tu chance de golpe crítico mágico.">
 						<b class="pull-left">Habilidad mágica:</b>
 
 						<div class="pull-right">
@@ -390,7 +400,7 @@
 				<span class="ui-button button" style="cursor: default; width: 250px;">
 					<a ng-click="addStat('stat_magic_resistance')" class="button-icon" ng-show="character.points_to_change > 0" style="cursor: pointer;" dynamic-tooltip="statsPrices.magic_resistance">+</a>
 					<i class="button-icon thunder" ng-show="character.points_to_change <= 0"></i>
-					<span class="button-content" style="width: 200px;" data-toggle="tooltip" data-placement="top" data-original-title="<p><b>Contraconjuro:</b> Aumenta la resistencia contra ataques mágicos.</p>">
+                    <span class="button-content" style="width: 200px;" data-toggle="tooltip" data-placement="top" data-original-title="<b>Contraconjuro:</b> Aumenta tu resistencia contra ataques mágicos.">
 						<b class="pull-left">Contraconjuro:</b>
 
 						<div class="pull-right">

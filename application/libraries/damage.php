@@ -139,16 +139,34 @@ class Damage
      * 
      * @return float
      */
-    protected function get_damage()
+    public function get_damage(Unit $target)
     {
         return 0.00;
+    }
+    
+    /**
+     * Metodo de ayuda para las vistas (authenticated.index)
+     * 
+     * @param Unit $target
+     * @return float
+     */
+    public function get_magical_damage(Unit $target)
+    {
+        $prev = $this->magical;
+        $this->magical = true;
+        
+        $magicalDamage = $this->get_damage($target);
+        
+        $this->magical = $prev;
+        
+        return $magicalDamage;
     }
     
     /**
      * 
      * @return float
      */
-    public function get_double_hit_chance()
+    public function get_double_hit_chance(Unit $target)
     {
         return 33.00;
     }
@@ -280,7 +298,7 @@ class Damage
         return $this->normal_with_amount(
             $target, 
             $magical, 
-            $this->get_damage(),
+            $this->get_damage($target),
             $battle
         );
     }

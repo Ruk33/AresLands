@@ -290,7 +290,7 @@
 											</div>
 										</div>
 
-										<img id="quests" src="{{ URL::base() }}/img/quest-icon.png" width="20px" height="21px" data-toggle="tooltip" data-original-title="<center><b>Misiones</b></center>" data-placement="top" data-container="body">
+										<img id="quests" src="{{ URL::base() }}/img/quest-icon.png" width="20px" height="21px" data-toggle="tooltip" data-original-title="<center><b>Misiones aceptadas</b></center>" data-placement="top" data-container="body">
 										
 										<script>
 											$('#quests').popover({

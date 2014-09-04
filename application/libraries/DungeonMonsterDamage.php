@@ -12,7 +12,7 @@ class DungeonMonsterDamage extends MonsterDamage
         return $target->level / 15 + 2;
     }
     
-    public function get_damage()
+    public function get_damage(Unit $target)
     {
         return parent::get_damage() * 13;
     }

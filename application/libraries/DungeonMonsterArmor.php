@@ -9,11 +9,13 @@ class DungeonMonsterArmor extends MonsterArmor
     
     public function get_miss_chance(Damage $damage)
     {
-        return 33;
+        return 25;
     }
     
     public function get_defense(Damage $damage)
     {
-        return (parent::get_defense($damage)+5) * $damage->get_attacker()->level;
+        $defense = parent::get_defense($damage) * 1.3;
+        
+        return $damage->get_attacker()->level / 3 + $defense;
     }
 }

@@ -22,6 +22,33 @@ class Item extends Base_Model
     
     /**
      * 
+     * @return string
+     */
+    public function get_css_class_from_quality()
+    {
+        switch ($this->quality) {
+            case self::QUALITY_POOR:
+                return 'item-poor-quality';
+                
+            case self::QUALITY_COMMON:
+                return 'item-common-quality';
+                
+            case self::QUALITY_UNCOMMON:
+                return 'item-uncommon-quality';
+                
+            case self::QUALITY_RARE:
+                return 'item-rare-quality';
+                
+            case self::QUALITY_EPIC:
+                return 'item-epic-quality';
+                
+            case self::QUALITY_LEGENDARY:
+                return 'item-legendary-quality';
+        }
+    }
+    
+    /**
+     * 
      * @param string $tooltip
      * @return string
      */
@@ -209,7 +236,7 @@ class Item extends Base_Model
 		$message .= '</span>';
 
 		$message .= "<div style='width: 300px;'>";
-		$message .= "<strong style='color: white;'>$this->name</strong>";
+        $message .= "<span class='{$this->get_css_class_from_quality()}'>$this->name</span>";
 		$message .= "<p style='color: #FFC200;'>Requiere nivel $this->level</p>";
 		$message .= "<p><small><em>$this->description</em></small></p>";
 		$message .= '</div>';

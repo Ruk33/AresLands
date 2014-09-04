@@ -2,6 +2,12 @@
 
 class CharacterDamage extends Damage
 {
+    public function get_double_hit_chance(Unit $target)
+    {
+        $attacker = $this->get_attacker();
+        return ($attacker->luck + $attacker->luck_extra) * 0.75 + 5;
+    }
+    
     public function get_critical_chance(Unit $target)
     {
         $dex = $this->get_attacker()->get_final_dexterity();
@@ -16,7 +22,7 @@ class CharacterDamage extends Damage
         return min(50, ($dex + $msk) / $lvl / 5 + $crt);
     }
     
-    protected function get_damage()
+    public function get_damage(Unit $target)
     {        
         if ( $this->is_magical() )
         {

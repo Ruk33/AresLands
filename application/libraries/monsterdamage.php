@@ -2,7 +2,7 @@
 
 class MonsterDamage extends Damage
 {
-    public function get_damage()
+    public function get_damage(Unit $target)
     {
         if ($this->is_magical()) {
             return $this->get_attacker()->get_final_magic() / 10 * 1.3;

@@ -43,7 +43,7 @@ class CharacterArmor extends Armor
             return 0;
         }
         
-        return ($this->defender->get_final_dexterity() - $damage->get_attacker()->get_final_dexterity()) * 0.04;
+        return ($this->defender->get_final_dexterity() - $damage->get_attacker()->get_final_dexterity() * 0.75) * 0.04;
     }
 
     public function get_defense(Damage $damage)
