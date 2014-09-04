@@ -97,7 +97,7 @@ textarea {
  * Calidad de los objetos
  */
 .item-poor-quality {
-    color: gray;
+    color: rgb(153, 153, 153);
 }
 
 .item-common-quality {
@@ -105,19 +105,19 @@ textarea {
 }
 
 .item-uncommon-quality {
-    color: yellow;
+    color: rgb(245, 255, 0);
 }
 
 .item-rare-quality {
-    color: greenyellow;
+    color: rgb(153, 255, 0);
 }
 
 .item-epic-quality {
-    color: orange;
+    color: rgb(255, 82, 0);
 }
 
 .item-legendary-quality {
-    color: purple;
+    color: rgb(192, 45, 192);
 }
 
 /*
