@@ -37,6 +37,11 @@ Route::group(array("before" => "auth|hasNoCharacter"), function()
 	Authenticated_Clan_Controller::register_routes();
 });
 
+Route::group(array("before" => "admin"), function()
+{
+    Admin_BattleSimulator_Controller::register_routes();
+});
+
 Route::get("admin/npcs", array(
 	"uses" => "admin.npc@index",
 	"as" => "get_admin_npc_index",

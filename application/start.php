@@ -85,6 +85,8 @@ Autoloader::map(array(
 	'Authenticated_Dungeon_Controller'    => path('app').'controllers/authenticated/dungeon.php',
 	'Authenticated_Ranking_Controller'    => path('app').'controllers/authenticated/ranking.php',
     
+    'Admin_BattleSimulator_Controller'    => path('app').'controllers/admin/battlesimulator.php',
+    
 	'Base_Model'                          => path('app').'models/base_model.php',
 ));
 

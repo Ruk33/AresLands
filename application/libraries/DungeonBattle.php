@@ -25,7 +25,7 @@ class DungeonBattle extends Battle
                 $amount = 1;
                 $item = \Laravel\IoC::resolve('Item')
                                     ->where_quality(Item::QUALITY_LEGENDARY)
-                                    ->where('level', '>=', $this->getAttacker()->level)
+                                    ->where('level', '>=', $this->getAttacker()->level - 10)
                                     ->order_by(DB::raw("RAND()"))
                                     ->first();
             } else {

@@ -205,6 +205,11 @@ class Character extends Unit
                     $damage = new DrowCharacterDamage($this);
                     $armor = new DrowCharacterArmor($this);
                     break;
+                
+                default:
+                    $damage = new CharacterDamage($this);
+                    $armor = new CharacterArmor($this);
+                    break;
             }
             
             $this->combatBehavior = new AttackableBehavior($this, $damage, $armor);
