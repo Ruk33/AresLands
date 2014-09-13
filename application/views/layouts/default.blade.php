@@ -379,19 +379,17 @@
 									<a href="{{ URL::to_route("get_authenticated_action_explore") }}">Explorar</a>
 								</li>
 								@endif
-                                
+								<li>
+									<i class="img-circle menu-icon menu-trade"></i>
+									<a href="{{ URL::to_route("get_authenticated_trade_index") }}">Comercios</a>
+								</li>
+                                <li class="nav-header">Eventos</li>
                                 @if ( $character->can_fight() === true )
 								<li>
 									<i class="img-circle menu-icon menu-dungeons"></i>
 									<a href="{{ URL::to_route("get_authenticated_dungeon_index") }}">Portal Oscuro</a>
 								</li>
 								@endif
-								
-								<li>
-									<i class="img-circle menu-icon menu-trade"></i>
-									<a href="{{ URL::to_route("get_authenticated_trade_index") }}">Comercios</a>
-								</li>
-                                <li class="nav-header">Eventos</li>
                                 <li>
 									<i class="img-circle menu-icon menu-ranking"></i>
 									<a href="{{ URL::to_route("get_authenticated_ranking_index") }}">Ranking</a>
