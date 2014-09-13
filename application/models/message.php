@@ -42,7 +42,7 @@ class Message extends Base_Model
 		$message->sender_id = $character->id;
 		$message->receiver_id = $character->id;
         
-        $message->subject = "¡Felicidades, te haz convertido en rey de una mazmorra!";
+        $message->subject = "¡Pudiste dominar el reto del portal oscuro!";
         $message->content = View::make('messages.kingofdungeon')->render();
         $message->unread = true;
 		$message->date = time();

@@ -73,11 +73,25 @@ class BattleSimulator
                 return new PveBattle($attacker, $target);
                 
             case self::DUNGEON_BATTLE:
-                $dungeonLevel = new DungeonLevel;
+                $dungeon = new DungeonSimulation();
+                $dungeonLevel = $dungeon->getLevel();
+                
+                $dungeonLevel->setTarget($target);
+                
+                $combatBehavior = new AttackableBehavior(
+                    $target, 
+                    new DungeonMonsterDamage($target),
+                    new DungeonMonsterArmor($target)
+                );
+                
+                $target->set_combat_behavior($combatBehavior);
+                
                 return new DungeonBattle($attacker, $target, $dungeonLevel);
                 
             default:
-                throw new Exception("El tipo de batalla {$battleType} no es soportado");
+                throw new Exception(
+                    "El tipo de batalla {$battleType} no es soportado"
+                );
         }
     }
     

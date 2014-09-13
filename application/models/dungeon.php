@@ -75,7 +75,14 @@ class Dungeon extends Base_Model
      */
     public function reset_progress(Character $character)
     {
-        $character->dungeons()->where_dungeon_id($this->id)->delete();
+        // Evitamos borrar el progreso ya que si es nulo mostramos un mensaje
+        // de ayuda (por ser la primera vez)
+        $progress = $character->dungeons()->where_dungeon_id($this->id)->first();
+        
+        if ($progress) {
+            $progress->dungeon_level = 1;
+            $progress->save();
+        }
     }
     
     /**
@@ -244,21 +251,15 @@ class Dungeon extends Base_Model
      */
     public function get_character_level(Character $character)
     {
-        $progress = $this->get_character_progress($character);
-        $dungeonLevel = null;
-        
-        if (! $progress) {
-            $dungeonLevel = $this->levels()->first();
-        } else {
-            $dungeonLevel = $this->levels()
-                                 ->where_dungeon_level($progress->dungeon_level)
-                                 ->first();
-            
-            // Si el nivel no existe, o el personaje ya es rey
-            // entonces pasamos directamente el nivel del rey
-            if (! $dungeonLevel || $this->is_character_king($character)) {
-                $dungeonLevel = $this->get_last_level()->next();
-            }
+        $progress = $this->get_character_progress_or_create($character);
+        $dungeonLevel = $this->levels()
+                             ->where_dungeon_level($progress->dungeon_level)
+                             ->first();
+
+        // Si el nivel no existe, o el personaje ya es rey
+        // entonces pasamos directamente el nivel del rey
+        if (! $dungeonLevel || $this->is_character_king($character)) {
+            $dungeonLevel = $this->get_last_level()->next();
         }
         
         return $dungeonLevel;

@@ -383,7 +383,7 @@
                                 @if ( $character->can_fight() === true )
 								<li>
 									<i class="img-circle menu-icon menu-dungeons"></i>
-									<a href="{{ URL::to_route("get_authenticated_dungeon_index") }}">Calabozo</a>
+									<a href="{{ URL::to_route("get_authenticated_dungeon_index") }}">Portal Oscuro</a>
 								</li>
 								@endif
 								

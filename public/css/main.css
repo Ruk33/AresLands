@@ -55,6 +55,13 @@ textarea {
    ========================================================================== */
 
 /*
+ * Helpers
+ */
+.block-center {
+    margin: 0 auto;
+}
+
+/*
  * Atributos secundarios
  */
 .secondary-attributes-li {
@@ -120,9 +127,67 @@ textarea {
     color: rgb(192, 45, 192);
 }
 
+.red-flag {
+    background-image: url("/img/flag.png");
+    width: 508px;
+    height: 69px;
+    background-repeat: no-repeat;
+}
+
+.red-flag h2, .red-flag h4 {
+    color: white;
+    text-shadow: 0 0 5px black, 0 0 5px black, 0 0 5px black;
+    font-family: georgia;
+    font-weight: bold;
+}
+
+.red-flag h2 {
+    font-size: 24px;
+    margin: 0;
+    margin-bottom: -20px;
+    padding: 0;
+    padding-top: 10px;
+    background-image: none;
+}
+
+.red-flag h4 {
+    margin: 0;
+    padding: 0;
+    font-size: 16px;
+}
+
 /*
  * Dungeons
  */
+.dungeon-first-time-box {
+    background-image: url('/img/characteristics-background.png');
+    background-repeat: no-repeat;
+    width: 615px;
+    height: 570px;
+    margin: 0 auto;
+}
+
+.dungeon-first-time-box-content {
+    padding: 50px;
+    padding-top: 70px;
+    color: #17110b;
+    font-weight: bold;
+    position: relative;
+}
+
+.dungeon-first-time-box-content p {
+    text-shadow: 0 0 5px white, 0 0 5px white;
+    padding-bottom: 15px;
+}
+
+.dungeon-first-time-box-content h2 {
+    color: white;
+    text-shadow: 0 0 5px black, 0 0 5px black;
+    text-align: center;
+    padding-bottom: 20px;
+    font-size: 24px;
+}
+
 .dungeon-king-congratulations-box {
     background-image: url("/img/rock-background.png");
     background-repeat: no-repeat;
@@ -144,13 +209,15 @@ textarea {
 
 .dungeon-king-congratulations-box-content {
     margin-left: 150px;
-    padding-top: 50px;
+    padding: 20px;
     text-shadow: 0 0 5px black;
+    position: relative;
 }
 
 h2.dungeon-name {
     background-position: 50% 100%;
-    color: rgb(189, 88, 49);
+    margin: 10px;
+    color: white;
     text-shadow: 0 0 5px black, 0 0 5px black, 0 0 5px black;
 }
 
@@ -167,6 +234,8 @@ h2.dungeon-name {
     background-repeat: no-repeat;
     width: 746px;
     height: 86px;
+    margin-bottom: -15px;
+    margin-top: 20px;
 }
 
 .dungeon-level-container ul {
@@ -1942,7 +2011,7 @@ div#content {
     text-align: center;
     display: table-cell;
     vertical-align: middle;
-    float: left; // ie tiene problemas con los tamaños de las imagenes, esto lo soluciona
+    float: left; // ie tiene problemas con los tamaÃ±os de las imagenes, esto lo soluciona
 }
 
 .inventory-item {
