@@ -251,3 +251,4 @@ IoC::instance('Merchant', new Merchant());
 IoC::instance('NpcMerchandise', new NpcMerchandise());
 IoC::instance('NpcRandomMerchandise', new NpcRandomMerchandise());
 IoC::instance('Monster', new Monster());
+IoC::instance('GlobalVariable', new GlobalVariable());

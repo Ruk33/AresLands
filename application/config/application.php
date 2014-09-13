@@ -172,7 +172,7 @@ return array(
 		'Bundle'     	=> 'Laravel\\Bundle',
 		'Cache'      	=> 'Laravel\\Cache',
 		'Command'    	=> 'Laravel\\CLI\\Command',
-		'Config'     	=> 'Laravel\\Config',
+		'Config'     	=> 'Libraries\\Config',
 		'Controller' 	=> 'Laravel\\Routing\\Controller',
 		'Cookie'     	=> 'Laravel\\Cookie',
 		'Crypter'    	=> 'Laravel\\Crypter',

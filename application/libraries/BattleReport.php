@@ -215,6 +215,14 @@ class BattleReport
         return $this->message;
     }
     
+    /**
+     * 
+     */
+    public function sendMessageReport()
+    {
+        $this->getMessage();
+    }
+    
     public function __construct(Unit $unit, Battle $battle) {
         $this->unit = $unit;
         $this->battle = $battle;

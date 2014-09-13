@@ -205,6 +205,9 @@ class PvpBattle extends Battle
         
         $this->getAttacker()->save();
         $this->getTarget()->save();
+        
+        $this->getAttackerReport()->sendMessageReport();
+        $this->getTargetReport()->sendMessageReport();
     }
     
     /**
