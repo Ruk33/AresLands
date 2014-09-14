@@ -346,11 +346,16 @@ class Skill extends Base_Model
 	 * @return boolean
 	 */
 	public function cast(Character $caster, Character $target, $amount = 1)
-	{		
+	{
 		if ( ! $this->can_be_casted($caster, $target) )
 		{
 			return false;
 		}
+        
+        if ( $caster->server_id != $target->server_id )
+        {
+            return false;
+        }
 		
 		// Las habilidades que no stackean solamente
 		// pueden tener 1 de cantidad

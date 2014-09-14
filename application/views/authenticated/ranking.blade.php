@@ -90,13 +90,8 @@
 				@elseif ( $index == 3 )
 					<img src="{{ URL::base() }}/img/icons/crown-bronze-icon.png" alt="">
 				@endif
-				@if ( $rank == 'clan' )
-					@if ( $element->clan )
-					{{ $element->clan->get_link() }}
-					@endif
-				@else
+                
 				{{ $element->get_link() }}
-				@endif
 			</td>
 			@if ( $rank != 'clan' )
 			<td>
@@ -115,7 +110,7 @@
             <td><div class="text-center">{{ $element->xp }}</div></td>
 			@endif
 			@if ( $rank == 'clan' )
-            <td><div class="text-center"><b>{{ $element->points }}</b></div></td>
+            <td><div class="text-center"><b>{{ $element->orb_points->points }}</b></div></td>
 			@endif
 		</tr>
 		@endforeach

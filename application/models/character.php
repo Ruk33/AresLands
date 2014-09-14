@@ -151,6 +151,12 @@ class Character extends Unit
         "second_mercenary" => 0,
     );
     
+    public function same_server()
+    {
+        $character = $this->get_logged(array("server_id"));
+        return $this->where_server_id($character->server_id);
+    }
+    
     public function check_buffs_time()
     {
         $this->check_skills_time();
@@ -543,6 +549,11 @@ class Character extends Unit
 	 */
 	public function can_give_leadership_to(Character $newLider)
 	{
+        if ( $this->server_id != $newLider->server_id )
+        {
+            return false;
+        }
+        
 		if ( ! $this->clan_id )
 		{
 			return false;
@@ -611,10 +622,9 @@ class Character extends Unit
 	/**
 	 * @return Eloquent
 	 */
-	public static function get_characters_for_pvp_ranking()
+	public function get_characters_for_pvp_ranking()
 	{
-		return static::with('clan')
-					 ->order_by('pvp_points', 'desc');
+		return $this->with('clan')->same_server()->order_by('pvp_points', 'desc');
 	}
 
 	/**
@@ -793,6 +803,11 @@ class Character extends Unit
 	 */
 	public function can_follow(Character $character)
 	{
+        if ( $character->server_id != $this->server_id )
+        {
+            return false;
+        }
+        
 		if ( ! $character->is_traveling )
 		{
 			return false;
@@ -831,6 +846,11 @@ class Character extends Unit
 	 */
 	public function sees(Character $target)
 	{
+        if ( $target->server_id != $this->server_id )
+        {
+            return;
+        }
+        
 		if ( $target->has_skill(Config::get("game.trap_skill")) )
 		{
 			$target->cast_random_trap_to($this, true);
@@ -852,6 +872,7 @@ class Character extends Unit
 		$eloquent = self::where('zone_id', '=', $this->zone_id)
 						->where_in('race', $races)
 						->where('name', '<>', $this->name)
+                        ->where('server_id', '=', $this->server_id)
 						->where('registered_in_tournament', '=', $this->registered_in_tournament);
 		
 		// Si estamos en torneo, evitamos que toquen de nuestro clan
@@ -1005,20 +1026,23 @@ class Character extends Unit
 	public function get_castable_talents(Character $target)
 	{
 		$castableSkills = array();
-		$talents = $this->talents;
-		
-		foreach ( $talents as $talent )
-		{
-			if ( $this->can_use_talent($talent) )
-			{
-				$skill = Skill::find($talent->skill_id);
-			
-				if ( $skill && $skill->can_be_casted($this, $target) )
-				{
-					$castableSkills[] = $skill->id;
-				}
-			}
-		}
+        
+        if ($target->server_id == $this->server_id) {
+            $talents = $this->talents;
+
+            foreach ( $talents as $talent )
+            {
+                if ( $this->can_use_talent($talent) )
+                {
+                    $skill = Skill::find($talent->skill_id);
+
+                    if ( $skill && $skill->can_be_casted($this, $target) )
+                    {
+                        $castableSkills[] = $skill->id;
+                    }
+                }
+            }
+        }
 		
 		return $castableSkills;
 	}
@@ -1406,6 +1430,7 @@ class Character extends Unit
 			$select = (array) $select + array('id', 'clan_id');
 
 			$characters = static::select($select)
+                                ->where('server_id', '=', $this->server_id)
 								->where('zone_id', '=', $this->zone_id)
 								->where('clan_id', '=', $this->clan_id)
 								->where('id', '<>', $this->id)
@@ -3254,6 +3279,11 @@ class Character extends Unit
 					return "No puedes atacar a miembros de tu grupo cuando hay un torneo activo";
 				}
 			}
+            
+            if ( $target->server_id != $this->server_id )
+            {
+                return "El personaje objetivo no está en el mismo servidor";
+            }
 			
 			if ( $target->has_protection($this) )
 			{

@@ -1,6 +1,6 @@
 <?php
 
-abstract class Base_Model extends Eloquent
+abstract class Base_Model extends Laravel\Database\Eloquent\Model
 {
 	protected $rules = array();
 	protected $messages = array();

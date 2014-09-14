@@ -87,12 +87,13 @@ class Authenticated_Character_Controller_Test extends \Tests\TestHelper
 	
 	public function testMostrar()
 	{
-		$this->assertHasFilter("get", "authenticated/character/show/foo", "before", "auth");
-		$this->assertHasFilter("get", "authenticated/character/show/foo", "before", "hasNoCharacter");
+		$this->assertHasFilter("get", "authenticated/character/show/1/foo", "before", "auth");
+		$this->assertHasFilter("get", "authenticated/character/show/1/foo", "before", "hasNoCharacter");
 		
 		$name = "foo";
 		$target = m::mock("Character");
 		
+		$this->character->shouldReceive("where_server_id")->twice()->with(1)->andReturnSelf();
 		$this->character->shouldReceive("where_name")->twice()->with($name)->andReturnSelf();
 		$this->character->shouldReceive("first_or_die")->twice()->andReturn($target);
 		
@@ -121,7 +122,7 @@ class Authenticated_Character_Controller_Test extends \Tests\TestHelper
 		
 		$target->shouldReceive("get_name")->twice()->andReturn($name);
 		
-		$response = $this->get("authenticated/character/show/{$name}");
+		$response = $this->get("authenticated/character/show/1/{$name}");
 		
 		$this->assertResponseOk($response);
 		$this->assertViewHasAll($response, array(
@@ -146,7 +147,7 @@ class Authenticated_Character_Controller_Test extends \Tests\TestHelper
 		
 		$target->shouldReceive("has_characteristic")->with(Characteristic::RESERVED)->once()->andReturn(true);
 		
-		$response = $this->get("authenticated/character/show/{$name}");
+		$response = $this->get("authenticated/character/show/1/{$name}");
 		
 		$this->assertResponseOk($response);
 		$this->assertViewHasAll($response, array(

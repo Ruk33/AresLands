@@ -28,8 +28,8 @@ class Authenticated_Dungeon_Controller_Test extends Tests\TestHelper
 	
 	public function testIndex()
 	{
-		$this->assertHasFilter("get", "authenticated/dungeon", "before", "auth");
-		$this->assertHasFilter("get", "authenticated/dungeon", "before", "hasNoCharacter");
+		$this->assertHasFilter("get", "authenticated/event/portal", "before", "auth");
+		$this->assertHasFilter("get", "authenticated/event/portal", "before", "hasNoCharacter");
 		
         $zone = m::mock("Zone");
         
@@ -40,21 +40,24 @@ class Authenticated_Dungeon_Controller_Test extends Tests\TestHelper
         
         $this->dungeon->shouldReceive("get_character_level")->once()->with($this->character)->andReturn(null);
         
-        $response = $this->get("authenticated/dungeon");
+        $this->dungeon->shouldReceive("get_character_progress")->once()->with($this->character)->andReturnNull();
+        
+        $response = $this->get("authenticated/event/portal");
         
         $this->assertResponseOk($response);
         $this->assertViewHasAll($response, array(
-            "title" => "Mazmorra",
+            "title" => "Portal Oscuro",
             "dungeon" => $this->dungeon,
             "character" => $this->character,
-            "actualDungeonLevel" => null
+            "actualDungeonLevel" => null,
+            "firstTime" => true
         ));
 	}
 	
 	public function testPostIndex()
 	{
-		$this->assertHasFilter("post", "authenticated/dungeon", "before", "auth");
-		$this->assertHasFilter("post", "authenticated/dungeon", "before", "hasNoCharacter");
+		$this->assertHasFilter("post", "authenticated/event/portal", "before", "auth");
+		$this->assertHasFilter("post", "authenticated/event/portal", "before", "hasNoCharacter");
         
         $dungeonId = 5;
         $dungeonLevel = m::mock("DungeonLevel");
@@ -72,7 +75,7 @@ class Authenticated_Dungeon_Controller_Test extends Tests\TestHelper
         
         $this->dungeon->shouldReceive("do_level_or_error")->twice()->with($this->character, $dungeonLevel)->andReturn("sponge bob knows", $dungeonBattle);
         
-        $response = $this->post("authenticated/dungeon");
+        $response = $this->post("authenticated/event/portal");
         
         $this->assertSessionHas("error", "sponge bob knows");
         $this->assertRedirectToRoute("get_authenticated_dungeon_index", $response);
@@ -81,7 +84,7 @@ class Authenticated_Dungeon_Controller_Test extends Tests\TestHelper
         
         $reportMessage->shouldReceive("get_id")->once()->andReturn($reportMessageId);
         
-        $response = $this->post("authenticated/dungeon");
+        $response = $this->post("authenticated/event/portal");
         
         $this->assertRedirectTo(URL::to_route("get_authenticated_message_read", array($reportMessageId)), $response);
 	}

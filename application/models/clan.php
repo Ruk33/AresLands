@@ -58,7 +58,23 @@ class Clan extends Base_Model
 
 		'message_between' => 'El mensaje del grupo puede tener hasta 1000 caracteres',
 	);
+    
+    public function same_server()
+    {
+        $character = \Laravel\IoC::resolve("Character")
+                                 ->get_logged(array("server_id"));
+        
+        return $this->where_server_id($character->server_id);
+    }
 	
+    public function get_clans_for_ranking()
+    {
+        return $this->with('orb_points')
+                    ->same_server()
+                    ->left_join('clan_orb_points', 'clan_orb_points.clan_id', '=', 'clans.id')
+                    ->order_by('clan_orb_points.points', 'desc');
+    }
+    
 	/**
 	 * Verificamos si personaje puede ver las peticiones del grupo
 	 * 
@@ -251,7 +267,8 @@ class Clan extends Base_Model
 	 */
 	public function can_join(Character $character)
 	{
-		return $character->clan_id == 0;
+		return 
+            $character->clan_id == 0 && $character->server_id == $this->server_id;
 	}
 	
 	/**
@@ -562,7 +579,7 @@ class Clan extends Base_Model
 	
 	public function orb_points()
 	{
-		return $this->has_one('ClanOrbPoint', 'clan_id');
+		return $this->has_one('ClanOrbPoint', 'clan_id')->order_by('points', 'desc');
 	}
 	
 	public function save()

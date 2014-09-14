@@ -366,6 +366,7 @@ class Authenticated_Clan_Controller_Test extends \Tests\TestHelper
 		
 		$this->character->shouldReceive("get_logged")->twice()->andReturnSelf();
 		
+		$this->clan->shouldReceive("same_server")->twice()->andReturnSelf();
 		$this->clan->shouldReceive("find_or_die")->with(1)->twice()->andReturnSelf();
 		$this->clan->shouldReceive("members->get")->twice()->andReturn(array());
 		$this->clan->shouldReceive("get_skills")->twice()->andReturnSelf();

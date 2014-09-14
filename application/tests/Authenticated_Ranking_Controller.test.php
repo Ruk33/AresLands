@@ -6,7 +6,7 @@ class Authenticated_Ranking_Controller_Test extends \Tests\TestHelper
 {
 	protected $character;
 	protected $kingOfTheHill;
-	protected $clanOrbPoint;
+	protected $clan;
 	
 	public function setUp()
 	{
@@ -14,11 +14,11 @@ class Authenticated_Ranking_Controller_Test extends \Tests\TestHelper
 		
 		$this->character = m::mock("Character");
 		$this->kingOfTheHill = m::mock("KingOfTheHill");
-		$this->clanOrbPoint = m::mock("ClanOrbPoint");
+		$this->clan = m::mock("Clan");
 		
 		\Laravel\IoC::instance("Character", $this->character);
 		\Laravel\IoC::instance("KingOfTheHill", $this->kingOfTheHill);
-		\Laravel\IoC::instance("ClanOrbPoint", $this->clanOrbPoint);
+		\Laravel\IoC::instance("Clan", $this->clan);
 	}
 	
 	public function tearDown()
@@ -27,7 +27,7 @@ class Authenticated_Ranking_Controller_Test extends \Tests\TestHelper
 		
 		\Laravel\IoC::unregister("Character");
 		\Laravel\IoC::unregister("KingOfTheHill");
-		\Laravel\IoC::unregister("ClanOrbPoint");
+		\Laravel\IoC::unregister("Clan");
 	}
 	
 //	public function testValorPorDefectoOIncorrectoRedireccionaAKingOfTheHill()
@@ -62,13 +62,7 @@ class Authenticated_Ranking_Controller_Test extends \Tests\TestHelper
 	{
 		$this->assertHasFilter("get", "authenticated/ranking/pvp", "before", "auth");
 		$this->assertHasFilter("get", "authenticated/ranking/pvp", "before", "hasNoCharacter");
-		
-		$this->character
-			 ->shouldReceive("with")
-			 ->once()
-			 ->with("clan")
-			 ->andReturnSelf();
-		
+				
 		$this->character
 			 ->shouldReceive("get_characters_for_pvp_ranking")
 			 ->once()
@@ -99,26 +93,19 @@ class Authenticated_Ranking_Controller_Test extends \Tests\TestHelper
     {
         $this->assertHasFilter("get", "authenticated/ranking/clan", "before", "auth");
 		$this->assertHasFilter("get", "authenticated/ranking/clan", "before", "hasNoCharacter");
-        
-        $this->clanOrbPoint
-             ->shouldReceive("with")
+                
+        $this->clan
+             ->shouldReceive("get_clans_for_ranking")
              ->once()
-             ->with("clan")
              ->andReturnSelf();
         
-        $this->clanOrbPoint
-             ->shouldReceive("order_by")
-             ->once()
-             ->with("points", "desc")
-             ->andReturnSelf();
-        
-        $this->clanOrbPoint
+        $this->clan
              ->shouldReceive("paginate")
              ->once()
              ->with(50)
              ->andReturnSelf();
         
-        $this->clanOrbPoint
+        $this->clan
              ->shouldReceive("get_results")
              ->once()
              ->andReturn(array());
@@ -128,7 +115,7 @@ class Authenticated_Ranking_Controller_Test extends \Tests\TestHelper
 		$this->assertResponseOk($response);
 		$this->assertViewHasAll($response, array(
 			"title" => "Ranking", 
-            "pagination" => $this->clanOrbPoint,
+            "pagination" => $this->clan,
 			"elements" => array()
 		));
     }

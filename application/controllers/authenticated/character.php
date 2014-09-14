@@ -19,7 +19,7 @@ class Authenticated_Character_Controller extends Authenticated_Base
 			"as"   => "post_authenticated_character_add_stat"
 		));
 		
-		Route::get("authenticated/character/show/(:any)", array(
+		Route::get("authenticated/character/show/(:num)/(:any)", array(
 			"uses" => "authenticated.character@show",
 			"as"   => "get_authenticated_character_show"
 		));
@@ -105,11 +105,15 @@ class Authenticated_Character_Controller extends Authenticated_Base
 	/**
 	 * Mostramos personaje
 	 * 
+     * @param integer $server
 	 * @param string $name
 	 */
-	public function get_show($name)
+	public function get_show($server, $name)
 	{
-		$characterToSee = $this->character->where_name($name)->first_or_die();
+		$characterToSee = $this->character
+                               ->where_server_id($server)
+                               ->where_name($name)
+                               ->first_or_die();
 		
 		$orb = $characterToSee->orbs()->first();
 		$skills = array();

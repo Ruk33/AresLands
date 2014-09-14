@@ -3,7 +3,7 @@
 class Authenticated_Ranking_Controller extends Authenticated_Base
 {
 	protected $kingOfTheHill;
-	protected $clanOrbPoint;
+	protected $clan;
 
 	public static function register_routes()
 	{
@@ -14,11 +14,11 @@ class Authenticated_Ranking_Controller extends Authenticated_Base
 	}
 	
 	public function __construct(KingOfTheHill $kingOfTheHill, 
-								ClanOrbPoint $clanOrbPoint, 
+								Clan $clan, 
 								Character $character)
 	{
 		$this->kingOfTheHill = $kingOfTheHill;
-		$this->clanOrbPoint = $clanOrbPoint;
+		$this->clan = $clan;
 		$this->character = $character;
 		
 		parent::__construct();
@@ -37,7 +37,6 @@ class Authenticated_Ranking_Controller extends Authenticated_Base
 
 			case "pvp":
 				$pagination = $this->character
-                                   ->with("clan")
                                    ->get_characters_for_pvp_ranking()
                                    ->paginate(50);
                 
@@ -46,9 +45,8 @@ class Authenticated_Ranking_Controller extends Authenticated_Base
 				break;
 
 			case "clan":
-				$pagination = $this->clanOrbPoint
-                                   ->with("clan")
-                                   ->order_by("points", "desc")
+				$pagination = $this->clan
+                                   ->get_clans_for_ranking()
                                    ->paginate(50);
                 
                 $elements = $pagination->results;

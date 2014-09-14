@@ -171,7 +171,7 @@
 								<span class="badge badge-important">OFF</span>
 							@endif
 						@endif
-						<a href="{{ URL::to_route("get_authenticated_character_show", array($member->name)) }}" character-tooltip="{{ $member->name }}">{{ $member->name }} ({{ $member->level }})</a>
+						<a href="{{ URL::to_route("get_authenticated_character_show", array($member->server_id, $member->name)) }}" character-tooltip="{{ $member->name }}">{{ $member->name }} ({{ $member->level }})</a>
 						@if ( $character->is_in_clan_of($member) )
 							<ul style="font-size: 10px; text-transform: uppercase; margin-top: 10px;" class="unstyled">
 								<li><b>Zona:</b> {{ $member->zone->name }}</li>
