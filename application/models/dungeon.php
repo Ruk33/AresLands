@@ -112,6 +112,10 @@ class Dungeon extends Base_Model
      */
     public function convert_into_king(Character $character)
     {
+        if ($this->king) {
+            Message::king_of_dungeon_defeated($this->king, $character);
+        }
+        
         Message::king_of_dungeon($character);
         
         Laravel\IoC::resolve("Skill")

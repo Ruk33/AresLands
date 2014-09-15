@@ -35,6 +35,23 @@ class Message extends Base_Model
 		return $this->belongs_to('Character', 'sender_id');
 	}
     
+    public static function king_of_dungeon_defeated(Character $oldKing, Character $newKing)
+    {
+        $message = new Message();
+
+		$message->sender_id = $oldKing->id;
+		$message->receiver_id = $oldKing->id;
+        
+        $message->subject = "¡Te han derrotado en el Portal Oscuro!";
+        $message->content = View::make('messages.kingofdungeondefeated', compact("oldKing", "newKing"))->render();
+        $message->unread = true;
+		$message->date = time();
+		$message->type = 'received';
+		$message->is_special = true;
+
+		$message->save();
+    }
+    
     public static function king_of_dungeon(Character $character)
     {
         $message = new Message();
