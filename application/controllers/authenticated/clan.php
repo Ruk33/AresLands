@@ -379,7 +379,7 @@ class Authenticated_Clan_Controller extends Authenticated_Base
      */
 	public function get_show($id)
 	{		
-		$clan = $this->clan->same_server()->find_or_die($id);
+		$clan = $this->clan->find_or_die($id);
 		$character = $this->character->get_logged();
 		$members = $clan->members()->get();
 		$skills = $this->clan->get_skills()->where_level(1)->get();
