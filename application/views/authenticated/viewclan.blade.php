@@ -15,7 +15,7 @@
 		</div>
 	@endif
 
-	@if ( $character->id == $clan->leader_id || $clan->has_permission($character, Clan::PERMISSION_ACCEPT_PETITION) || $clan->has_permission($character, Clan::PERMISSION_DECLINE_PETITION) )
+	@if ( $clan->can_see_petitions($character) )
 		@if ( isset($petitions) )
 		<div class="dark-box">
 			<h5>Peticiones de inclusión</h5>
@@ -35,7 +35,10 @@
 								@if ( $clan->has_permission($character, Clan::PERMISSION_ACCEPT_PETITION) )
 								<td>
 									<div data-toggle="tooltip" data-original-title="Acepta la petición para que este jugador ingrese al grupo">
-										<a href="{{ URL::to('authenticated/clanAcceptPetition/' . $petition->id) }}" class="btn btn-primary">Aceptar</a>
+                                        {{ Form::open(URL::to_route("post_authenticated_clan_accept_petition")) }}
+                                            {{ Form::hidden("id", $petition->id) }}
+                                            {{ Form::submit("Aceptar", array("class" => "btn btn-primary")) }}
+                                        {{ Form::close() }}
 									</div>
 								</td>
 								@endif
@@ -43,7 +46,10 @@
 								@if ( $clan->has_permission($character, Clan::PERMISSION_DECLINE_PETITION) )
 								<td>
 									<div data-toggle="tooltip" data-original-title="Rechaza la petición de ingreso de este jugador">
-										<a href="{{ URL::to('authenticated/clanRejectPetition/' . $petition->id) }}" class="btn btn-danger">Rechazar</a>
+										{{ Form::open(URL::to_route("post_authenticated_clan_reject_petition")) }}
+                                            {{ Form::hidden("id", $petition->id) }}
+                                            {{ Form::submit("Rechazar", array("class" => "btn btn-danger")) }}
+                                        {{ Form::close() }}
 									</div>
 								</td>
 								@endif
