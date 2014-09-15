@@ -27,7 +27,7 @@
                 <td data-toggle="tooltip" data-original-title="{{ $orb->get_tooltip() }}">{{ $orb->name }}</td>
                 <td>
                     @if ( $orb->owner_character )
-                        {{ $orb->owner()->select(array('id', 'name'))->first()->get_link() }}
+                        {{ $orb->owner->get_link() }}
                     @else
                         Nadie
                         
@@ -46,7 +46,7 @@
                 <td>
                     @if ( $orb->last_attack_time && $orb->last_attacker )
                         {{ date('H:i:s d/m/y', $orb->last_attack_time) }} por 
-                        {{ $orb->attacker()->select(array('id', 'name'))->first()->get_link() }}
+                        {{ $orb->attacker->get_link() }}
                     @else
                         Nadie
                     @endif
