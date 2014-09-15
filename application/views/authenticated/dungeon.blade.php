@@ -139,7 +139,7 @@
 @else
     <div class="dungeon-level-container" style="margin-top: 200px;">
         <h5 class="text-center" style="padding-top: 32px; color: white; text-shadow: 0 0 5px black;">
-            Esta zona está segura, aún no han abierto ningún portal oscuro... aún...
+            Esta zona está segura, aún no ha abierto ningún portal oscuro... aún...
         </h5>
     </div>
 @endif
