@@ -400,7 +400,7 @@
 								@endif
                                 <li>
 									<i class="img-circle menu-icon menu-ranking"></i>
-									<a href="{{ URL::to_route("get_authenticated_ranking_index") }}">Ranking</a>
+									<a href="{{ URL::to_route("get_authenticated_ranking_index", array("pvp")) }}">Ranking</a>
 								</li>
 								<li>
 									<i class="img-circle menu-icon menu-orbs"></i>

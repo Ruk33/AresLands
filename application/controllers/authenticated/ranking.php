@@ -7,7 +7,7 @@ class Authenticated_Ranking_Controller extends Authenticated_Base
 
 	public static function register_routes()
 	{
-		Route::get("authenticated/ranking/(:any?)", array(
+		Route::get("authenticated/ranking/(:any)/(:any?)", array(
 			"uses" => "authenticated.ranking@index",
 			"as"   => "get_authenticated_ranking_index"
 		));
@@ -24,10 +24,11 @@ class Authenticated_Ranking_Controller extends Authenticated_Base
 		parent::__construct();
 	}
 	
-	public function get_index($rank = "pvp")
+	public function get_index($rank = "pvp", $server = null)
 	{
         $elements = array();
         $pagination = null;
+        $allServers = $server == "all";
         
 		switch ( $rank )
 		{
@@ -37,7 +38,7 @@ class Authenticated_Ranking_Controller extends Authenticated_Base
 
 			case "pvp":
 				$pagination = $this->character
-                                   ->get_characters_for_pvp_ranking()
+                                   ->get_characters_for_pvp_ranking($allServers)
                                    ->paginate(50);
                 
                 $elements = $pagination->results;
@@ -46,7 +47,7 @@ class Authenticated_Ranking_Controller extends Authenticated_Base
 
 			case "clan":
 				$pagination = $this->clan
-                                   ->get_clans_for_ranking()
+                                   ->get_clans_for_ranking($allServers)
                                    ->paginate(50);
                 
                 $elements = $pagination->results;

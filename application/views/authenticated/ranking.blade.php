@@ -37,6 +37,26 @@
             <h2>Ranking Grupos</h2>
         @endif
     </div>
+    
+    <ul class="inline text-center">
+        <li>
+            <a href="{{ URL::to_route("get_authenticated_ranking_index", array($rank)) }}" class="ui-button button">
+                <i class="button-icon arrow"></i>
+                <span class="button-content">
+                    Tu servidor
+                </span>
+            </a>
+        </li>
+        
+        <li>
+            <a href="{{ URL::to_route("get_authenticated_ranking_index", array($rank, "all")) }}" class="ui-button button">
+                <i class="button-icon fire"></i>
+                <span class="button-content">
+                    Todos los servidores
+                </span>
+            </a>
+        </li>
+    </ul>
 
 <table class="table table-striped brown-table">
 	<thead>

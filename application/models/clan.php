@@ -67,12 +67,21 @@ class Clan extends Base_Model
         return $this->where_server_id($character->server_id);
     }
 	
-    public function get_clans_for_ranking()
+    /**
+     * 
+     * @param boolean $allServers
+     * @return Query
+     */
+    public function get_clans_for_ranking($allServers)
     {
-        return $this->with('orb_points')
-                    ->same_server()
-                    ->left_join('clan_orb_points', 'clan_orb_points.clan_id', '=', 'clans.id')
-                    ->order_by('clan_orb_points.points', 'desc');
+        $query = $this->with('orb_points');
+        
+        if (! $allServers) {
+            $query = $query->same_server();
+        }
+        
+        return $query->left_join('clan_orb_points', 'clan_orb_points.clan_id', '=', 'clans.id')
+                     ->order_by('clan_orb_points.points', 'desc');
     }
     
 	/**
