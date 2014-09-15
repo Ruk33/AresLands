@@ -772,6 +772,11 @@ class Character extends Unit
 	 */
 	public function can_remove_invisibility_of(Character $target)
 	{
+        if ( $target->server_id != $this->server_id )
+        {
+            return false;
+        }
+        
 		if ( ! $target->is_invisible() )
 		{
 			return false;
@@ -872,7 +877,6 @@ class Character extends Unit
 		$eloquent = self::where('zone_id', '=', $this->zone_id)
 						->where_in('race', $races)
 						->where('name', '<>', $this->name)
-                        ->where('server_id', '=', $this->server_id)
 						->where('registered_in_tournament', '=', $this->registered_in_tournament);
 		
 		// Si estamos en torneo, evitamos que toquen de nuestro clan
@@ -3281,11 +3285,6 @@ class Character extends Unit
 					return "No puedes atacar a miembros de tu grupo cuando hay un torneo activo";
 				}
 			}
-            
-            if ( $target->server_id != $this->server_id )
-            {
-                return "El personaje objetivo no está en el mismo servidor";
-            }
 			
 			if ( $target->has_protection($this) )
 			{

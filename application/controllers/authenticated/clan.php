@@ -154,7 +154,8 @@ class Authenticated_Clan_Controller extends Authenticated_Base
 			$clan = $this->clan->create_instance(
                 array_merge(
                     array(
-                        "leader_id" => $character->id
+                        "leader_id" => $character->id,
+                        "server_id" => $character->server_id
                     ),
                     Input::only(array("name", "message"))
                 )
