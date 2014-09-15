@@ -148,6 +148,10 @@
                                     case 'chest':
                                         echo '¡Has recibido la recompensa del cofre!';
                                         break;
+                                    
+                                    case 'levelUp':
+                                        echo '¡Haz subido de nivel!';
+                                        break;
                                 }
                                 ?>
                             </span>
@@ -170,6 +174,10 @@
                                             <img src="' . Item::find($itemId)->get_image_path() . '" width="80px" height="80px">
                                         </div>
                                         <div style="margin-left: 125px;">Has abierto el cofre y dentro del mismo, se encontraba esto. ¡Felicitaciones!</div>';
+                                    break;
+                                
+                                case 'levelUp':
+                                    echo 'Haz alcanzado un nuevo nivel. Tu vida se ha incrementado y se te ha dado una bonificacion de puntos para atributos.';
                                     break;
                             }
                             ?>

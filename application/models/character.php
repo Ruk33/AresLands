@@ -1789,6 +1789,8 @@ class Character extends Unit
 
         $this->check_orbs();
         $this->save();
+        
+        Laravel\Event::fire('levelUp', array($this));
     }
 	
 	public function set_xp($value)

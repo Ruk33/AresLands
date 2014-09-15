@@ -1,5 +1,10 @@
 <?php
 
+Event::listen('levelUp', function(Character $character)
+{
+    Session::flash('modalMessage', 'levelUp');
+});
+
 Event::listen('fullActivityBar', function(Character $character)
 {
 	Session::flash('modalMessage', 'activityBar');
