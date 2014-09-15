@@ -28,18 +28,7 @@ class Authenticated_Ranking_Controller_Test extends \Tests\TestHelper
 		\Laravel\IoC::unregister("Character");
 		\Laravel\IoC::unregister("KingOfTheHill");
 		\Laravel\IoC::unregister("Clan");
-	}
-	
-//	public function testValorPorDefectoOIncorrectoRedireccionaAKingOfTheHill()
-//	{
-//		$this->kingOfTheHill->shouldReceive("get_list")->once();
-//		
-//		$response = $this->get("authenticated/ranking");
-//		$this->assertResponseOk($response);
-//		
-//		$response = $this->get("authenticated/ranking/foo");
-//		$this->assertRedirect(URL::to_route("get_authenticated_ranking_index"), $response);
-//	}
+	}	
 	
 //	public function testKingOfTheHill()
 //	{

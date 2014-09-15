@@ -120,6 +120,7 @@ class Authenticated_Clan_Controller_Test extends \Tests\TestHelper
 				
 		$this->character->shouldReceive("get_logged")->times(3)->andReturnSelf();
         $this->character->shouldReceive("get_id")->times(2)->andReturn(5);
+        $this->character->shouldReceive("get_server_id")->times(2)->andReturn(1);
 		$this->character->shouldReceive("get_clan_id")->once()->andReturn(1);
 		
 		$response = $this->post("authenticated/clan/create");
@@ -131,7 +132,7 @@ class Authenticated_Clan_Controller_Test extends \Tests\TestHelper
 		
 		Input::replace($attributes);
 		
-		$this->clan->shouldReceive("create_instance")->with(array_merge($attributes, array("leader_id" => 5)))->twice()->andReturnSelf();
+		$this->clan->shouldReceive("create_instance")->with(array_merge($attributes, array("leader_id" => 5, "server_id" => 1)))->twice()->andReturnSelf();
 		$this->clan->shouldReceive("validate")->once()->andReturn(false);
 		$this->clan->shouldReceive("errors->all")->once()->andReturn(array("lorem ipsum dolor amet"));
 		
