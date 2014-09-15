@@ -249,13 +249,20 @@
 	@endforeach
 	</ul>
 	</div>
-
-	@if ( $character->clan_id == 0 && ! $character->petitions()->where('clan_id', '=', $clan->id)->first() )
+    
+	@if ( $clan->can_send_petition($character) )
 		<h2>¿Quieres ingresar?</h2>
-		<a href="{{ URL::to('authenticated/clanJoinRequest/' . $clan->id) }}">Solicitar inclusión</a>
-	@elseif ( $character->clan_id == $clan->id && $character->id != $clan->leader_id )
+        {{ Form::open(URL::to_route("post_authenticated_clan_new_petition")) }}
+            {{ Form::hidden("id", $clan->id) }}
+            {{ Form::submit("Solicitar inclusión", array("class" => "ui-button ui-input-button")) }}
+        {{ Form::close() }}
+	@endif
+    
+    @if ( $clan->can_leave($character) )
 		<h2>¿Salir del grupo?</h2>
-		<a href="{{ URL::to('authenticated/leaveFromClan') }}">Salir del grupo</a>
+		{{ Form::open(URL::to_route("post_authenticated_clan_leave")) }}
+            {{ Form::submit("Salir del grupo", array("class" => "ui-button ui-input-button")) }}
+        {{ Form::close() }}
 	@endif
 </div>
 

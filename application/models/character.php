@@ -3290,6 +3290,11 @@ class Character extends Unit
 					return "No puedes atacar a miembros de tu grupo cuando hay un torneo activo";
 				}
 			}
+            
+            if ( ! $target->battle_all_servers )
+            {
+                return "El personaje objetivo no tiene la opcion de batallar contra todos los servidores";
+            }
 			
 			if ( $target->has_protection($this) )
 			{
