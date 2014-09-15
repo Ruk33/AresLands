@@ -12,6 +12,26 @@ class Dungeon extends Base_Model
     const VIP_PRICE = 10;
     
     /**
+     * Obtenemos los dias que todavía le quedan al evento antes de que termine
+     * 
+     * @return integer
+     */
+    public function days_left()
+    {
+        return Carbon\Carbon::createFromDate(null, 10, 4)->diffInDays();
+    }
+    
+    /**
+     * Verificamos si el evento ha finalizado
+     * 
+     * @return boolean
+     */
+    public function has_finished()
+    {
+        return $this->days_left() == 0;
+    }
+    
+    /**
      * 
      * @param Character $character
      * @return CharacterDungeon

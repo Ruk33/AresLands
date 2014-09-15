@@ -285,7 +285,7 @@ abstract class TestHelper extends PHPUnit_Framework_TestCase
 		{
 			$route = Router::route(strtoupper($method), $uri);
 			$action = $route->action;
-
+            
 			if ( isset($action[$event]) )
 			{
 				$filters = explode('|', $action[$event]);

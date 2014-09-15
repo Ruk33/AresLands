@@ -134,6 +134,10 @@
                     </div>
                 </div>
             </div>
+            
+            <div class="text-center negative">
+                El evento finaliza en {{ $dungeon->days_left() }} dia(s)
+            </div>
         </div>
     @endif
 @else

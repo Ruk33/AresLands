@@ -8,11 +8,13 @@ class Authenticated_Dungeon_Controller extends Authenticated_Base
 	{
 		Route::get("authenticated/event/portal", array(
 			"uses" => "authenticated.dungeon@index",
+            "before" => "auth|hasNoCharacter|unfinishedDungeon",
 			"as"   => "get_authenticated_dungeon_index"
 		));
 		
 		Route::post("authenticated/event/portal", array(
 			"uses" => "authenticated.dungeon@index",
+            "before" => "auth|hasNoCharacter|unfinishedDungeon",
 			"as"   => "post_authenticated_dungeon_index"
 		));
 	}
@@ -21,7 +23,7 @@ class Authenticated_Dungeon_Controller extends Authenticated_Base
 	{
 		$this->dungeon = $dungeon;
 		$this->character = $character;
-		
+        
 		parent::__construct();
 	}
     

@@ -1,5 +1,12 @@
 <?php
 
+Route::filter('unfinishedDungeon', function()
+{
+    if (Laravel\IoC::resolve("Dungeon")->has_finished()) {
+        return Laravel\Redirect::to_route("get_authenticated_index");
+    }
+});
+
 /*
  *	Antes de todo, verificamos
  *	si el usuario está logueado

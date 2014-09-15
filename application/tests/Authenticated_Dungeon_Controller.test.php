@@ -30,6 +30,7 @@ class Authenticated_Dungeon_Controller_Test extends Tests\TestHelper
 	{
 		$this->assertHasFilter("get", "authenticated/event/portal", "before", "auth");
 		$this->assertHasFilter("get", "authenticated/event/portal", "before", "hasNoCharacter");
+		$this->assertHasFilter("get", "authenticated/event/portal", "before", "unfinishedDungeon");
 		
         $zone = m::mock("Zone");
         
@@ -58,6 +59,7 @@ class Authenticated_Dungeon_Controller_Test extends Tests\TestHelper
 	{
 		$this->assertHasFilter("post", "authenticated/event/portal", "before", "auth");
 		$this->assertHasFilter("post", "authenticated/event/portal", "before", "hasNoCharacter");
+		$this->assertHasFilter("post", "authenticated/event/portal", "before", "unfinishedDungeon");
         
         $dungeonId = 5;
         $dungeonLevel = m::mock("DungeonLevel");

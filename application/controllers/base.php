@@ -1,6 +1,6 @@
 <?php
 
-class Base_Controller extends Controller {
+class Base_Controller extends Laravel\Routing\Controller {
 
 	/**
 	 * Catch-all method for requests that can't be matched.

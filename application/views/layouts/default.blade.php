@@ -392,7 +392,7 @@
 									<a href="{{ URL::to_route("get_authenticated_trade_index") }}">Comercios</a>
 								</li>
                                 <li class="nav-header">Eventos</li>
-                                @if ( $character->can_fight() === true )
+                                @if ( $character->can_fight() === true && ! IoC::resolve("Dungeon")->has_finished() )
 								<li>
 									<i class="img-circle menu-icon menu-dungeons"></i>
 									<a href="{{ URL::to_route("get_authenticated_dungeon_index") }}">Portal Oscuro</a>
