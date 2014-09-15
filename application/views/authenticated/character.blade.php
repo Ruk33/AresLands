@@ -1,13 +1,16 @@
 @if ( isset($character) && isset($characterToSee) )
 	<div class="text-center" style="margin-left: -15px;">
 		<h1 style="margin-bottom: -15px !important;">{{ $characterToSee->name }}</h1>
-		
+        		
 		@if ( $characterToSee->clan_id > 0 )
-			<i>Miembro de {{ $characterToSee->clan()->select(array('id', 'name'))->first()->get_link() }}</i>
+            <div><i>Miembro de {{ $characterToSee->clan->get_link() }}</i></div>
 		@endif
 		
-		<div style="font-size: 12px;">Nivel: {{ $characterToSee->level }}</div>
-		
+		<div style="font-size: 12px;">
+            <div>Nivel: {{ $characterToSee->level }}</div>
+            <div><i>Servidor {{ $characterToSee->server->name }} (Nº {{ $characterToSee->server_id }})</i></div>
+        </div>
+        
 		@if ( $character->is_admin() )
 			<!-- BUFFS -->
 			@if ( count($skills) > 0 )

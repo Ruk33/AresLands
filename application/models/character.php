@@ -2627,7 +2627,7 @@ class Character extends Unit
 	public function get_link()
 	{
         $href = URL::to_route("get_authenticated_character_show", array(
-            $this->name
+            $this->server_id, $this->name
         ));
         
 		return "<a href='{$href}'>{$this->name}</a>";
@@ -3699,6 +3699,11 @@ class Character extends Unit
 	{
 		return $this->has_one('ActivityBar', 'character_id');
 	}
+    
+    public function server()
+    {
+        return $this->belongs_to('Server', 'server_id');
+    }
 	
 	/**
 	 * Asignamos caracteristicas del personaje desde array

@@ -62,6 +62,55 @@ textarea {
 }
 
 /*
+ * Creacion de personaje
+ */
+.character-creation-race-list {
+    margin-top: 20px;
+}
+
+.character-creation-race-list li {
+    margin-right: 33px;
+}
+
+.character-creation-race-icon:hover {
+    box-shadow: 
+        0 0 2px #ffffcc,
+        0 0 10px #ff6633;
+}
+
+.character-creation-race-icon {
+    width: 64px;
+    height: 64px;
+    display: block;
+    background-repeat: no-repeat;
+    border-radius: 5px;
+}
+
+.character-creation-race-icon-dwarf {
+    background-image: url("/img/dwarf-male-64.png");
+}
+
+.character-creation-race-icon-human {
+    background-image: url("/img/human-female-64.png");
+}
+
+.character-creation-race-icon-elf {
+    background-image: url("/img/elf-male-64.png");
+}
+
+.character-creation-race-icon-drow {
+    background-image: url("/img/drow-female-64.png");
+}
+
+.character-creation-race-tooltip {
+    width: 600px;
+}
+
+.character-creation-race-tooltip + .popover {
+    margin-top: 200px !important;
+}
+
+/*
  * Atributos secundarios
  */
 .secondary-attributes-li {

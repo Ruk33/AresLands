@@ -2,7 +2,7 @@
 
 class CharacterCreation_Controller extends Base_Controller
 {
-	public $layout = 'layouts.default';
+	public $layout = 'layouts.charactercreation';
 	public $restful = true;
 
 	public function __construct()
