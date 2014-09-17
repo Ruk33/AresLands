@@ -884,6 +884,10 @@ class Character extends Unit
 						->where('name', '<>', $this->name)
 						->where('registered_in_tournament', '=', $this->registered_in_tournament);
 		
+        if (! $this->battle_all_servers) {
+            $eloquent = $eloquent->where_server_id($this->server_id);
+        }
+        
 		// Si estamos en torneo, evitamos que toquen de nuestro clan
 		if ( Tournament::is_active() && $this->registered_in_tournament )
 		{
@@ -3291,7 +3295,7 @@ class Character extends Unit
 				}
 			}
             
-            if ( ! $target->battle_all_servers )
+            if ( ! $target->battle_all_servers && $this->server_id != $target->server_id )
             {
                 return "El personaje objetivo no tiene la opcion de batallar contra todos los servidores";
             }
