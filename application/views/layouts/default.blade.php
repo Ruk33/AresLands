@@ -503,7 +503,7 @@
 						<ul class="chat-list unstyled" name="messages">
 							<li ng-repeat="message in chat.messages[chat.channel]">
 								<div class="pull-right" style="color: rgb(77, 77, 77);">[[ formatMessageTime(message.time) ]]</div>
-								<a href="{{ URL::base() }}/authenticated/character/show/[[ message.name ]]">[[ message.name ]]</a>: [[ message.message ]]
+								<a href="{{ URL::base() }}/authenticated/character/show/[[ message.server_id ]]/[[ message.name ]]">[[ message.name ]]</a>: [[ message.message ]]
 							</li>
 						</ul>
 					</div>

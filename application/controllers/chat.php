@@ -53,7 +53,7 @@ class Chat_Controller extends Base_Controller
 		->where('time', '>', $time)
 		->where('channel', '=', $channel)
 		->order_by('time', 'asc')
-		->get(array('chat.message', 'chat.time', 'characters.name'));
+		->get(array('chat.message', 'chat.time', 'characters.name', 'characters.server_id'));
 
 		return json_encode($messages);
 	}
@@ -66,9 +66,11 @@ class Chat_Controller extends Base_Controller
 		{
 			return;
 		}
+        
+        $character = Character::get_character_of_logged_user(array('id', 'server_id'));
 
 		$data = array(
-			'character_id' => Character::get_character_of_logged_user(array('id'))->id,
+			'character_id' => $character->id,
 			'message' => $json->message,
 			'channel' => $json->channel,
 			'time' => time()
