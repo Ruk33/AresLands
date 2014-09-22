@@ -7,46 +7,10 @@ class Character extends Unit
 	public static $table = "characters";
         
     /**
-     * Cache para el segundo mercenario
-     * @var Item
+     *
+     * @var StatBag
      */
-    protected $secondMercenary;
-    
-    /**
-     * Cache para cuando se calcula la fuerza final
-     * @var float
-     */
-    protected $finalStrength;
-    
-    /**
-     * Cache para cuando se calcula la destreza final
-     * @var float
-     */
-    protected $finalDexterity;
-    
-    /**
-     * Cache para cuando se calcula la resistencia final
-     * @var float
-     */
-    protected $finalResistance;
-    
-    /**
-     * Cache para cuando se calcula la magia final
-     * @var float
-     */
-    protected $finalMagic;
-    
-    /**
-     * Cache para cuando se calcula la habilidad magica final
-     * @var float
-     */
-    protected $finalMagicSkill;
-    
-    /**
-     * Cache para cuando se calcula la resistencia magica final
-     * @var float
-     */
-    protected $finalMagicResistance;
+    protected $stats;
     
     protected $rules = array(
 		'name' => 'required|unique:characters|between:3,10|alpha_num',
@@ -328,13 +292,18 @@ class Character extends Unit
         return URL::base() . "/img/characters/{$this->race}_{$this->gender}_999.png";
     }
 
-	/**
-	 * Obtenemos el arma del personaje
-	 * @return CharacterItem
-	 */
 	public function get_weapon()
 	{
-		return $this->items()->where_in('location', array('lrhand', 'rhand'))->first();
+        $weapon = null;
+        $location = array('lrhand', 'rhand');
+        
+        if ($weapon = $this->items()->where_in('location', $location)->first()) {
+            $id = $weapon->id;
+            $weapon = $weapon->item;
+            $weapon->set_attribute('character_item_id', $id);
+        }
+        
+        return $weapon;
 	}
 
 	/**
@@ -343,7 +312,15 @@ class Character extends Unit
 	 */
 	public function get_shield()
 	{
-		return $this->items()->where('location', '=', 'lhand')->first();
+        $shield = null;
+        
+        if ($shield = $this->items()->where_location('lhand')->first()) {
+            $id = $shield->id;
+            $shield = $shield->item;
+            $shield->set_attribute('character_item_id', $id);
+        }
+        
+		return $shield;
 	}
 
 	/**
@@ -357,11 +334,19 @@ class Character extends Unit
 
 	/**
 	 * Obtenemos mercenario de personaje
-	 * @return CharacterItem
+	 * @return Item
 	 */
 	public function get_mercenary()
 	{
-		return $this->items()->where('location', '=', 'mercenary')->first();
+        $mercenary = null;
+        
+        if ($mercenary = $this->items()->where_location('mercenary')->first()) {
+            $id = $mercenary->id;
+            $mercenary = $mercenary->item;
+            $mercenary->set_attribute('character_item_id', $id);
+        }
+        
+		return $mercenary;
 	}
 
 	/**
@@ -2648,102 +2633,47 @@ class Character extends Unit
 		return "<a href='{$href}'>{$this->name}</a>";
 	}
     
-    public function get_final_strength()
+    /**
+     * 
+     * @return StatBag
+     */
+    public function getStatBag()
     {
-        if (! $this->finalStrength) {
-            $extra = 0;
-
-            if ($this->has_second_mercenary()) {
-                $extra = $this->get_second_mercenary()->stat_strength;
-            }
-            
-            $this->finalStrength = 
-                $this->stat_strength + $this->stat_strength_extra + $extra;
+        if (! $this->stats) {
+            $this->stats = new StatBag($this, true);
         }
         
-        return $this->finalStrength;
+        return $this->stats;
+    }
+    
+    public function get_final_strength()
+    {
+        return $this->getStatBag()->getStrength();
     }
     
     public function get_final_dexterity()
     {
-        if (! $this->finalDexterity) {
-            $extra = 0;
-
-            if ($this->has_second_mercenary()) {
-                $extra = $this->get_second_mercenary()->stat_dexterity;
-            }
-            
-            $this->finalDexterity = 
-                $this->stat_dexterity + $this->stat_dexterity_extra + $extra;
-        }
-        
-        return $this->finalDexterity;
+        return $this->getStatBag()->getDexterity();
     }
     
     public function get_final_resistance()
     {
-        if (! $this->finalResistance) {
-            $extra = 0;
-
-            if ($this->has_second_mercenary()) {
-                $extra = $this->get_second_mercenary()->stat_resistance;
-            }
-            
-            $this->finalResistance = 
-                $this->stat_resistance + $this->stat_resistance_extra + $extra;
-        }
-        
-        return $this->finalResistance;
+        return $this->getStatBag()->getResistance();
     }
     
     public function get_final_magic()
     {
-        if (! $this->finalMagic) {
-            $extra = 0;
-
-            if ($this->has_second_mercenary()) {
-                $extra = $this->get_second_mercenary()->stat_magic;
-            }
-            
-            $this->finalMagic = 
-                $this->stat_magic + $this->stat_magic_extra + $extra;
-        }
-        
-        return $this->finalMagic;
+        return $this->getStatBag()->getMagic();
     }
     
     public function get_final_magic_skill()
     {
-        if (! $this->finalMagicSkill) {
-            $extra = 0;
-
-            if ($this->has_second_mercenary()) {
-                $extra = $this->get_second_mercenary()->stat_magic_skill;
-            }
-            
-            $this->finalMagicSkill = 
-                $this->stat_magic_skill + $this->stat_magic_skill_extra + $extra;
-        }
-        
-        return $this->finalMagicSkill;
+        return $this->getStatBag()->getMagicSkill();
     }
     
     public function get_final_magic_resistance()
     {
-        if (! $this->finalMagicResistance) {
-            $extra = 0;
-
-            if ($this->has_second_mercenary()) {
-                $extra = $this->get_second_mercenary()->stat_magic_resistance;
-            }
-            
-            $this->finalMagicResistance = 
-                $this->stat_magic_resistance + 
-                $this->stat_magic_resistance_extra + 
-                $extra;
-        }
-        
-        return $this->finalMagicResistance;
+        return $this->getStatBag()->getMagicResistance();
     }
 
     /**
@@ -2754,27 +2684,12 @@ class Character extends Unit
 	{
 		$stats = array();
 
-		$stats['stat_strength'] = $this->stat_strength + $this->stat_strength_extra;
-		$stats['stat_dexterity'] = $this->stat_dexterity + $this->stat_dexterity_extra;
-		$stats['stat_resistance'] = $this->stat_resistance + $this->stat_resistance_extra;
-		$stats['stat_magic'] = $this->stat_magic + $this->stat_magic_extra;
-		$stats['stat_magic_skill'] = $this->stat_magic_skill + $this->stat_magic_skill_extra;
-		$stats['stat_magic_resistance'] = $this->stat_magic_resistance + $this->stat_magic_resistance_extra;
-
-		if ( $this->has_second_mercenary() )
-		{
-			$second_mercenary = Item::find($this->second_mercenary);
-
-			if ( $second_mercenary )
-			{
-				$stats['stat_strength'] += $second_mercenary->stat_strength;
-				$stats['stat_dexterity'] += $second_mercenary->stat_dexterity;
-				$stats['stat_resistance'] += $second_mercenary->stat_resistance;
-				$stats['stat_magic'] += $second_mercenary->stat_magic;
-				$stats['stat_magic_skill'] += $second_mercenary->stat_magic_skill;
-				$stats['stat_magic_resistance'] += $second_mercenary->stat_magic_resistance;
-			}
-		}
+		$stats['stat_strength'] = $this->get_final_strength();
+		$stats['stat_dexterity'] = $this->get_final_dexterity();
+		$stats['stat_resistance'] = $this->get_final_resistance();
+		$stats['stat_magic'] = $this->get_final_magic();
+		$stats['stat_magic_skill'] = $this->get_final_magic_skill();
+		$stats['stat_magic_resistance'] = $this->get_final_magic_resistance();
 
 		return $stats;
 	}
@@ -3640,6 +3555,20 @@ class Character extends Unit
 	{
 		return $this->has_many('CharacterItem', 'owner_id');
 	}
+    
+    public function get_buffs()
+    {
+        $buffs = array();
+        
+        foreach ($this->skills as $buff) {
+            $buffs[] = array(
+                'skill' => $buff->skill,
+                'amount' => $buff->amount
+            );
+        }
+        
+        return $buffs;
+    }
 
 	public function skills()
 	{

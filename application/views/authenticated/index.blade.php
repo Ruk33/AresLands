@@ -97,10 +97,10 @@
 				<div class="box box-box-64-gold">
 					@if ( $weapon )
                         {{ Form::open(URL::to_route("post_authenticated_inventory_use")) }}
-                            {{ Form::hidden("id", $weapon->id) }}
+                            {{ Form::hidden("id", $weapon->character_item_id) }}
                             {{ Form::hidden("amount", 1) }}
-                            <div data-toggle="tooltip" data-placement="top" data-original-title="{{ $weapon->item->get_text_for_tooltip() }}">
-                                {{ Form::image($weapon->item->get_image_path(), $weapon->item->name, array("width" => "64px", "height" => "64px")) }}
+                            <div data-toggle="tooltip" data-placement="top" data-original-title="{{ $weapon->get_text_for_tooltip() }}">
+                                {{ Form::image($weapon->get_image_path(), $weapon->name, array("width" => "64px", "height" => "64px")) }}
                             </div>
                         {{ Form::close() }}
 					@endif
@@ -112,12 +112,12 @@
 				<!-- ESCUDO -->
 				<div style="position: absolute; left: 230px; top: 150px;">
 					<div class="box box-box-64-gold">
-						@if ( $shield && $shield->item )
+						@if ( $shield )
 							{{ Form::open(URL::to_route("post_authenticated_inventory_use")) }}
-                                {{ Form::hidden("id", $shield->id) }}
+                                {{ Form::hidden("id", $shield->character_item_id) }}
                                 {{ Form::hidden("amount", 1) }}
-                                <div data-toggle="tooltip" data-placement="top" data-original-title="{{ $shield->item->get_text_for_tooltip() }}">
-                                    {{ Form::image($shield->item->get_image_path(), $shield->item->name, array("width" => "64px", "height" => "64px")) }}
+                                <div data-toggle="tooltip" data-placement="top" data-original-title="{{ $shield->get_text_for_tooltip() }}">
+                                    {{ Form::image($shield->get_image_path(), $shield->name, array("width" => "64px", "height" => "64px")) }}
                                 </div>
                             {{ Form::close() }}
 						@endif
@@ -139,10 +139,10 @@
                 <div class="box box-box-64-blue">
                     @if ( $mercenary )
                         {{ Form::open(URL::to_route("post_authenticated_inventory_use")) }}
-                            {{ Form::hidden("id", $mercenary->id) }}
+                            {{ Form::hidden("id", $mercenary->character_item_id) }}
                             {{ Form::hidden("amount", 1) }}
-                            <div data-toggle="tooltip" data-placement="top" data-original-title="{{ $mercenary->item->get_text_for_tooltip() }}">
-                                {{ Form::image($mercenary->item->get_image_path(), $mercenary->item->name, array("width" => "64px", "height" => "64px")) }}
+                            <div data-toggle="tooltip" data-placement="top" data-original-title="{{ $mercenary->get_text_for_tooltip() }}">
+                                {{ Form::image($mercenary->get_image_path(), $mercenary->name, array("width" => "64px", "height" => "64px")) }}
                             </div>
                         {{ Form::close() }}
                     @endif
@@ -300,11 +300,11 @@
 						<div class="pull-right">
 							<span ng-bind="character.stat_strength">?</span>
 							
-							@if ( $character->stat_strength_extra != 0 )
-								@if ( $character->stat_strength_extra > 0 )
-									<span class="positive">+{{ $character->stat_strength_extra }}</span>
+							@if ( $character->getStatBag()->getExtraStrength() != 0 )
+								@if ( $character->getStatBag()->getExtraStrength() > 0 )
+									<span class="positive">+{{ $character->getStatBag()->getExtraStrength() }}</span>
 								@else
-									<span class="negative">{{ $character->stat_strength_extra }}</span>
+									<span class="negative">{{ $character->getStatBag()->getExtraStrength() }}</span>
 								@endif
 							@endif
 						</div>
@@ -321,11 +321,11 @@
 						<div class="pull-right">
 							<span ng-bind="character.stat_dexterity">?</span>
 
-							@if ( $character->stat_dexterity_extra != 0 )
-								@if ( $character->stat_dexterity_extra > 0 )
-									<span class="positive">+{{ $character->stat_dexterity_extra }}</span>
+							@if ( $character->getStatBag()->getExtraDexterity() != 0 )
+								@if ( $character->getStatBag()->getExtraDexterity() > 0 )
+									<span class="positive">+{{ $character->getStatBag()->getExtraDexterity() }}</span>
 								@else
-									<span class="negative">{{ $character->stat_dexterity_extra }}</span>
+									<span class="negative">{{ $character->getStatBag()->getExtraDexterity() }}</span>
 								@endif
 							@endif
 						</div>
@@ -342,11 +342,11 @@
 						<div class="pull-right">
 							<span ng-bind="character.stat_resistance">?</span>
 
-							@if ( $character->stat_resistance_extra != 0 )
-								@if ( $character->stat_resistance_extra > 0 )
-									<span class="positive">+{{ $character->stat_resistance_extra }}</span>
+							@if ( $character->getStatBag()->getExtraResistance() != 0 )
+								@if ( $character->getStatBag()->getExtraResistance() > 0 )
+									<span class="positive">+{{ $character->getStatBag()->getExtraResistance() }}</span>
 								@else
-									<span class="negative">{{ $character->stat_resistance_extra }}</span>
+									<span class="negative">{{ $character->getStatBag()->getExtraResistance() }}</span>
 								@endif
 							@endif
 						</div>
@@ -364,11 +364,11 @@
 						<div class="pull-right">
 							<span ng-bind="character.stat_magic">?</span>
 
-							@if ( $character->stat_magic_extra != 0 )
-								@if ( $character->stat_magic_extra > 0 )
-									<span class="positive">+{{ $character->stat_magic_extra }}</span>
+							@if ( $character->getStatBag()->getExtraMagic() != 0 )
+								@if ( $character->getStatBag()->getExtraMagic() > 0 )
+									<span class="positive">+{{ $character->getStatBag()->getExtraMagic() }}</span>
 								@else
-									<span class="negative">{{ $character->stat_magic_extra }}</span>
+									<span class="negative">{{ $character->getStatBag()->getExtraMagic() }}</span>
 								@endif
 							@endif
 						</div>
@@ -385,11 +385,11 @@
 						<div class="pull-right">
 							<span ng-bind="character.stat_magic_skill">?</span>
 
-							@if ( $character->stat_magic_skill_extra != 0 )
-								@if ( $character->stat_magic_skill_extra > 0 )
-									<span class="positive">+{{ $character->stat_magic_skill_extra }}</span>
+							@if ( $character->getStatBag()->getExtraMagicSkill() != 0 )
+								@if ( $character->getStatBag()->getExtraMagicSkill() > 0 )
+									<span class="positive">+{{ $character->getStatBag()->getExtraMagicSkill() }}</span>
 								@else
-									<span class="negative">{{ $character->stat_magic_skill_extra }}</span>
+									<span class="negative">{{ $character->getStatBag()->getExtraMagicSkill() }}</span>
 								@endif
 							@endif
 						</div>
@@ -406,11 +406,11 @@
 						<div class="pull-right">
 							<span ng-bind="character.stat_magic_resistance">?</span>
 
-							@if ( $character->stat_magic_resistance_extra != 0 )
-								@if ( $character->stat_magic_resistance_extra > 0 )
-									<span class="positive">+{{ $character->stat_magic_resistance_extra }}</span>
+							@if ( $character->getStatBag()->getExtraMagicResistance() != 0 )
+								@if ( $character->getStatBag()->getExtraMagicResistance() > 0 )
+									<span class="positive">+{{ $character->getStatBag()->getExtraMagicResistance() }}</span>
 								@else
-									<span class="negative">{{ $character->stat_magic_resistance_extra }}</span>
+									<span class="negative">{{ $character->getStatBag()->getExtraMagicResistance() }}</span>
 								@endif
 							@endif
 						</div>

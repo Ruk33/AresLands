@@ -133,7 +133,7 @@
 						<span class="ui-button button" style="cursor: default;">
 							<i class="button-icon axe"></i>
 							<span class="button-content">
-								{{ $characterToSee->stat_strength_extra }}
+								{{ $characterToSee->getStatBag()->getExtraStrength() }}
 							</span>
 						</span>
 					</span>
@@ -143,7 +143,7 @@
 						<span class="ui-button button" style="cursor: default;">
 							<i class="button-icon boot"></i>
 							<span class="button-content">
-								{{ $characterToSee->stat_dexterity_extra }}
+								{{ $characterToSee->getStatBag()->getExtraDexterity() }}
 							</span>
 						</span>
 					</span>
@@ -153,7 +153,7 @@
 						<span class="ui-button button" style="cursor: default;">
 							<i class="button-icon hearth"></i>
 							<span class="button-content">
-								{{ $characterToSee->stat_resistance_extra }}
+								{{ $characterToSee->getStatBag()->getExtraResistance() }}
 							</span>
 						</span>
 					</span>
@@ -163,7 +163,7 @@
 						<span class="ui-button button" style="cursor: default;">
 							<i class="button-icon fire"></i>
 							<span class="button-content">
-								{{ $characterToSee->stat_magic_extra }}
+								{{ $characterToSee->getStatBag()->getExtraMagic() }}
 							</span>
 						</span>
 					</span>
@@ -173,7 +173,7 @@
 						<span class="ui-button button" style="cursor: default;">
 							<i class="button-icon arrow"></i>
 							<span class="button-content">
-								{{ $characterToSee->stat_magic_skill_extra }}
+								{{ $characterToSee->getStatBag()->getExtraMagicSkill() }}
 							</span>
 						</span>
 					</span>
@@ -183,7 +183,7 @@
 						<span class="ui-button button" style="cursor: default;">
 							<i class="button-icon thunder"></i>
 							<span class="button-content">
-								{{ $characterToSee->stat_magic_resistance_extra }}
+								{{ $characterToSee->getStatBag()->getExtraMagicResistance() }}
 							</span>
 						</span>
 					</span>
@@ -196,7 +196,7 @@
 			<div style="position: absolute; left: 40px; top: 150px;">
 				<div class="box box-box-64-gold">
 					@if ( $weapon )
-						<img style="cursor: pointer;" src="{{ $weapon->item->get_image_path() }}" alt="" width="80px" height="80px" data-toggle="tooltip" data-placement="top" data-original-title="{{ $weapon->item->get_text_for_tooltip() }}">
+						<img style="cursor: pointer;" src="{{ $weapon->get_image_path() }}" alt="" width="80px" height="80px" data-toggle="tooltip" data-placement="top" data-original-title="{{ $weapon->get_text_for_tooltip() }}">
 					@endif
 				</div>
 			</div>
@@ -206,8 +206,8 @@
 				<!-- ESCUDO -->
 				<div style="position: absolute; left: 230px; top: 150px;">
 					<div class="box box-box-64-gold">
-						@if ( $shield && $shield->item )
-							<img style="cursor: pointer;" src="{{ $shield->item->get_image_path() }}" alt="" width="80px" height="80px" data-toggle="tooltip" data-placement="top" data-original-title="{{ $shield->item->get_text_for_tooltip() }}">
+						@if ( $shield )
+							<img style="cursor: pointer;" src="{{ $shield->get_image_path() }}" alt="" width="80px" height="80px" data-toggle="tooltip" data-placement="top" data-original-title="{{ $shield->get_text_for_tooltip() }}">
 						@endif
 					</div>
 				</div>
@@ -226,7 +226,7 @@
 			<div style="position: absolute; left: 230px; top: 65px;">
                 <div class="box box-box-64-blue">
                     @if ( $mercenary )
-                        <img src="{{ $mercenary->item->get_image_path() }}" alt="" width="64px" height="64px" data-toggle="tooltip" data-placement="top" data-original-title="{{ $mercenary->item->get_text_for_tooltip() }}">
+                        <img src="{{ $mercenary->get_image_path() }}" alt="" width="64px" height="64px" data-toggle="tooltip" data-placement="top" data-original-title="{{ $mercenary->get_text_for_tooltip() }}">
                     @endif
                 </div>
 			</div>
