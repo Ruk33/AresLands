@@ -187,6 +187,14 @@ class Dungeon extends Base_Model
         $progress = $this->get_character_progress($character);
         
         if ($progress) {
+            $lastLevel = $this->get_last_level()->dungeon_level;
+            
+            // Los personajes pueden tener el nivel del dungeon superior
+            // al real (lo que significa que van contra el rey)
+            if ($lastLevel < $dungeonLevel->dungeon_level) {
+                return false;
+            }
+            
             return $progress->dungeon_level > $dungeonLevel->dungeon_level;
         }
         
