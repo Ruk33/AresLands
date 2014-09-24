@@ -360,12 +360,7 @@ class Character extends Unit
 			return null;
 		}
         
-        if (! $this->secondMercenary) {
-            $this->secondMercenary = 
-                Item::find($this->get_attribute('second_mercenary'));
-        }
-		
-		return $this->secondMercenary;
+        return Item::find($this->get_attribute('second_mercenary'));
 	}
 
 	/**
