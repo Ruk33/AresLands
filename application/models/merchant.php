@@ -126,8 +126,7 @@ class Merchant extends Npc
 		)");
 		
 		return $this->quests()
-                    ->where('quests.id', 'NOT IN', $notRepeatableCharacterQuests)
-                    ->where('min_level', '<=', $character->level);
+                    ->where('quests.id', 'NOT IN', $notRepeatableCharacterQuests);
 	}
     
     /**

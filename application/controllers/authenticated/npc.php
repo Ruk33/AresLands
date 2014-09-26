@@ -45,7 +45,7 @@ class Authenticated_Npc_Controller extends Authenticated_Base
 		$npc->fire_global_event('npcTalk', array($character, $npc));
 
 		$merchandises = $npc->get_merchandises_for($character)->with('item')->get();
-		$quests = $npc->quests()->order_by('min_level', 'asc')->get();
+		$quests = $npc->available_quests_of($character)->order_by('min_level', 'asc')->get();
         $characterQuests = $character->quests()->lists("repeatable_at", "quest_id");
 		$characterCoinsCount = $character->get_coins()->count;
 
