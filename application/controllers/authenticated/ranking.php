@@ -24,7 +24,7 @@ class Authenticated_Ranking_Controller extends Authenticated_Base
 		parent::__construct();
 	}
 	
-	public function get_index($rank = "pvp", $server = null)
+	public function get_index($rank = "level", $server = null)
 	{
         $elements = array();
         $pagination = null;
@@ -32,24 +32,23 @@ class Authenticated_Ranking_Controller extends Authenticated_Base
         
 		switch ( $rank )
 		{
+            case "level":
+                $pagination = $this->character->get_characters_for_level_ranking($allServers)->paginate(50);
+                $elements = $pagination->results;
+                break;
+
 //			case "kingOfTheHill":
 //				$elements = $this->kingOfTheHill->get_list();
 //				break;
 
 			case "pvp":
-				$pagination = $this->character
-                                   ->get_characters_for_pvp_ranking($allServers)
-                                   ->paginate(50);
-                
+				$pagination = $this->character->get_characters_for_pvp_ranking($allServers)->paginate(50);
                 $elements = $pagination->results;
                 
 				break;
 
 			case "clan":
-				$pagination = $this->clan
-                                   ->get_clans_for_ranking($allServers)
-                                   ->paginate(50);
-                
+				$pagination = $this->clan->get_clans_for_ranking($allServers)->paginate(50);
                 $elements = $pagination->results;
                 
 				break;

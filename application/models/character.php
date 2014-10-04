@@ -590,13 +590,16 @@ class Character extends Unit
 	}
 
 	/**
+     * @param boolean $allServers
 	 * @return Eloquent
 	 */
-	public static function get_characters_for_xp_ranking()
+	public function get_characters_for_level_ranking($allServers)
 	{
-		return static::with('clan')
-					 ->order_by('level', 'desc')
-					 ->order_by('xp', 'desc');
+        if ($allServers) {
+            return $this->with('clan')->order_by('level', 'desc')->order_by('xp', 'desc');
+        } else {
+            return $this->with('clan')->same_server()->order_by('level', 'desc')->order_by('xp', 'desc');
+        }
 	}
 
 	/**

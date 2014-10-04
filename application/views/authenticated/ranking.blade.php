@@ -4,6 +4,14 @@
     <div class="span12" style="padding: 15px;">
         <ul class="inline pull-right">
             <li>
+                <a href="{{ URL::to_route("get_authenticated_ranking_index", array("level")) }}" class="ui-button button">
+                <i class="button-icon dagger"></i>
+                    <span class="button-content">
+                        Nivel
+                    </span>
+                </a>
+            </li>
+            <li>
                 <a href="{{ URL::to_route("get_authenticated_ranking_index", array("pvp")) }}" class="ui-button button">
                     <i class="button-icon dagger"></i>
                     <span class="button-content">
@@ -32,9 +40,11 @@
         @if ( $rank == 'kingOfTheHill' )
             <h2>Rey de la colina</h2>
         @elseif ( $rank == 'pvp' )
-            <h2>Ranking Jugador contra Jugador</h2>
+            <h2>Rank PvP</h2>
         @elseif ( $rank == 'clan' )
-            <h2>Ranking Grupos</h2>
+            <h2>Rank Grupos</h2>
+        @elseif ( $rank == 'level' )
+            <h2>Rank Nivel</h2>
         @endif
     </div>
     
@@ -80,6 +90,9 @@
 			@if ( $rank == 'clan' )
             <th><div class="text-center">Puntos</div></th>
 			@endif
+            @if ( $rank == 'level' )
+            <th><div class="text-center">Nivel</div></th>
+            @endif
 		</tr>
 	</thead>
 
@@ -125,9 +138,8 @@
 			@if ( $rank == 'pvp' )
             <td><div class="text-center"><b>{{ $element->pvp_points }}</b></div></td>
 			@endif
-			@if ( $rank == 'xp' )
+			@if ( $rank == 'level' )
             <td><div class="text-center">{{ $element->level }}</div></td>
-            <td><div class="text-center">{{ $element->xp }}</div></td>
 			@endif
 			@if ( $rank == 'clan' )
             <td><div class="text-center"><b>{{ $element->orb_points->points }}</b></div></td>
