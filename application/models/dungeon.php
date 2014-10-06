@@ -18,7 +18,11 @@ class Dungeon extends Base_Model
      */
     public function days_left()
     {
-        return Carbon\Carbon::createFromDate(null, 10, 4)->diffInDays();
+        $today = \Carbon\Carbon::today();
+        $end = \Carbon\Carbon::createFromDate(2014, 10, 4);
+
+        // Pueden tocar dias negativos, asi que lo evitamos usando max
+        return max($today->diffInDays($end, false), 0);
     }
     
     /**
