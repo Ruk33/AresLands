@@ -25,7 +25,7 @@ return array(
 	|
 	*/
 
-	'url' => '//areslands.ironfist.com.ar',
+	'url' => '//areslands.titangames.com.ar',
 
 	/*
 	|--------------------------------------------------------------------------
@@ -65,7 +65,7 @@ return array(
 	|
 	*/
 
-	'key' => md5('ironFistClave'),
+	'key' => md5('titanGamesClave'),
 
 	/*
 	|--------------------------------------------------------------------------
