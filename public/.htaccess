@@ -11,12 +11,12 @@
     </IfModule>
 
 #Options +FollowSymLinks
-#RewriteEngine on
+RewriteEngine on
 
-#RewriteCond %{REQUEST_FILENAME} !-f
-#RewriteCond %{REQUEST_FILENAME} !-d
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
 
-#RewriteRule . index.php [L]
+RewriteRule . index.php [L]
 
 # Apache configuration file
 # httpd.apache.org/docs/2.2/mod/quickreference.html
