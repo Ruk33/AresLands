@@ -25,7 +25,7 @@
 
 				<div class="alert-content" style="height: 75px;">
 					<div style="margin-top: 20px">
-						Tus <span data-toggle="tooltip" data-original-title="Las IronCoins son monedas especiales que adquieres mediante dinero real para comprar diferentes objetos en los juegos de IronFist"><u>IronCoins</u></span>: {{ Auth::user()->coins }} (<a href="//ironfist.com.ar/profile/ironcoins/peso">Conseguir</a>)
+						Tus <span data-toggle="tooltip" data-original-title="Las TitanCoins son monedas especiales que adquieres mediante dinero real para comprar diferentes objetos en los juegos de TitanGames"><u>TitanCoins</u></span>: {{ Auth::user()->coins }} (<a href="//titangames.com.ar/profile/coins/peso">Conseguir</a>)
 					</div>
 				</div>
 
@@ -58,7 +58,7 @@
 					<div class="clearfix"></div>
 
 					<div style="position: absolute; bottom: 10px; left: 10px; font-size: 11px; text-transform: uppercase;">
-						IronCoins: {{ $vipObject->getPrice() }}
+						TitanCoins: {{ $vipObject->getPrice() }}
 					</div>
 
 					<div style="position: absolute; bottom: 10px; right: 10px;">
