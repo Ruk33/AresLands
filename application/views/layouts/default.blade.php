@@ -430,11 +430,11 @@
                                 <li class="nav-header">Ayuda</li>
 								<li>
 									<i class="img-circle menu-icon menu-tutorial"></i>
-									<a href="//ironfist.com.ar/forums/topic/175/guia-inicial" target="_blank">Guia</a>
+									<a href="//titangames.com.ar/forums/topic/175/guia-inicial" target="_blank">Guia</a>
 								</li>
 								<li>
 									<i class="img-circle menu-icon menu-forum"></i>
-									<a href="//ironfist.com.ar/forums" target="_blank">Foro</a>
+									<a href="//titangames.com.ar/forums" target="_blank">Foro</a>
 								</li>
                                 <li class="nav-header">otro</li>
 								<li>
