@@ -36,6 +36,3 @@ intermediate
 publish
 .idea
 storage/views/*
-
-# htaccess
-public/.htaccess
