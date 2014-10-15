@@ -7,6 +7,16 @@ class CharacterSkill extends Base_Model
 	public static $table = 'character_skills';
 	public static $key = 'id';
 	
+    /**
+     * Verificamos si habilidad de personaje ya ha terminado
+     * 
+     * @return boolean
+     */
+    public function is_over()
+    {
+        return $this->end_time != 0 && time() > $this->end_time;
+    }
+    
 	public function get_data()
 	{
 		$data = $this->get_attribute('data');

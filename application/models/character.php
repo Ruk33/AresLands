@@ -742,9 +742,8 @@ class Character extends Unit
 	{
 		if ( $this->is_invisible() )
 		{
-			$invisibilitySkill = $this->skills()
-									  ->where('skill_id', '=', Config::get('game.invisibility_skill'))
-									  ->first();
+            $invisibilityId = Config::get('game.invisibility_skill');
+			$invisibilitySkill = $this->skills()->where_skill_id($invisibilityId)->first();
 
 			if ( $invisibilitySkill )
 			{

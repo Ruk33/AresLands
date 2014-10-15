@@ -23,7 +23,7 @@
 
 $environments = array(
 
-	'local'      => array('areslands.ironfist.com'),
+	'local'      => array('areslands.ironfist.com', '127.0.0.1:8000'),
     'production' => array('areslands.titangames.com.ar'),
     'test'       => array(''),
 
