@@ -86,6 +86,9 @@ class Authenticated_Message_Controller extends Authenticated_Base
 		}
 		
 		$character = $this->character->get_logged();
+        
+        $character->clear_old_battle_reports();
+        
 		$messages = $character->messages()
 							  ->where_type($type)
 							  ->order_by("unread", "desc")

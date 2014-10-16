@@ -115,6 +115,20 @@ class Character extends Unit
         "second_mercenary" => 0,
     );
     
+    /**
+     * Borramos los reportes de batalla del personaje que tengan cierta
+     * antiguedad
+     * 
+     * @param integer $diff Por defecto, borrar mensajes que superen el mes de antiguedad
+     */
+    public function clear_old_battle_reports($diff = 2592000)
+    {
+        $this->messages()
+             ->where_in('type', array('attack', 'defense'))
+             ->where('date', '<', time() - $diff)
+             ->delete();
+    }
+    
     public function same_server()
     {
         $character = $this->get_logged(array("server_id"));
