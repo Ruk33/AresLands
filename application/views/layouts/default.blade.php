@@ -456,26 +456,26 @@
 				</div>
                     
                 <div style="background-image: url({{ URL::base() }}/img/footer-content.png); height: 100px; margin-top: -20px; background-position: 1px 0; background-repeat: no-repeat; position: relative; z-index: 2; width: 101%;"></div>
-				
-				<div id="footer">
-					<div class="pull-left" style="padding: 25px;">
-						<a href="//titangames.com.ar" target="_blank">
-							<img src="{{ URL::base() }}/img/logo-titangames.png">
-						</a>
-					</div>
-					<div style="padding-top: 50px; margin-left: 130px;">
-						<p>
-							Todas las marcas aquí mencionadas son propiedad de sus respectivos dueños. 
-							<br>
-							©2014 TitanGames. Todos los derechos reservados.
-							<a href="//titangames.com.ar/privacy" target="_blank">Política de privacidad</a>
-							-
-							<a href="//titangames.com.ar/terms" target="_blank">Condiciones generales de uso</a>
-							<br>
-							AresLands es una realidad gracias a <b>Vicente Buendia</b> y a su proyecto open <a href="http://sourceforge.net/projects/tierras/" target="_blank" rel="nofollow">Tierras de Leyenda</a> y a <a href="{{ URL::to('home/thanks') }}">todos los que contribuyeron con nosotros</a>.
-						</p>
-					</div>
-				</div>
+
+                <div id="footer">
+                    <div class="text-center">
+                        <div>
+                            <a href="//titangames.com.ar">
+                                <img src="{{ URL::base() }}/img/logo-titangames.png">
+                            </a>
+                            <p>
+                                Todas las marcas aquí mencionadas son propiedad de sus respectivos dueños.
+                                <br>
+                                ©2014 TitanGames. Todos los derechos reservados.
+                                <a href="//titangames.com.ar/privacy" target="_blank">Política de privacidad</a>
+                                -
+                                <a href="//titangames.com.ar/terms" target="_blank">Condiciones generales de uso</a>
+                                <br>
+                                AresLands es una realidad gracias a <b>Vicente Buendia</b> y a su proyecto open <a href="http://sourceforge.net/projects/tierras/" target="_blank" rel="nofollow">Tierras de Leyenda</a> y a <a href="{{ URL::to('home/thanks') }}">todos los que contribuyeron con nosotros</a>.
+                            </p>
+                        </div>
+                    </div>
+                </div>
 			</div>
 			</div> <!-- /container -->
 		</div> <!-- /wrap -->

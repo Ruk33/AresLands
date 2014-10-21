@@ -38,12 +38,19 @@
 		<div id="footer">
 			<div class="text-center">
 				<div>
-					<img src="{{ URL::base() }}/img/ironfist-logo.png" width="212px" height="259px">
-					<p style="color: white; font-size: 11px;">
-						Todas las marcas aquí mencionadas son propiedad de sus respectivos dueños. 
-						<br>
-						©2013 IronFist. Todos los derechos reservados.
-					</p>
+                    <a href="//titangames.com.ar">
+					    <img src="{{ URL::base() }}/img/logo-titangames.png">
+                    </a>
+                    <p>
+                        Todas las marcas aquí mencionadas son propiedad de sus respectivos dueños.
+                        <br>
+                        ©2014 TitanGames. Todos los derechos reservados.
+                        <a href="//titangames.com.ar/privacy" target="_blank">Política de privacidad</a>
+                        -
+                        <a href="//titangames.com.ar/terms" target="_blank">Condiciones generales de uso</a>
+                        <br>
+                        AresLands es una realidad gracias a <b>Vicente Buendia</b> y a su proyecto open <a href="http://sourceforge.net/projects/tierras/" target="_blank" rel="nofollow">Tierras de Leyenda</a> y a <a href="{{ URL::to('home/thanks') }}">todos los que contribuyeron con nosotros</a>.
+                    </p>
 				</div>
 			</div>
 		</div>
