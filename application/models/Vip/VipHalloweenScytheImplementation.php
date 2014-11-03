@@ -2,13 +2,40 @@
 
 use Laravel\Validator;
 use Laravel\Config;
+use Laravel\IoC;
 
-class VipHalloweenScytheImplementation extends VipBuffImplementation
+class VipHalloweenScytheImplementation implements VipImplementation
 {
-    protected function getSkill()
+    protected $entity;
+    
+    protected $attributes;
+    
+    protected $itemRepository;
+    
+    public function __construct(\Character $entity, array $attributes)
     {
-        $buffId = Config::get('game.vip_multiplier_xp_rate_skill');
-        return $this->getSkillRepository()->find($buffId);
+        $this->entity = $entity;
+        $this->attributes = $attributes;
+    }
+    
+    public function setItemRepository(Item $itemRepository)
+    {
+        $this->itemRepository = $itemRepository;
+    }
+    
+    protected function getItemRepository()
+    {
+        if (! $this->itemRepository) {
+            $this->itemRepository = IoC::resolve("Item");
+        }
+        
+        return $this->itemRepository;
+    }
+
+    public function execute()
+    {
+        $item = $this->getItemRepository()->find(13588);
+        return $this->entity->add_item($item);
     }
 
     public function getInputs()
