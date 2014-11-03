@@ -303,6 +303,10 @@ class Character extends Unit
     
     public function get_image_path()
     {
+        if ($this->has_buff(80)) {
+            return URL::base() . "/img/characters/halloween_1.png";
+        }
+        
         return URL::base() . "/img/characters/{$this->race}_{$this->gender}_999.png";
     }
 
@@ -3579,6 +3583,11 @@ class Character extends Unit
         }
         
         return $buffs;
+    }
+    
+    public function has_buff($id)
+    {
+        return (bool) $this->skills()->where_skill_id($id)->take(1)->count();
     }
 
 	public function skills()

@@ -32,7 +32,7 @@
 				<div class="alert-bot"></div>
 			</div>
 		</li>
-		@foreach ( $vipObjects as $id => $vipObject )
+		@foreach ( $vipObjects as $vipObject )
 		<li class="text-left" style="margin-top: 7px; margin-bottom: 7px; vertical-align: top;">
 			<div class="alert-center">
 				<div class="alert-top"></div>
@@ -41,7 +41,7 @@
 					{{ Form::open(URL::to_route("post_authenticated_secret_shop_buy")) }}
 
 					{{ Form::token() }}
-					{{ Form::hidden('id', $id) }}
+					{{ Form::hidden('id', $vipObject->id) }}
 
 					<strong style="color: white;">{{ $vipObject->getName() }}</strong>
 					<div class="pull-left" style="margin-right: 10px;">
@@ -52,7 +52,7 @@
 					<div class="clearfix"></div>
 
 					<div style="margin-top: 10px;">
-                        {{ $vipObject->getInput() }}
+                        {{ $vipObject->getVipImplementation($character)->getInputs() }}
 					</div>
 
 					<div class="clearfix"></div>
@@ -62,7 +62,7 @@
 					</div>
 
 					<div style="position: absolute; bottom: 10px; right: 10px;">
-						{{ Form::submit('Comprar', array('class' => 'ui-button ui-input-button', 'onclick' => 'return confirm("¿Seguro que quieres comprar ' . $vipObject->getName() . ' por ' . $vipObject->getPrice() . ' IronCoins?");')) }}
+						{{ Form::submit('Comprar', array('class' => 'ui-button ui-input-button', 'onclick' => 'return confirm("¿Seguro que quieres comprar ' . $vipObject->getName() . ' por ' . $vipObject->getPrice() . ' TitanCoins?");')) }}
 					</div>
 
 					{{ Form::close() }}

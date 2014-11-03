@@ -133,7 +133,7 @@ Event::listen('equipItem', function(CharacterItem $characterItem, $amount = 1)
 						 */
 						foreach ( $skills as $skill )
 						{
-							if ( $skill['duration'] == -1 )
+							if ( $skill->duration == -1 )
 							{
 								/*
 								$data = $skill->data;
@@ -149,10 +149,10 @@ Event::listen('equipItem', function(CharacterItem $characterItem, $amount = 1)
 							{
 								$characterSkill = new CharacterSkill();
 
-								$characterSkill->skill_id = $skill['skill_id'];
+								$characterSkill->skill_id = $skill->id;
 								$characterSkill->character_id = $character->id;
-								$characterSkill->level = $skill['level'];
-								$characterSkill->end_time = ($skill['duration'] != 0) ? time() + $skill['duration'] : 0;
+								$characterSkill->level = $skill->level;
+								$characterSkill->end_time = ($skill->duration != 0) ? time() + $skill->duration : 0;
 								$characterSkill->amount = $amount;
 
 								$characterSkill->save();

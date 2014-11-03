@@ -107,6 +107,7 @@ Autoloader::directories(array(
 ));
 
 Autoloader::namespaces(array(
+    'Models' => path('app').'models',
 	'Libraries' => path('app').'libraries',
 	'Tests' => path('app').'tests',
 ));
@@ -252,3 +253,4 @@ IoC::instance('NpcMerchandise', new NpcMerchandise());
 IoC::instance('NpcRandomMerchandise', new NpcRandomMerchandise());
 IoC::instance('Monster', new Monster());
 IoC::instance('GlobalVariable', new GlobalVariable());
+IoC::instance('Models\Vip\VipRepository', new \Models\Vip\Vip());

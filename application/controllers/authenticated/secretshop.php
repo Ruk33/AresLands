@@ -4,9 +4,9 @@ class Authenticated_SecretShop_Controller extends Authenticated_Base
 {
 	/**
 	 *
-	 * @var VipFactory
+	 * @var \Models\Vip\VipRepository
 	 */
-	protected $vipFactory;
+	protected $vipRepository;
 	
 	public static function register_routes()
 	{
@@ -21,9 +21,10 @@ class Authenticated_SecretShop_Controller extends Authenticated_Base
 		));
 	}
 	
-	public function __construct(VipFactory $vipFactory, Character $character)
+	public function __construct(\Models\Vip\VipRepository $vipRepository, 
+                                Character $character)
 	{
-		$this->vipFactory = $vipFactory;
+		$this->vipRepository = $vipRepository;
 		$this->character = $character;
 		
 		parent::__construct();
@@ -31,55 +32,28 @@ class Authenticated_SecretShop_Controller extends Authenticated_Base
 	
 	public function get_index()
 	{
-		$vipObjects = $this->vipFactory->getAll();
+        $character = $this->character->get_logged();
+		$vipObjects = $this->vipRepository->where_enabled(true)->get();
 		
 		$this->layout->title = 'Mercado secreto';
-		$this->layout->content = View::make('authenticated.secretshop', compact('vipObjects'));
+		$this->layout->content = View::make('authenticated.secretshop', compact('vipObjects', 'character'));
 	}
 	
 	public function post_buy()
 	{
-		$character = $this->character->get_logged();
-		$vipObject = $this->vipFactory->get(Input::get("id"));
-		
-		$vipObject->setBuyer($character);
-        $vipObject->setAttributes(Input::all());
-		
-		$validator = $vipObject->getValidator();
-		
-		if ($validator->fails()) {
-			Session::flash("errors", $validator->errors->all());
-			return \Laravel\Redirect::to_route("get_authenticated_secret_shop_index");
-		}
+        $character = $this->character->get_logged();
+        $vip = $this->vipRepository->find(Input::get("id"));
+        $shop = new \Models\Vip\VipShop($vip);
         
-        if (! Auth::user()->consume_coins($vipObject->getPrice())) {
-            Session::flash("errors", array(
-                "No tienes suficientes IronCoins para comprar este objeto"
-            ));
-            
-            return \Laravel\Redirect::to_route("get_authenticated_secret_shop_index");
+        if (! $shop->buy(Auth::user(), $character, Input::all())) {
+            Session::flash("errors", $shop->getErrors());
+			return Redirect::to_route("get_authenticated_secret_shop_index");
         }
-		
-		if (! $vipObject->execute()) {
-			Session::flash("errors", array(
-                "Hubo un error al procesar la peticion, por favor notifica a " . 
-                "los administradores en el foro."
-            ));
-            
-            Laravel\Log::write(
-                "ERROR SECRET_SHOP", 
-                "Se le gastaron las IronCoins al personaje {$character->name}" . 
-                "al comprar el objeto {$vipObject->getName()} pero las " . 
-                "acciones no pudieron ser ejecutadas"
-            );
-            
-			return \Laravel\Redirect::to_route("get_authenticated_secret_shop_index");
-		}
-		
-		$this->layout->title = "¡Compra exitosa!";
+        
+        $this->layout->title = "¡Compra exitosa!";
 		$this->layout->content = View::make(
             "authenticated.buyfromsecretshop", 
-            compact("vipObject")
+            array("vipObject" => $vip)
         );
 	}
 }

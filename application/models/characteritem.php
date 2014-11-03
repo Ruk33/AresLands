@@ -44,8 +44,8 @@ class CharacterItem extends Base_Model
 
             foreach ((array) $skills as $skill) {
                 $character->skills()
-                          ->where_skill_id($skill['skill_id'])
-                          ->where_level($skill['level'])
+                          ->where_skill_id($skill->id)
+                          ->where_level($skill->level)
                           ->delete();
             }
         }

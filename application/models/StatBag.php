@@ -271,19 +271,19 @@ class StatBag
             }
         }
         
+        $this->extraStrength += $this->strength * ($strengthPercentage - 1);
+        $this->extraDexterity += $this->dexterity * ($dexterityPercentage - 1);
+        $this->extraResistance += $this->resistance * ($resistancePercentage - 1);
+        $this->extraMagic += $this->magic * ($magicPercentage - 1);
+        $this->extraMagicSkill += $this->magicSkill * ($magicSkillPercentage - 1);
+        $this->extraMagicResistance += $this->magicResistance * ($magicResistancePercentage - 1);
+        
         $this->strength += $this->extraStrength;
         $this->dexterity += $this->extraDexterity;
         $this->resistance += $this->extraResistance;
         $this->magic += $this->extraMagic;
         $this->magicSkill += $this->extraMagicSkill;
         $this->magicResistance += $this->extraMagicResistance;
-        
-        $this->strength *= $strengthPercentage;
-        $this->dexterity *= $dexterityPercentage;
-        $this->resistance *= $resistancePercentage;
-        $this->magic *= $magicPercentage;
-        $this->magicSkill *= $magicSkillPercentage;
-        $this->magicResistance *= $magicResistancePercentage;
     }
     
     /**
