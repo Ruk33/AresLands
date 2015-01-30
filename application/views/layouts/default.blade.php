@@ -533,7 +533,7 @@
 				 *	Iniciamos los tooltips
 				 */
 				$('[data-toggle="tooltip"]').tooltip({ html: true, container: '#wrap' });
-				$('[data-toggle="popover"]').popover({ html: true });
+				$('[data-toggle="popover"]').popover({ html: true, container: '#wrap' });
 
 				var lowerCountdown;
 				var originalTitle = document.title;

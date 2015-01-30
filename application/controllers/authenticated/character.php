@@ -2,6 +2,16 @@
 
 class Authenticated_Character_Controller extends Authenticated_Base
 {
+    /**
+     * @var Models\Achievement\AchievementRepository
+     */
+    protected $achievementRepository;
+
+    /**
+     * @var \Models\Achievement\AchievementCharacterProgressRepository
+     */
+    protected $achievementCharacterProgressRepository;
+
 	public static function register_routes()
 	{
 		Route::post("authenticated/character/follow", array(
@@ -23,12 +33,21 @@ class Authenticated_Character_Controller extends Authenticated_Base
 			"uses" => "authenticated.character@show",
 			"as"   => "get_authenticated_character_show"
 		));
+
+        Route::get("authenticated/character/show/(:num)/(:any)/achievements", array(
+            "uses" => "authenticated.character@achievements",
+            "as" => "get_authenticated_character_achievements"
+        ));
 	}
 	
-	public function __construct(Character $character)
+	public function __construct(Character $character,
+                                \Models\Achievement\AchievementRepository $achievementRepository,
+                                \Models\Achievement\AchievementCharacterProgressRepository $achievementCharacterProgressRepository)
 	{
 		$this->character = $character;
-		
+        $this->achievementRepository = $achievementRepository;
+		$this->achievementCharacterProgressRepository = $achievementCharacterProgressRepository;
+
 		parent::__construct();
 	}
 	
@@ -158,4 +177,26 @@ class Authenticated_Character_Controller extends Authenticated_Base
 			'pairs'
 		));
 	}
+
+    /**
+     * Mostramos los logros de un personaje
+     *
+     * @param integer $server
+     * @param string $name
+     */
+    public function get_achievements($server, $name)
+    {
+        $character = $this->character->getCharacterFromServerByName($server, $name)->first_or_die();
+
+        $achievements = $this->achievementRepository->all();
+        $characterAchievements = $character->getAchievementsRelationship()->lists("is_completed", "achievement_id");
+        $progressHelper = array();
+
+        foreach ($achievements as $achievement) {
+            $progressHelper[$achievement->getId()] = new \Models\Achievement\AchievementProgressHelper($achievement, $this->achievementCharacterProgressRepository->getInstance($character, $achievement));
+        }
+
+        $this->layout->title = "Logros";
+        $this->layout->content = \Laravel\View::make("authenticated.characterachievements", compact("achievements", "characterAchievements", "progressHelper"));
+    }
 }

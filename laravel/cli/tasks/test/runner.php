@@ -49,57 +49,79 @@ class Runner extends Task {
 	 * @return void
 	 */
 	public function bundle($bundles = array())
-	{
-		if (count($bundles) == 0)
-		{
-			$bundles = Bundle::names();
-		}
+    {
+        if (count($bundles) == 0)
+        {
+            $bundles = Bundle::names();
+        }
 
-		$this->base_path = path('sys').'cli'.DS.'tasks'.DS.'test'.DS;
+        $is_bundle = false;
+        $this->base_path = path('sys').'cli'.DS.'tasks'.DS.'test'.DS;
 
-		foreach ($bundles as $bundle)
-		{
-			// To run PHPUnit for the application, bundles, and the framework
-			// from one task, we'll dynamically stub PHPUnit.xml files via
-			// the task and point the test suite to the correct directory
-			// based on what was requested.
-			if (is_dir($path = Bundle::path($bundle).'tests'))
-			{
-				$this->stub($path);
+        foreach ($bundles as $bundle)
+        {
+            // To run PHPUnit for the application, bundles, and the framework
+            // from one task, we'll dynamically stub PHPUnit.xml files via
+            // the task and point the test suite to the correct directory
+            // based on what was requested.
+            if (is_dir($path = Bundle::path($bundle).'tests'))
+            {
+                $this->stub($path);
 
-				$this->test();				
-			}
-		}
-	}
+                $this->test();
+                $is_bundle = true;
+            }
+        }
+
+        if (!$is_bundle)
+        {
+            $this->stub($path);
+
+            // Run a specific test group
+            @$this->test($bundles[0], $bundles[1]);
+        }
+    }
 
 	/**
 	 * Run PHPUnit with the temporary XML configuration.
 	 *
 	 * @return void
 	 */
-	protected function test()
-	{
-		// We'll simply fire off PHPUnit with the configuration switch
-		// pointing to our requested configuration file. This allows
-		// us to flexibly run tests for any setup.
-		$path = 'phpunit.xml';
-		
-		// fix the spaced directories problem when using the command line
-		// strings with spaces inside should be wrapped in quotes.
-		$esc_path = escapeshellarg($path);
+    protected function test($group = null, $file = null)
+    {
+        // We'll simply fire off PHPUnit with the configuration switch
+        // pointing to our requested configuration file. This allows
+        // us to flexibly run tests for any setup.
+        $path = 'phpunit.xml';
 
-		//putenv('LARAVEL_ENV='.Request::env());
-		//passthru('LARAVEL_ENV='.Request::env().' phpunit --configuration '.$esc_path, $status);
+        // fix the spaced directories problem when using the command line
+        // strings with spaces inside should be wrapped in quotes.
+        $esc_path = escapeshellarg($path);
 
-		putenv('LARAVEL_ENV='.Request::env());
-		passthru('phpunit --configuration '.$esc_path, $status);
+        $group_string = '';
 
-		@unlink($path);
+        if ($group)
+        {
+            $group_string = '--group ' . $group . ' ';
 
-		// Pass through the exit status
-		exit($status);
-	}
+            if ($file)
+            {
+                $group_string .= path('app') . 'tests/' . $file . '.test.php';
+            }
+            else
+            {
+                $group_string .= path('app') . 'tests/' . $group . '.test.php';
+            }
+        }
 
+        passthru('phpunit --configuration '.$esc_path.' '.$group_string, $status);
+
+        @unlink($path);
+
+        // Pass through the exit status
+        exit($status);
+    }
+    
 	/**
 	 * Write a stub phpunit.xml file to the base directory.
 	 *

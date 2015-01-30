@@ -55,6 +55,35 @@ textarea {
    ========================================================================== */
 
 /*
+ * Achievements
+ */
+.achievement-icon-box {
+    width: 44px;
+    height: 44px;
+    position: relative;
+}
+
+.achievement-icon-box img {
+    position: absolute;
+    z-index: 0;
+    top: 4px;
+    left: 4px;
+    width: 36px;
+    height: 36px;
+}
+
+.achievement-icon-box del {
+    position: absolute;
+    z-index: 10;
+    top: 0;
+    left: 0;
+    background-image: url("/img/achievement-icon-border.png");
+    background-repeat: no-repeat;
+    width: 44px;
+    height: 44px;
+}
+
+/*
  * Helpers
  */
 .block-center {

@@ -22,6 +22,8 @@ class CharacterQuest extends Base_Model
 		$this->progress = "finished";
 		
 		$this->save();
+
+        $this->character->afterFinishQuest($this->quest);
 	}
 	
 	public function get_data()

@@ -57,6 +57,10 @@ class PveBattle extends Battle
     }
 
     protected function onFinish() {
+        if ($this->getWinner() instanceof Character) {
+            $this->getAttacker()->afterWinPve($this->getTarget());
+        }
+
         $this->getAttacker()->after_battle();
         $this->getAttacker()->save();
 

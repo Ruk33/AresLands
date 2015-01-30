@@ -202,7 +202,8 @@ class PvpBattle extends Battle
         $this->checkProtections();
         
         $this->getAttacker()->after_pvp_battle($this->getTarget());
-        
+        $this->getWinner()->afterWinPvp($this->getLoser());
+
         $this->getAttacker()->save();
         $this->getTarget()->save();
         

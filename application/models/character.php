@@ -1,5 +1,7 @@
 <?php
 
+use Models\Achievement\AchievementCharacterProgressRepository;
+
 class Character extends Unit
 {
 	public static $softDelete = true;
@@ -114,6 +116,103 @@ class Character extends Unit
         "invisible_until" => 0,
         "second_mercenary" => 0,
     );
+
+    /**
+     * @return AchievementCharacterProgressRepository
+     */
+    public function getAchievementCharacterProgressRepository()
+    {
+        return $this->getDependency("Models\\Achievement\\AchievementCharacterProgressRepository");
+    }
+
+    /**
+     * @param AchievementCharacterProgressRepository $achievementCharacterRepository
+     */
+    public function setAchievementCharacterProgressRepository(AchievementCharacterProgressRepository $achievementCharacterRepository)
+    {
+        $this->setDependency("Models\\Achievement\\AchievementCharacterProgressRepository", $achievementCharacterRepository);
+    }
+
+    /**
+     * @param Quest $quest
+     */
+    public function afterFinishQuest(Quest $quest)
+    {
+        $this->completed_quests++;
+        $this->save();
+
+        $this->getAchievementCharacterProgressRepository()->completedQuest($this, $quest);
+    }
+
+    /**
+     * @param Monster $target
+     */
+    public function afterWinPve(Monster $target)
+    {
+        $this->pves++;
+        $this->save();
+
+        $this->getAchievementCharacterProgressRepository()->winPve($this, $target);
+    }
+
+    /**
+     * @param Character $target
+     */
+    public function afterWinPvp(Character $target)
+    {
+        $this->pvps++;
+        $this->save();
+
+        $this->getAchievementCharacterProgressRepository()->winPvp($this, $target);
+    }
+
+    /**
+     * Obtenemos la cantidad de PVEs del personaje
+     *
+     * @return integer
+     */
+    public function getPves()
+    {
+        return $this->pves;
+    }
+
+    /**
+     * Obtenemos la cantidad de PVPs del personaje
+     *
+     * @return integer
+     */
+    public function getPvps()
+    {
+        return $this->pvps;
+    }
+
+    /**
+     * Obtenemos la cantidad de misiones que ha completado el personaje
+     *
+     * @return integer
+     */
+    public function getCompletedQuestsAmount()
+    {
+        return $this->completed_quests;
+    }
+
+    /**
+     * @param integer $server
+     * @param string $name
+     * @return Query
+     */
+    public function getCharacterFromServerByName($server, $name)
+    {
+        return $this->where_server_id($server)->where_name($name);
+    }
+
+    /**
+     * @return \Laravel\Database\Eloquent\Relationship
+     */
+    public function getAchievementsRelationship()
+    {
+        return $this->has_many("Models\\Achievement\\AchievementCharacterProgress", "character_id");
+    }
     
     /**
      * Borramos los reportes de batalla del personaje que tengan cierta

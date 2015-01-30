@@ -138,6 +138,16 @@ return array(
 	 */
 	'coin_id' => 1,
 
+    /*
+     * Objeto dummy para otorgar puntos de talento
+     */
+    'talent_point_item_id' => 13589,
+
+    /*
+     * Objeto dummy para otorgar experiencia de clan
+     */
+    'clan_xp_item_id' => 13590,
+
 	/*
 	 *	Nivel máximo de los clanes
 	 */
