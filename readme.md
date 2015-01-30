@@ -1,67 +1,17 @@
-# [Laravel](http://laravel.com) - A PHP Framework For Web Artisans
+#AresLands - El renacimiento de Tierras de Leyendas
 
-Laravel is a clean and classy framework for PHP web development. Freeing you
-from spaghetti code, Laravel helps you create wonderful applications using
-simple, expressive syntax. Development should be a creative experience that you
-enjoy, not something that is painful. Enjoy the fresh air.
+¡Hola!, éste es el código fuente oficial del juego de navegador AresLands creado por TitanGames.
 
-[Official Website & Documentation](http://laravel.com)
+##¿Qué es AresLands?
+AresLands es un juego de navegador (como Gladiatus, Ogame, etc.) en el cual debes crear un personaje y completar misiones, derrotar adversarios y mucho mas para progresar. La aplicación utiliza **PHP** (**Laravel 3 con modificaciones realizadas debido a necesidad**), **MySQL**, **AngularJS** y **CSS**.
 
-## Feature Overview
+Quiero aclarar que éste **no es el proyecto mas organizado (todo lo contrario) ni con las mejores prácticas de programación**. Programé/comencé AresLands cuando tenía muy poca experiencia en el campo de la programación y es por ello que algunos componentes pueden parecer un desastre (me disculpo).
 
-- Simple routing using Closures or controllers.
-- Views and templating.
-- Driver based session and cache handling.
-- Database abstraction with query builder.
-- Authentication.
-- Migrations.
-- PHPUnit Integration.
-- A lot more.
+##¿Por qué fue liberado?
+Como autor/creador me pareció lo correcto. En lugar de dejarlo juntando polvo por qué no liberarlo y dejar que otros entusiastas jueguen con él.
 
-## A Few Examples
+##Documentación
+Casi nula, aunque veré si creo alguna (porque estoy considerando muy seriamente re-escribir de cero este juego).
 
-### Hello World:
-
-```php
-<?php
-
-Route::get('/', function()
-{
-	return "Hello World!";
-});
-```
-
-### Passing Data To Views:
-
-```php
-<?php
-
-Route::get('user/(:num)', function($id)
-{
-	$user = DB::table('users')->find($id);
-
-	return View::make('profile')->with('user', $user);
-});
-```
-
-### Redirecting & Flashing Data To The Session:
-
-```php
-<?php
-
-return Redirect::to('profile')->with('message', 'Welcome Back!');
-```
-
-## Contributing to Laravel
-
-Contributions are encouraged and welcome; however, please review the Developer
-Certificate of Origin in the "license.txt" file included in the repository. All
-commits must be signed off using the `-s` switch.
-
-```bash
-git commit -s -m "this commit will be signed off automatically!"
-```
-
-## License
-
-Laravel is open-sourced software licensed under the MIT License.
+##Licencia
+MIT
