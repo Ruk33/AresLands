@@ -5,6 +5,9 @@
 ##¿Qué es AresLands?
 AresLands es un juego de navegador (como Gladiatus, Ogame, etc.) en el cual debes crear un personaje y completar misiones, derrotar adversarios y mucho mas para progresar. La aplicación utiliza **PHP** (**Laravel 3 con modificaciones realizadas debido a necesidad**), **MySQL**, **AngularJS** y **CSS**.
 
+##Imagenes
+http://www.imgur.com/a/m6Dft
+
 Quiero aclarar que éste **no es el proyecto mas organizado (todo lo contrario) ni con las mejores prácticas de programación**. Programé/comencé AresLands cuando tenía muy poca experiencia en el campo de la programación y es por ello que algunos componentes pueden parecer un desastre (me disculpo).
 
 ##¿Por qué fue liberado?
